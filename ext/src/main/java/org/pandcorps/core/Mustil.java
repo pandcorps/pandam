@@ -234,6 +234,7 @@ public class Mustil {
     public static boolean durationSameAsDelta = false;
     public static int volPercussion = VOL_MAX;
     public static boolean whiteKeyMode = false;
+    public static long size = 0;
     public static int channel = 0, key, vol, deltaTick;
     public static long tick = 0;
     public static long next = 0;
@@ -285,6 +286,9 @@ public class Mustil {
 	}
 	
 	private final static int getKey(final int key) {
+	    if (key < 0) {
+	        return key;
+	    }
 	    return whiteKeyMode ? WHITE_KEYS[key] : key;
 	}
 	
@@ -292,6 +296,12 @@ public class Mustil {
 		//info(tick + " - " + key);
 	    if (dur <= 0) {
 	        throw new IllegalArgumentException("Duration must be positive but was " + dur);
+	    } else if (key == -2) {
+	        addNoteRaw(track, tick, dur, channel, 64, SILENT);
+	        return;
+	    } else if (key == -1) {
+	        next = tick + dur;
+	        return;
 	    }
 		addShort(track, ShortMessage.NOTE_ON, tick, channel, key, vol);
 		next = tick + dur;
@@ -311,12 +321,10 @@ public class Mustil {
 		final int size = keys.length;
 		for (int i = 0; i < size; i++) {
 			final int key = keys[i];
-			if (key != -1) {
-				if (extend && i < (size - 1) && keys[i + 1] == -1) {
-					addNote(track, tick, unspecifiedNoteDuration + deltaTick, channel, key, vol);
-				} else {
-					addNote(track, tick, durationSameAsDelta ? deltaTick : unspecifiedNoteDuration, channel, key, vol);
-				}
+			if (extend && i < (size - 1) && keys[i + 1] == -1) {
+				addNote(track, tick, unspecifiedNoteDuration + deltaTick, channel, key, vol);
+			} else {
+				addNote(track, tick, durationSameAsDelta ? deltaTick : unspecifiedNoteDuration, channel, key, vol);
 			}
 			tick += deltaTick;
 		}
@@ -338,9 +346,7 @@ public class Mustil {
 	    for (int i = 0; i < size; i+= 2) {
 	        final int dur = notes[i];
 	        final int key = notes[i + 1];
-	        if (key != -1) {
-	            addNote(track, tick, dur, channel, key, vol);
-	        }
+	        addNote(track, tick, dur, channel, key, vol);
 	        tick += dur;
 	    }
 	    next = tick;
@@ -368,7 +374,7 @@ public class Mustil {
 	    return next;
 	}
 	
-	public final static long composeUntil(final int end, final int... notes) throws Exception {
+	public final static long composeUntil(final long end, final int... notes) throws Exception {
         while (true) {
             compose(notes);
             if (next == end) {
@@ -386,9 +392,7 @@ public class Mustil {
             final int dur = notes[i];
             final int key = notes[i + 1];
             final int vol = notes[i + 2];
-            if (key != -1) {
-                addNote(track, tick, dur, channel, key, vol);
-            }
+            addNote(track, tick, dur, channel, key, vol);
             tick += dur;
         }
         next = tick;
@@ -481,7 +485,7 @@ public class Mustil {
 		return tick;
 	}
 	
-	public final static long addPercussionsUntil(final Track track, final long firstTick, final int deltaTick, final int end, final int... keys) throws Exception {
+	public final static long addPercussionsUntil(final Track track, final long firstTick, final int deltaTick, final long end, final int... keys) throws Exception {
         long tick = firstTick;
         while (true) {
             tick = addPercussions(track, tick, deltaTick, keys);
@@ -493,7 +497,7 @@ public class Mustil {
         }
     }
 	
-	public final static void addSilent(final int end, final int dur) throws Exception {
+	public final static void addSilent(final long end, final int dur) throws Exception {
 	    addNote(track, end - dur, dur, channel, 28, SILENT);
 	}
 	

@@ -29,6 +29,7 @@ import org.pandcorps.core.*;
 public class BotsnBoltsMusic extends Mustil {
     private final static String COPYRIGHT = "Copyright (c) " + BotsnBoltsGame.YEAR + ", " + BotsnBoltsGame.AUTHOR;
     
+    private final static long DEF_SIZE = 1536;
     private final static int BG = PRG_SQUARE, BG2 = PRG_SAWTOOTH;
     private final static int FG = PRG_CLAVINET; // PRG_NEW_AGE, PRG_ELECTRIC_PIANO_2
     private final static int CHCK = PRC_CLOSED_HI_HAT, DRUM = PRC_BASS_DRUM_2;
@@ -38,14 +39,15 @@ public class BotsnBoltsMusic extends Mustil {
     private static int arg = 0;
     
     static {
-        initSong();
+        initSong(0);
     }
     
-    private final static void initSong() {
+    private final static void initSong(final long size) {
         sequenceResolution = 128;
         durationSameAsDelta = true;
         volPercussion = 48;
         whiteKeyMode = true;
+        Mustil.size = size;
     }
     
     protected final static Song newSongVolcano() throws Exception {
@@ -110,7 +112,7 @@ public class BotsnBoltsMusic extends Mustil {
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int size = 1536, reps = 6;
+        final int reps = 6;
         final int m = 21, l = 20, h = 22;
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, h, -1, h, -1, h, h, h, -1, h, h, h, -1, h, -1, h, -1,
             m, -1, m, -1, m, m, m, -1, m, m, m, -1, m, -1, m, -1,
@@ -263,7 +265,6 @@ public class BotsnBoltsMusic extends Mustil {
         channel = 0;
         vol = VOL_BG;
         setInstrument(track, channel, BG);
-        final int size = 1536;
         final int m = 21, h = 22;
         composeUntil(size, 4, m, 4, -1, 4, -1, 4, h, 4, -1, 4, -1, 4, m, 4, -1);
         
@@ -313,7 +314,6 @@ public class BotsnBoltsMusic extends Mustil {
         setInstrument(track, channel, BG);
         final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6;
         final int m = 21, h = 22;
-        final int size = 1536;
         composeUntil(size, d1, m, d1, m, d2, h);
         
         final int p = CHCK, p2 = DRUM;
@@ -373,7 +373,6 @@ public class BotsnBoltsMusic extends Mustil {
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int size = 1536;
         final int n = 21, h = 28;
         //addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, n, -1, -1, -1, n, n, n, -1, -1, -1, -1, -1); //TODO might work, untested
         //n, n, n, -1, n, n, -1, -1, n, n, n, -1, -1, -1, -1, -1
@@ -648,26 +647,44 @@ public class BotsnBoltsMusic extends Mustil {
     }
     
     protected final static Song newSongFinal() throws Exception {
-        final Song song = newSong("Final");
+        final Song song = newSong("Final", 512 * 5);
         final Track track = song.track;
         
         channel = 0;
         vol = VOL_BG;
         setInstrument(track, channel, BG2);
-        final int reps = 24;
         final int n = 21;
         next = 0;
         final int dur = 16, dur3 = dur * 3;
-        for (int i = 0; i < reps; i++) {
-            addNotes(track, next, channel, vol, dur3, n, n);
-            addNotes(track, next, channel, vol, dur, n, n);
-        }
+        composeUntil(size, dur3, n, dur3, n, dur, n, dur, n);
         
+        final int p = CHCK, p2 = DRUM;
+        //addPercussionsUntil(track, 0, d8, size, p); //TODO
+        
+        channel = 1;
+        vol = VOL_FG;
+        next = 0;
+        setInstrument(track, channel, FG);
+        next = 512;
+        final int d1 = 4, d2 = d1 * 2, d4 = d1 * 4, d8 = d1 * 8;
+        final int n0 = 30, nn = n0 - 1, n1 = n0 + 1, n2 = n0 + 2, n3 = n0 + 3, n4 = n0 + 4;
+        for (int i = 0; i < 2; i++) {
+            addEcho(d8, n3, 6, 8);
+            addEcho(d8, n2, 6, 8);
+        }
+        for (int i = 0; i < 2; i++) {
+            compose(d8, n3, d8, n2, d2, n3, d2, n3, d2, n2, d2, n2, d8, n1, d4, n3, d4, n3, d4, n2, d4, n2, d2, n1, d2, n1, d2, n0, d2, n0, d8, nn); // d8 * 8 = 256
+            if (i == 0)  {
+                compose(d2, n3, d2, n3, d2, n3, d2, n3, d4, n2, d4, n2, d2, n3, d2, n3, d2, n3, d2, n3, d8, n2, d4, n3, d4, n3, d4, n2, d4, n2, d8, n1, d8, -1);
+            } else {
+                compose(d2, n3, d2, n3, d2, n2, d2, n2, d2, n3, d2, n3, d2, n4, d2, n4, d4, n3, d4, n2, d4, n3, d4, n2, d2, n1, d2, n1, d2, n2, d2, n2, d4, n1, d4, n0, d8, nn, d8, -2);
+            }
+        }
         return song;
     }
     
     protected final static Song newSongTmp() throws Exception {
-        final Song song = newSong("TmpBot");
+        final Song song = newSong("TmpBot", 1024);
         final Track track = song.track;
         
         channel = 0;
@@ -677,8 +694,6 @@ public class BotsnBoltsMusic extends Mustil {
         //final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dg = d1 * 16;
         final int d1 = 2, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dc = d1 * 12, dg = d1 * 16;
         final int m = 21, h = 22;
-        final int size = 1024;
-        //final int size = 1536;
         //composeUntil(size, );
         
         final int p = CHCK, p2 = DRUM;
@@ -739,7 +754,7 @@ System.out.println(next);
     }
     
     protected final static Song newSongTmp2() throws Exception {
-        final Song song = newSong("Tmp2Bot");
+        final Song song = newSong("Tmp2Bot", 512);
         final Track track = song.track;
         
         channel = 0;
@@ -747,7 +762,6 @@ System.out.println(next);
         setInstrument(track, channel, BG);
         final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dc = d1 * 12, dg = d1 * 16;
         final int m = 21, h = 22;
-        final int size = 512;
         //composeUntil(size, );
         
         final int p = CHCK, p2 = DRUM;
@@ -780,14 +794,13 @@ System.out.println(next);
     }
     
     protected final static Song newSongTmp3() throws Exception {
-        final Song song = newSong("Tmp3Bot");
+        final Song song = newSong("Tmp3Bot", 2048);
         final Track track = song.track;
         
         channel = 0;
         vol = VOL_BG;
         setInstrument(track, channel, BG);
         final int b2 = 22, b3 = 23;
-        final int size = 2048;
         final int db = 7, dp = 1;
         composeUntil(size, db, b2, dp, -1, db, b3, dp, -1, db, b2, dp, -1, db, b3, dp, -1, db, -1, dp, -1, db, -1, dp, -1, db, b2, dp, -1, db, b3, dp, -1);
         
@@ -851,7 +864,6 @@ System.out.println(next);
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int size = 1536;
         final int n = 21, h = 28;
         composeUntil(size, 4, n, 4, -1, 4, h, 4, -1, 4, -1, 4, n, 4, n, 4, -1);
         
@@ -923,7 +935,6 @@ System.out.println(next);
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int size = 1536;
         final int reps = 24;
         //final int l = 20, n = 21, h = 28;
         //composeUntil(size);
@@ -960,14 +971,13 @@ System.out.println(next);
     }
     
     protected final static Song newSongTmp6() throws Exception {
-        final Song song = newSong("Tmp6Bot");
+        final Song song = newSong("Tmp6Bot", 512);
         final Track track = song.track;
         
         channel = 0;
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int size = 512;
         //final int l = 20, n = 21, h = 28;
         //composeUntil(size);
         
@@ -992,18 +1002,14 @@ System.out.println(next);
     }
     
     protected final static Song newSongTmp7() throws Exception {
-        final Song song = newSong("Tmp6Bot");
+        final Song song = newSong("Tmp7Bot");
         final Track track = song.track;
         
         channel = 0;
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int size = 1536;
         final int l = 20, n = 21;
-        //composeUntil(size, 4, n, 4, l);
-        //composeUntil(size, 4, n, 4, -1);
-        //composeUntil(size, 2, n, 2, -1, 2, l, 2, -1);
         composeUntil(size, 3, n, 1, -1, 3, l, 1, -1);
         
         final int p = CHCK, p2 = DRUM;
@@ -1015,25 +1021,13 @@ System.out.println(next);
         setInstrument(track, channel, FG);
         final int o = 28, n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3;
         final int nfa = n1, nfb = n0, nsa = n3, nsb = n2;
-        /*compose(8, n4, 4, n3, 4, n3, 16, n4, 32, -1);
-        compose(8, n4, 4, n3, 4, n3, 16, n4, 32, -1);
-        compose(8, n7, 4, n6, 4, n6, 16, n7, 32, -1);
-        compose(8, n7, 4, n6, 4, n6, 16, n7, 32, -1);*/
         for (int i = 0; i < 4; i++) {
             compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 32, -1);
         }
         for (int i = 0; i < 4; i++) {
             compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 32, -1);
         }
-        /*compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 8, nfa, 8, nfb, 16, -1);
-        compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 8, nfa, 8, nfb, 16, -1);
-        compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 8, nsa, 8, nsb, 16, -1);
-        compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 8, nsa, 8, nsb, 16, -1);*/
         
-        /*compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 8, nfa, 8, -1, 8, nfa, 8, -1);
-        compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 8, nfa, 8, -1, 8, nfa, 8, -1);
-        compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 8, nsa, 8, -1, 8, nsa, 8, -1);
-        compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 8, nsa, 8, -1, 8, nsa, 8, -1);*/
         for (int j = 0; j < 2; j++) {
             for (int i = 0; i < 2; i++) {
                 compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 16, -1, 8, nfb, 8, nfb);
@@ -1043,12 +1037,35 @@ System.out.println(next);
             }
         }
 
-        //addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1, n2, n2, n2, n2, -1, -1, -1, -1);
-        //addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1, n0, n0, n0, n0, -1, -1, -1, -1);
         addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
         addEcho(16, n2, 6, 8);
         addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
         addEcho(16, n0, 6, 8);
+        
+        return song;
+    }
+    
+    protected final static Song newSongTmp8() throws Exception {
+        final Song song = newSong("Tmp8Bot");
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        deltaTick = 4;
+        setInstrument(track, channel, BG);
+        final int l = 20, n = 21;
+        //composeUntil(size);
+        
+        final int p = CHCK, p2 = DRUM;
+        addPercussionsUntil(track, 0, 16, size, p2); //TODO
+        
+        channel = 1;
+        vol = VOL_FG;
+        next = 0;
+        setInstrument(track, channel, FG);
+        final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4;
+        final int o = 28, n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3;
+        compose(d3, -1, d1, n2, d4, n2, d2, -1, d2, n2);
         
         return song;
     }
@@ -1094,7 +1111,11 @@ System.out.println(next);
     }
     
     private final static Song newSong(final String name) throws Exception {
-        initSong();
+        return newSong(name, DEF_SIZE);
+    }
+    
+    private final static Song newSong(final String name, final long size) throws Exception {
+        initSong(size);
         return new Song(name, COPYRIGHT);
     }
     
@@ -1112,7 +1133,7 @@ System.out.println(next);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongTmp7();
+            song = newSongFinal();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 512;
