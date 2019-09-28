@@ -340,6 +340,16 @@ public class Mustil {
 		return tick;
 	}
 	
+	public final static void addNotesUntil(final int dur, final long end, final int... keys) throws Exception {
+        do {
+            addNotes(dur, keys);
+        } while (moreNeeded(end));
+    }
+	
+	public final static void addNotesAll(final int dur, final int... keys) throws Exception {
+	    addNotesUntil(dur, size, keys);
+	}
+	
 	public final static long compose(final Track track, final long firstTick, final int channel, final int vol, final int... notes) throws Exception {
 	    long tick = firstTick;
 	    final int size = notes.length;
@@ -374,16 +384,24 @@ public class Mustil {
 	    return next;
 	}
 	
-	public final static long composeUntil(final long end, final int... notes) throws Exception {
-        while (true) {
+	public final static void composeUntil(final long end, final int... notes) throws Exception {
+        do {
             compose(notes);
-            if (next == end) {
-                return next;
-            } else if (next > end) {
-                throw new IllegalStateException("Composed until " + next + " > " + end);
-            }
-        }
+        } while (moreNeeded(end));
     }
+	
+	private final static boolean moreNeeded(final long end) {
+	    if (next == end) {
+	        return false;
+	    } else if (next > end) {
+	        throw new IllegalStateException("Composed until " + next + " > " + end);
+	    }
+	    return true;
+	}
+	
+	public final static void composeAll(final int... notes) throws Exception {
+	    composeUntil(size, notes);
+	}
 	
 	public final static long composeWithVolumes(final Track track, final long firstTick, final int channel, final int... notes) throws Exception {
         long tick = firstTick;
@@ -474,6 +492,7 @@ public class Mustil {
 			}
 			tick += deltaTick;
 		}
+		next = tick;
 		return tick;
 	}
 	
@@ -485,16 +504,19 @@ public class Mustil {
 		return tick;
 	}
 	
-	public final static long addPercussionsUntil(final Track track, final long firstTick, final int deltaTick, final long end, final int... keys) throws Exception {
+	public final static void addPercussionsUntil(final Track track, final long firstTick, final int deltaTick, final long end, final int... keys) throws Exception {
         long tick = firstTick;
-        while (true) {
+        do {
             tick = addPercussions(track, tick, deltaTick, keys);
-            if (tick == end) {
-                return tick;
-            } else if (tick > end) {
-                throw new IllegalStateException("Added percussions until " + tick + " > " + end);
-            }
-        }
+        } while (moreNeeded(end));
+    }
+	
+	public final static void addPercussionsUntil(final int deltaTick, final long end, final int... keys) throws Exception {
+	    addPercussionsUntil(track, next, deltaTick, end, keys);
+	}
+	
+	public final static void addPercussionsAll(final int deltaTick, final int... keys) throws Exception {
+        addPercussionsUntil(deltaTick, size, keys);
     }
 	
 	public final static void addSilent(final long end, final int dur) throws Exception {
