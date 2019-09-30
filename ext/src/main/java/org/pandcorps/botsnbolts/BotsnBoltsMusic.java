@@ -227,12 +227,6 @@ System.out.println(next);
         vol = old;
     }
     
-    private final static void addHails(final int dur, final int... keys) throws Exception {
-        for (final int key : keys) {
-            addHail(dur, key);
-        }
-    }
-    
     private final static void addHail(final int dur, final int n) throws Exception {
         //addNotes(1, 45, 46, 47, 48);
         //final int n = 52;
@@ -817,46 +811,6 @@ System.out.println(next);
         return song;
     }
     
-    protected final static Song newSongTmp2() throws Exception {
-        final Song song = newSong("Tmp2Bot", 512);
-        final Track track = song.track;
-        
-        channel = 0;
-        vol = VOL_BG;
-        setInstrument(track, channel, BG);
-        final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6, d8 = d1 * 8, d12 = d1 * 12, dc = d1 * 12, dg = d1 * 16;
-        final int m = 21, h = 22;
-        //composeUntil(size, );
-        
-        final int p = CHCK, p2 = DRUM;
-        addPercussionsUntil(track, 0, dg, size, p2);
-        
-        channel = 1;
-        vol = VOL_FG;
-        next = 0;
-        setInstrument(track, channel, FG);
-        final int baseNote = 28;
-        final int o = baseNote - 1;
-        final int n0 = o, n1 = o + 1, n2 = o + 2, n3 = o + 3, n4 = o + 4, n5 = o + 5;
-        /*for (int i = 0; i < 4; i++) {
-            compose(dg, n2, d4, n3, d4, n2, d4, n1, d4, n0);
-        }
-        compose(d8, n2, d4, n1, d4, n1, dg, n2);
-        next += dg;*/
-        for (int i = 0; i < 3; i++) {
-            /*compose(d4, n2, d4, n2, d4, n3, d4, n3);
-            if (i < 2) {
-                compose(d8, -1, d8, n1);
-            }*/
-            compose(d2, n2, d2, n2, d2, n3, d2, n3);
-            if (i < 2) {
-                compose(d4, -1, d4, n1);
-            }
-        }
-        
-        return song;
-    }
-    
     protected final static Song newSongTmp3() throws Exception {
         final Song song = newSong("Tmp3Bot", 2048);
         final Track track = song.track;
@@ -1034,37 +988,6 @@ System.out.println(next);
         return song;
     }
     
-    protected final static Song newSongTmp6() throws Exception {
-        final Song song = newSong("Tmp6Bot", 512);
-        final Track track = song.track;
-        
-        channel = 0;
-        vol = VOL_BG;
-        deltaTick = 4;
-        setInstrument(track, channel, BG);
-        //final int l = 20, n = 21, h = 28;
-        //composeUntil(size);
-        
-        final int p = CHCK, p2 = DRUM;
-        addPercussionsUntil(track, 0, 16, size, p2);
-        
-        channel = 1;
-        vol = VOL_FG;
-        next = 0;
-        setInstrument(track, channel, FG);
-        final int d = 8;
-        //final int n = 28, h = 35, s = -1;
-        final int l = 27, n = 28, m = 30, h = 32, s = -1;
-        compose(16, n, 16, n, 16, n, 16, -1, 4, l, 12, l, 48, -1);
-        compose(16, l, 16, l, 16, l, 16, -1, 4, n, 4, n, 8, n, 48, -1);
-        compose(16, n, 16, n, 16, n, 16, -1, 4, l, 12, l, 48, -1);
-        compose(16, l, 16, l, 16, l, 16, -1, 4, n, 4, n, 8, n, 48, -1);
-System.out.println(next);
-        addSilent(size, 4);
-        
-        return song;
-    }
-    
     protected final static Song newSongTmp7() throws Exception {
         final Song song = newSong("Tmp7Bot");
         final Track track = song.track;
@@ -1102,7 +1025,7 @@ System.out.println(next);
         }
 
         addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
-        addEcho(16, n2, 6, 8);
+        addEcho(16, n2, 6, 8); // End these last 2 parts with 8/4/4/16 pattern used above instead of echo??
         addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
         addEcho(16, n0, 6, 8);
         
@@ -1172,7 +1095,7 @@ System.out.println(next);
         compose(d4, n3, d4, n2, d4, n3, d3, -1, d1, n2);
         compose(d4, n3, d4, n2, d4, n1, d3, -1, d1, n2);*/
 System.out.println(next);
-//addSilent(size, 4);
+addSilent(size, 4);
         
         return song;
     }
@@ -1233,36 +1156,6 @@ System.out.println(next);
         return song;
     }
     
-    protected final static Song newSongRock() throws Exception {
-        final Song song = newSong("RockBot");
-        final Track track = song.track;
-        
-        channel = 0;
-        vol = VOL_BG;
-        setInstrument(track, channel, BG);
-        //final int reps = 16;
-        final int reps = 8;
-        //final int n = 21, h = 28, l = 20;
-        final int n = 21, h = 22, l = 20;
-        addRepeatedNotes(track, 0, channel, vol, 4, reps, n, -1, n, -1, l, -1, l, -1, h, -1, h, -1, -1, -1, -1, -1);
-        addNote(track, 1020, 4, channel, n, SILENT);
-        
-        final int p = CHCK, p2 = DRUM;
-        addRepeatedPercussions(track, 0, 4, reps, p, -1, -1, -1, p, -1, -1, -1, p, -1, p2, -1, p, -1, p, -1);
-        
-        channel = 1;
-        vol = VOL_FG;
-        next = 0;
-        setInstrument(track, channel, FG);
-        final int n0 = 28, n1 = n0 + 1, n2 = n0 + 2;
-        //compose(8, n2, 8, n2, 8, n2, 8, n2, 4, n1, 4, n2);
-        compose(16, n2, 16, n2, 16, n2, 16, n2, 8, n1, 8, n2);
-        next += 48;
-        compose(16, n2, 16, n2, 16, n2, 16, n2, 8, n1, 8, n2);
-        
-        return song;
-    }
-    
     protected final static Song newSongBoss() throws Exception {
         final Song song = newSong("Boss");
         return song;
@@ -1296,7 +1189,7 @@ System.out.println(next);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongTmp10();
+            song = newSongArray();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 512;
