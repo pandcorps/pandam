@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core;
 
 import java.io.*;
+import java.util.*;
 
 import javax.sound.midi.*;
 
@@ -233,6 +234,7 @@ public class Mustil {
     public static int unspecifiedNoteDuration = DEF_NOTE_DURATION;
     public static boolean durationSameAsDelta = false;
     public static int volPercussion = VOL_MAX;
+    public final static Map<Integer, Integer> volPercussionMap = new HashMap<Integer, Integer>();
     public static boolean whiteKeyMode = false;
     public static long size = 0;
     public static int channel = 0, key, vol, deltaTick;
@@ -469,7 +471,7 @@ public class Mustil {
 	}
 	
 	public final static void addPercussion(final Track track, final long tick, final int dur, final int key) throws Exception {
-		addPercussionAtVolume(track, tick, dur, key, volPercussion);
+		addPercussionAtVolume(track, tick, dur, key, getVolumePercussion(key, -1));
 	}
 	
 	public final static void addPercussionAtVolume(final Track track, final long tick, final int dur, final int key, final int vol) throws Exception {
@@ -477,7 +479,7 @@ public class Mustil {
 	}
 	
 	public final static long addPercussions(final Track track, final long firstTick, final int deltaTick, final int... keys) throws Exception {
-		return addPercussionsAtVolume(track, firstTick, volPercussion, deltaTick, keys);
+		return addPercussionsAtVolume(track, firstTick, -1, deltaTick, keys);
 	}
 	
 	public final static long addPercussionsAtVolume(final Track track, final long firstTick, final int vol, final int deltaTick, final int... keys) throws Exception {
@@ -488,12 +490,24 @@ public class Mustil {
 			if (key != -1) {
 				int j = i + 1;
 				for (; j < size && keys[j] != -1; j++);
-				addPercussionAtVolume(track, tick, deltaTick * (j - i), key, vol);
+				addPercussionAtVolume(track, tick, deltaTick * (j - i), key, getVolumePercussion(key, vol));
 			}
 			tick += deltaTick;
 		}
 		next = tick;
 		return tick;
+	}
+	
+	public final static int getVolumePercussion(final int key, final int vol) {
+	    if (vol < 0) {
+	        final Integer volKey = volPercussionMap.get(Integer.valueOf(key));
+	        return (volKey == null) ? volPercussion : volKey.intValue();
+	    }
+	    return vol;
+	}
+	
+	public final static void setVolumePercussion(final int key, final int vol) {
+	    volPercussionMap.put(Integer.valueOf(key), Integer.valueOf(vol));
 	}
 	
 	public final static long addRepeatedPercussions(final Track track, final long firstTick, final int deltaTick, final int numberOfRepetitions, final int... keys) throws Exception {
@@ -615,6 +629,10 @@ public class Mustil {
 	    sequencer.stop();
 	    sequencer.close();
 	    sequencer = null;
+	}
+	
+	public final static void info(final Object s) {
+	    System.out.println(s);
 	}
 	
 	public final static Sequence newSequence() throws Exception {
