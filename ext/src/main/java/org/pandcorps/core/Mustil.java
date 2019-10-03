@@ -231,6 +231,7 @@ public class Mustil {
     
     public final static int DEF_NOTE_DURATION = 30;
     public static int sequenceResolution = 96;
+    public static int numberOfPlays = 1;
     public static int unspecifiedNoteDuration = DEF_NOTE_DURATION;
     public static boolean durationSameAsDelta = false;
     public static int volPercussion = VOL_MAX;
@@ -269,10 +270,16 @@ public class Mustil {
 	    next = 0;
 	}
 	
+	protected final static void finishTrack() throws Exception {
+        addSilent(size, 1);
+    }
+	
 	private final static void addShort(final Track track, final int cmd, final long tick, final int channel, final int a1, final int a2) throws Exception {
-		final ShortMessage message = new ShortMessage();
-		message.setMessage(cmd, channel, a1, a2);
-		track.add(new MidiEvent(message, tick));
+	    for (int i = 0; i < numberOfPlays; i++) {
+    		final ShortMessage message = new ShortMessage();
+    		message.setMessage(cmd, channel, a1, a2);
+    		track.add(new MidiEvent(message, tick + (i * size)));
+	    }
 	}
 	
 	public final static void addNote(final int dur, final int key) throws Exception {

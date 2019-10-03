@@ -170,6 +170,33 @@ public final class Iotil {
 		return resourceLister.list();
 	}
 	
+	public final static boolean isFileContentIdentical(final String location1, final String location2) {
+	    InputStream in1 = null, in2 = null;
+	    try {
+	        in1 = getInputStream(location1);
+	        in2 = getInputStream(location2);
+	        final byte[] buf1 = new byte[1024], buf2 = new byte[1024];
+	        while (true) {
+	            final int size1 = in1.read(buf1), size2 = in2.read(buf2);
+	            if (size1 != size2) {
+	                return false;
+	            } else if (size1 == -1) {
+	                return true;
+	            }
+	            for (int i = 0; i < size1; i++) {
+	                if (buf1[i] != buf2[i]) {
+	                    return false;
+	                }
+	            }
+	        }
+	    } catch (final IOException e) {
+	        throw new RuntimeException(e);
+	    } finally {
+	        close(in1);
+	        close(in2);
+	    }
+	}
+	
 	public final static Reader getReader(final String location) {
 		return new InputStreamReader(getInputStream(location), Charset.forName("ISO-8859-1"));
 	}
