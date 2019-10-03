@@ -189,6 +189,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static HudMeterImages hudMeterBlank = null;
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
+    private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
+    protected static Pansound musicLevelSelect = null;
     
     protected static PlayerContext pc = null;
     private static final float defPlayerStartX = 48;
@@ -260,6 +262,7 @@ public final class BotsnBoltsGame extends BaseGame {
         loadDoors();
         loadMisc();
         loadEnemies();
+        loadAudio();
         loadPlayer();
         postProcess();
         Menu.loadMenu();
@@ -1064,6 +1067,21 @@ public final class BotsnBoltsGame extends BaseGame {
             frm.getBoundingMinimum(), frm.getBoundingMaximum());
     }
     
+    protected final static Pansound getMusic(final String name) {
+        Pansound sound = music.get(name);
+        if (sound == null) {
+            sound = Pangine.getEngine().getAudio().createMusic(RES + "music/" + name + ".mid");
+            music.put(name, sound);
+        }
+        return sound;
+    }
+    
+    private final static void loadAudio() {
+        final Panaudio audio = Pangine.getEngine().getAudio();
+        audio.ensureCapacity(6);
+        musicLevelSelect = audio.createMusic(RES + "music/LevelSelect.mid");
+    }
+    
     private final static class TitleScreen extends Panscreen {
         private Panmage title = null;
         
@@ -1117,6 +1135,7 @@ public final class BotsnBoltsGame extends BaseGame {
             //initRoom(room);
             //fillRoom(room);
             loadRoom(RoomLoader.getStartRoom());
+            getMusic(RoomLoader.level.musicName).changeMusic();
         }
         
         protected final static void loadRoom(final BotRoom botRoom) {

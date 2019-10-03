@@ -66,6 +66,7 @@ public abstract class RoomLoader {
     protected static int startX = 0;
     protected static int startY = 0;
     protected static int levelVersion = 0;
+    protected static BotLevel level = null;
     private static int row = 0;
     protected static int waterLevel = 0;
     private static int waterX = 0;
@@ -1309,6 +1310,7 @@ public abstract class RoomLoader {
         protected final Panmage portrait;
         protected final int version;
         protected final List<String> prerequisites;
+        protected final String musicName;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1318,8 +1320,9 @@ public abstract class RoomLoader {
             levelX = seg.intValue(4);
             levelY = seg.intValue(5);
             String portraitLoc = seg.getValue(6);
+            final String fullName = Chartil.unnull(name1) + Chartil.unnull(name2);
             if (Chartil.isEmpty(portraitLoc)) {
-                portraitLoc = "boss/" + name1.toLowerCase() + name2.toLowerCase() + "/" + name1 + name2 + "Portrait";
+                portraitLoc = "boss/" + name1.toLowerCase() + name2.toLowerCase() + "/" + fullName + "Portrait";
             }
             portrait = Pangine.getEngine().createImage(portraitLoc, BotsnBoltsGame.RES + portraitLoc + ".png");
             version = seg.getInt(7, 0);
@@ -1329,6 +1332,7 @@ public abstract class RoomLoader {
             for (int i = 0; i < prerequisitesSize; i++) {
                 prerequisites.add(prerequisiteFields.get(i).getValue());
             }
+            musicName = fullName;
         }
         
         protected final boolean isAllowed() {

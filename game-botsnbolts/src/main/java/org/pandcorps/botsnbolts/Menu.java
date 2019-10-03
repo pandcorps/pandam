@@ -566,6 +566,7 @@ public class Menu {
         @Override
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
+            BotsnBoltsGame.musicLevelSelect.changeMusic();
             final PlayerContext pc = BotsnBoltsGame.pc;
             pc.prf.saveProfile();
             BotsnBoltsGame.initPlayerStart();
@@ -672,6 +673,7 @@ public class Menu {
         RoomLoader.startX = level.levelX;
         RoomLoader.startY = level.levelY;
         RoomLoader.levelVersion = level.version;
+        RoomLoader.level = level;
         Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
     }
     
