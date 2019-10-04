@@ -271,7 +271,12 @@ public class Mustil {
 	}
 	
 	protected final static void finishTrack() throws Exception {
-        addSilent(size, 1);
+	    final int trackSize = track.size();
+	    if (trackSize < size) {
+	        addSilent(size, 1);
+	    } else if (trackSize > size) {
+	        throw new IllegalStateException("Expected track size to be " + size + " but was longer (" + trackSize + ")");
+	    }
     }
 	
 	private final static void addShort(final Track track, final int cmd, final long tick, final int channel, final int a1, final int a2) throws Exception {
