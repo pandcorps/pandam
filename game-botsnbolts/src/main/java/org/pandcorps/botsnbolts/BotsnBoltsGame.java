@@ -191,6 +191,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Img[] hudMeterImgs = null;
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicLevelSelect = null;
+    protected static Pansound musicLevelStart = null;
     
     protected static PlayerContext pc = null;
     private static final float defPlayerStartX = 48;
@@ -1080,6 +1081,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panaudio audio = Pangine.getEngine().getAudio();
         audio.ensureCapacity(6);
         musicLevelSelect = audio.createMusic(RES + "music/LevelSelect.mid");
+        musicLevelStart = audio.createTransition(RES + "music/LevelStart.mid");
     }
     
     private final static class TitleScreen extends Panscreen {

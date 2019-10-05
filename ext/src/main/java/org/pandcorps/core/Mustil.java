@@ -271,11 +271,11 @@ public class Mustil {
 	}
 	
 	protected final static void finishTrack() throws Exception {
-	    final int trackSize = track.size();
-	    if (trackSize < size) {
+	    final long trackSize = track.size(), expectedSize = size * numberOfPlays;
+	    if (trackSize < expectedSize) {
 	        addSilent(size, 1);
-	    } else if (trackSize > size) {
-	        throw new IllegalStateException("Expected track size to be " + size + " but was longer (" + trackSize + ")");
+	    } else if (trackSize > expectedSize) {
+	        throw new IllegalStateException("Expected track size to be " + expectedSize + " but was longer (" + trackSize + ")");
 	    }
     }
 	
@@ -494,6 +494,10 @@ public class Mustil {
 		return addPercussionsAtVolume(track, firstTick, -1, deltaTick, keys);
 	}
 	
+	public final static long addPercussions(final int deltaTick, final int... keys) throws Exception {
+	    return addPercussions(track, next, deltaTick, keys);
+	}
+	
 	public final static long addPercussionsAtVolume(final Track track, final long firstTick, final int vol, final int deltaTick, final int... keys) throws Exception {
 		long tick = firstTick;
 		final int size = keys.length;
@@ -549,6 +553,10 @@ public class Mustil {
 	    addNote(track, end - dur, dur, channel, 28, SILENT);
 	}
 	
+	public final static void setInstrument(final int program) throws Exception {
+        setInstrument(track, channel, program);
+    }
+	
 	public final static void setInstrument(final Track track, final int channel, final int program) throws Exception {
 	    setInstrument(track, 0, channel, program);
 	}
@@ -556,6 +564,13 @@ public class Mustil {
 	public final static void setInstrument(final Track track, final long tick, final int channel, final int program) throws Exception {
 		addShort(track, ShortMessage.PROGRAM_CHANGE, tick, channel, program, 0);
 	}
+	
+	public final static void initChannel(final int channel, final int vol, final int program) throws Exception {
+	    Mustil.channel = channel;
+	    Mustil.vol = vol;
+        setInstrument(program);
+        next = 0;
+    }
 	
 	public final static void setPitch(final Track track, final long tick, final int channel, final int amt) throws Exception {
 		addShort(track, ShortMessage.PITCH_BEND, tick, channel, 0, amt); // < 64 to lower, > 65 to raise

@@ -22,6 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.io.*;
+import java.util.*;
+
 import javax.sound.midi.*;
 
 import org.pandcorps.core.*;
@@ -36,6 +39,9 @@ public class BotsnBoltsMusic extends Mustil {
     private final static int VOL_BG = 56;
     private final static int VOL_FG = 64;
     
+    private static int d1, d2, d4, d8, dc;
+    private static int nn, n0, n1, n2, n3, n4, n5, n6, n7;
+    
     private static int arg = 0;
     
     static {
@@ -45,9 +51,16 @@ public class BotsnBoltsMusic extends Mustil {
     private final static void initSong(final long size) {
         sequenceResolution = 128;
         durationSameAsDelta = true;
-        volPercussion = 48;
+        volPercussion = 72;
+        volPercussionMap.clear();
+        setVolumePercussion(CHCK, 48);
         whiteKeyMode = true;
         Mustil.size = size;
+    }
+    
+    private final static void initNotes(final int d1, final int n0) {
+        BotsnBoltsMusic.d1 = d1; d2 = d1 * 2; d4 = d1 * 4; d8 = d1 * 8; dc = d1 * 12;
+        BotsnBoltsMusic.n0 = n0; n1 = n0 + 1; n2 = n0 + 2; n3 = n0 + 3; n4 = n0 + 4; n5 = n0 + 5; n6 = n0 + 6; n7 = n0 + 7; nn = n0 - 1;
     }
     
     protected final static Song newSongVolcano() throws Exception {
@@ -310,7 +323,7 @@ System.out.println(next);
     }
     
     protected final static Song newSongEarthquake() throws Exception {
-        final Song song = newSong("EarthquakeBot");
+        final Song song = newSong("EarthquakeBot", 3072);
         final Track track = song.track;
         
         channel = 0;
@@ -326,15 +339,15 @@ System.out.println(next);
         vol = VOL_FG;
         next = 0;
         setInstrument(track, channel, FG);
-        final int o = 28;
-        final int n2 = o + 2, n3 = o + 3, n4 = o + 4;
-        final int d1 = 4;
-        final int d2 = d1 * 2, d4 = d1 * 4;
-        for (int i = 0; i < 6; i++) {
+        initNotes(8, 28);
+        final int nN = n0 - 2;
+        /*for (int i = 0; i < 6; i++) {
             if (i == 0 || i == 2) {
-                addEcho(d2, n4, 6, 4); addEcho(d2, n3, 6, 4);
+                addEcho(d2, n0, 6, 2); addEcho(d2, n1, 6, 2); addEcho(d2, n2, 6, 2); addEcho(d2, n3, 6, 2);
+                //addEcho(d2, n2, 6, 2); addEcho(d2, n1, 6, 2); addEcho(d2, n3, 6, 2); addEcho(d2, n2, 6, 2);
             } else if (i == 1) {
-                addEcho(d4, n4, 6, 2); addEcho(d4, n3, 6, 2);
+                //addEcho(d4, n4, 6, 2); addEcho(d4, n3, 6, 2);
+                addEcho(d2, n4, 6, 2); addEcho(d2, n3, 6, 2); addEcho(d2, n2, 6, 2); addEcho(d2, n1, 6, 2);
             } else if (i == 3) {
                 addEcho(d2, n2, 6, 4); addEcho(d2, n3, 6, 4);
             } else if (i == 4) {
@@ -347,13 +360,36 @@ System.out.println(next);
                 addEcho(d2, n4, 6, 4); addEcho(d2, n3, 6, 4);
                 addEcho(d2, n2, 6, 8);
             } else {
-                addEcho(d2, n2, 6, 8);
-                addEcho(d2, n4, 6, 6); compose(d4, n3);
+                addEcho(d2, n4, 6, 8);
+                addEcho(d2, n4, 6, 6); addNote(d4, n3);
                 addEcho(d2, n2, 6, 8);
             }
-        }
+        }*/
+        addEarthquakeRise(); addEarthquakeLong(n4); addEarthquakeTransition(n4, n3); addEarthquakeLong(n2);
+        addEarthquakeFall(); addEarthquakeLong(n0); addEarthquakeTransition(n0, n1); addEarthquakeLong(n0);
+        addEarthquakeTransition(n4, n3); addEarthquakeLong(n2); addEarthquakeTransition(n0, nn); addEarthquakeRise();
+        addEarthquakeTransition(n4, n3); addEarthquakeLong(n2); addEarthquakeTransition(n4, n3); addEarthquakeFall();
+        addEarthquakeTransition(n4, n3); addEarthquakeLong(n2); addEarthquakeTransition(n4, n3); addEarthquakeLong(n2);
+        addEarthquakeTransition(n2, n3); addEarthquakeLong(n4); addEarthquakeTransition(n4, n3); addEarthquakeLong(n2);
+        addSilent(size, 1);
         
         return song;
+    }
+    
+    private final static void addEarthquakeRise() throws Exception {
+        addEcho(d2, n0, 6, 2); addEcho(d2, n1, 6, 2); addEcho(d2, n2, 6, 2); addEcho(d2, n3, 6, 2);
+    }
+    
+    private final static void addEarthquakeFall() throws Exception {
+        addEcho(d2, n4, 6, 2); addEcho(d2, n3, 6, 2); addEcho(d2, n2, 6, 2); addEcho(d2, n1, 6, 2);
+    }
+    
+    private final static void addEarthquakeLong(final int n) throws Exception {
+        addEcho(d2, n, 6, 8);
+    }
+    
+    private final static void addEarthquakeTransition(final int n, final int nt) throws Exception {
+        addEcho(d2, n, 6, 6); addNote(d4, nt);
     }
     
     protected final static Song newSongCyclone() throws Exception {
@@ -1162,7 +1198,45 @@ addSilent(size, 4);
     }
     
     protected final static Song newSongLevelSelect() throws Exception {
-        final Song song = newSong("LevelSelect");
+        final Song song = newSong("LevelSelect", 128);
+        
+        initChannel(0, VOL_BG, BG);
+        final int n = 21;
+        composeAll(24, n, 8, -1);
+        
+        next = 0;
+        final int p = CHCK, p2 = DRUM;
+        addPercussionsAll(8, p, p, p2, -1, p, -1, -1, -1);
+        
+        initChannel(1, VOL_FG, FG);
+        initNotes(4, 28);
+        addNotes(d1, n1, n1, n1, n1, n0, n0, n0, n0, n1, n1, n1, n1, n2, -1, n2, -1);
+        addNotes(d1, n1, n1, n1, n1, n0, n0, n0, n0, n1, n1, n1, n1, n0, -1, n0, -1);
+        
+        return song;
+    }
+    
+    protected final static Song newSongLevelStart() throws Exception {
+        final Song song = newSong("LevelStart", 256);
+        
+        initNotes(4, 28);
+        initChannel(0, VOL_BG, BG);
+        final int n = n0 - 7;
+        compose(dc, n, d4, -1, dc, n + 2, d4, -1, d8, n, d8, n + 2, dc, n + 4, d4, -1);
+        
+        next = 0;
+        final int p = CHCK, p2 = DRUM;
+        addPercussions(d1, p, p, p2, p2, p, p, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            p, p, p2, p2, p, p, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            p, p, p2, -1, -1, -1, -1, -1, p, p, p2, -1, -1, -1, -1, -1,
+            p, p, p2, p2, p, p, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+        
+        initChannel(1, VOL_FG, FG);
+        addNotes(d1, n0, n0, n1, n1, n2, n2, -1, -1); addNotes(d2, n3, n3, n3, n3);
+        addNotes(d1, n2, n2, n3, n3, n4, n4, -1, -1); addNotes(d2, n5, n5, n5, n5);
+        addNotes(d1, n0, n0, n1, -1); addNotes(d2, n3, n3); addNotes(d1, n2, n2, n3, -1); addNotes(d2, n5, n5);
+        addNotes(d1, n4, n4, n5, n5, n6, n6, -1, -1); addNotes(d2, n7, n7, n7, n7);
+        
         return song;
     }
     
@@ -1173,6 +1247,67 @@ addSilent(size, 4);
     private final static Song newSong(final String name, final long size) throws Exception {
         initSong(size);
         return new Song(name, COPYRIGHT);
+    }
+    
+    private final static List<Song> list = new ArrayList<Song>();
+    
+    protected final static List<Song> newSongList() throws Exception {
+        add(newSongCyclone());
+        add(newSongDrought());
+        add(newSongEarthquake());
+        add(newSongFlood());
+        add(newSongHail());
+        add(newSongLightning());
+        add(newSongRockslide());
+        add(newSongVolcano());
+        add(newSongCity());
+        add(newSongArray());
+        add(newSongFinal());
+        add(newSongLevelSelect());
+        add(newSongLevelStart());
+        return list;
+    }
+    
+    protected final static void add(final Song song) throws Exception {
+        finishTrack();
+        list.add(song);
+    }
+    
+    protected final static void saveSongs() throws Exception {
+        numberOfPlays = getNumberOfPlays();
+        final String out = getOutputDirectory() + "/", work = out + "work/", bak = out + "bak/";
+        new File(work).mkdir();
+        new File(bak).mkdir();
+        int createCount = 0, updateCount = 0;
+        for (final Song song : newSongList()) {
+            final String name = ((numberOfPlays > 1) ? ("Play" + numberOfPlays + "Times") : "") + song.name;
+            final String fileName = name + ".mid";
+            final String outLoc = out + fileName, workLoc = work + fileName;
+            Mustil.save(song.seq, workLoc);
+            final File outFile = new File(outLoc), workFile = new File(workLoc);
+            if (!outFile.exists()) {
+                workFile.renameTo(outFile);
+                info("Created new file " + outLoc);
+                createCount++;
+            } else if (!Iotil.isFileContentIdentical(outLoc, workLoc)) {
+                final String bakLoc = bak + name + System.currentTimeMillis() + ".mid";
+                final File bakFile = new File(bakLoc);
+                outFile.renameTo(bakFile);
+                workFile.renameTo(outFile);
+                info("Updated " + outLoc + ", moved old version to " + bakLoc);
+                updateCount++;
+            }
+        }
+        info("Created " + createCount + " new file(s), updated " + updateCount + " existing file(s)");
+        numberOfPlays = 1;
+    }
+    
+    protected final static int getNumberOfPlays() {
+        return Pantil.getProperty("org.pandcorps.botsnbolts.BotsnBoltsMusic.numberOfPlays", 1);
+    }
+    
+    protected final static String getOutputDirectory() {
+        return Pantil.getProperty("org.pandcorps.botsnbolts.BotsnBoltsMusic.output");
     }
     
     private final static void run() throws Exception {
@@ -1189,12 +1324,16 @@ addSilent(size, 4);
         do {
             stop();
             final boolean first = song == null;
-            song = newSongArray();
+            //saveSongs();
+            song = newSongLevelStart();
+            finishTrack();
             if (first) {
                 final long size = song.track.ticks();
-                final int sectionLength = 512;
+                final int sectionLength = 128;
                 if ((size % sectionLength) != 0) {
                     throw new IllegalStateException("Song not a multiple of " + sectionLength + ": " + size);
+                } else if (size != Mustil.size) {
+                    throw new IllegalStateException("Expected " + song.name + " to be " + Mustil.size + " but was " + size);
                 }
                 System.out.println("Playing " + song.name + " - " + size + " ticks");
                 System.out.println("Press enter to adjust; press x and enter to stop");

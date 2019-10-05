@@ -31,6 +31,7 @@ import org.pandcorps.core.img.process.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
@@ -668,13 +669,14 @@ public class Menu {
     }
     
     private final static void startLevel(final BotLevel level) {
+        Pangine.getEngine().getAudio().stop();
         Boss.dropping = false;
         RoomLoader.levelVariables.clear();
         RoomLoader.startX = level.levelX;
         RoomLoader.startY = level.levelY;
         RoomLoader.levelVersion = level.version;
         RoomLoader.level = level;
-        Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
+        Panscreen.set(new LevelStartScreen());
     }
     
     private final static class LevelSelectGrid extends Panctor {
@@ -726,12 +728,16 @@ public class Menu {
             }
         }
         
-        @Override
-        protected final void renderView(final Panderer renderer) {
-            final Panlayer layer = getLayer();
+        protected final static Panmage getSelectBg() {
             if (bg == null) {
                 bg = Pangine.getEngine().createImage("select.bg", BotsnBoltsGame.RES + "menu/SelectBg.png");
             }
+            return bg;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
             final Panmage box = BotsnBoltsGame.getBox();
             for (final LevelSelectCell[] row : cells) {
                 int y = 0;
@@ -741,8 +747,12 @@ public class Menu {
                     }
                     renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, box);
                 }
-                renderer.render(layer, bg, 0, y + 8, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, BotsnBoltsGame.GAME_W, 32, 0, false, false);
+                renderBg(renderer, layer, y + 8);
             }
+        }
+        
+        protected final static void renderBg(final Panderer renderer, final Panlayer layer, final int y) {
+            renderer.render(layer, getSelectBg(), 0, y, BotsnBoltsGame.DEPTH_BEHIND, 0, 0, BotsnBoltsGame.GAME_W, 32, 0, false, false);
         }
         
         private final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y, final int z, final Panmage img) {
@@ -817,5 +827,28 @@ public class Menu {
         }
         
         public abstract void onGridEnd();
+    }
+    
+    protected final static class LevelStartScreen extends Panscreen {
+        @Override
+        protected final void load() throws Exception {
+            final Panroom room = Pangame.getGame().getCurrentRoom();
+            final LevelStartBg bg = new LevelStartBg();
+            room.addActor(bg);
+            BotsnBoltsGame.musicLevelStart.startSound();
+            Pangine.getEngine().addTimer(bg, 300, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
+                }});
+        }
+    }
+    
+    protected final static class LevelStartBg extends Panctor {
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            LevelSelectGrid.renderBg(renderer, layer, 48);
+            LevelSelectGrid.renderBg(renderer, layer, 144);
+        }
     }
 }
