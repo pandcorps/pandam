@@ -241,6 +241,7 @@ public class Mustil {
     public static int channel = 0, key, vol, deltaTick;
     public static long tick = 0;
     public static long next = 0;
+    public static Song song = null;
     public static Track track = null;
 	
 	protected Mustil() {
@@ -271,6 +272,9 @@ public class Mustil {
 	}
 	
 	protected final static void finishTrack() throws Exception {
+	    if (song.fx) {
+	        return;
+	    }
 	    final long trackSize = track.size(), expectedSize = size * numberOfPlays;
 	    if (trackSize < expectedSize) {
 	        addSilent(size, 1);
@@ -490,6 +494,10 @@ public class Mustil {
 		addNoteRaw(track, tick, dur, CHN_PERCUSSION, key, vol);
 	}
 	
+	public final static void addPercussionAtVolume(final int dur, final int key, final int vol) throws Exception {
+        addNoteRaw(track, next, dur, CHN_PERCUSSION, key, vol);
+    }
+	
 	public final static long addPercussions(final Track track, final long firstTick, final int deltaTick, final int... keys) throws Exception {
 		return addPercussionsAtVolume(track, firstTick, -1, deltaTick, keys);
 	}
@@ -642,21 +650,44 @@ public class Mustil {
 	
 	public final static void play(final Song song) throws Exception {
 	    stop();
-	    sequencer = MidiSystem.getSequencer();
-	    sequencer.open();
-	    sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
-	    sequencer.setSequence(song.seq);
-	    sequencer.start();
+        sequencer = newSequencer(song, Sequencer.LOOP_CONTINUOUSLY);
+        sequencer.start();
+	}
+	
+	private final static Sequencer newSequencer(final Song song, final int loopCount) throws Exception {
+	    final Sequencer sequencer = MidiSystem.getSequencer();
+        sequencer.open();
+        sequencer.setLoopCount(loopCount);
+        sequencer.setSequence(song.seq);
+        return sequencer;
 	}
 	
 	public final static void stop() {
+	    stop(sequencer);
+	    sequencer = null;
+	}
+	
+	private final static void stop(final Sequencer sequencer) {
 	    if (sequencer == null) {
 	        return;
 	    }
 	    sequencer.stop();
 	    sequencer.close();
-	    sequencer = null;
 	}
+	
+	private static Sequencer fxSequencer = null;
+	
+	public final static void playFx(final Song fx) throws Exception {
+	    if (fxSequencer == null) {
+	        fxSequencer = newSequencer(fx, 1);
+	    }
+	    fxSequencer.start();
+	}
+	
+	public final static void stopFx() {
+        stop(fxSequencer);
+        fxSequencer = null;
+    }
 	
 	public final static void info(final Object s) {
 	    System.out.println(s);
@@ -679,12 +710,19 @@ public class Mustil {
         public final String name;
         public final Sequence seq;
         public final Track track;
+        public final boolean fx;
         
         public Song(final String name, final String copyright) throws Exception {
+            this(name, copyright, false);
+        }
+        
+        public Song(final String name, final String copyright, final boolean fx) throws Exception {
             this.name = name;
             seq = newSequence();
             initTrack();
             track = newTrack(seq, name, copyright);
+            this.fx = fx;
+            song = this;
             Mustil.track = track;
         }
     }
