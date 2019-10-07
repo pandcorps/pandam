@@ -49,6 +49,9 @@ public abstract class HudMeter extends Panctor {
             displayValue--;
         } else if (actualValue > displayValue) {
             displayValue++;
+            if (displayValue == MAX_VALUE) {
+                onMaxDisplayReached();
+            }
         }
         final int value = displayValue;
         final int end = MAX_VALUE - 1;
@@ -67,6 +70,9 @@ public abstract class HudMeter extends Panctor {
     }
     
     protected abstract int getValue();
+    
+    protected void onMaxDisplayReached() {
+    }
     
     protected final static class HudMeterImages {
         private final Panmage bottom;

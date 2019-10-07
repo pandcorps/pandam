@@ -45,12 +45,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static byte STATE_STILL = 0;
     private final static int DAMAGE = 4;
     private final static float DROP_X = 192;
+    private final static byte TAUNT_NEEDED = 0;
+    private final static byte TAUNT_STARTED = 1;
+    private final static byte TAUNT_WAITING = 2;
+    private final static byte TAUNT_FINISHED = 3;
+    private final static int WAIT_INDEFINITE = Integer.MAX_VALUE;
     
     private boolean initializationNeeded = true;
-    protected int waitTimer = 0;
+    protected int waitTimer = 0; // Will be assigned by startStillBeforeTaunt()
     protected byte state = 0;
     protected Queue<Jump> pendingJumps = null;
     private boolean jumping = false;
+    protected byte tauntState = TAUNT_NEEDED;
     protected int moves = -1;
     protected static boolean clipping = true;
     private static boolean delaying = false;
@@ -78,7 +84,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return;
         }
         init();
-        startStill();
+        startStillBeforeTaunt();
         setMirror(true);
         if (isDropNeeded()) {
             getPosition().setY(getDropY());
@@ -105,10 +111,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     private final void onFirstStep() {
-        if (isHealthMeterNeeded() && Panscreen.get() instanceof BotsnBoltsGame.BotsnBoltsScreen) {
+        if (isHealthMeterNeeded() && isDuringGameplay()) {
             healthMeter = addHealthMeter();
         }
-        health = HudMeter.MAX_VALUE;
+    }
+    
+    protected final static boolean isDuringGameplay() {
+        return Panscreen.get() instanceof BotsnBoltsGame.BotsnBoltsScreen;
     }
     
     protected boolean isHealthMeterNeeded() {
@@ -151,6 +160,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         if (dropping) {
             if (clipping && isGrounded()) {
                 dropping = false;
+                setPlayerActive(false); // Will activate Player after health bar fills
             } else {
                 return false;
             }
@@ -161,13 +171,53 @@ public abstract class Boss extends Enemy implements SpecBoss {
             waitTimer--;
             return onWaiting();
         } else if (isStill()) {
-            if (pollPendingJumps()) {
+            if (taunting()) {
+                return false;
+            } else if (pollPendingJumps()) {
                 return false;
             }
             moves++;
             return pickState();
         }
         return continueState();
+    }
+    
+    private final boolean taunting() {
+        if (tauntState == TAUNT_FINISHED) {
+            return false;
+        } else if (tauntState == TAUNT_NEEDED) {
+            tauntState = TAUNT_STARTED;
+            taunt();
+        } else if (tauntState == TAUNT_STARTED) { // Called when picking state after taunt done (if sub-class doesn't call finishTaunt directly)
+            finishTaunt();
+        } else if (tauntState != TAUNT_WAITING) {
+            throw new IllegalStateException("Unexpected tauntState " + tauntState);
+        }
+        return true;
+    }
+    
+    protected void taunt() {
+        waitTimer = 0;
+    }
+    
+    protected final boolean isTauntFinished() {
+        return tauntState == TAUNT_FINISHED;
+    }
+    
+    protected final boolean finishTaunt() {
+        if (tauntState == TAUNT_FINISHED) {
+            return false;
+        }
+        health = HudMeter.MAX_VALUE;
+        tauntState = TAUNT_WAITING; // TAUNT_FINISHED will be set when health bar is full
+        return true;
+    }
+    
+    @Override
+    public final void onHealthMaxDisplayReached() {
+        tauntState = TAUNT_FINISHED;
+        waitTimer = 0;
+        setPlayerActive(true);
     }
     
     protected boolean isStill() {
@@ -275,7 +325,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final void startStateIndefinite(final byte state, final Panmage img) {
-        startState(state, Integer.MAX_VALUE, img);
+        startState(state, WAIT_INDEFINITE, img);
     }
     
     protected final void startJump(final Jump jump) {
@@ -418,6 +468,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected void startStill() {
         startStill(initStillTimer());
+    }
+    
+    protected void startStillBeforeTaunt() {
+        startStill(15);
     }
     
     protected void startStill(final int waitTimer) {
@@ -686,6 +740,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final void taunt() {
+            startLift();
+        }
+        
+        @Override
         protected final int getDamage() {
             return (state == STATE_DIVE) ? 6 : super.getDamage();
         }
@@ -693,6 +752,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean onWaiting() {
             if (state == STATE_CROUCH) {
+                if (!isTauntFinished()) {
+                    return false;
+                }
                 final float t;
                 switch (waitTimer) {
                     case 15 :
@@ -814,7 +876,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startCrouch() {
             targetX = -1;
-            startState(STATE_CROUCH, 50, getCrouch());
+            startState(STATE_CROUCH, finishTaunt() ? WAIT_INDEFINITE : 50, getCrouch());
         }
         
         @Override
@@ -2798,7 +2860,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected FloodBot(final Segment seg) {
             super(FLOOD_OFF_X, FLOOD_H, seg);
-            valve = new Valve(this);
+            valve = isDuringGameplay() ? new Valve(this) : null;
             xRight = getX();
             xLeft = getMirroredX(xRight);
         }
@@ -3788,6 +3850,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        public final void onHealthMaxDisplayReached() {
+        }
+        
+        @Override
         public final void onMaterialized() {
             super.onMaterialized();
             health = HudMeter.MAX_VALUE;
@@ -3852,7 +3918,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final boolean isIndefinite() {
-            return waitTimer == Integer.MAX_VALUE;
+            return waitTimer == WAIT_INDEFINITE;
         }
         
         protected final void startHandler(final AiHandler handler) {
@@ -4080,7 +4146,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected int initTimer(final AiBoss boss) {
-            return Integer.MAX_VALUE;
+            return WAIT_INDEFINITE;
         }
         
         protected abstract void onStep(final AiBoss boss);
@@ -5617,7 +5683,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void onFlyingU() {
-            final int i = Integer.MAX_VALUE - waitTimer - 1; // 0 - 79
+            final int i = WAIT_INDEFINITE - waitTimer - 1; // 0 - 79
             final int divisor = 5, maxSpeed = 6;
             final int v = (i < 40) ? -Math.max(maxSpeed - (i / divisor), 0) : Math.max(maxSpeed - ((79 - i) / divisor), 0);
             getPosition().addY(v);
@@ -5625,7 +5691,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void onFlyingW() {
-            final int i = Integer.MAX_VALUE - waitTimer - 1; // 0 - 79
+            final int i = WAIT_INDEFINITE - waitTimer - 1; // 0 - 79
             final int baseSpeed = 18, maxSpeed = 8;
             final int v;
             if (i < 20) {

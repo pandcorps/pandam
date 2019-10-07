@@ -3882,6 +3882,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         return new HudMeter(BotsnBoltsGame.hudMeterBoss) {
             @Override protected final int getValue() {
                 return enemy.getHealth();
+            }
+            @Override protected final void onMaxDisplayReached() {
+                if (enemy instanceof SpecBoss) {
+                    ((SpecBoss) enemy).onHealthMaxDisplayReached();
+                }
             }};
     }
 }

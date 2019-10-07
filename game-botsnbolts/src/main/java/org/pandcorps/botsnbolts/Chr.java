@@ -133,6 +133,8 @@ public abstract class Chr extends GuyPlatform {
     }
     
     protected static interface SpecBoss extends SpecEnemy {
+        public void onHealthMaxDisplayReached();
+        
         public void onAward(final Player player);
         
         public boolean isLaunchPossible();
