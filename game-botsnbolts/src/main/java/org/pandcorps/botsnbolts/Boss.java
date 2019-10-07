@@ -105,7 +105,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     private final void onFirstStep() {
-        if (isHealthMeterNeeded()) {
+        if (isHealthMeterNeeded() && Panscreen.get() instanceof BotsnBoltsGame.BotsnBoltsScreen) {
             healthMeter = addHealthMeter();
         }
         health = HudMeter.MAX_VALUE;

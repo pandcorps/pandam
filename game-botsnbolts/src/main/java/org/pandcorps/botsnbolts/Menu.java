@@ -35,6 +35,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandax.tile.*;
 
 public class Menu {
     private final static int DIM_BUTTON = 59;
@@ -653,12 +654,12 @@ public class Menu {
             cell.level = level;
             grid.register(btn, new GridStartListener() {
                 @Override public final void onGridStart() {
-                    grid.currentCell = cell;
+                    grid.setCurrentCell(cell);
                 }});
             btn.setActiveListener(new TouchButtonActiveListener() {
                 @Override public final void onActive(final TouchButton btn) {
                     if (isGridEnabled()) {
-                        grid.currentCell = cell;
+                        grid.setCurrentCell(cell);
                     }
                 }});
         }
@@ -670,6 +671,7 @@ public class Menu {
     
     private final static void startLevel(final BotLevel level) {
         Pangine.getEngine().getAudio().stop();
+        BotsnBoltsGame.fxMenuClick.startSound();
         Boss.dropping = false;
         RoomLoader.levelVariables.clear();
         RoomLoader.startX = level.levelX;
@@ -724,7 +726,14 @@ public class Menu {
         private final void moveCurrentCell(final int xAmt, final int yAmt) {
             final LevelSelectCell newCell = Coltil.get(Coltil.get(cells, currentCell.j + yAmt), currentCell.i + xAmt);
             if ((newCell != null) && newCell.isSelectable()) {
-                currentCell = newCell;
+                setCurrentCell(newCell);
+            }
+        }
+        
+        protected final void setCurrentCell(final LevelSelectCell currentCell) {
+            if (this.currentCell != currentCell) {
+                this.currentCell = currentCell;
+                BotsnBoltsGame.fxMenuHover.startSound();
             }
         }
         
@@ -830,11 +839,32 @@ public class Menu {
     }
     
     protected final static class LevelStartScreen extends Panscreen {
+        private final static int floorY = 4;
+        private LevelStartBg bg = null;
+        
         @Override
         protected final void load() throws Exception {
             final Panroom room = Pangame.getGame().getCurrentRoom();
-            final LevelStartBg bg = new LevelStartBg();
+            BotsnBoltsGame.room = room;
+            bg = new LevelStartBg();
             room.addActor(bg);
+            room.addActor(newTileMap());
+            room.addActor(RoomLoader.newBoss(15, floorY + 1, RoomLoader.level.bossClassName));
+            Pangine.getEngine().addTimer(bg, 16, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    startMusic();
+                }});
+        }
+        
+        private final static TileMap newTileMap() {
+            final TileMap tm = BotsnBoltsGame.BotsnBoltsScreen.newTileMap();
+            tm.fillBackground(null, 0, floorY, BotsnBoltsGame.GAME_COLUMNS, 1, true);
+            BotsnBoltsGame.tm = tm;
+            tm.getPosition().addY(-8);
+            return tm;
+        }
+        
+        private final void startMusic() {
             BotsnBoltsGame.musicLevelStart.startSound();
             Pangine.getEngine().addTimer(bg, 300, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
@@ -847,8 +877,8 @@ public class Menu {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
-            LevelSelectGrid.renderBg(renderer, layer, 48);
-            LevelSelectGrid.renderBg(renderer, layer, 144);
+            LevelSelectGrid.renderBg(renderer, layer, 40);
+            LevelSelectGrid.renderBg(renderer, layer, 152);
         }
     }
 }

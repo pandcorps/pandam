@@ -192,6 +192,8 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicLevelSelect = null;
     protected static Pansound musicLevelStart = null;
+    protected static Pansound fxMenuHover = null;
+    protected static Pansound fxMenuClick = null;
     
     protected static PlayerContext pc = null;
     private static final float defPlayerStartX = 48;
@@ -1082,6 +1084,8 @@ public final class BotsnBoltsGame extends BaseGame {
         audio.ensureCapacity(6);
         musicLevelSelect = audio.createMusic(RES + "music/LevelSelect.mid");
         musicLevelStart = audio.createTransition(RES + "music/LevelStart.mid");
+        fxMenuHover = audio.createSound(RES + "sound/MenuHover.mid");
+        fxMenuClick = audio.createSound(RES + "sound/MenuClick.mid");
     }
     
     private final static class TitleScreen extends Panscreen {
@@ -1202,7 +1206,7 @@ public final class BotsnBoltsGame extends BaseGame {
                     bgLayer.addActor(bgTexture);
                     bgLayer.setConstant(!(bgTexture instanceof AnimTexture));
                 } else {
-                    bgTm = new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
+                    bgTm = newTileMap();
                     bgTm.setImageMap(timg);
                     bgTm.getPosition().setZ(DEPTH_PARALLAX_BG);
                     bgTm.setForegroundDepth(DEPTH_PARALLAX_FG);
@@ -1212,6 +1216,10 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
                 room.setClearDepthEnabled(false);
             }
+        }
+        
+        protected final static TileMap newTileMap() {
+            return new TileMap(Pantil.vmid(), GAME_COLUMNS, GAME_ROWS, DIM, DIM);
         }
         
         private final static void attachBgLayer(final Panroom room) {

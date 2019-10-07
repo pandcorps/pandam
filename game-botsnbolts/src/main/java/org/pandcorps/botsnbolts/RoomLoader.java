@@ -715,7 +715,19 @@ public abstract class RoomLoader {
     }
     
     private final static void bos(final Segment seg) throws Exception {
-        addActor(getBossConstructor(seg.getValue(2)).newInstance(seg));
+        addActor(newBoss(seg));
+    }
+    
+    private final static Boss newBoss(final Segment seg) throws Exception {
+        return (Boss) getBossConstructor(seg.getValue(2)).newInstance(seg);
+    }
+    
+    protected final static Boss newBoss(final int x, final int y, final String bossClassName) throws Exception {
+        final Segment seg = new Segment();
+        seg.setInt(0, x);
+        seg.setInt(1, y);
+        seg.setValue(2, bossClassName);
+        return newBoss(seg);
     }
     
     private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) throws Exception {
@@ -1311,6 +1323,7 @@ public abstract class RoomLoader {
         protected final int version;
         protected final List<String> prerequisites;
         protected final String musicName;
+        protected final String bossClassName;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1333,6 +1346,7 @@ public abstract class RoomLoader {
                 prerequisites.add(prerequisiteFields.get(i).getValue());
             }
             musicName = fullName;
+            bossClassName = fullName;
         }
         
         protected final boolean isAllowed() {
