@@ -307,11 +307,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         while (true) {
             final int r = (Mathtil.randi(0, (max * 1000) - 1)) / 1000;
             if ((r != prevRand) || (r != prevPrevRand)) {
-                prevPrevRand = prevRand;
-                prevRand = r;
-                return r;
+                return addToRandHistory(r);
             }
         }
+    }
+    
+    protected final static int addToRandHistory(final int r) {
+        prevPrevRand = prevRand;
+        prevRand = r;
+        return r;
     }
     
     protected final static <E> E rand(final List<E> list) {
@@ -1640,6 +1644,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final void taunt() {
+            startBurst();
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_STRIKE) {
                 if (waitTimer == (WAIT_STRIKE - 1)) {
@@ -1682,7 +1691,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final boolean pickState() {
-            final int r = rand(3);
+            final int r = (moves == 0) ? addToRandHistory(0) : rand(3);
             if (r == 0) {
                 startJump();
             } else if (r == 1) {
@@ -1697,6 +1706,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean continueState() {
             if (state == STATE_STRIKE) {
                 finishJump();
+            } else if ((state == STATE_BURST) && finishTaunt()) {
+                startStateIndefinite(STATE_STILL, getBurst());
             } else {
                 startStill();
             }
