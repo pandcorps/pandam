@@ -2115,6 +2115,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final void taunt() {
+            startDrill1();
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_JUMP_DRILL) {
                 drillTimer++;
@@ -2347,19 +2352,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final int velX;
         private final int remaining;
         private final int maxIndex;
+        private final boolean taunt;
         private int timer = 0;
         private int index = 0;
         private int distance = 0;
         
-        protected Earthquake(final Panctor src, final int ox, final int oy, final int remaining, final int maxIndex) {
-            this(src, ox, oy, remaining, maxIndex, 0);
+        protected Earthquake(final Boss src, final int ox, final int oy, final int remaining, final int maxIndex) {
+            this(src, ox, oy, remaining, maxIndex, 0, !src.isTauntFinished());
         }
         
-        protected Earthquake(final Panctor src, final int ox, final int oy, final int remaining, final int maxIndex, final int velX) {
+        protected Earthquake(final Panctor src, final int ox, final int oy, final int remaining, final int maxIndex, final int velX, final boolean taunt) {
             super(getSubImage(0), src, ox, oy, 0, 0);
             this.velX = (velX == 0) ? (8 * getMirrorMultiplier() * ox / Math.abs(ox)) : velX;
             this.remaining = remaining;
             this.maxIndex = maxIndex;
+            this.taunt = taunt;
         }
         
         @Override
@@ -2370,12 +2377,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 getPosition().addX(velX);
                 distance += Math.abs(velX);
                 if ((distance == 16) && (remaining > 0)) {
-                    new Earthquake(this, 16, 0, remaining - 1, Math.max(0, maxIndex - 1), velX);
+                    new Earthquake(this, 16, 0, remaining - 1, Math.max(0, maxIndex - 1), velX, taunt);
                 }
                 if ((timer % frameDuration) == 0) {
                     index++;
                     if (index <= maxIndex) {
                         changeView(getSubImage(index));
+                    } else if (taunt) {
+                        destroy();
                     }
                 }
             }
@@ -3423,6 +3432,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final void taunt() {
+            startMorph();
+        }
+        
+        @Override
         protected final boolean onBossLanded() {
             if (Panctor.isVisible(tex)) {
                 startFade();
@@ -3476,7 +3490,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final boolean onSanding() {
-            if (!addBoundedX(xLeft, xRight)) {
+            if (!isTauntFinished()) {
+                startUnmorph();
+            } else if (!addBoundedX(xLeft, xRight)) {
                 setMirror(!isMirror());
                 if (Mathtil.rand()) {
                     hv *= -1;
@@ -3563,7 +3579,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startSand() {
             startStateIndefinite(STATE_SAND, getSand());
-            hv = getMirrorMultiplier() * 6;
+            hv = isTauntFinished() ? (getMirrorMultiplier() * 6) : 0;
         }
         
         protected final void startWrap(final Player player) {
