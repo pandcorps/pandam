@@ -63,6 +63,11 @@ public class TextTyper extends Pantext implements StepListener {
         return this;
     }
     
+    public final TextTyper setTimer(final int timer) {
+        this.timer = timer;
+        return this;
+    }
+    
     public final TextTyper setEnd(final int end) {
         seq.setEnd(end);
         return this;

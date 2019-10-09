@@ -1324,6 +1324,7 @@ public abstract class RoomLoader {
         protected final List<String> prerequisites;
         protected final String musicName;
         protected final String bossClassName;
+        protected final String bossDisplayName;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1347,6 +1348,7 @@ public abstract class RoomLoader {
             }
             musicName = fullName;
             bossClassName = fullName;
+            bossDisplayName = Chartil.isEmpty(name2) ? name1 : (Chartil.isEmpty(name1) ? name2 : (name1 + " " + name2));
         }
         
         protected final boolean isAllowed() {

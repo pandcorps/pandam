@@ -57,6 +57,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected Queue<Jump> pendingJumps = null;
     private boolean jumping = false;
     protected byte tauntState = TAUNT_NEEDED;
+    protected Runnable tauntFinishHandler = null;
     protected int moves = -1;
     protected static boolean clipping = true;
     private static boolean delaying = false;
@@ -210,6 +211,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         health = HudMeter.MAX_VALUE;
         tauntState = TAUNT_WAITING; // TAUNT_FINISHED will be set when health bar is full
+        if (tauntFinishHandler != null) {
+            tauntFinishHandler.run();
+            tauntFinishHandler = null;
+        }
         return true;
     }
     

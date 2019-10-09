@@ -35,6 +35,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Menu {
@@ -846,10 +847,20 @@ public class Menu {
         protected final void load() throws Exception {
             final Panroom room = Pangame.getGame().getCurrentRoom();
             BotsnBoltsGame.room = room;
+            final BotLevel level = RoomLoader.level;
             bg = new LevelStartBg();
             room.addActor(bg);
             room.addActor(newTileMap());
-            room.addActor(RoomLoader.newBoss(15, floorY + 1, RoomLoader.level.bossClassName));
+            final int bossY = floorY + 1;
+            final Boss boss = RoomLoader.newBoss(16, bossY, level.bossClassName);
+            room.addActor(boss);
+            boss.tauntFinishHandler = new Runnable() {
+                @Override public final void run() {
+                    final TextTyper nameTyper = new TextTyper(BotsnBoltsGame.font, level.bossDisplayName).setTime(8).setTimer(0);
+                    nameTyper.getPosition().set(8 * BotsnBoltsGame.DIM, bossY * BotsnBoltsGame.DIM, BotsnBoltsGame.DEPTH_HUD);
+                    nameTyper.centerX();
+                    room.addActor(nameTyper);
+                }};
             Pangine.getEngine().addTimer(bg, 16, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     startMusic();
