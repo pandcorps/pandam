@@ -552,7 +552,7 @@ public class Pantext extends Panctor {
 	
 	//TODO class Orientation? Justification? Center/Left/Right? Center/Min/Max? set(Justification, x)
 	// Centers relative to the current position, not the screen/layer/etc.
-	public final void centerX() {
+	public void centerX() {
 		final Panple pos = getPosition();
 		pos.setX(pos.getX() - (size.getX() / 2));
 	}
