@@ -132,6 +132,9 @@ public class TextTyper extends Pantext implements StepListener {
         if (!seq.increment()) {
             if (lineIndex < (lines.size() - 1)) {
                 lineIndex++;
+                if ((lineIndex - firstLine) >= linesPerPage) {
+                    firstLine = lineIndex;
+                }
                 return;
             }
             if (loop) {

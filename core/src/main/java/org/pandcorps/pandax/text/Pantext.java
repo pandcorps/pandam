@@ -74,8 +74,8 @@ public class Pantext extends Panctor {
 	So text is top/left justified even though the screen's origin is the bottom left corner.
 	*/
 	private int charactersPerLine = 0; // Maybe can still use this for fixed size instead of using the maximum of each line
-	private int linesPerPage = 0;
-	private int firstLine = 0;
+	/*package*/ int linesPerPage = 0;
+	/*package*/ int firstLine = 0;
 	/*package*/ int radioLine = -1;
 	private int cursorLine = -1;
 	/*package*/ int cursorChar = -1;
