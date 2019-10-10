@@ -22,27 +22,30 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.core.chr.*;
 import org.pandcorps.pandam.event.*;
 
 public class TextTyper extends Pantext implements StepListener {
-    private final SubSequence seq;
+    private List<SubSequence> lines;
     private int min = 0;
     private int time = 1;
     private boolean loop = false;
     private Runnable finishHandler = null;
     private int timer = time;
+    private int lineIndex = 0;
     
     public TextTyper(final Font font, final CharSequence msg) {
-        super(Pantil.vmid(), font, new SubSequence(msg, 0));
-        seq = (SubSequence) text.get(0);
+        super(Pantil.vmid(), font, msg);
+        setEnd(0);
     }
     
     public final TextTyper setMin(final int min) {
         this.min = min;
-        if (seq.length() < min) {
-            seq.setEnd(min);
+        if (length() < min) {
+            setEnd(min);
         }
         return this;
     }
@@ -68,13 +71,34 @@ public class TextTyper extends Pantext implements StepListener {
         return this;
     }
     
-    public final TextTyper setEnd(final int end) {
-        seq.setEnd(end);
+    public final TextTyper setEnd(int end) {
+        for (final SubSequence seq : lines) {
+            final int max = seq.getMax();
+            if (end < max) {
+                seq.setEnd(end);
+                end = 0;
+            } else {
+                seq.setEnd(max);
+                end -= max;
+            }
+        }
         return this;
+    }
+    
+    public final int length() {
+        int size = 0;
+        for (final SubSequence seq : lines) {
+            size += Chartil.size(seq);
+        }
+        return size;
     }
     
     @Override
     public final void centerX() {
+        if (Coltil.isEmpty(lines)) {
+            return;
+        }
+        final SubSequence seq = lines.get(0);
         final int old = seq.length();
         try {
             seq.setEnd(seq.getMax());
@@ -83,17 +107,35 @@ public class TextTyper extends Pantext implements StepListener {
             seq.setEnd(old);
         }
     }
+    
+    @Override
+    protected final List<? extends CharSequence> wrapTokens(final List<? extends CharSequence> tokens) {
+        final int size = Coltil.size(tokens);
+        lines = new ArrayList<SubSequence>(size);
+        for (final CharSequence token : tokens) {
+            lines.add(new SubSequence(token));
+        }
+        return lines;
+    }
 
     @Override
     public final void onStep(final StepEvent event) {
+        if (Coltil.isEmpty(lines)) {
+            return;
+        }
         timer--;
         if (timer > 0) {
             return;
         }
         timer = time;
+        SubSequence seq = lines.get(lineIndex);
         if (!seq.increment()) {
+            if (lineIndex < (lines.size() - 1)) {
+                lineIndex++;
+                return;
+            }
             if (loop) {
-                seq.setEnd(min);
+                setEnd(min);
             }
             if (finishHandler != null) {
                 finishHandler.run();

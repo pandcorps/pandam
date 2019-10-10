@@ -91,7 +91,7 @@ public class Pantext extends Panctor {
 	//private TextItem item = null;
 
 	public Pantext(final String id, final Font font, final CharSequence text) {
-	    this(id, font, Collections.singletonList(text));
+	    this(id, font, split(text));
 	}
 	
 	public Pantext(final String id, final Font font, final String text, final int charactersPerLine) {
@@ -108,7 +108,7 @@ public class Pantext extends Panctor {
 	}
 	
 	public Pantext(final String id, final MultiFont fonts, final CharSequence text) {
-	    this(id, fonts, Collections.singletonList(text));
+	    this(id, fonts, split(text));
 	}
 	
 	public Pantext(final String id, final MultiFont fonts, final List<? extends CharSequence> text) {
@@ -117,7 +117,7 @@ public class Pantext extends Panctor {
 	
 	public Pantext(final String id, final MultiFont fonts, final List<? extends CharSequence> text, final int charactersPerLine) {
 		super(id);
-		this.text = text;
+		this.text = wrapTokens(text);
 		this.fonts = fonts;
 		init();
 	}
@@ -579,12 +579,27 @@ public class Pantext extends Panctor {
 	    return f;
 	}
 	
+	protected List<? extends CharSequence> wrapTokens(final List<? extends CharSequence> tokens) {
+        return tokens;
+	}
+	
 	private final static Pattern PAT_BR = Pattern.compile("[\r\n]");
 	
-	public final static List<String> split(final String text, final int charactersPerLine) {
+	public final static List<? extends CharSequence> split(final CharSequence text) {
+        if (Chartil.isEmpty(text)) {
+            return Collections.emptyList();
+        }
+        final String[] tokens = PAT_BR.split(text);
+        if (tokens.length == 1) {
+            return Collections.singletonList(text);
+        }
+        return Arrays.asList(tokens);
+	}
+	
+	public final static List<CharSequence> split(final CharSequence text, final int charactersPerLine) {
 		//TODO option not to treat '\n' as a line break?
         final String[] tokens = PAT_BR.split(text);
-		final List<String> list = new ArrayList<String>();
+		final List<CharSequence> list = new ArrayList<CharSequence>();
 		final int size = tokens.length;
 		for (int i = 0; i < size; i++) {
 			splitIntern(list, tokens[i], charactersPerLine);
@@ -592,7 +607,7 @@ public class Pantext extends Panctor {
 		return list;
 	}
 	
-	private final static List<String> splitIntern(final List<String> list, final String text, final int charactersPerLine) {
+	private final static List<CharSequence> splitIntern(final List<CharSequence> list, final String text, final int charactersPerLine) {
         int textSize = text.length(), off = 0;
         while (true) {
             //TODO '\t'?
