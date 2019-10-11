@@ -32,9 +32,11 @@ public class TextTyper extends Pantext implements StepListener {
     private List<SubSequence> lines;
     private int min = 0;
     private int time = 1;
+    private int pageTime = 60;
     private boolean loop = false;
     private Runnable finishHandler = null;
     private int timer = time;
+    private boolean newPageNeeded = false;
     private int lineIndex = 0;
     
     public TextTyper(final Font font, final CharSequence msg) {
@@ -53,6 +55,11 @@ public class TextTyper extends Pantext implements StepListener {
     public final TextTyper setTime(final int time) {
         this.time = time;
         timer = time;
+        return this;
+    }
+    
+    public final TextTyper setPageTime(final int pageTime) {
+        this.pageTime = pageTime;
         return this;
     }
     
@@ -128,12 +135,18 @@ public class TextTyper extends Pantext implements StepListener {
             return;
         }
         timer = time;
+        if (newPageNeeded) {
+            firstLine = lineIndex;
+            newPageNeeded = false;
+            return;
+        }
         SubSequence seq = lines.get(lineIndex);
         if (!seq.increment()) {
             if (lineIndex < (lines.size() - 1)) {
                 lineIndex++;
                 if ((lineIndex - firstLine) >= linesPerPage) {
-                    firstLine = lineIndex;
+                    timer = pageTime;
+                    newPageNeeded = true;
                 }
                 return;
             }
