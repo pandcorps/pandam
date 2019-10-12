@@ -49,6 +49,10 @@ public class SubSequence implements CharSequence {
         return false;
     }
     
+    public final void maximize() {
+        end = getMax();
+    }
+    
     public final int getMax() {
         return Chartil.size(seq);
     }
