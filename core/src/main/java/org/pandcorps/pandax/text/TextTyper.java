@@ -26,7 +26,9 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.chr.*;
+import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
 
 public class TextTyper extends Pantext implements StepListener {
     private List<SubSequence> lines;
@@ -36,6 +38,7 @@ public class TextTyper extends Pantext implements StepListener {
     private boolean loop = false;
     private Runnable finishHandler = null;
     private int timer = time;
+    private boolean finishTextNeeded = false;
     private boolean newPageNeeded = false;
     private int lineIndex = 0;
     
@@ -100,6 +103,88 @@ public class TextTyper extends Pantext implements StepListener {
         return size;
     }
     
+    public final TextTyper registerAdvanceListener(final Panput input) {
+        register(input, newAdvanceListener());
+        return this;
+    }
+    
+    public final TextTyper registerAdvanceListener() {
+        register(newAdvanceListener());
+        return this;
+    }
+    
+    private final ActionStartListener newAdvanceListener() {
+        return new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) {
+                advance();
+            }};
+    }
+    
+    public final void advance() {
+        if (incrementPageIfNeeded()) {
+            return;
+        }
+        fillPage();
+    }
+    
+    private final boolean incrementPageIfNeeded() {
+        if (newPageNeeded) {
+            firstLine = lineIndex;
+            newPageNeeded = false;
+            timer = time;
+            return true;
+        }
+        return false;
+    }
+    
+    private final void fillPage() {
+        while (true) {
+            lines.get(lineIndex).maximize();
+            if (!isAnotherLineAvailable()) {
+                prepareToFinishText();
+                break;
+            }
+            incrementLine();
+            if (newPageNeeded) {
+                break;
+            }
+        }
+    }
+    
+    private final boolean isAnotherLineAvailable() {
+        return lineIndex < (lines.size() - 1);
+    }
+    
+    private final void incrementLine() {
+        lineIndex++;
+        if ((lineIndex - firstLine) >= linesPerPage) {
+            timer = pageTime;
+            newPageNeeded = true;
+        }
+    }
+    
+    private final void prepareToFinishText() {
+        timer = pageTime;
+        finishTextNeeded = true;
+    }
+    
+    private final boolean finishTextIfNeeded() {
+        if (finishTextNeeded) {
+            finishText();
+            return true;
+        }
+        return false;
+    }
+    
+    private final void finishText() {
+        if (loop) {
+            setEnd(min);
+        }
+        if (finishHandler != null) {
+            finishHandler.run();
+        }
+    }
+    
     @Override
     public final void centerX() {
         if (Coltil.isEmpty(lines)) {
@@ -133,29 +218,19 @@ public class TextTyper extends Pantext implements StepListener {
         timer--;
         if (timer > 0) {
             return;
-        }
-        timer = time;
-        if (newPageNeeded) {
-            firstLine = lineIndex;
-            newPageNeeded = false;
+        } else if (finishTextIfNeeded()) {
+            return;
+        } else if (incrementPageIfNeeded()) {
             return;
         }
+        timer = time;
         SubSequence seq = lines.get(lineIndex);
         if (!seq.increment()) {
-            if (lineIndex < (lines.size() - 1)) {
-                lineIndex++;
-                if ((lineIndex - firstLine) >= linesPerPage) {
-                    timer = pageTime;
-                    newPageNeeded = true;
-                }
+            if (isAnotherLineAvailable()) {
+                incrementLine();
                 return;
             }
-            if (loop) {
-                setEnd(min);
-            }
-            if (finishHandler != null) {
-                finishHandler.run();
-            }
+            prepareToFinishText();
         }
     }
 }
