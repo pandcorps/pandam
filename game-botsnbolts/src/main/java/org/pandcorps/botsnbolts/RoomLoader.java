@@ -1346,7 +1346,7 @@ public abstract class RoomLoader {
             for (int i = 0; i < prerequisitesSize; i++) {
                 prerequisites.add(prerequisiteFields.get(i).getValue());
             }
-            musicName = fullName;
+            musicName = seg.getValue(9, fullName);
             bossClassName = fullName;
             bossDisplayName = Chartil.isEmpty(name2) ? name1 : (Chartil.isEmpty(name1) ? name2 : (name1 + " " + name2));
         }
