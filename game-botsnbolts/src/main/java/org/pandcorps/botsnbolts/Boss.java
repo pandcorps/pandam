@@ -56,7 +56,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected byte state = 0;
     protected Queue<Jump> pendingJumps = null;
     private boolean jumping = false;
-    protected byte tauntState = TAUNT_NEEDED;
+    protected byte tauntState = isTauntNeeded() ? TAUNT_NEEDED : TAUNT_FINISHED;
     protected Runnable tauntFinishHandler = null;
     protected int moves = -1;
     protected static boolean clipping = true;
@@ -173,7 +173,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return onWaiting();
         } else if (isStill()) {
             if (taunting()) {
-                return false;
+                return getTauntingReturnValue();
             } else if (pollPendingJumps()) {
                 return false;
             }
@@ -181,6 +181,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return pickState();
         }
         return continueState();
+    }
+    
+    protected boolean isTauntNeeded() {
+        return true;
     }
     
     private final boolean taunting() {
@@ -195,6 +199,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             throw new IllegalStateException("Unexpected tauntState " + tauntState);
         }
         return true;
+    }
+    
+    protected boolean getTauntingReturnValue() {
+        return false;
     }
     
     protected void taunt() {
@@ -222,7 +230,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     public final void onHealthMaxDisplayReached() {
         tauntState = TAUNT_FINISHED;
         waitTimer = 0;
-        setPlayerActive(true);
+        if (isPlayerActivationAfterHealthMaxNeeded()) {
+            setPlayerActive(true);
+        }
+    }
+    
+    protected boolean isPlayerActivationAfterHealthMaxNeeded() {
+        return true;
     }
     
     protected boolean isStill() {
@@ -5277,6 +5291,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return Projectile.POWER_MEDIUM;
         }
         
+        @Override
+        protected final void award(final PowerUp powerUp) {
+        }
+        
         private final static Panmage getRocket() {
             return (img = Boss.getImage(img, "final/Rocket", null, null, null));
         }
@@ -5469,6 +5487,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int floorIndex = 0;
         private Panctor finalActor = null;
         private Final finalBoss = null;
+        
+        @Override
+        protected final boolean isTauntNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean getTauntingReturnValue() {
+            return true;
+        }
+        
+        @Override
+        protected final boolean isPlayerActivationAfterHealthMaxNeeded() {
+            return false;
+        }
         
         @Override
         protected final boolean pickState() {
