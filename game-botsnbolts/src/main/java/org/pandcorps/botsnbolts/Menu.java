@@ -37,6 +37,7 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public class Menu {
     private final static int DIM_BUTTON = 59;
@@ -679,7 +680,7 @@ public class Menu {
         RoomLoader.startY = level.levelY;
         RoomLoader.levelVersion = level.version;
         RoomLoader.level = level;
-        Panscreen.set(new LevelStartScreen());
+        Panscreen.set(level.fortressStartScreen ? new FortressStartScreen() : new LevelStartScreen());
     }
     
     private final static class LevelSelectGrid extends Panctor {
@@ -877,7 +878,11 @@ public class Menu {
         
         private final void startMusic() {
             BotsnBoltsGame.musicLevelStart.startSound();
-            Pangine.getEngine().addTimer(bg, 300, new TimerListener() {
+            startLevelTimer(bg);
+        }
+        
+        private final static void startLevelTimer(final Panctor actor) {
+            Pangine.getEngine().addTimer(actor, 300, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
                 }});
@@ -891,5 +896,89 @@ public class Menu {
             LevelSelectGrid.renderBg(renderer, layer, 40);
             LevelSelectGrid.renderBg(renderer, layer, 152);
         }
+    }
+    
+    protected final static class FortressStartScreen extends Panscreen {
+        private static Panmage imgFortress = null;
+        private static Panmage imgTiles = null;
+        
+        @Override
+        protected final void load() throws Exception {
+            final Panroom room = Pangame.getGame().getCurrentRoom();
+            final Panctor fortress = new Panctor();
+            Pangine.getEngine().setBgColor(Pancolor.BLACK);
+            fortress.setView(getImageFortress());
+            fortress.getPosition().set(64, 0, 2);
+            room.addActor(fortress);
+            room.addActor(newTileMap());
+            LevelStartScreen.startLevelTimer(fortress);
+        }
+        
+        private final static TileMap newTileMap() {
+            final TileMap tm = BotsnBoltsGame.BotsnBoltsScreen.newTileMap();
+            final TileMapImage[][] imgMap = tm.splitImageMap(getImageTiles());
+            tm.setBackground(3, 0, imgMap[3][1]);
+            tm.setBackground(3, 1, imgMap[2][1]);
+            tm.setBackground(0, 0, imgMap[3][0]);
+            tm.setBackground(1, 0, imgMap[2][0]);
+            tm.setBackground(2, 0, imgMap[3][0]);
+            tm.setBackground(20, 0, imgMap[2][0]);
+            tm.setBackground(21, 0, imgMap[3][0]);
+            tm.setBackground(22, 0, imgMap[3][0]);
+            tm.setBackground(23, 0, imgMap[2][0]);
+            addRow(tm, 0, 2, 19, 23, 1, imgMap[3][2]);
+            addRow(tm, 0, 4, 19, 23, 2, imgMap[2][2]);
+            addRow(tm, 0, 4, 18, 23, 3, imgMap[3][3]);
+            addRow(tm, 0, 4, 17, 23, 4, imgMap[2][3]);
+            tm.setBackground(4, 1, imgMap[3][2]);
+            tm.setBackground(0, 8, imgMap[1][3]);
+            addTiles(tm, 0, 9, imgMap[1][0], imgMap[1][2], imgMap[1][3]);
+            addTiles(tm, 0, 10, imgMap[1][1], imgMap[1][0], imgMap[1][0], imgMap[1][2]);
+            addTiles(tm, 0, 11, imgMap[0][3], imgMap[1][0], imgMap[1][0], imgMap[1][1]);
+            addTiles(tm, 0, 12, imgMap[0][1], imgMap[0][3], imgMap[1][0], imgMap[1][0]);
+            addTiles(tm, 0, 13, imgMap[0][0], imgMap[0][1], imgMap[0][2], imgMap[0][2]);
+            final AdjustedTileMapImage m01 = new AdjustedTileMapImage(imgMap[0][1], 0, true, false);
+            final AdjustedTileMapImage m03 = new AdjustedTileMapImage(imgMap[0][3], 0, true, false);
+            final AdjustedTileMapImage m11 = new AdjustedTileMapImage(imgMap[1][1], 0, true, false);
+            final AdjustedTileMapImage m13 = new AdjustedTileMapImage(imgMap[1][3], 0, true, false);
+            tm.setBackground(23, 9, m13);
+            addTiles(tm, 20, 10, imgMap[1][3], null, m13, m11);
+            addTiles(tm, 20, 11, imgMap[1][0], imgMap[1][2], imgMap[1][0], imgMap[1][0]);
+            addTiles(tm, 20, 12, imgMap[1][0], m03, imgMap[0][2], imgMap[0][2]);
+            addTiles(tm, 20, 13, imgMap[0][2], imgMap[0][0], m01, imgMap[0][0]);
+            return tm;
+        }
+        
+        private final static void addRow(final TileMap tm, final int xMin1, final int xMax1, final int xMin2, final int xMax2, final int y, final TileMapImage img) {
+            addRow(tm, xMin1, xMax1, y, img);
+            addRow(tm, xMin2, xMax2, y, img);
+        }
+        
+        private final static void addRow(final TileMap tm, final int xMin, final int xMax, final int y, final TileMapImage img) {
+            for (int x = xMin; x <= xMax; x++) {
+                if (img != null) {
+                    tm.setBackground(x, y, img);
+                }
+            }
+        }
+        
+        private final static void addTiles(final TileMap tm, int x, final int y, final TileMapImage... imgs) {
+            for (final TileMapImage img : imgs) {
+                tm.setBackground(x, y, img);
+                x++;
+            }
+        }
+        
+        private final static Panmage getImageFortress() {
+            return (imgFortress = getStoryImage(imgFortress, "Fortress"));
+        }
+        
+        private final static Panmage getImageTiles() {
+            return (imgTiles = getStoryImage(imgTiles, "FortressTiles"));
+        }
+    }
+    
+    protected final static Panmage getStoryImage(final Panmage img, final String name) {
+        return (img == null) ? Pangine.getEngine().createImage(name, BotsnBoltsGame.RES + "story/" + name + ".png") : img;
     }
 }

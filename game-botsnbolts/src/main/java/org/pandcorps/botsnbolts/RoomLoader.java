@@ -1325,6 +1325,7 @@ public abstract class RoomLoader {
         protected final String musicName;
         protected final String bossClassName;
         protected final String bossDisplayName;
+        protected final boolean fortressStartScreen;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1349,6 +1350,7 @@ public abstract class RoomLoader {
             musicName = seg.getValue(9, fullName);
             bossClassName = fullName;
             bossDisplayName = Chartil.isEmpty(name2) ? name1 : (Chartil.isEmpty(name1) ? name2 : (name1 + " " + name2));
+            fortressStartScreen = seg.getBoolean(10, false);
         }
         
         protected final boolean isAllowed() {
