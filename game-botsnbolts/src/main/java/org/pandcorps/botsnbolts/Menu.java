@@ -680,7 +680,7 @@ public class Menu {
         RoomLoader.startY = level.levelY;
         RoomLoader.levelVersion = level.version;
         RoomLoader.level = level;
-        Panscreen.set(level.fortressStartScreen ? new FortressStartScreen() : new LevelStartScreen());
+        Panscreen.set((level.startScreen == null) ? new LevelStartScreen() : level.startScreen.screen);
     }
     
     private final static class LevelSelectGrid extends Panctor {
@@ -911,6 +911,7 @@ public class Menu {
             fortress.getPosition().set(64, 0, 2);
             room.addActor(fortress);
             room.addActor(newTileMap());
+            room.addActor(new FortressMap(RoomLoader.StartScreenDefinition.Fortress));
             LevelStartScreen.startLevelTimer(fortress);
         }
         
@@ -975,6 +976,85 @@ public class Menu {
         
         private final static Panmage getImageTiles() {
             return (imgTiles = getStoryImage(imgTiles, "FortressTiles"));
+        }
+    }
+    
+    private final static class FortressMap extends Panctor {
+        private final static FortressLineDefinition[] lineDefs = {
+                new FortressLineDefinition(8, 0, 3, true), new FortressLineDefinition(8, 0, 0, false),
+                new FortressLineDefinition(0, 0, 0, false), new FortressLineDefinition(0, 8, 0, false),
+                new FortressLineDefinition(8, 8, 0, false), new FortressLineDefinition(0, 8, 3, true) };
+        private static Panmage finalIcon = null;
+        private static Panmage mapMarker = null;
+        private static Panmage mapLine = null;
+        private final StartScreenDefinition def;
+        
+        private FortressMap(final StartScreenDefinition def) {
+            this.def = def;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            renderIcons(renderer);
+            renderMarkers(renderer);
+            renderLines(renderer);
+        }
+        
+        private final void renderIcons(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            getFinalIcon();
+            final int[] a = def.icons;
+            final int size = a.length;
+            for (int i = 0; i < size; i += 2) {
+                renderer.render(layer, finalIcon, (a[i] * 8) - 4, (a[i + 1] * 8) - 4, 6);
+            }
+        }
+        
+        private final void renderMarkers(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            getMapMarker();
+            final int[] a = def.markers;
+            final int size = a.length;
+            for (int i = 0; i < size; i += 2) {
+                renderer.render(layer, mapMarker, a[i] * 8, a[i + 1] * 8, 4);
+            }
+        }
+        
+        private final void renderLines(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            getMapLine();
+            final int[] a = def.lines;
+            final int size = a.length;
+            for (int i = 0; i < size; i += 3) {
+                final FortressLineDefinition def = lineDefs[a[i + 2]];
+                renderer.render(layer, mapLine, a[i] * 8, a[i + 1] * 8, 4, def.x, def.y, 8, 8, def.rot, def.mirror, false);
+            }
+        }
+        
+        private final static Panmage getFinalIcon() {
+            return (finalIcon = getStoryImage(finalIcon, "FinalIcon"));
+        }
+        
+        private final static Panmage getMapMarker() {
+            return (mapMarker = getStoryImage(mapMarker, "MapMarker"));
+        }
+        
+        private final static Panmage getMapLine() {
+            return (mapLine = getStoryImage(mapLine, "MapLine"));
+        }
+    }
+    
+    private final static class FortressLineDefinition {
+        private final int x;
+        private final int y;
+        private final int rot;
+        private final boolean mirror;
+        
+        private FortressLineDefinition(final int x, final int y, final int rot, final boolean mirror) {
+            this.x = x;
+            this.y = y;
+            this.rot = rot;
+            this.mirror = mirror;
         }
     }
     

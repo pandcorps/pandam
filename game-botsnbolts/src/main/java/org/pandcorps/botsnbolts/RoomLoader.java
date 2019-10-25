@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Carrier.*;
 import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.botsnbolts.Menu.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomFunction.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
@@ -1218,8 +1219,11 @@ public abstract class RoomLoader {
     
     protected final static void loadLevels(final SegmentStream in) throws Exception {
         Segment seg;
-        while ((seg = in.read()) != null) {
+        while ((seg = in.readIf("LVL")) != null) {
             levels.add(new BotLevel(seg));
+        }
+        while ((seg = in.readIf("SCR")) != null) {
+            loadScreen(seg);
         }
     }
     
@@ -1267,6 +1271,14 @@ public abstract class RoomLoader {
         BotsnBoltsGame.BotsnBoltsScreen.loadRoom(room);
     }
     
+    private final static void loadScreen(final Segment seg) {
+        final String name = seg.getValue(0);
+        final StartScreenDefinition def = StartScreenDefinition.valueOf(name);
+        def.icons = seg.getIntArray(1);
+        def.markers = seg.getIntArray(2);
+        def.lines = seg.getIntArray(3);
+    }
+    
     protected final static class TileAnimator {
         protected final Tile tile;
         private final int period;
@@ -1312,6 +1324,19 @@ public abstract class RoomLoader {
         }
     }
     
+    protected static enum StartScreenDefinition {
+        Fortress(new FortressStartScreen());
+        
+        protected final Panscreen screen;
+        protected int[] icons = null;
+        protected int[] markers = null;
+        protected int[] lines = null;
+        
+        private StartScreenDefinition(final Panscreen screen) {
+            this.screen = screen;
+        }
+    }
+    
     protected final static class BotLevel {
         protected final String name1;
         protected final String name2;
@@ -1325,7 +1350,7 @@ public abstract class RoomLoader {
         protected final String musicName;
         protected final String bossClassName;
         protected final String bossDisplayName;
-        protected final boolean fortressStartScreen;
+        protected final StartScreenDefinition startScreen;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1350,7 +1375,8 @@ public abstract class RoomLoader {
             musicName = seg.getValue(9, fullName);
             bossClassName = fullName;
             bossDisplayName = Chartil.isEmpty(name2) ? name1 : (Chartil.isEmpty(name1) ? name2 : (name1 + " " + name2));
-            fortressStartScreen = seg.getBoolean(10, false);
+            final String startScreenName = seg.getValue(10);
+            startScreen = (startScreenName == null) ? null : StartScreenDefinition.valueOf(startScreenName);
         }
         
         protected final boolean isAllowed() {

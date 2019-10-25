@@ -118,6 +118,19 @@ public class Segment extends Record {
         return Field.getValue(getField(i));
     }
     
+    public final int[] getIntArray(final int i) {
+        final List<Field> reps = getRepetitions(i);
+        final int size = Coltil.size(reps);
+        if (size == 0) {
+            return null;
+        }
+        final int[] a = new int[size];
+        for (int j = 0; j < size; j++) {
+            a[j] = reps.get(j).intValue();
+        }
+        return a;
+    }
+    
     public final void setName(final String name) {
         this.name = name;
     }
