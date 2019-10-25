@@ -1351,6 +1351,8 @@ public abstract class RoomLoader {
         protected final String bossClassName;
         protected final String bossDisplayName;
         protected final StartScreenDefinition startScreen;
+        protected final int startLineSize;
+        protected final int endLineSize;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1377,6 +1379,8 @@ public abstract class RoomLoader {
             bossDisplayName = Chartil.isEmpty(name2) ? name1 : (Chartil.isEmpty(name1) ? name2 : (name1 + " " + name2));
             final String startScreenName = seg.getValue(10);
             startScreen = (startScreenName == null) ? null : StartScreenDefinition.valueOf(startScreenName);
+            startLineSize = seg.initInt(11);
+            endLineSize = seg.initInt(12);
         }
         
         protected final boolean isAllowed() {

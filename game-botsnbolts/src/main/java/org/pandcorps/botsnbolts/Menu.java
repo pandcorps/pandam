@@ -906,12 +906,16 @@ public class Menu {
         protected final void load() throws Exception {
             final Panroom room = Pangame.getGame().getCurrentRoom();
             final Panctor fortress = new Panctor();
-            Pangine.getEngine().setBgColor(Pancolor.BLACK);
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(Pancolor.BLACK);
             fortress.setView(getImageFortress());
             fortress.getPosition().set(64, 0, 2);
             room.addActor(fortress);
             room.addActor(newTileMap());
-            room.addActor(new FortressMap(RoomLoader.StartScreenDefinition.Fortress));
+            engine.addTimer(fortress, 90, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    room.addActor(new FortressMap(RoomLoader.StartScreenDefinition.Fortress));
+                }});
             LevelStartScreen.startLevelTimer(fortress);
         }
         
@@ -988,9 +992,11 @@ public class Menu {
         private static Panmage mapMarker = null;
         private static Panmage mapLine = null;
         private final StartScreenDefinition def;
+        private int currLineSize;
         
         private FortressMap(final StartScreenDefinition def) {
             this.def = def;
+            currLineSize = RoomLoader.level.startLineSize;
         }
         
         @Override
@@ -1024,10 +1030,18 @@ public class Menu {
             final Panlayer layer = getLayer();
             getMapLine();
             final int[] a = def.lines;
-            final int size = a.length;
-            for (int i = 0; i < size; i += 3) {
+            final int fields = 3;
+            final int size = currLineSize * fields;
+            for (int i = 0; i < size; i += fields) {
                 final FortressLineDefinition def = lineDefs[a[i + 2]];
                 renderer.render(layer, mapLine, a[i] * 8, a[i + 1] * 8, 4, def.x, def.y, 8, 8, def.rot, def.mirror, false);
+            }
+            int endLineSize = RoomLoader.level.endLineSize;
+            if (endLineSize <= 0) {
+                endLineSize = (a.length / fields);
+            }
+            if (currLineSize < endLineSize) {
+                currLineSize++;
             }
         }
         
