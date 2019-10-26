@@ -683,7 +683,7 @@ public class Menu {
         Panscreen.set((level.startScreen == null) ? new LevelStartScreen() : level.startScreen.screen);
     }
     
-    private final static class LevelSelectGrid extends Panctor {
+    protected final static class LevelSelectGrid extends Panctor {
         private static Panmage bg = null;
         private final LevelSelectCell[][] cells = new LevelSelectCell[LEVEL_ROWS][LEVEL_COLUMNS];
         private LevelSelectCell currentCell;
@@ -767,15 +767,22 @@ public class Menu {
         }
         
         private final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y, final int z, final Panmage img) {
-            final int x8 = x + 8, y8 = y + 8, x40 = x + 40, y40 = y + 40;
+            renderBox(renderer, layer, x, y, z, img, 2, 2);
+        }
+        
+        protected final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y, final int z, final Panmage img, final int w, final int h) {
+            final int x8 = x + 8, y8 = y + 8, x40 = x + (16 * w) + 8, y40 = y + (16 * h) + 8;
             renderer.render(layer, img, x, y, z, 0, 24, 8, 8, 0, false, false);
             renderer.render(layer, img, x40, y, z, 24, 24, 8, 8, 0, false, false);
             renderer.render(layer, img, x, y40, z, 0, 0, 8, 8, 0, false, false);
             renderer.render(layer, img, x40, y40, z, 24, 0, 8, 8, 0, false, false);
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < w; i++) {
                 final int i16 = i * 16;
                 renderer.render(layer, img, x8 + i16, y, z, 8, 24, 16, 8, 0, false, false);
                 renderer.render(layer, img, x8 + i16, y40, z, 8, 0, 16, 8, 0, false, false);
+            }
+            for (int i = 0; i < h; i++) {
+                final int i16 = i * 16;
                 renderer.render(layer, img, x, y8 + i16, z, 0, 8, 8, 16, 0, false, false);
                 renderer.render(layer, img, x40, y8 + i16, z, 24, 8, 8, 16, 0, false, false);
             }

@@ -64,6 +64,7 @@ public class Pantext extends Panctor {
 	/*package*/ int fontNum;
 	/*package*/ float fontWidth;
 	/*package*/ float fontHeight;
+	private int gapY = 0;
 	//private final FinPanple size;
 	/*package*/ final SizePanple size = new SizePanple();
 	private final TextDisplay display = new TextDisplay();
@@ -136,6 +137,10 @@ public class Pantext extends Panctor {
 		//size = new FinPanple2(fontSize * text.length(), fontSize);
 	}
 	
+	public final void setGapY(final int gapY) {
+	    this.gapY = gapY;
+	}
+	
 	/*package*/ final class SizePanple extends UnmodPanple {
 
         @Override
@@ -145,7 +150,7 @@ public class Pantext extends Panctor {
 
         @Override
         public final float getY() {
-            return getNumRows() * fontHeight;
+            return getNumRows() * (fontHeight + gapY) - gapY;
         }
 
         @Override
@@ -398,7 +403,7 @@ public class Pantext extends Panctor {
 	    }
 	    final float xoff = BaseFont.getColumn(index, fontNum) * fontWidth;
         final float yoff = BaseFont.getRow(index, fontNum) * fontHeight;
-        renderer.render(layer, font, x + (i * fontWidth), y - ((j - firstLine) * fontHeight), z, xoff, yoff, fontWidth, fontHeight);
+        renderer.render(layer, font, x + (i * fontWidth), y - ((j - firstLine) * (fontHeight + gapY)), z, xoff, yoff, fontWidth, fontHeight);
 	}
 	
 	public final List<? extends CharSequence> getText() {
