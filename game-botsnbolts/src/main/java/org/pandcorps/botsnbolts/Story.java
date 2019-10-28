@@ -27,7 +27,7 @@ import org.pandcorps.pandax.text.*;
 
 public class Story {
     protected final static DialogueBox dialogue(final Panmage portrait, final boolean portraitLeft, final CharSequence msg) {
-        final TextTyper typer = new TextTyper(BotsnBoltsGame.font, msg).enableWaitForInput();
+        final TextTyper typer = new TextTyper(BotsnBoltsGame.font, msg, 29).enableWaitForInput();
         final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft);
         typer.setLinesPerPage(6);
         typer.setGapY(2);

@@ -95,7 +95,7 @@ public class Pantext extends Panctor {
 	    this(id, font, split(text));
 	}
 	
-	public Pantext(final String id, final Font font, final String text, final int charactersPerLine) {
+	public Pantext(final String id, final Font font, final CharSequence text, final int charactersPerLine) {
 	    this(id, font, split(text, charactersPerLine));
 	    this.charactersPerLine = charactersPerLine;
 	}

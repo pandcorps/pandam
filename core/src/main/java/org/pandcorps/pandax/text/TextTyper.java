@@ -48,6 +48,11 @@ public class TextTyper extends Pantext implements StepListener {
         setEnd(0);
     }
     
+    public TextTyper(final Font font, final CharSequence msg, final int charactersPerLine) {
+        super(Pantil.vmid(), font, msg, charactersPerLine);
+        setEnd(0);
+    }
+    
     public final TextTyper setMin(final int min) {
         this.min = min;
         if (length() < min) {
