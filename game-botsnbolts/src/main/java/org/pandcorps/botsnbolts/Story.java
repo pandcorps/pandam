@@ -26,23 +26,29 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
 
 public class Story {
-    protected final static void dialogue(final Panmage portrait, final boolean portraitLeft, final CharSequence msg) {
-        final DialogueBox box = new DialogueBox(portrait, portraitLeft);
-        BotsnBoltsGame.addActor(box);
-        final TextTyper typer = new TextTyper(BotsnBoltsGame.font, msg);
+    protected final static DialogueBox dialogue(final Panmage portrait, final boolean portraitLeft, final CharSequence msg) {
+        final TextTyper typer = new TextTyper(BotsnBoltsGame.font, msg).enableWaitForInput();
+        final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft);
         typer.setLinesPerPage(6);
         typer.setGapY(2);
         typer.getPosition().set(box.xText + 12, 197, BotsnBoltsGame.DEPTH_HUD_TEXT);
-        BotsnBoltsGame.addActor(typer);
+        typer.setFinishHandler(new Runnable() {
+            @Override public final void run() {
+                box.finish();
+            }});
+        return box;
     }
     
     protected final static class DialogueBox extends Panctor {
+        protected final TextTyper typer;
         private final Panmage portrait;
         private final boolean portraitLeft;
         private final int xText;
         private final int xPortrait;
+        private Runnable finishHandler = null;
         
-        protected DialogueBox(final Panmage portrait, final boolean portraitLeft) {
+        protected DialogueBox(final TextTyper typer, final Panmage portrait, final boolean portraitLeft) {
+            this.typer = typer;
             this.portrait = portrait;
             this.portraitLeft = portraitLeft;
             if (portraitLeft) {
@@ -54,6 +60,27 @@ public class Story {
             }
         }
         
+        protected final DialogueBox add() {
+            BotsnBoltsGame.addActor(this);
+            BotsnBoltsGame.addActor(typer);
+            typer.registerAdvanceListener();
+            return this;
+        }
+        
+        protected final DialogueBox setFinishHandler(final Runnable finishHandler) {
+            this.finishHandler = finishHandler;
+            return this;
+        }
+        
+        protected final DialogueBox setNext(final Panmage portrait, final boolean portraitLeft, final CharSequence msg) {
+            final DialogueBox next = dialogue(portrait, portraitLeft, msg);
+            setFinishHandler(new Runnable() {
+                @Override public final void run() {
+                    next.add();
+                }});
+            return next;
+        }
+        
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
@@ -62,6 +89,14 @@ public class Story {
             Menu.LevelSelectGrid.renderBox(renderer, layer, xPortrait, 168, BotsnBoltsGame.DEPTH_HUD, box, 2, 2);
             renderer.render(layer, portrait, xPortrait + 8, 176, BotsnBoltsGame.DEPTH_HUD_TEXT, 0, 0, 32, 32, 0, !portraitLeft, false);
             renderer.render(layer, BotsnBoltsGame.black, xText + 8, 144, BotsnBoltsGame.DEPTH_HUD, 0, 0, 240, 64);
+        }
+        
+        private final void finish() {
+            Panctor.destroy(typer);
+            destroy();
+            if (finishHandler != null) {
+                finishHandler.run();
+            }
         }
     }
 }

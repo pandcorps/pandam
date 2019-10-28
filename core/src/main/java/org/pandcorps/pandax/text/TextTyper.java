@@ -41,6 +41,7 @@ public class TextTyper extends Pantext implements StepListener {
     private boolean finishTextNeeded = false;
     private boolean newPageNeeded = false;
     private int lineIndex = 0;
+    private long clockAdvanceListenerRegistered = -1000;
     
     public TextTyper(final Font font, final CharSequence msg) {
         super(Pantil.vmid(), font, msg);
@@ -64,6 +65,10 @@ public class TextTyper extends Pantext implements StepListener {
     public final TextTyper setPageTime(final int pageTime) {
         this.pageTime = pageTime;
         return this;
+    }
+    
+    public final TextTyper enableWaitForInput() {
+        return setPageTime(Integer.MAX_VALUE);
     }
     
     public final TextTyper setLoop(final boolean loop) {
@@ -105,23 +110,31 @@ public class TextTyper extends Pantext implements StepListener {
     
     public final TextTyper registerAdvanceListener(final Panput input) {
         register(input, newAdvanceListener());
+        clockAdvanceListenerRegistered = Pangine.getEngine().getClock();
         return this;
     }
     
     public final TextTyper registerAdvanceListener() {
         register(newAdvanceListener());
+        clockAdvanceListenerRegistered = Pangine.getEngine().getClock();
         return this;
     }
     
     private final ActionStartListener newAdvanceListener() {
         return new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) {
+                if (clockAdvanceListenerRegistered >= Pangine.getEngine().getClock()) {
+                    return;
+                }
+                event.getInput().inactivate();
                 advance();
             }};
     }
     
     public final void advance() {
-        if (incrementPageIfNeeded()) {
+        if (finishTextIfNeeded()) {
+            return;
+        } else if (incrementPageIfNeeded()) {
             return;
         }
         fillPage();
@@ -215,7 +228,9 @@ public class TextTyper extends Pantext implements StepListener {
         if (Coltil.isEmpty(lines)) {
             return;
         }
-        timer--;
+        if (timer < Integer.MAX_VALUE) {
+            timer--;
+        }
         if (timer > 0) {
             return;
         } else if (finishTextIfNeeded()) {
