@@ -29,6 +29,7 @@ import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.botsnbolts.Profile.*;
+import org.pandcorps.botsnbolts.Story.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.actor.*;
@@ -610,6 +611,23 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return getLayerRequired().getActors();
     }
     
+    protected final static void dialogue(final Panmage bossPortrait, final Runnable finishHandler, final String... msgs) {
+        setPlayerActive(false);
+        final Panmage playerPortrait = getPlayerContext().pi.portrait;
+        DialogueBox box = null;
+        boolean portraitLeft = false;
+        for (final String msg : msgs) {
+            final Panmage portrait = portraitLeft ? playerPortrait : bossPortrait;
+            if (box == null) {
+                box = Story.dialogue(portrait, portraitLeft, msg).add();
+            } else {
+                box = box.setNext(portrait, portraitLeft, msg);
+            }
+            portraitLeft = !portraitLeft;
+        }
+        box.setFinishHandler(finishHandler);
+    }
+    
     protected static class Fort extends Boss {
         private static Panmage still = null;
         private int spawnTimer = 0;
@@ -660,6 +678,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final void onAward(final Player player) {
+            clearPlayerExtras();
             player.startScript(new LeftAi(32.0f), new Runnable() {
                 @Override public final void run() {
                     new Warp(getNextBoss(20, 3));
@@ -3896,7 +3915,42 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onHealthMaxDisplayReached() {
+        public void onHealthMaxDisplayReached() {
+            setPlayerActive(true);
+        }
+        
+        protected final void dialogue(final Runnable finishHandler, final String... msgs) {
+            deactivateCharacters();
+            Boss.dialogue(getPortrait(), finishHandler, msgs);
+        }
+        
+        protected final Panmage getPortrait() {
+            return pi.portrait;
+        }
+        
+        protected final Runnable newDialogueFinishHandler() {
+            return new Runnable() {
+                @Override public final void run() {
+                    activateCharacters();
+                }};
+        }
+        
+        protected final Runnable newDialogueFinishExitHandler() {
+            return new Runnable() {
+                @Override public final void run() {
+                    activateCharacters();
+                    exit();
+                }};
+        }
+        
+        protected final void activateCharacters() {
+            setPlayerActive(true);
+            active = true;
+        }
+        
+        protected final void deactivateCharacters() {
+            setPlayerActive(false);
+            active = false;
         }
         
         @Override
@@ -4113,7 +4167,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void afterDefeat() {
-            exit();
+            final String[] defeatMsgs = getDefeatMessages();
+            if (defeatMsgs == null) {
+                exit();
+            } else {
+                dialogue(newDialogueFinishExitHandler(), defeatMsgs);
+            }
+        }
+        
+        protected String[] getDefeatMessages() {
+            return null;
         }
         
         protected final void exit() {
@@ -4147,11 +4210,25 @@ public abstract class Boss extends Enemy implements SpecBoss {
             handlers.add(new AttackHandler());
             handlers.add(new AttackJumpHandler());
             handlers.add(new JumpsHandler());
+            deactivateCharacters();
+        }
+        
+        @Override
+        public final void onHealthMaxDisplayReached() {
+            dialogue(newDialogueFinishHandler(),
+                "Hello, Void.  I've been expecting you.",
+                "Who are you?",
+                "My name is Volatile.");
         }
         
         @Override
         protected final int initStillTimer() {
             return Mathtil.randi(30, 45);
+        }
+        
+        @Override
+        protected final String[] getDefeatMessages() {
+            return new String[] { "You're more powerful than I thought you'd be.  But you're too late.  Dr. Final has already unleashed his robot army!" };
         }
     }
     
@@ -4163,6 +4240,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
             handlers.add(new RapidAttackHandler()); // If he has a turret attack, will be similar to this; then move this to Final
             handlers.add(new RapidAttackJumpHandler());
             handlers.add(new BombRollHandler());
+            deactivateCharacters();
+        }
+        
+        @Override
+        public final void onHealthMaxDisplayReached() {
+            dialogue(newDialogueFinishHandler(),
+                "Hello again, Void.");
         }
         
         @Override
@@ -4177,6 +4261,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final int initStillTimer() {
             return Mathtil.randi(15, 30);
+        }
+        
+        @Override
+        protected final String[] getDefeatMessages() {
+            return new String[] { "I'm impressed.  But you still won't be able to defeat Dr. Final!" };
         }
     }
     
@@ -5622,9 +5711,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 case STATE_INTRO_DESTROY :
                     setPlayerActive(true);
                     break;
-                case STATE_COAT :
-                    startArmor();
-                    break;
                 default :
                     startStill();
             }
@@ -5813,12 +5899,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startCoat() {
-            startState(STATE_COAT, 30);
+            startStateIndefinite(STATE_COAT);
             for (int i = 0; i < 10; i++) {
                 burst();
             }
             finalActor = Final.newFinalActor(FINAL_BOSS_X, FINAL_BOSS_Y, true);
             setVisible(false);
+            dialogue(BotsnBoltsGame.finalImages.portrait, new Runnable() {
+                @Override public final void run() {
+                    startArmor();
+                }},
+                "Do you really think you've defeated me?");
         }
         
         private final void startArmor() {
