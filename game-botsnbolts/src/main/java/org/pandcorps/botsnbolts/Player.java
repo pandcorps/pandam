@@ -810,9 +810,6 @@ public class Player extends Chr implements Warpable {
     @Override
     protected final boolean onStepCustom() {
         updateVisibility();
-        if (!active) {
-            return false;
-        }
         if (RoomChanger.isChanging()) {
             final RoomChanger changer = RoomChanger.getActiveChanger();
             if (changer.getAge() <= 28) {
@@ -831,6 +828,9 @@ public class Player extends Chr implements Warpable {
         } else if (bossDoorStatus == 3) {
             hv = -VEL_WALK;
             v = 0;
+        }
+        if (!active) {
+            return false;
         }
         prevUnderwater = splashIfNeeded(this, prevUnderwater, this);
         final boolean ret = onStepState();
@@ -1509,6 +1509,7 @@ public class Player extends Chr implements Warpable {
     @Override
     protected boolean onFell() {
         if (changeRoom(0, -1)) {
+            v = 0;
             return true;
         } else if ((availableRescues > 0) && (safeX != NULL_COORD)) {
             final String rescueDisabled = RoomLoader.variables.get("rescueDisabled");
@@ -1610,6 +1611,8 @@ public class Player extends Chr implements Warpable {
         actorsToKeep.add(this);
         actorsToKeep.add(BotsnBoltsGame.tm);
         if (!Panctor.isDestroyed(Boss.aiBoss) && (Boss.aiBoss.getLayer() == getLayer())) {
+            Boss.aiBoss.getPosition().setY(getPosition().getY());
+            Boss.aiBoss.v = 0;
             actorsToKeep.add(Boss.aiBoss);
         }
         Coltil.addIfValued(actorsToKeep, boltDoor); // Keep Player and old TileMap while scrolling

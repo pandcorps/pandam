@@ -38,6 +38,8 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     private Panctor tracked = null;
     private final List<? extends Panctor> actorsToDestroy;
     private int age = 0;
+    private int lastAge = -1000;
+    private long clockAge = -1000;
     
     // Might keep a constant deep background layer and a HUD layer on top
     public RoomChanger(final int nextX, final int nextY, final int velX, final int velY, final List<Panlayer> layersToKeepBeneath, final List<Panlayer> layersToKeepAbove,
@@ -171,7 +173,12 @@ public abstract class RoomChanger extends Panctor implements StepListener {
     }
     
     public final int getAge() {
-        return age;
+        final long clock = Pangine.getEngine().getClock();
+        if ((lastAge < 0) || (clockAge < clock)) {
+            lastAge = age;
+            clockAge = clock;
+        }
+        return lastAge;
     }
     
     public final static RoomChanger getActiveChanger() {
