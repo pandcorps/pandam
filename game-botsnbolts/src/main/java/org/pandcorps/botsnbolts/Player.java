@@ -2895,11 +2895,44 @@ public class Player extends Chr implements Warpable {
         @Override
         public final void onStep(final Player player) {
             if (player.getPosition().getX() <= dstX) {
-                player.setMirror(false);
+                player.pickMirror();
                 player.finishScript();
                 return;
             }
             player.stateHandler.onLeft(player);
         }
+    }
+    
+    protected final static class RightAi implements Ai {
+        private final float dstX;
+        
+        protected RightAi(final float dstX) {
+            this.dstX = dstX;
+        }
+        
+        @Override
+        public final void onStep(final Player player) {
+            if (player.getPosition().getX() >= dstX) {
+                player.pickMirror();
+                player.finishScript();
+                return;
+            }
+            player.stateHandler.onRight(player);
+        }
+    }
+    
+    protected final Ai getWalkAi(final float dstX) {
+        if (getPosition().getX() < dstX) {
+            return new RightAi(dstX);
+        }
+        return new LeftAi(dstX);
+    }
+    
+    protected final void pickMirror() {
+        setMirror(!isOnLeftSide());
+    }
+    
+    protected final boolean isOnLeftSide() {
+        return getPosition().getX() < (BotsnBoltsGame.GAME_W / 2);
     }
 }
