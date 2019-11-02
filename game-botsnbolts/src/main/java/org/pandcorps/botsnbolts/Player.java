@@ -1623,6 +1623,14 @@ public class Player extends Chr implements Warpable {
             if ((actor instanceof Pantexture) || ((actor instanceof Extra) && ((Extra) actor).isVisibleWhileRoomChanging())) {
                 actorsToKeep.add(actor);
                 actorsToDestroy.add(actor);
+            } else if (actor instanceof RoomChangeListener) {
+                final int status = ((RoomChangeListener) actor).getRoomChangeStatus();
+                if ((status & RoomChangeListener.ROOM_CHANGE_KEEP) != 0) {
+                    actorsToKeep.add(actor);
+                }
+                if ((status & RoomChangeListener.ROOM_CHANGE_DESTROY) != 0) {
+                    actorsToDestroy.add(actor);
+                }
             }
         }
         final int velX = VEL_ROOM_CHANGE * dirX, velY = VEL_ROOM_CHANGE * dirY;
@@ -2879,6 +2887,13 @@ public class Player extends Chr implements Warpable {
         public PlayerImages getPlayerImages();
         
         public void burst();
+    }
+    
+    protected static interface RoomChangeListener extends SpecPanctor {
+        public final static int ROOM_CHANGE_KEEP = 1;
+        public final static int ROOM_CHANGE_DESTROY = 2;
+        
+        public int getRoomChangeStatus();
     }
     
     protected static interface Ai {

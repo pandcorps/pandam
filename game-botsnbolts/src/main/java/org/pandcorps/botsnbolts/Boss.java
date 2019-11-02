@@ -43,6 +43,7 @@ import org.pandcorps.pandax.visual.*;
 
 public abstract class Boss extends Enemy implements SpecBoss {
     protected final static String RES_BOSS = BotsnBoltsGame.RES + "boss/";
+    protected final static String RES_CHR = BotsnBoltsGame.RES + "chr/";
     protected final static byte STATE_STILL = 0;
     private final static int DAMAGE = 4;
     private final static float DROP_X = 192;
@@ -513,6 +514,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return getImage(img, "boss.", RES_BOSS, name, o, min, max);
     }
     
+    protected final static Panmage getImageChr(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
+        return getImage(img, "boss.", RES_CHR, name, o, min, max);
+    }
+    
     protected abstract Panmage getStill();
     
     @Override
@@ -611,9 +616,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return getLayerRequired().getActors();
     }
     
+    protected final static Panmage getPlayerPortrait() {
+        return getPlayerContext().pi.portrait;
+    }
+    
     protected final static void dialogue(final Panmage bossPortrait, final Runnable finishHandler, final String... msgs) {
         setPlayerActive(false);
-        final Panmage playerPortrait = getPlayerContext().pi.portrait;
+        final Panmage playerPortrait = getPlayerPortrait();
         DialogueBox box = null;
         boolean portraitLeft = false;
         for (final String msg : msgs) {
@@ -3883,10 +3892,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected abstract static class AiBoss extends Player implements SpecBoss, RoomAddListener {
+        protected final static byte DEFEATED_NO = 0;
+        protected final static byte DEFEATED_YES = 1;
+        protected final static byte DEFEATED_AFTER = 2;
         protected final List<AiHandler> handlers = new ArrayList<AiHandler>();
         protected AiHandler handler = null;
         protected AiHandler nextHandler = null;
-        protected boolean defeated = false;
+        protected byte defeated = DEFEATED_NO;
         protected boolean needMirror = false;
         protected int waitTimer = 0;
         protected int shootTimer = 0;
@@ -3911,12 +3923,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final void onRoomAdd(final RoomAddEvent event) {
+            if (!isHealthMeterNeeded()) {
+                return;
+            }
+            deactivateCharacters();
             BotsnBoltsGame.initHealthMeter(healthMeter = Enemy.newHealthMeter(this), false);
+        }
+        
+        protected boolean isHealthMeterNeeded() {
+            return true;
         }
         
         @Override
         public void onHealthMaxDisplayReached() {
-            setPlayerActive(true);
+            activateCharacters();
         }
         
         protected final void dialogue(final Runnable finishHandler, final String... msgs) {
@@ -3957,6 +3977,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         public final void onMaterialized() {
             super.onMaterialized();
             health = HudMeter.MAX_VALUE;
+            onBossMaterialized();
+        }
+        
+        //@OverrideMe
+        protected void onBossMaterialized() {
         }
         
         protected final void onStepAi() {
@@ -4055,6 +4080,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
         }
         
+        protected final void setMirrorTowardPlayer() {
+            if (!isFacingPlayer()) {
+                setMirror(!isMirror());
+            }
+        }
+        
         protected final boolean isFacingPlayer() {
             final boolean mirrorNeeded = getPlayerX() < getPosition().getX();
             return mirrorNeeded == isMirror();
@@ -4122,7 +4153,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final boolean isHarmful() {
-            return !defeated;
+            return defeated == DEFEATED_NO;
         }
         
         @Override
@@ -4154,22 +4185,28 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final void onDefeat() {
-            if (defeated) {
+            if (defeated >= DEFEATED_YES) {
                 return;
             }
-            defeated = true;
+            defeated = DEFEATED_YES;
             destroyEnemies();
-            if (isGrounded()) {
-                afterDefeat();
-            } else {
-                startHandler(new DefeatedHandler());
-            }
+            startHandler(new DefeatedHandler());
         }
         
         private final void afterDefeat() {
+            if (defeated >= DEFEATED_AFTER) {
+                return;
+            }
+            defeated = DEFEATED_AFTER;
+            onAfterDefeat();
+        }
+        
+        protected void onAfterDefeat() {
             final String[] defeatMsgs = getDefeatMessages();
             if (defeatMsgs == null) {
-                exit();
+                if (isExitAfterDefeatNeeded()) {
+                    exit();
+                }
             } else {
                 dialogue(newDialogueFinishExitHandler(), defeatMsgs);
             }
@@ -4179,12 +4216,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return null;
         }
         
+        protected boolean isExitAfterDefeatNeeded() {
+            return true;
+        }
+        
         protected final void exit() {
             destroy();
             dematerialize(new Runnable() {
                 @Override public final void run() {
-                    Boss.award(new VictoryDisk(getPlayer(), AiBoss.this), DROP_X);
+                    if (isAwardNeeded()) {
+                        Boss.award(new VictoryDisk(getPlayer(), AiBoss.this), DROP_X);
+                    }
                 }});
+        }
+        
+        protected boolean isAwardNeeded() {
+            return true;
         }
         
         @Override
@@ -4269,6 +4316,36 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    protected final static class VolatileActor extends AiBoss {
+        private Runnable materializedDialogueFinishHandler = null;
+        private String[] materializedDialogueMessages = null;
+        
+        protected VolatileActor(final int x, final int y) {
+            super(BotsnBoltsGame.volatileImages, x, y);
+            handlers.add(new StillHandler());
+        }
+        
+        @Override
+        protected final void onBossMaterialized() {
+            dialogue(materializedDialogueFinishHandler, materializedDialogueMessages);
+        }
+        
+        @Override
+        protected final boolean isHealthMeterNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final int initStillTimer() {
+            return Integer.MAX_VALUE;
+        }
+        
+        @Override
+        protected final boolean isAwardNeeded() {
+            return false;
+        }
+    }
+    
     protected final static class BossAi implements Ai {
         @Override
         public final void onStep(final Player player) {
@@ -4314,12 +4391,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class DefeatedHandler extends AiHandler {
         @Override
         protected final void onStep(final AiBoss boss) {
-        }
-        
-        @Override
-        protected final boolean isDoneWhenLanded(final AiBoss boss) {
-            boss.afterDefeat();
-            return false;
+            final Player player = getPlayer();
+            if (boss.isGrounded() && ((player == null) || player.isGrounded())) {
+                boss.afterDefeat();
+            }
         }
     }
     
@@ -5548,7 +5623,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
-    protected final static class FinalSaucer extends BaseSaucer {
+    protected final static class FinalSaucer extends BaseSaucer implements RoomChangeListener {
         private final static byte STATE_INTRO_RISE = 1;
         private final static byte STATE_INTRO_DESTROY = 2; // isVulnerable depends on intro states being less than later states
         private final static byte STATE_TRACTOR_BEAM_SEEK = 3;
@@ -5940,8 +6015,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void onFloorOpen() {
-            if (floorIndex == 22) {
-                destroy();
+            if (floorIndex > 22) {
+                return;
+            } else if (floorIndex == 22) {
                 final TileMap tm = BotsnBoltsGame.tm;
                 for (int i = 1; i < 23; i++) {
                     for (int j = 0; j < 3; j++) {
@@ -5958,6 +6034,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 }
             }
             floorIndex++;
+        }
+        
+        @Override
+        public final int getRoomChangeStatus() {
+            return ROOM_CHANGE_KEEP;
         }
         
         private final void startCeilingClose() {
@@ -5987,6 +6068,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final void startFinalBattle() {
             finalBoss.health = HudMeter.MAX_VALUE;
             finalBoss.startStill();
+            destroy();
         }
         
         private final void burst() {
@@ -6143,6 +6225,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static class Final extends AiBoss {
         private static Panmage coat = null;
         private final static Panmage[] coatThrown = new Panmage[3];
+        private static Panmage wounded = null;
         
         protected Final(final int x, final int y) {
             super(BotsnBoltsGame.finalImages, x, y);
@@ -6165,6 +6248,48 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return Mathtil.randi(12, 15);
         }
         
+        @Override
+        protected void onAfterDefeat() {
+            setHidden(true);
+            final Panctor finalActor = newFinalActor(getWounded(), this);
+            finalActor.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT);
+            final Pangine engine = Pangine.getEngine();
+            final Player player = getPlayer();
+            final boolean leftSide = isOnLeftSide();
+            final float playerDstX = leftSide ? 256 : 128;
+            player.startScript(player.getWalkAi(playerDstX), new Runnable() {
+                @Override public final void run() {
+                    final VolatileActor volatileActor = new VolatileActor(BotsnBoltsGame.tm.getContainerColumn(getPosition().getX()) + (leftSide ? 1 : -1), 3);
+                    volatileActor.setMirrorTowardPlayer();
+                    new Warp(volatileActor);
+                    volatileActor.materializedDialogueMessages = new String[] { "I'm impressed.  You're far stronger than I realized.  But Dr. Final will never stop trying to conquer your world." };
+                    volatileActor.materializedDialogueFinishHandler = new Runnable() {
+                        @Override public final void run() {
+                            volatileActor.exit();
+                            finalActor.destroy();
+                            Final.this.setHidden(false);
+                            Final.this.exit();
+                            engine.addTimer(BotsnBoltsGame.tm, 30, new TimerListener() {
+                                @Override public final void onTimer(final TimerEvent event) {
+                                    Story.dialogue(getPlayerPortrait(), true, "And I will never stop defending it.").add().setFinishHandler(new Runnable() {
+                                        @Override public final void run() {
+                                            Boss.award(new VictoryDisk(getPlayer(), Final.this), getPlayerX());
+                                        }});
+                                }});
+                        }};
+                }});
+        }
+        
+        @Override
+        protected final boolean isExitAfterDefeatNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean isAwardNeeded() {
+            return false;
+        }
+        
         private final static Panmage getCoat() {
             return (coat = getImage(coat, "final/FinalCoat", BotsnBoltsGame.og, null, null));
         }
@@ -6178,14 +6303,32 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return img;
         }
         
+        protected final static Panmage getWounded() {
+            return (wounded = getImageChr(wounded, "final/FinalWounded", BotsnBoltsGame.og, null, null));
+        }
+        
         protected final static Panctor newFinalActor(final int x, final int y, final boolean mirror) {
+            return newFinalActor(getCoat(), x, y, mirror);
+        }
+        
+        protected final static Panctor newFinalActor(final Panmage img, final int x, final int y, final boolean mirror) {
+            final Panctor actor = newFinalActor(img, mirror);
+            BotsnBoltsGame.tm.savePositionXy(actor.getPosition(), x, y);
+            return actor;
+        }
+        
+        protected final static Panctor newFinalActor(final Panmage img, final boolean mirror) {
             final Panctor actor = new Panctor();
-            actor.setView(getCoat());
-            final Panple pos = actor.getPosition();
-            BotsnBoltsGame.tm.savePositionXy(pos, x, y);
-            pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+            actor.setView(img);
+            actor.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY);
             actor.setMirror(mirror);
             BotsnBoltsGame.addActor(actor);
+            return actor;
+        }
+        
+        protected final static Panctor newFinalActor(final Panmage img, final Panctor src) {
+            final Panctor actor = newFinalActor(img, src.isMirror());
+            actor.getPosition().set(src.getPosition());
             return actor;
         }
         
