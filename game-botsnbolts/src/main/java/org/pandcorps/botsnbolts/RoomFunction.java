@@ -417,6 +417,50 @@ public abstract class RoomFunction {
         }
     }
     
+    public final static class LabBackground extends StepHandler {
+        private TileMapImage[] imgs = null;
+        
+        @Override
+        protected final void init() {
+            update();
+        }
+        
+        @Override
+        protected final void step() {
+            if ((Pangine.getEngine().getClock() % 30) != 0) {
+                return;
+            }
+            update();
+        }
+        
+        private final void update() {
+            initImages();
+            final TileMap tm = BotsnBoltsGame.tm;
+            for (int x = 11; x <= 12; x++) {
+                for (int y = 8; y <= 9; y++) {
+                    tm.setBackground(x, y, Mathtil.rand(imgs));
+                }
+            }
+        }
+        
+        private final void initImages() {
+            if (imgs != null) {
+                return;
+            }
+            final TileMapImage[] imgRow = BotsnBoltsGame.imgMap[6];
+            imgs = new TileMapImage[21];
+            for (int i = 0; i < 5; i++) {
+                final int i4 = i * 4;
+                final TileMapImage img = imgRow[3 + i];
+                imgs[i4] = img;
+                for (int rot = 1; rot < 4; rot++) {
+                    imgs[i4 + rot] = new AdjustedTileMapImage(img, rot, false, false);
+                }
+            }
+            imgs[20] = imgRow[2];
+        }
+    }
+    
     public final static class Shader {
         private final Object top;
         private final Object topLeft;

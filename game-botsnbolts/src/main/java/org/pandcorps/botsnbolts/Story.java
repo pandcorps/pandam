@@ -22,16 +22,23 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
 
 public class Story {
-    protected final static DialogueBox dialogue(final Panmage portrait, final boolean portraitLeft, final CharSequence msg) {
-        final TextTyper typer = new TextTyper(BotsnBoltsGame.font, msg, 29).enableWaitForInput();
-        final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft);
+    protected final static TextTyper newTextTyper(final CharSequence msg, final int charactersPerLine) {
+        final TextTyper typer = new TextTyper(BotsnBoltsGame.font, msg, charactersPerLine).enableWaitForInput();
         typer.setLinesPerPage(6);
         typer.setGapY(2);
-        typer.getPosition().set(box.xText + 12, 197, BotsnBoltsGame.DEPTH_HUD_TEXT);
+        typer.getPosition().setZ(BotsnBoltsGame.DEPTH_HUD_TEXT);
+        return typer;
+    }
+    
+    protected final static DialogueBox dialogue(final Panmage portrait, final boolean portraitLeft, final CharSequence msg) {
+        final TextTyper typer = newTextTyper(msg, 29);
+        final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft);
+        typer.getPosition().set(box.xText + 12, 197);
         typer.setFinishHandler(new Runnable() {
             @Override public final void run() {
                 box.finish();
@@ -98,5 +105,89 @@ public class Story {
                 finishHandler.run();
             }
         }
+    }
+    
+    protected abstract static class LabScreen extends Panscreen {
+        @Override
+        protected final void load() {
+            BotsnBoltsGame.BotsnBoltsScreen.loadRoom(RoomLoader.getRoom(0, 550), false);
+            loadLab();
+        }
+        
+        //@OverrideMe
+        protected void loadLab() {
+        }
+        
+        @Override
+        protected final void step() {
+            RoomLoader.step();
+        }
+    }
+    
+    protected abstract static class TextScreen extends Panscreen {
+        @Override
+        protected final void load() {
+            Pangine.getEngine().setBgColor(Pancolor.BLACK);
+            loadText();
+        }
+        
+        protected abstract void loadText();
+    }
+    
+    protected final static class LabScreen1 extends LabScreen {
+        @Override
+        protected final void loadLab() {
+            newActor(getRoot(), 96, false);
+            newActor(getFinalMask(), 128, true);
+            // from far away... learn from him... too many froms
+            newLabTextTyper("20XX\nDr. Root is the nation's foremost expert in the fields of robotics and artificial intelligence.  Scientists travel from far away to learn from him.  His brightest apprentice is Dr. Finnell.  Dr. Root teaches everything that he knows to Dr. Finnell.")
+                .setFinishHandler(newScreenRunner(new TextScreen1()));
+        }
+    }
+    
+    protected final static class TextScreen1 extends TextScreen {
+        @Override
+        protected final void loadText() {
+            newLabTextTyper("But one day...");
+        }
+    }
+    
+    protected final static TextTyper newLabTextTyper(final CharSequence msg) {
+        final TextTyper typer = newTextTyper(msg, 32).registerAdvanceListener();
+        typer.getPosition().set(64, 53);
+        BotsnBoltsGame.addActor(typer);
+        return typer;
+    }
+    
+    protected final static Panctor newActor(final Panmage img, final float x, final boolean mirror) {
+        final Panctor actor = new Panctor();
+        actor.setView(img);
+        actor.getPosition().set(x, 96, BotsnBoltsGame.DEPTH_ENEMY);
+        actor.setMirror(mirror);
+        BotsnBoltsGame.addActor(actor);
+        return actor;
+    }
+    
+    protected final static Runnable newScreenRunner(final Panscreen screen) {
+        return new Runnable() {
+            @Override public final void run() {
+                Panscreen.set(screen);
+            }};
+    }
+    
+    private static Panmage root = null;
+    
+    protected final static Panmage getRoot() {
+        return getImage(root, "chr/root/Root", BotsnBoltsGame.og);
+    }
+    
+    private static Panmage finalMask = null;
+    
+    protected final static Panmage getFinalMask() {
+        return getImage(finalMask, "boss/final/FinalMask", BotsnBoltsGame.og);
+    }
+    
+    protected final static Panmage getImage(final Panmage img, final String name, final Panple o) {
+        return (img == null) ? Pangine.getEngine().createImage(name, o, null, null, BotsnBoltsGame.RES + name + ".png") : img;
     }
 }
