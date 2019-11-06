@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
 
 public class Story {
@@ -121,6 +122,11 @@ public class Story {
         @Override
         protected final void step() {
             RoomLoader.step();
+            stepLab();
+        }
+        
+        //@OverrideMe
+        protected void stepLab() {
         }
     }
     
@@ -135,20 +141,66 @@ public class Story {
     }
     
     protected final static class LabScreen1 extends LabScreen {
+        private Talker drRoot = null;
+        private Talker drFinal = null;
+        
         @Override
         protected final void loadLab() {
-            newActor(getRoot(), 96, false);
-            newActor(getFinalMask(), 128, true);
+            initActor(drRoot = newRootTalker(), 96, false);
+            initActor(drFinal = newFinalMaskTalker(), 128, true);
+            stepLab();
             // from far away... learn from him... too many froms
             newLabTextTyper("20XX\nDr. Root is the nation's foremost expert in the fields of robotics and artificial intelligence.  Scientists travel from far away to learn from him.  His brightest apprentice is Dr. Finnell.  Dr. Root teaches everything that he knows to Dr. Finnell.")
                 .setFinishHandler(newScreenRunner(new TextScreen1()));
+        }
+        
+        @Override
+        protected final void stepLab() {
+            final boolean rootTalk = Pangine.getEngine().isOn(64);
+            drRoot.setTalking(rootTalk);
+            drFinal.setTalking(!rootTalk);
         }
     }
     
     protected final static class TextScreen1 extends TextScreen {
         @Override
         protected final void loadText() {
-            newLabTextTyper("But one day...");
+            newLabTextTyper("But one day...").setFinishHandler(newScreenRunner(new LabScreen2()));
+        }
+    }
+    
+    protected final static class LabScreen2 extends LabScreen {
+        @Override
+        protected final void loadLab() {
+            final Talker drRoot = newRootTalker().setTalking(false);
+            initActor(drRoot, 128, false);
+            final Talker drFinal = newFinalMaskTalker().setTalking(false);
+            initActor(drFinal, 192, 130, true);
+            drFinal.setVisible(false);
+            Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 60, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    RoomFunction.LabBackground.setActive(false);
+                    final TextTyper typer = new TextTyper(BotsnBoltsGame.font, "Init\ncall\n...");
+                    typer.getPosition().set(176, 152, BotsnBoltsGame.DEPTH_HUD_TEXT);
+                    BotsnBoltsGame.addActor(typer);
+                    typer.setFinishHandler(new Runnable() {
+                        @Override public final void run() {
+                            typer.destroy();
+                            drFinal.setVisible(true);
+                            startLabConversation(drRoot, drFinal, newScreenRunner(new TextScreen2()),
+                                "\"Hello Dr. Finnell. How can I help you?\"",
+                                "\"You fool! You've taught me all of your secrets, and now I'll use them to conquer your world. I'm not really Dr. Finnell. My name is Final!\"",
+                                "\"How could you? I trusted you, Final!\"",
+                                "\"That's Dr. Final! I'm an alien invader, but I still earned my PhD while I was studying your planet!\"");
+                        }});
+                }});
+        }
+    }
+    
+    protected final static class TextScreen2 extends TextScreen {
+        @Override
+        protected final void loadText() {
+            newLabTextTyper("Loading...");
         }
     }
     
@@ -159,13 +211,89 @@ public class Story {
         return typer;
     }
     
+    protected final static void startLabConversation(final Talker talker1, final Talker talker2, final Runnable finishHandler, final CharSequence... msgs) {
+        talker1.setTalking(false); // continueLabConversion will invert these
+        talker2.setTalking(true);
+        continueLabConversation(talker1, talker2, finishHandler, 0, msgs);
+    }
+    
+    protected final static void continueLabConversation(final Talker talker1, final Talker talker2, final Runnable finishHandler, final int msgIndex, final CharSequence... msgs) {
+        talker1.toggleTalking();
+        talker2.toggleTalking();
+        final TextTyper typer = newLabTextTyper(msgs[msgIndex]);
+        typer.setFinishHandler(new Runnable() {
+            @Override public final void run() {
+                final int nextIndex = msgIndex + 1;
+                if (nextIndex >= msgs.length) {
+                    finishHandler.run();
+                } else {
+                    typer.destroy();
+                    continueLabConversation(talker1, talker2, finishHandler, nextIndex, msgs);
+                }
+            }});
+    }
+    
     protected final static Panctor newActor(final Panmage img, final float x, final boolean mirror) {
         final Panctor actor = new Panctor();
         actor.setView(img);
-        actor.getPosition().set(x, 96, BotsnBoltsGame.DEPTH_ENEMY);
+        initActor(actor, x, mirror);
+        return actor;
+    }
+    
+    private final static void initActor(final Panctor actor, final float x, final boolean mirror) {
+        initActor(actor, x, 96, mirror);
+    }
+    
+    private final static void initActor(final Panctor actor, final float x, final float y, final boolean mirror) {
+        actor.getPosition().set(x, y, BotsnBoltsGame.DEPTH_ENEMY);
         actor.setMirror(mirror);
         BotsnBoltsGame.addActor(actor);
-        return actor;
+    }
+    
+    protected abstract static class Talker extends Panctor implements StepListener {
+        private boolean talking = true;
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            if (talking) {
+                changeView(Pangine.getEngine().isOn(4) ? getMouthOpen() : getMouthClosed());
+            } else {
+                changeView(getMouthClosed());
+            }
+        }
+        
+        protected Talker setTalking(final boolean talking) {
+            this.talking = talking;
+            return this;
+        }
+        
+        protected Talker toggleTalking() {
+            return setTalking(!talking);
+        }
+        
+        protected abstract Panmage getMouthClosed();
+        
+        protected abstract Panmage getMouthOpen();
+    }
+    
+    protected final static Talker newRootTalker() {
+        return new Talker() {
+            @Override final protected Panmage getMouthClosed() {
+                return getRoot();
+            }
+            @Override final protected Panmage getMouthOpen() {
+                return getRootTalk();
+            }};
+    }
+    
+    protected final static Talker newFinalMaskTalker() {
+        return new Talker() {
+            @Override final protected Panmage getMouthClosed() {
+                return getFinalMask();
+            }
+            @Override final protected Panmage getMouthOpen() {
+                return getFinalMaskTalk();
+            }};
     }
     
     protected final static Runnable newScreenRunner(final Panscreen screen) {
@@ -175,16 +303,24 @@ public class Story {
             }};
     }
     
-    private static Panmage root = null;
+    private static Panmage root = null, rootTalk = null;
     
     protected final static Panmage getRoot() {
         return getImage(root, "chr/root/Root", BotsnBoltsGame.og);
     }
     
-    private static Panmage finalMask = null;
+    protected final static Panmage getRootTalk() {
+        return getImage(rootTalk, "chr/root/RootTalk", BotsnBoltsGame.og);
+    }
+    
+    private static Panmage finalMask = null, finalMaskTalk = null;
     
     protected final static Panmage getFinalMask() {
         return getImage(finalMask, "boss/final/FinalMask", BotsnBoltsGame.og);
+    }
+    
+    protected final static Panmage getFinalMaskTalk() {
+        return getImage(finalMaskTalk, "boss/final/FinalMaskTalk", BotsnBoltsGame.og);
     }
     
     protected final static Panmage getImage(final Panmage img, final String name, final Panple o) {

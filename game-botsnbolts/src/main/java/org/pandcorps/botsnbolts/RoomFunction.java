@@ -418,10 +418,17 @@ public abstract class RoomFunction {
     }
     
     public final static class LabBackground extends StepHandler {
-        private TileMapImage[] imgs = null;
+        private static boolean active = true;
+        private static TileMapImage[] imgs = null;
+        
+        protected final static void setActive(final boolean active) {
+            LabBackground.active = active;
+            update();
+        }
         
         @Override
         protected final void init() {
+            active = true;
             update();
         }
         
@@ -433,17 +440,17 @@ public abstract class RoomFunction {
             update();
         }
         
-        private final void update() {
+        private final static void update() {
             initImages();
             final TileMap tm = BotsnBoltsGame.tm;
             for (int x = 11; x <= 12; x++) {
                 for (int y = 8; y <= 9; y++) {
-                    tm.setBackground(x, y, Mathtil.rand(imgs));
+                    tm.setBackground(x, y, active ? Mathtil.rand(imgs) : imgs[20]);
                 }
             }
         }
         
-        private final void initImages() {
+        private final static void initImages() {
             if (imgs != null) {
                 return;
             }
