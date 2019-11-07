@@ -422,6 +422,9 @@ public abstract class RoomFunction {
         private static TileMapImage[] imgs = null;
         
         protected final static void setActive(final boolean active) {
+            if (LabBackground.active == active) {
+                return;
+            }
             LabBackground.active = active;
             update();
         }
@@ -434,7 +437,9 @@ public abstract class RoomFunction {
         
         @Override
         protected final void step() {
-            if ((Pangine.getEngine().getClock() % 30) != 0) {
+            if (!active) {
+                return;
+            } else if ((Pangine.getEngine().getClock() % 30) != 0) {
                 return;
             }
             update();

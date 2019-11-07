@@ -182,6 +182,7 @@ public class Story {
                     RoomFunction.LabBackground.setActive(false);
                     final TextTyper typer = new TextTyper(BotsnBoltsGame.font, "Init\ncall\n...");
                     typer.getPosition().set(176, 152, BotsnBoltsGame.DEPTH_HUD_TEXT);
+                    typer.setLinesPerPage(4);
                     BotsnBoltsGame.addActor(typer);
                     typer.setFinishHandler(new Runnable() {
                         @Override public final void run() {
