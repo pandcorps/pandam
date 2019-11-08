@@ -302,6 +302,15 @@ public class Story {
                     player.setView(pi.shootSet.stand);
                     lookAround(player, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                         player.setView(playerStand);
+                        addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                            final Player p = new Player(BotsnBoltsGame.pc) { @Override protected final void onLanded() {
+                                destroy();
+                                dematerialize(newScreenRunner(new LabScreen1()));
+                            }};
+                            replaceActor(player, p);
+                            p.startScript(new StillAi(), null);
+                            p.stateHandler.onJump(p);
+                        }});
                     }});
                 }});
             }});

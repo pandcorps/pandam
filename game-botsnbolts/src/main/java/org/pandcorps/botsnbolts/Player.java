@@ -2900,6 +2900,12 @@ public class Player extends Chr implements Warpable {
         public void onStep(final Player player);
     }
     
+    protected final static class StillAi implements Ai {
+        @Override
+        public final void onStep(final Player player) {
+        }
+    }
+    
     protected final static class LeftAi implements Ai {
         private final float dstX;
         
