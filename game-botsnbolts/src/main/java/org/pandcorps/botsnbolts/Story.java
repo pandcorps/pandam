@@ -22,10 +22,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Boss.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 
 public class Story {
     protected final static TextTyper newTextTyper(final CharSequence msg, final int charactersPerLine) {
@@ -112,6 +115,7 @@ public class Story {
         @Override
         protected final void load() {
             BotsnBoltsGame.BotsnBoltsScreen.loadRoom(RoomLoader.getRoom(0, 550), false);
+            Player.registerCapture(BotsnBoltsGame.tm);
             loadLab();
         }
         
@@ -175,26 +179,53 @@ public class Story {
             final Talker drRoot = newRootTalker().setTalking(false);
             initActor(drRoot, 128, false);
             final Talker drFinal = newFinalMaskTalker().setTalking(false);
-            initActor(drFinal, 192, 130, true);
+            initActor(drFinal, 188, 130, true);
             drFinal.setVisible(false);
-            Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 60, new TimerListener() {
-                @Override public final void onTimer(final TimerEvent event) {
-                    RoomFunction.LabBackground.setActive(false);
-                    final TextTyper typer = new TextTyper(BotsnBoltsGame.font, "Init\ncall\n...");
-                    typer.getPosition().set(176, 152, BotsnBoltsGame.DEPTH_HUD_TEXT);
-                    typer.setLinesPerPage(4);
-                    BotsnBoltsGame.addActor(typer);
-                    typer.setFinishHandler(new Runnable() {
-                        @Override public final void run() {
-                            typer.destroy();
-                            drFinal.setVisible(true);
-                            startLabConversation(drRoot, drFinal, newScreenRunner(new TextScreen2()),
-                                "\"Hello Dr. Finnell. How can I help you?\"",
-                                "\"You fool! You've taught me all of your secrets, and now I'll use them to conquer your world. I'm not really Dr. Finnell. My name is Final!\"",
-                                "\"How could you? I trusted you, Final!\"",
-                                "\"That's Dr. Final! I'm an alien invader, but I still earned my PhD while I was studying your planet!\"");
+            addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                RoomFunction.LabBackground.setActive(false);
+                final TextTyper typer = new TextTyper(BotsnBoltsGame.font, "Init\ncall\n...");
+                typer.getPosition().set(176, 150, BotsnBoltsGame.DEPTH_HUD_TEXT);
+                typer.setLinesPerPage(4);
+                typer.setGapY(2);
+                BotsnBoltsGame.addActor(typer);
+                typer.setFinishHandler(new Runnable() { @Override public final void run() {
+                    typer.destroy();
+                    setScreen(3);
+                    drFinal.setVisible(true);
+                    startLabConversation(drRoot, drFinal, new CharSequence[] {
+                        "\"Hello Dr. Finnell.  How can I help you?\"",
+                        "\"You fool!  You've taught me all of your secrets, and now I'll use them to destroy you!  I'm not really Dr. Finnell.\"" },
+                        new Runnable() { @Override public final void run() {
+                            setScreen(5);
+                            final Panctor drFinalUnmasking = new Panctor();
+                            replaceActor(drFinal, drFinalUnmasking);
+                            drFinalUnmasking.setView(getFinalUnmask(0));
+                            unmask(drFinalUnmasking, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                                setScreen(3);
+                                final Talker drFinalUnmasked = newFinalTalker().setTalking(false);
+                                replaceActor(drFinalUnmasking, drFinalUnmasked);
+                                startLabConversation(drFinalUnmasked, drRoot, new CharSequence[] {
+                                    "\"My name is Final, and I've come here to conquer your world!\"",
+                                    "\"How could you?  I trusted you, Final!\"",
+                                    "\"That's Dr. Final!  I'm an alien invader, but I still earned my PhD while I was studying your planet!\"" },
+                                    newScreenRunner(new TextScreen2()));
+                            }});
                         }});
                 }});
+            }});
+        }
+    }
+    
+    protected final static void setScreen(final int imgX) {
+        RoomFunction.LabBackground.setActive(false);
+        final TileMap tm = BotsnBoltsGame.tm;
+        final TileMapImage[][] imgMap = BotsnBoltsGame.imgMap;
+        for (int y = 0; y < 2; y++) {
+            final TileMapImage[] imgs = imgMap[5 - y];
+            final int tmY = y + 8;
+            for (int x = 0; x < 2; x++) {
+                tm.setBackground(x + 11, tmY, imgs[imgX + x]);
+            }
         }
     }
     
@@ -212,7 +243,7 @@ public class Story {
         return typer;
     }
     
-    protected final static void startLabConversation(final Talker talker1, final Talker talker2, final Runnable finishHandler, final CharSequence... msgs) {
+    protected final static void startLabConversation(final Talker talker1, final Talker talker2, final CharSequence[] msgs, final Runnable finishHandler) {
         talker1.setTalking(false); // continueLabConversion will invert these
         talker2.setTalking(true);
         continueLabConversation(talker1, talker2, finishHandler, 0, msgs);
@@ -224,11 +255,11 @@ public class Story {
         final TextTyper typer = newLabTextTyper(msgs[msgIndex]);
         typer.setFinishHandler(new Runnable() {
             @Override public final void run() {
+                typer.destroy();
                 final int nextIndex = msgIndex + 1;
                 if (nextIndex >= msgs.length) {
                     finishHandler.run();
                 } else {
-                    typer.destroy();
                     continueLabConversation(talker1, talker2, finishHandler, nextIndex, msgs);
                 }
             }});
@@ -251,11 +282,21 @@ public class Story {
         BotsnBoltsGame.addActor(actor);
     }
     
+    private final static void replaceActor(final Panctor oldActor, final Panctor newActor) {
+        final Panple oldPos = oldActor.getPosition();
+        initActor(newActor, oldPos.getX(), oldPos.getY(), oldActor.isMirror());
+        oldActor.destroy();
+    }
+    
     protected abstract static class Talker extends Panctor implements StepListener {
         private boolean talking = true;
         
         @Override
         public final void onStep(final StepEvent event) {
+            step();
+        }
+        
+        private final void step() {
             if (talking) {
                 changeView(Pangine.getEngine().isOn(4) ? getMouthOpen() : getMouthClosed());
             } else {
@@ -263,12 +304,13 @@ public class Story {
             }
         }
         
-        protected Talker setTalking(final boolean talking) {
+        protected final Talker setTalking(final boolean talking) {
             this.talking = talking;
+            step();
             return this;
         }
         
-        protected Talker toggleTalking() {
+        protected final Talker toggleTalking() {
             return setTalking(!talking);
         }
         
@@ -297,6 +339,32 @@ public class Story {
             }};
     }
     
+    protected final static void unmask(final Panctor drFinal, final TimerListener finishHandler) {
+        unmask(drFinal, 30, 1, finishHandler);
+    }
+    
+    protected final static void unmask(final Panctor drFinal, final long duration, final int i, final TimerListener finishHandler) {
+        addTimer(duration, new TimerListener() {
+            @Override public final void onTimer(final TimerEvent event) {
+                drFinal.setView(getFinalUnmask(i));
+                if (i < 11) {
+                    unmask(drFinal, 4, i + 1, finishHandler);
+                } else {
+                    addTimer(30, finishHandler);
+                }
+            }});
+    }
+    
+    protected final static Talker newFinalTalker() {
+        return new Talker() {
+            @Override final protected Panmage getMouthClosed() {
+                return Final.getCoat();
+            }
+            @Override final protected Panmage getMouthOpen() {
+                return Final.getCoatTalk();
+            }};
+    }
+    
     protected final static Runnable newScreenRunner(final Panscreen screen) {
         return new Runnable() {
             @Override public final void run() {
@@ -307,24 +375,39 @@ public class Story {
     private static Panmage root = null, rootTalk = null;
     
     protected final static Panmage getRoot() {
-        return getImage(root, "chr/root/Root", BotsnBoltsGame.og);
+        return (root = getImage(root, "chr/root/Root", BotsnBoltsGame.og));
     }
     
     protected final static Panmage getRootTalk() {
-        return getImage(rootTalk, "chr/root/RootTalk", BotsnBoltsGame.og);
+        return (rootTalk = getImage(rootTalk, "chr/root/RootTalk", BotsnBoltsGame.og));
     }
     
     private static Panmage finalMask = null, finalMaskTalk = null;
     
     protected final static Panmage getFinalMask() {
-        return getImage(finalMask, "boss/final/FinalMask", BotsnBoltsGame.og);
+        return (finalMask = getImage(finalMask, "boss/final/FinalMask", BotsnBoltsGame.og));
     }
     
     protected final static Panmage getFinalMaskTalk() {
-        return getImage(finalMaskTalk, "boss/final/FinalMaskTalk", BotsnBoltsGame.og);
+        return (finalMaskTalk = getImage(finalMaskTalk, "boss/final/FinalMaskTalk", BotsnBoltsGame.og));
+    }
+    
+    private final static Panmage finalUnmask[] = new Panmage[12];
+    
+    protected final static Panmage getFinalUnmask(final int i) {
+        Panmage img = finalUnmask[i];
+        if (img == null) {
+            img = getImage(img, "boss/final/FinalUnmask" + (i + 1), BotsnBoltsGame.og);
+            finalUnmask[i] = img;
+        }
+        return img;
     }
     
     protected final static Panmage getImage(final Panmage img, final String name, final Panple o) {
         return (img == null) ? Pangine.getEngine().createImage(name, o, null, null, BotsnBoltsGame.RES + name + ".png") : img;
+    }
+    
+    protected final static void addTimer(final long duration, final TimerListener listener) {
+        Pangine.getEngine().addTimer(BotsnBoltsGame.tm, duration, listener);
     }
 }

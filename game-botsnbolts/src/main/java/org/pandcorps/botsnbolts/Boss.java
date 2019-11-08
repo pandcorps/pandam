@@ -6224,6 +6224,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static class Final extends AiBoss {
         private static Panmage coat = null;
+        private static Panmage coatTalk = null;
         private final static Panmage[] coatThrown = new Panmage[3];
         private static Panmage wounded = null;
         
@@ -6290,8 +6291,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return false;
         }
         
-        private final static Panmage getCoat() {
+        protected final static Panmage getCoat() {
             return (coat = getImage(coat, "final/FinalCoat", BotsnBoltsGame.og, null, null));
+        }
+        
+        protected final static Panmage getCoatTalk() {
+            return (coatTalk = getImage(coatTalk, "final/FinalCoatTalk", BotsnBoltsGame.og, null, null));
         }
         
         private final static Panmage getCoatThrown(final int i) {
