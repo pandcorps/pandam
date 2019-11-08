@@ -2355,7 +2355,7 @@ public class Player extends Chr implements Warpable {
     
     protected final static class PlayerImages {
         protected final PlayerImagesSubSet basicSet;
-        private final PlayerImagesSubSet shootSet;
+        protected final PlayerImagesSubSet shootSet;
         private final Panmage hurt;
         private final Panmage frozen;
         protected final Panimation defeat;
@@ -2446,11 +2446,11 @@ public class Player extends Chr implements Warpable {
     }
     
     protected final static class PlayerImagesSubSet {
-        private final Panmage stand;
+        protected final Panmage stand;
         protected final Panmage jump;
         private final Panmage[] run;
         private final Panmage start;
-        private final Panmage blink;
+        protected final Panmage blink;
         private final Panmage[] crouch;
         
         protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch) {

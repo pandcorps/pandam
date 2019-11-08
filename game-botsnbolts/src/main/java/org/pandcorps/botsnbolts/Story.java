@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Boss.*;
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -232,13 +233,133 @@ public class Story {
     protected final static class TextScreen2 extends TextScreen {
         @Override
         protected final void loadText() {
-            newLabTextTyper("Loading...");
+            newLabTextTyper("So Dr. Root began a search for Dr. Final's secret base of operations, developing plans and contingency plans to stop him.")
+                .setFinishHandler(newScreenRunner(new VoidBootScreen()));
+        }
+    }
+    
+    protected abstract static class BootScreen extends TextScreen {
+        @Override
+        protected final void loadText() {
+            newBootTextTyper(
+                "Initiating boot sequence\n" +
+                "* Dr. Root robotics " + getName() + " Test\n" +
+                "* Version " + getVersion() + "\n" +
+                "Validating components\n" +
+                "* CPU... OK\n" +
+                "* RAM... OK\n" +
+                "* DISK... OK\n" +
+                "Loading core routines\n" +
+                "* Language... DONE\n" +
+                "* Cognition... DONE\n" +
+                "* Combat... DONE\n" +
+                "Loading memory image from disk\n" +
+                "Activating hardware systems\n" +
+                "* Ambulatory... READY\n" +
+                "* Audio input... READY\n" +
+                "* Visual input... READY\n") // Last line, eyes open after visual input is activated
+                .setFinishHandler(getFinishHandler());
+        }
+        
+        protected abstract String getName();
+        
+        protected abstract String getVersion();
+        
+        protected abstract Runnable getFinishHandler();
+    }
+    
+    protected final static class VoidBootScreen extends BootScreen {
+        @Override
+        protected final String getName() {
+            return "Beta";
+        }
+        
+        @Override
+        protected final String getVersion() {
+            return "0.9.0";
+        }
+        
+        @Override
+        protected final Runnable getFinishHandler() {
+            return newScreenRunner(new LabScreen3());
+        }
+    }
+    
+    protected final static class LabScreen3 extends LabScreen {
+        @Override
+        protected final void loadLab() {
+            final Talker drRoot = newRootTalker().setTalking(false);
+            initActor(drRoot, 160, false);
+            final PlayerImages pi = BotsnBoltsGame.pc == null ? BotsnBoltsGame.voidImages : BotsnBoltsGame.pc.pi;
+            final Panmage playerStand = pi.basicSet.stand, playerBlink = pi.basicSet.blink;
+            final Panctor player = newActor(playerBlink, 224, true);
+            openEyes(player, playerBlink, playerStand, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                drRoot.setTalking(true);
+                final TextTyper typer = newLabTextTyper("\"I know that you're still just a beta test, but there's no time to finish you.  You need to stop Dr. Final.  I'm counting on you, Void!\"");
+                typer.setFinishHandler(new Runnable() { @Override public final void run() {
+                    typer.destroy();
+                    drRoot.setTalking(false);
+                    player.setView(pi.shootSet.stand);
+                    lookAround(player, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                        player.setView(playerStand);
+                    }});
+                }});
+            }});
+        }
+    }
+    
+    protected final static class ShipScreen extends TextScreen {
+        @Override
+        protected final void loadText() {
+            newLabTextTyper(
+                "Proximity alert\n" +
+                "Approaching target\n" +
+                "Decelerating\n" +
+                "Enabling sensors\n" +
+                "Scanning for landing site\n" +
+                "Plotting final course\n" +
+                "Engaging engines\n" +
+                "Correcting current trajectory\n" +
+                "Contacting Root\n" +
+                "* Failed\n" +
+                "Attempting auxiliary communication array\n" +
+                "Contacting Root\n" +
+                "* Success\n" +
+                "Activating payload")
+                .setFinishHandler(newScreenRunner(new NullBootScreen()));
+        }
+    }
+    
+    protected final static class NullBootScreen extends BootScreen {
+        @Override
+        protected final String getName() {
+            return "Alpha";
+        }
+        
+        @Override
+        protected final String getVersion() {
+            return "0.8.0";
+        }
+        
+        @Override
+        protected final Runnable getFinishHandler() {
+            return null;
         }
     }
     
     protected final static TextTyper newLabTextTyper(final CharSequence msg) {
+        return newStoryTyper(msg, 53);
+    }
+    
+    protected final static TextTyper newBootTextTyper(final CharSequence msg) {
+        final TextTyper typer = newStoryTyper(msg, 180);
+        typer.setLinesPerPage(16);
+        return typer;
+    }
+    
+    protected final static TextTyper newStoryTyper(final CharSequence msg, final float y) {
         final TextTyper typer = newTextTyper(msg, 32).registerAdvanceListener();
-        typer.getPosition().set(64, 53);
+        typer.getPosition().set(64, y);
         BotsnBoltsGame.addActor(typer);
         return typer;
     }
@@ -353,6 +474,30 @@ public class Story {
                     addTimer(30, finishHandler);
                 }
             }});
+    }
+    
+    protected final static void openEyes(final Panctor actor, final Panmage closed, final Panmage open, final TimerListener finishHandler) {
+        openEyes(actor, closed, open, 0, finishHandler);
+    }
+    
+    protected final static void openEyes(final Panctor actor, final Panmage curr, final Panmage next, final int index, final TimerListener finishHandler) {
+        final boolean last = index == 9;
+        final long dur = (last || (index == 0)) ? 30 : 6;
+        addTimer(dur, last ? finishHandler : new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+            actor.setView(next);
+            openEyes(actor, next, curr, index + 1, finishHandler);
+        }});
+    }
+    
+    protected final static void lookAround(final Panctor actor, final TimerListener finishHandler) {
+        lookAround(actor, 0, finishHandler);
+    }
+    
+    protected final static void lookAround(final Panctor actor, final int index, final TimerListener finishHandler) {
+        addTimer(24, (index == 4) ? finishHandler : new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+            actor.setMirror(!actor.isMirror());
+            lookAround(actor, index + 1, finishHandler);
+        }});
     }
     
     protected final static Talker newFinalTalker() {
