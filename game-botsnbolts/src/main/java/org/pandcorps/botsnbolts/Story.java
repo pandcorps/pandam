@@ -186,11 +186,7 @@ public class Story {
             drFinal.setVisible(false);
             addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                 RoomFunction.LabBackground.setActive(false);
-                final TextTyper typer = new TextTyper(BotsnBoltsGame.font, "Init\ncall\n...");
-                typer.getPosition().set(176, 150, BotsnBoltsGame.DEPTH_HUD_TEXT);
-                typer.setLinesPerPage(4);
-                typer.setGapY(2);
-                BotsnBoltsGame.addActor(typer);
+                final TextTyper typer = newScreenTyper("Init\ncall\n...");
                 typer.setFinishHandler(new Runnable() { @Override public final void run() {
                     typer.destroy();
                     setScreen(3);
@@ -278,7 +274,7 @@ public class Story {
         
         @Override
         protected final String getVersion() {
-            return "0.9.0";
+            return "0.2.0";
         }
         
         @Override
@@ -588,14 +584,35 @@ public class Story {
                 "-------------\n" +
                 "Percentage:\n" +
                 percentage + "%")
-                .setFinishHandler(newScreenRunner(new RootFamilyScreen()));
+                .setFinishHandler(newScreenRunner(new LabScreenStinger1()));
+        }
+    }
+    
+    protected final static class LabScreenStinger1 extends LabScreen {
+        @Override
+        protected final void loadLab() {
+            final Talker drRoot = newRootTalker().setTalking(false);
+            initActor(drRoot, 96, true);
+            final Talker player = newPlayerTalker().setTalking(false);
+            initActor(player, 128, true);
+            addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                RoomFunction.LabBackground.setActive(false);
+                newScreenTyper("....\n....\n....").setFinishHandler(new Runnable() { @Override public final void run() {
+                    player.setMirror(false);
+                    addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                        drRoot.setMirror(false);
+                        player.setTalking(true).setMirror(true);
+                        newLabTextTyper("\"Dr. Root...  It looks like we're receiving some kind of transmission.\"").setFinishHandler(newScreenRunner(new ShipScreen()));
+                    }});
+                }});
+            }});
         }
     }
     
     protected final static class ShipScreen extends TextScreen {
         @Override
         protected final void loadText() {
-            newLabTextTyper(
+            newBootTextTyper(
                 "Navigation system online\n" +
                 "Proximity alert\n" +
                 "Approaching target\n" +
@@ -607,7 +624,7 @@ public class Story {
                 "Correcting current trajectory\n" +
                 "Contacting Tree\n" +
                 "* Failed\n" +
-                "Attempting auxiliary communication array\n" +
+                "Attempting auxiliary communication unit\n" +
                 "Contacting Tree\n" +
                 "* Success\n" +
                 "Activating payload")
@@ -623,12 +640,31 @@ public class Story {
         
         @Override
         protected final String getVersion() {
-            return "0.8.0";
+            return "0.1.0";
         }
         
         @Override
         protected final Runnable getFinishHandler() {
-            return null;
+            return newScreenRunner(new LabScreenStinger2());
+        }
+    }
+    
+    protected final static class LabScreenStinger2 extends LabScreen {
+        @Override
+        protected final void loadLab() {
+            final Talker drRoot = newRootTalker().setTalking(false);
+            initActor(drRoot, 160, false);
+            final Talker player = newPlayerTalker().setTalking(true);
+            initActor(player, 224, true);
+            RoomFunction.LabBackground.setActive(false);
+            initScreenText(new Pantext(Pantil.vmid(), BotsnBoltsGame.font, "....\n....\n...."));
+            startLabConversation(drRoot, player, new CharSequence[] {
+                "\"This is amazing!  When I first lost contact, I feared the worst.\"",
+                "\"Lost contact with what?\"",
+                "\"But it was simply the primary communication unit that failed.  All other systems are still functioning!  The auxiliary unit is only used for high priority messages.  That's why I haven't heard anything else until now!\"",
+                "\"Dr. Root?  I don't understand.  What are you saying?\"",
+                "\"Void...  I need to tell you something...  Something that I should have told you long ago...  Void...  You were not my first child.\"" },
+                newScreenRunner(new LabScreenStinger1()));
         }
     }
     
@@ -669,6 +705,19 @@ public class Story {
                     continueLabConversation(talker1, talker2, finishHandler, nextIndex, msgs);
                 }
             }});
+    }
+    
+    protected final static TextTyper newScreenTyper(final CharSequence msg) {
+        final TextTyper typer = new TextTyper(BotsnBoltsGame.font, msg);
+        initScreenText(typer);
+        return typer;
+    }
+    
+    protected final static void initScreenText(final Pantext text) {
+        text.getPosition().set(176, 150, BotsnBoltsGame.DEPTH_HUD_TEXT);
+        text.setLinesPerPage(4);
+        text.setGapY(2);
+        BotsnBoltsGame.addActor(text);
     }
     
     protected final static Panctor newActor(final Panmage img, final float x, final boolean mirror) {
@@ -742,6 +791,16 @@ public class Story {
             }
             @Override final protected Panmage getMouthOpen() {
                 return getFinalMaskTalk();
+            }};
+    }
+    
+    protected final static Talker newPlayerTalker() {
+        return new Talker() {
+            @Override final protected Panmage getMouthClosed() {
+                return BotsnBoltsGame.pc.pi.basicSet.stand;
+            }
+            @Override final protected Panmage getMouthOpen() {
+                return BotsnBoltsGame.pc.pi.talk;
             }};
     }
     

@@ -777,6 +777,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] jumpAimImgsMirror = loadPlayerMirrorStrip(pre + "JumpAimMirror.png");
         final Panmage jumpAimDiag = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 0);
         final Panmage jumpAimUp = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 1);
+        final Img imgTalk = Imtil.load(pre + "Talk.png"), imgTalkMirror = playerMirror ? Imtil.load(pre + "TalkMirror.png") : null;
+        final Panmage talk = newPlayerImage(PRE_IMG + "." + name + ".talk", og, imgTalk, imgTalkMirror);
         
         final Panmage basicProjectile = (src == null) ? engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile) : src.basicProjectile;
         final Panimation projectile2 = (src == null) ? newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4) : src.projectile2;
@@ -825,7 +827,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
-        return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
+        return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, animalName, birdName);
     }
     

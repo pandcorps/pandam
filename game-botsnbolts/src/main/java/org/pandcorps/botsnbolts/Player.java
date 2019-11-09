@@ -2364,6 +2364,7 @@ public class Player extends Chr implements Warpable {
         private final Panmage climbTop;
         private final Panmage jumpAimDiag;
         private final Panmage jumpAimUp;
+        protected final Panmage talk;
         protected final Panmage basicProjectile;
         protected final Panimation projectile2;
         protected final Panimation projectile3;
@@ -2396,7 +2397,7 @@ public class Player extends Chr implements Warpable {
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet,
                                final Panmage hurt, final Panmage frozen, final Panimation defeat,
                                final Panmage climb, final Panmage climbShoot, final Panmage climbTop,
-                               final Panmage jumpAimDiag, final Panmage jumpAimUp,
+                               final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panimation burst, final Panframe[] ball, final Panmage warp, final Panimation materialize, final Panimation bomb,
@@ -2414,6 +2415,7 @@ public class Player extends Chr implements Warpable {
             this.climbTop = climbTop;
             this.jumpAimDiag = jumpAimDiag;
             this.jumpAimUp = jumpAimUp;
+            this.talk = talk;
             this.basicProjectile = basicProjectile;
             this.projectile2 = projectile2;
             this.projectile3 = projectile3;
