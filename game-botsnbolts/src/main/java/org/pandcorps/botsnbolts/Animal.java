@@ -49,6 +49,14 @@ public class Animal {
         return img;
     }
     
+    protected final static Panmage getAnimalImage(final PlayerImages pi) {
+        return getImage(pi.animalName);
+    }
+    
+    protected final static Panmage getBirdImage(final PlayerImages pi) {
+        return getBirdImage(pi.birdName);
+    }
+    
     private final static Panmage getImage(final String name) {
         return getImage(name, ANM_O, ANM_MIN, ANM_MAX);
     }
@@ -66,7 +74,7 @@ public class Animal {
         protected Spring(final Player p) {
             super(ANM_OFF_X, ANM_H);
             pi = p.pi;
-            this.img = getImage(pi.animalName);
+            this.img = getAnimalImage(pi);
             setView(img);
             setVisible(false);
             final Panple ppos = p.getPosition();
@@ -164,7 +172,7 @@ public class Animal {
                 destroy();
                 return;
             }
-            final Panmage img = getBirdImage(p.pi.birdName);
+            final Panmage img = getBirdImage(p.pi);
             imgs[0] = img;
             setView(img);
             final Panple pos = getPosition(), ppos = p.getPosition();

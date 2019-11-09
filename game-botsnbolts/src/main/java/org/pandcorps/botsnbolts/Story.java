@@ -23,7 +23,9 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Boss.*;
+import org.pandcorps.botsnbolts.Menu.*;
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -317,10 +319,120 @@ public class Story {
         }
     }
     
+    protected abstract static class CharacterScreen extends Panscreen {
+        private final String title;
+        private final boolean mirror;
+        private final int textLines;
+        private final CharacterDefinition[] defs;
+        
+        protected CharacterScreen(final String title, final boolean mirror, final int textLines, final CharacterDefinition... defs) {
+            this.title = title;
+            this.mirror = mirror;
+            this.textLines = textLines;
+            this.defs = defs;
+        }
+        
+        @Override
+        protected final void load() throws Exception {
+            BotsnBoltsGame.room = Pangame.getGame().getCurrentRoom();
+            Pangine.getEngine().setBgColor(new FinPancolor(96, 96, 96));
+            BotsnBoltsGame.addActor(new CharacterBg());
+            final Pantext text = new Pantext(Pantil.vmid(), BotsnBoltsGame.font, title);
+            text.getPosition().set(192, 159, BotsnBoltsGame.DEPTH_HUD_TEXT);
+            text.centerX();
+            BotsnBoltsGame.addActor(text);
+            addCharacter(0);
+        }
+        
+        private final void addCharacter(final int index) {
+            final int n = defs.length;
+            final int textHeight = textLines * 9;
+            final Panctor actor = new Panctor();
+            final CharacterDefinition def = defs[index];
+            actor.setView(def.getImage());
+            final float num = BotsnBoltsGame.GAME_W * (index + 1);
+            final float den = n + 1;
+            final float x = Math.round(num / den);
+            actor.getPosition().set(x, 58 + textHeight, BotsnBoltsGame.DEPTH_ENEMY);
+            actor.setMirror(mirror);
+            BotsnBoltsGame.addActor(actor);
+            final TextTyper typer = new TextTyper(BotsnBoltsGame.font, def.name)
+            .registerAdvanceListener()
+            .setFinishHandler(new Runnable() { @Override public final void run() {
+                final int nextIndex = index + 1;
+                if (nextIndex < n) {
+                    addCharacter(nextIndex);
+                } else {
+                    Pangine.getEngine().addTimer(actor, 60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                        finish();
+                    }});
+                }
+            }});
+            typer.setLinesPerPage(3);
+            typer.setGapY(1);
+            typer.getPosition().set(x, 48 + textHeight, BotsnBoltsGame.DEPTH_HUD_TEXT);
+            typer.centerX();
+            BotsnBoltsGame.addActor(typer);
+        }
+        
+        protected abstract void finish();
+    }
+    
+    private final static class CharacterBg extends Panctor {
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            LevelSelectGrid.renderBg(renderer, layer, 24);
+            LevelSelectGrid.renderBg(renderer, layer, 168);
+        }
+    }
+    
+    private abstract static class CharacterDefinition {
+        private final String name;
+        
+        private CharacterDefinition(final String name) {
+            this.name = name;
+        }
+        
+        protected abstract Panmage getImage();
+    }
+    
+    protected final static class RootFamilyScreen extends CharacterScreen {
+        protected RootFamilyScreen() {
+            super("The Root Family Tree", false, 1,
+                new CharacterDefinition("Dr. Root") { @Override protected final Panmage getImage() { return getRoot(); }},
+                new CharacterDefinition("Byte") { @Override protected final Panmage getImage() { return Animal.getAnimalImage(BotsnBoltsGame.voidImages); }},
+                new CharacterDefinition("Baud") { @Override protected final Panmage getImage() { return Animal.getBirdImage(BotsnBoltsGame.voidImages); }},
+                new CharacterDefinition("Void") { @Override protected final Panmage getImage() { return BotsnBoltsGame.voidImages.basicSet.stand; }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new InnerLoopScreen());
+        }
+    }
+    
+    protected final static class InnerLoopScreen extends CharacterScreen {
+        protected InnerLoopScreen() {
+            super("The Inner Loop", true, 1,
+                new CharacterDefinition("Cyan Titan") { @Override protected final Panmage getImage() { return CyanTitan.getImage(); }},
+                new CharacterDefinition("Volatile") { @Override protected final Panmage getImage() { return BotsnBoltsGame.volatileImages.basicSet.stand; }},
+                new CharacterDefinition("Dr. Final") { @Override protected final Panmage getImage() { return Final.getCoat(); }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new RootFamilyScreen());
+        }
+    }
+    
     protected final static class ShipScreen extends TextScreen {
         @Override
         protected final void loadText() {
             newLabTextTyper(
+                "Navigation system online\n" +
                 "Proximity alert\n" +
                 "Approaching target\n" +
                 "Decelerating\n" +
@@ -329,10 +441,10 @@ public class Story {
                 "Plotting final course\n" +
                 "Engaging engines\n" +
                 "Correcting current trajectory\n" +
-                "Contacting Root\n" +
+                "Contacting Tree\n" +
                 "* Failed\n" +
                 "Attempting auxiliary communication array\n" +
-                "Contacting Root\n" +
+                "Contacting Tree\n" +
                 "* Success\n" +
                 "Activating payload")
                 .setFinishHandler(newScreenRunner(new NullBootScreen()));

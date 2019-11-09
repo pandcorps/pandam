@@ -200,6 +200,7 @@ public class TextTyper extends Pantext implements StepListener {
         }
         if (finishHandler != null) {
             finishHandler.run();
+            finishHandler = null;
         }
     }
     
@@ -208,7 +209,7 @@ public class TextTyper extends Pantext implements StepListener {
         if (Coltil.isEmpty(lines)) {
             return;
         }
-        final SubSequence seq = lines.get(0);
+        final SubSequence seq = getMaxLine();
         final int old = seq.length();
         try {
             seq.setEnd(seq.getMax());
@@ -216,6 +217,19 @@ public class TextTyper extends Pantext implements StepListener {
         } finally {
             seq.setEnd(old);
         }
+    }
+    
+    private final SubSequence getMaxLine() {
+        SubSequence maxLine = null;
+        int maxLength = -1;
+        for (final SubSequence line : lines) {
+            final int currLength = line.getMax();
+            if (currLength > maxLength) {
+                maxLine = line;
+                maxLength = currLength;
+            }
+        }
+        return maxLine;
     }
     
     @Override

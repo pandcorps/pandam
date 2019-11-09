@@ -4776,6 +4776,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final Panmage getStill() {
+            return getImage();
+        }
+        
+        protected final static Panmage getImage() {
             if (still == null) {
                 still = getImage(null, "cyantitan/CyanTitan", TITAN_O, TITAN_MIN, TITAN_MAX);
             }
