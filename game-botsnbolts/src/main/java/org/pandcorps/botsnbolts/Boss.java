@@ -932,6 +932,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final Panmage getStill() {
+            return getImage();
+        }
+        
+        protected final static Panmage getImage() {
             return (still = getVolcanoImage(still, "volcanobot/VolcanoBot"));
         }
         
@@ -1173,6 +1177,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final Panmage getStill() {
+            return getImage();
+        }
+        
+        protected final static Panmage getImage() {
             return (still = getHailImage(still, "hailbot/HailBot"));
         }
         
@@ -1436,6 +1444,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final Panmage getStill() {
+            return getImage();
+        }
+        
+        protected final static Panmage getImage() {
             return (still = getRockslideImage(still, "rockslidebot/RockslideBot"));
         }
         
@@ -1803,6 +1815,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final Panmage getStill() {
+            return getImage();
+        }
+        
+        protected final static Panmage getImage() {
             return (still = getLightningImage(still, "lightningbot/LightningBot"));
         }
         
@@ -2328,6 +2344,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final Panmage getStill() {
+            return getImage();
+        }
+        
+        protected final static Panmage getImage() {
             return (still = getEarthquakeImage(still, "earthquakebot/EarthquakeBot"));
         }
         
@@ -2699,6 +2719,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final Panmage getStill() {
+            return getImage();
+        }
+        
+        protected final static Panmage getImage() {
             return (still = getCycloneImage(still, "cyclonebot/CycloneBot"));
         }
         
@@ -3671,6 +3695,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final Panmage getStill() {
+            return getImage();
+        }
+        
+        protected final static Panmage getImage() {
             return (still = getDroughtImage(still, "droughtbot/DroughtBot"));
         }
         

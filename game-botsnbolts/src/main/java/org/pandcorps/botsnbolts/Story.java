@@ -341,6 +341,7 @@ public class Story {
             text.getPosition().set(192, 159, BotsnBoltsGame.DEPTH_HUD_TEXT);
             text.centerX();
             BotsnBoltsGame.addActor(text);
+            Player.registerCapture(text);
             addCharacter(0);
         }
         
@@ -350,8 +351,7 @@ public class Story {
             final Panctor actor = new Panctor();
             final CharacterDefinition def = defs[index];
             actor.setView(def.getImage());
-            final float num = BotsnBoltsGame.GAME_W * (index + 1);
-            final float den = n + 1;
+            final float num = BotsnBoltsGame.GAME_W * (index + 0.5f), den = n;
             final float x = Math.round(num / den);
             actor.getPosition().set(x, 58 + textHeight, BotsnBoltsGame.DEPTH_ENEMY);
             actor.setMirror(mirror);
@@ -404,6 +404,44 @@ public class Story {
                 new CharacterDefinition("Byte") { @Override protected final Panmage getImage() { return Animal.getAnimalImage(BotsnBoltsGame.voidImages); }},
                 new CharacterDefinition("Baud") { @Override protected final Panmage getImage() { return Animal.getBirdImage(BotsnBoltsGame.voidImages); }},
                 new CharacterDefinition("Void") { @Override protected final Panmage getImage() { return BotsnBoltsGame.voidImages.basicSet.stand; }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new ArrayScreen1());
+        }
+    }
+    
+    protected abstract static class ArrayScreen extends CharacterScreen {
+        protected ArrayScreen(final CharacterDefinition... defs) {
+            super("The Array", true, 3, defs);
+        }
+    }
+    
+    protected final static class ArrayScreen1 extends ArrayScreen {
+        protected ArrayScreen1() {
+            super(
+                new CharacterDefinition("DFA[0][0]\nVolcano\nBot") { @Override protected final Panmage getImage() { return VolcanoBot.getImage(); }},
+                new CharacterDefinition("DFA[0][1]\nHail\nBot") { @Override protected final Panmage getImage() { return HailBot.getImage(); }},
+                new CharacterDefinition("DFA[0][2]\nRockslide\nBot") { @Override protected final Panmage getImage() { return RockslideBot.getImage(); }},
+                new CharacterDefinition("DFA[0][3]\nLightning\nBot") { @Override protected final Panmage getImage() { return LightningBot.getImage(); }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new ArrayScreen2());
+        }
+    }
+    
+    protected final static class ArrayScreen2 extends ArrayScreen {
+        protected ArrayScreen2() {
+            super(
+                new CharacterDefinition("DFA[0][4]\nEarthquake\nBot") { @Override protected final Panmage getImage() { return EarthquakeBot.getImage(); }},
+                new CharacterDefinition("DFA[0][5]\nCyclone\nBot") { @Override protected final Panmage getImage() { return CycloneBot.getImage(); }},
+                new CharacterDefinition("DFA[0][6]\nFlood\nBot") { @Override protected final Panmage getImage() { return FloodBot.getStart1(); }},
+                new CharacterDefinition("DFA[0][7]\nDrought\nBot") { @Override protected final Panmage getImage() { return DroughtBot.getImage(); }}
             );
         }
         
