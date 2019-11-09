@@ -4293,7 +4293,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             dialogue(newDialogueFinishHandler(),
                 "Hello, Void.  I've been expecting you.",
                 "Who are you?",
-                "My name is Volatile.");
+                "My name is Volatile.  If you want to face Dr. Final, then you'll need to go through me first!");
         }
         
         @Override
@@ -4303,7 +4303,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getDefeatMessages() {
-            return new String[] { "You're more powerful than I thought you'd be.  But you're too late.  Dr. Final has already unleashed his robot army!" };
+            return new String[] { "You're more powerful than I thought you'd be, but you're too late.  Fighting Dr. Final won't help now.  He has already unleashed his array of robots!  I suggest you stop them before people get hurt." };
         }
     }
     
@@ -4321,7 +4321,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         public final void onHealthMaxDisplayReached() {
             dialogue(newDialogueFinishHandler(),
-                "Hello again, Void.");
+                "Hello again, Void.",
+                "Volatile!  I've grown stronger since we last met.",
+                "So have I.  Allow me to demonstrate.  You will never reach Dr. Final.  I will destroy you!");
         }
         
         @Override
@@ -4340,7 +4342,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getDefeatMessages() {
-            return new String[] { "I'm impressed.  But you still won't be able to defeat Dr. Final!" };
+            return new String[] { "I'm impressed.  But you still won't be able to defeat Dr. Final!  Go ahead and try.  It will be the end of you." };
         }
     }
     
@@ -6016,7 +6018,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 @Override public final void run() {
                     startArmor();
                 }},
-                "Do you really think you've defeated me?");
+                "Do you really think you've defeated me?  You fool!  Our battle has only begun.  I don't need any wheeled monstrosity or spinning saucer to destroy you?  I've created armor for myself that matches all of the capabilties of your robotic body!");
         }
         
         private final void startArmor() {

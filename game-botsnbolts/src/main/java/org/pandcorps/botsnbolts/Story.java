@@ -157,8 +157,7 @@ public class Story {
             initActor(drRoot = newRootTalker(), 96, false);
             initActor(drFinal = newFinalMaskTalker(), 128, true);
             stepLab();
-            // from far away... learn from him... too many froms
-            newLabTextTyper("20XX\nDr. Root is the nation's foremost expert in the fields of robotics and artificial intelligence.  Scientists travel from far away to learn from him.  His brightest apprentice is Dr. Finnell.  Dr. Root teaches everything that he knows to Dr. Finnell.")
+            newLabTextTyper("20XX\nDr. Root is the nation's foremost expert in the fields of robotics and artificial intelligence.  Scientists travel from far away to seek his guidance.  His brightest apprentice is Dr. Finnell.  Dr. Root teaches everything that he knows to Dr. Finnell.")
                 .setFinishHandler(newScreenRunner(new TextScreen1()));
         }
         
@@ -568,7 +567,28 @@ public class Story {
         
         @Override
         protected final void finish() {
-            Panscreen.set(new RootFamilyScreen());
+            Panscreen.set(new ProgressScreen());
+        }
+    }
+    
+    protected final static class ProgressScreen extends TextScreen {
+        @Override
+        protected final void loadText() {
+            final Profile prf = BotsnBoltsGame.pc.prf;
+            final int numUpgrades = prf.upgrades.size(), numDisks = prf.disks.size();
+            final float percentage = Math.round((numUpgrades + numDisks) * 1000.0f / 36.0f) / 10.0f;
+            newBootTextTyper(
+                "Status Report\n" +
+                "-------------\n" +
+                "Upgrades:\n" +
+                numUpgrades + " / " + 8 + "\n" +
+                "-------------\n" +
+                "Disks:\n" +
+                numDisks + " / " + 28 + "\n" +
+                "-------------\n" +
+                "Percentage:\n" +
+                percentage + "%")
+                .setFinishHandler(newScreenRunner(new RootFamilyScreen()));
         }
     }
     
