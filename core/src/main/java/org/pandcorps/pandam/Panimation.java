@@ -29,4 +29,8 @@ public interface Panimation extends Panview {
 	public int getDuration();
 	
 	public void destroyAll();
+	
+	public Panmage getImage(final int i);
+	
+	public Panmage getImage();
 }

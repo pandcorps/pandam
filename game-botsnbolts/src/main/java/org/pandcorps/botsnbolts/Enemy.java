@@ -1516,7 +1516,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         private final void setCurrentView() {
-            final int i = animTimer / FRAME_DURATION;
+            changeView(getImage(animTimer / FRAME_DURATION));
+        }
+        
+        protected final static Panmage getImage(final int i) {
             Panmage img = drillImgs[i];
             if (img == null) {
                 img = getImage(null, "DrillEnemy" + (i + 1), BotsnBoltsGame.crawlEnemy.getFrames()[0].getImage());
@@ -1524,7 +1527,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             } else {
                 getDirtShatter(); // Load the image if needed
             }
-            changeView(img);
+            return img;
         }
         
         @Override
@@ -1697,7 +1700,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             setMirror(!isMirror());
         }
         
-        private final static Panmage getImage(final int i) {
+        protected final static Panmage getImage(final int i) {
             Panmage image = images[i];
             if (image != null) {
                 return image;
@@ -1799,7 +1802,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             changeView(getImage(i));
         }
         
-        private final static Panmage getImage(final int i) {
+        protected final static Panmage getImage(final int i) {
             Panmage image = images[i];
             if (image != null) {
                 return image;
@@ -1856,7 +1859,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             return getImage(Pangine.getEngine().isOn(4) ? 0 : 1);
         }
         
-        private final static Panmage getImage(final int i) {
+        protected final static Panmage getImage(final int i) {
             Panmage image = images[i];
             if (image != null) {
                 return image;
@@ -1918,7 +1921,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             // Skip parent logic of clearing v
         }
         
-        private final static Panmage getImage(final int i) {
+        protected final static Panmage getImage(final int i) {
             Panmage image = images[i];
             if (image != null) {
                 return image;
@@ -2024,7 +2027,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             y = newY;
         }
         
-        private final static Panmage getImage(final int i) {
+        protected final static Panmage getImage(final int i) {
             Panmage image = images[i];
             if (image != null) {
                 return image;
@@ -3283,7 +3286,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             return (rockCatch = getRockImage(rockCatch, "RockEnemyCatch"));
         }
         
-        private final static Panmage getRockThrow() {
+        protected final static Panmage getRockThrow() {
             return (rockThrow = getRockImage(rockThrow, "RockEnemyThrow"));
         }
         
@@ -3356,7 +3359,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             changeView(getImage(0));
         }
         
-        private final static Panmage getImage(final int i) {
+        protected final static Panmage getImage(final int i) {
             final Panmage img = imgs[i];
             if (img != null) {
                 return img;
@@ -3455,7 +3458,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             setView(getImage(i));
         }
         
-        private final static Panmage getImage(final int i) {
+        protected final static Panmage getImage(final int i) {
             final Panmage img = imgs[i];
             if (img != null) {
                 return img;
@@ -3538,7 +3541,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             }
         }
         
-        private final static Panmage getStrike() {
+        protected final static Panmage getStrike() {
             return (strike = getElectricityImage(strike, "ElectricityEnemyStrike"));
         }
         
@@ -3577,7 +3580,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             return getSwimImage((c < 3) ? ((int) c) : 1);
         }
         
-        private final static Panmage getSwimImage(final int i) {
+        protected final static Panmage getSwimImage(final int i) {
             Panmage img = imgs[i];
             if (img != null) {
                 return img;
@@ -3591,7 +3594,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     protected final static class JetpackEnemy extends Enemy {
         private final static int DURATION_FRAME = 5;
         private final static int DURATION_ANIM = DURATION_FRAME * 2;
-        private final static Panmage[] flyImgs = new Panmage[2];
+        protected final static Panmage[] flyImgs = new Panmage[2];
         private final static Panmage[] attackImgs = new Panmage[2];
         private int vy = 1;
         private int attackTimer = 0;
@@ -3642,7 +3645,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             return false;
         }
         
-        private final static Panmage getJetpackImage(final Panmage[] imgs, final int i) {
+        protected final static Panmage getJetpackImage(final Panmage[] imgs, final int i) {
             Panmage img = imgs[i];
             if (img != null) {
                 return img;

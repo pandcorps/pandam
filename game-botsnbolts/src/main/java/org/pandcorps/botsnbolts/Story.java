@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Boss.*;
+import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Menu.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.core.*;
@@ -353,7 +354,7 @@ public class Story {
             actor.setView(def.getImage());
             final float num = BotsnBoltsGame.GAME_W * (index + 0.5f), den = n;
             final float x = Math.round(num / den);
-            actor.getPosition().set(x, 58 + textHeight, BotsnBoltsGame.DEPTH_ENEMY);
+            actor.getPosition().set(x + def.x, 58 + textHeight + def.y, BotsnBoltsGame.DEPTH_ENEMY);
             actor.setMirror(mirror);
             BotsnBoltsGame.addActor(actor);
             final TextTyper typer = new TextTyper(BotsnBoltsGame.font, def.name)
@@ -389,9 +390,21 @@ public class Story {
     
     private abstract static class CharacterDefinition {
         private final String name;
+        private int x = 0;
+        private int y = 0;
         
         private CharacterDefinition(final String name) {
             this.name = name;
+        }
+        
+        protected final CharacterDefinition setX(final int x) {
+            this.x = x;
+            return this;
+        }
+        
+        protected final CharacterDefinition setY(final int y) {
+            this.y = y;
+            return this;
         }
         
         protected abstract Panmage getImage();
@@ -404,6 +417,99 @@ public class Story {
                 new CharacterDefinition("Byte") { @Override protected final Panmage getImage() { return Animal.getAnimalImage(BotsnBoltsGame.voidImages); }},
                 new CharacterDefinition("Baud") { @Override protected final Panmage getImage() { return Animal.getBirdImage(BotsnBoltsGame.voidImages); }},
                 new CharacterDefinition("Void") { @Override protected final Panmage getImage() { return BotsnBoltsGame.voidImages.basicSet.stand; }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new DroneScreen1());
+        }
+    }
+    
+    protected abstract static class DroneScreen extends CharacterScreen {
+        protected DroneScreen(final CharacterDefinition... defs) {
+            super("The Drones", true, 2, defs);
+        }
+    }
+    
+    protected final static class DroneScreen1 extends DroneScreen {
+        protected DroneScreen1() {
+            super(
+                new CharacterDefinition("Saucer\nDrone") { @Override protected final Panmage getImage() { return SaucerEnemy.getImage(0); }},
+                new CharacterDefinition("Copter\nDrone") { @Override protected final Panmage getImage() { return BotsnBoltsGame.propEnemy.getImage(1); }},
+                new CharacterDefinition("Spring\nDrone") { @Override protected final Panmage getImage() { return BotsnBoltsGame.springEnemy[1]; }}.setY(2),
+                new CharacterDefinition("Crawl\nDrone") { @Override protected final Panmage getImage() { return BotsnBoltsGame.crawlEnemy.getImage(1); }},
+                new CharacterDefinition("Shield\nDrone") { @Override protected final Panmage getImage() { return BotsnBoltsGame.shieldedEnemy.getImage(); }}.setY(1)
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new DroneScreen2());
+        }
+    }
+    
+    protected final static class DroneScreen2 extends DroneScreen {
+        protected DroneScreen2() {
+            super(
+                new CharacterDefinition("Drill\nDrone") { @Override protected final Panmage getImage() { return DrillEnemy.getImage(0); }},
+                new CharacterDefinition("Walker\nDrone") { @Override protected final Panmage getImage() { return WalkerEnemy.getImage(0); }},
+                new CharacterDefinition("Glider\nDrone") { @Override protected final Panmage getImage() { return GliderEnemy.getImage(2); }}.setX(7).setY(-1),
+                new CharacterDefinition("Sub\nDrone") { @Override protected final Panmage getImage() { return SubEnemy.getImage(1); }},
+                new CharacterDefinition("Ring\nDrone") { @Override protected final Panmage getImage() { return RingEnemy.getImage(6); }}.setX(7).setY(-1)
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new HenchbotScreen1());
+        }
+    }
+    
+    protected abstract static class HenchbotScreen extends CharacterScreen {
+        protected HenchbotScreen(final CharacterDefinition... defs) {
+            super("The Henchbots", true, 2, defs);
+        }
+    }
+    
+    protected final static class HenchbotScreen1 extends HenchbotScreen {
+        protected HenchbotScreen1() {
+            super(
+                new CharacterDefinition("Cyan\nHenchbot") { @Override protected final Panmage getImage() { return BotsnBoltsGame.henchbotEnemy[1]; }},
+                new CharacterDefinition("Electric\nHenchbot") { @Override protected final Panmage getImage() { return ElectricityEnemy.getStrike(); }},
+                new CharacterDefinition("Fire\nHenchbot") { @Override protected final Panmage getImage() { return BotsnBoltsGame.flamethrowerEnemy[0]; }},
+                new CharacterDefinition("Jetpack\nHenchbot") { @Override protected final Panmage getImage() { return JetpackEnemy.getJetpackImage(JetpackEnemy.flyImgs, 0); }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new HenchbotScreen2());
+        }
+    }
+    
+    protected final static class HenchbotScreen2 extends HenchbotScreen {
+        protected HenchbotScreen2() {
+            super(
+                new CharacterDefinition("Shovel\nHenchbot") { @Override protected final Panmage getImage() { return ShovelEnemy.getImage(0); }},
+                new CharacterDefinition("Jackhammer\nHenchbot") { @Override protected final Panmage getImage() { return JackhammerEnemy.getImage(0); }},
+                new CharacterDefinition("Freeze\nHenchbot") { @Override protected final Panmage getImage() { return BotsnBoltsGame.freezeRayEnemy[0]; }},
+                new CharacterDefinition("Quicksand\nHenchbot") { @Override protected final Panmage getImage() { return BotsnBoltsGame.quicksandEnemyAttack; }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new HenchbotScreen3());
+        }
+    }
+    
+    protected final static class HenchbotScreen3 extends HenchbotScreen {
+        protected HenchbotScreen3() {
+            super(
+                new CharacterDefinition("Swimmer\nHenchbot") { @Override protected final Panmage getImage() { return SwimEnemy.getSwimImage(0); }},
+                new CharacterDefinition("Rock\nHenchbot") { @Override protected final Panmage getImage() { return RockEnemy.getRockThrow(); }},
+                new CharacterDefinition("Magenta\nHenchbot") { @Override protected final Panmage getImage() { return BotsnBoltsGame.magentaEnemy[2]; }}
             );
         }
         
