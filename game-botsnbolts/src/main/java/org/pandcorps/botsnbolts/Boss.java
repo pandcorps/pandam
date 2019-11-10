@@ -4342,7 +4342,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getDefeatMessages() {
-            return new String[] { "I'm impressed.  But you still won't be able to defeat Dr. Final!  Go ahead and try.  It will be the end of you." };
+            return new String[] { "I'm impressed.  But you still won't be able to defeat Dr. Final.  Go ahead and try.  It will be the end of you!" };
         }
     }
     
