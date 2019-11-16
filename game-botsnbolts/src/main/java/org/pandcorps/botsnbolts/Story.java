@@ -315,6 +315,27 @@ public class Story {
         }
     }
     
+    protected final static class LabScreenEnding1 extends LabScreen {
+        @Override
+        protected final void loadLab() {
+            final Talker drRoot = newRootTalker().setTalking(false);
+            initActor(drRoot, 96, true);
+            addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                final Player p = new Player(BotsnBoltsGame.pc) { @Override public final void onMaterialized() {
+                    destroy();
+                    final Talker player = newPlayerTalker().setTalking(false);
+                    replaceActor(this, player);
+                    addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                        drRoot.setTalking(true).setMirror(false);
+                        newLabTextTyper("\"Welcome back, Void!  You defeated Dr. Final and forced him to retreat to his base offworld.  Our whole world can breath a sigh of relief.  I'm so proud of you, Void!\"").setFinishHandler(newScreenRunner(new RootFamilyScreen()));
+                    }});
+                }};
+                initActor(p, 128, true);
+                new Warp(p);
+            }});
+        }
+    }
+    
     protected abstract static class CharacterScreen extends Panscreen {
         private final String title;
         private final boolean mirror;
@@ -663,7 +684,9 @@ public class Story {
                 "\"Lost contact with what?\"",
                 "\"But it was simply the primary communication unit that failed.  All other systems are still functioning!  The auxiliary unit is only used for high priority messages.  That's why I haven't heard anything else until now!\"",
                 "\"Dr. Root?  I don't understand.  What are you saying?\"",
-                "\"Void...  I need to tell you something...  Something that I should have told you long ago...  Void...  You were not my first child.\"" },
+                "\"Void...  I need to tell you something...  Something that I should have told you long ago...\"",
+                "\"Dr. Root?\"",
+                "\"Void...  You were not my first child.\"" },
                 newScreenRunner(new LabScreenStinger1()));
         }
     }

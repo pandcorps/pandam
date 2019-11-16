@@ -3976,13 +3976,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return pi.portrait;
         }
         
-        protected final Runnable newDialogueFinishHandler() {
-            return new Runnable() {
-                @Override public final void run() {
-                    activateCharacters();
-                }};
-        }
-        
         protected final Runnable newDialogueFinishExitHandler() {
             return new Runnable() {
                 @Override public final void run() {
@@ -4004,8 +3997,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         public final void onMaterialized() {
             super.onMaterialized();
-            health = HudMeter.MAX_VALUE;
+            final String[] introMsgs = getIntroMessages();
+            if (introMsgs == null) {
+                health = HudMeter.MAX_VALUE;
+            } else {
+                dialogue(new Runnable() { @Override public final void run() {
+                    health = HudMeter.MAX_VALUE;
+                }}, introMsgs);
+            }
             onBossMaterialized();
+        }
+        
+        protected String[] getIntroMessages() {
+            return null;
         }
         
         //@OverrideMe
@@ -4289,11 +4293,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onHealthMaxDisplayReached() {
-            dialogue(newDialogueFinishHandler(),
+        protected final String[] getIntroMessages() {
+            return new String[] {
                 "Hello, Void.  I've been expecting you.",
                 "Who are you?",
-                "My name is Volatile.  If you want to face Dr. Final, then you'll need to go through me first!");
+                "My name is Volatile.  If you want to face Dr. Final, then you'll need to go through me first!"
+            };
         }
         
         @Override
@@ -4319,11 +4324,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onHealthMaxDisplayReached() {
-            dialogue(newDialogueFinishHandler(),
+        protected final String[] getIntroMessages() {
+            return new String[] {
                 "Hello again, Void.",
                 "Volatile!  I've grown stronger since we last met.",
-                "So have I.  Allow me to demonstrate.  You will never reach Dr. Final.  I will destroy you!");
+                "So have I.  Allow me to demonstrate.  You will never reach Dr. Final.  I will destroy you!"
+            };
         }
         
         @Override
