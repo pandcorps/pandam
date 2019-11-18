@@ -618,7 +618,6 @@ public class Menu {
                 }});
             layer.setConstant(true);
             room.addBeneath(layer);
-            room.addActor(new CurrentSelection(grid));
             addCursor(room);
         }
         
@@ -756,7 +755,7 @@ public class Menu {
                     if (!cell.isSelectable()) {
                         continue;
                     }
-                    renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, box);
+                    renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, (cell == currentCell) ? BotsnBoltsGame.pc.pi.highlightBox : box);
                 }
                 renderBg(renderer, layer, y + 8);
             }
@@ -771,7 +770,7 @@ public class Menu {
         }
         
         protected final static void renderBox(final Panderer renderer, final Panlayer layer, final int x, final int y, final int z, final Panmage img, final int w, final int h) {
-            final int x8 = x + 8, y8 = y + 8, x40 = x + (16 * w) + 8, y40 = y + (16 * h) + 8;
+            final int x8 = x + 8, y8 = y + 8, w16 = 16 * w, h16 = 16 * h, x40 = x + w16 + 8, y40 = y + h16 + 8;
             renderer.render(layer, img, x, y, z, 0, 24, 8, 8, 0, false, false);
             renderer.render(layer, img, x40, y, z, 24, 24, 8, 8, 0, false, false);
             renderer.render(layer, img, x, y40, z, 0, 0, 8, 8, 0, false, false);
@@ -786,23 +785,7 @@ public class Menu {
                 renderer.render(layer, img, x, y8 + i16, z, 0, 8, 8, 16, 0, false, false);
                 renderer.render(layer, img, x40, y8 + i16, z, 24, 8, 8, 16, 0, false, false);
             }
-        }
-    }
-    
-    private final static class CurrentSelection extends Panctor {
-        private final LevelSelectGrid grid;
-        
-        private CurrentSelection(final LevelSelectGrid grid) {
-            this.grid = grid;
-        }
-        
-        @Override
-        protected final void renderView(final Panderer renderer) {
-            if (!isGridEnabled()) {
-                return;
-            }
-            final LevelSelectCell cell = grid.currentCell;
-            LevelSelectGrid.renderBox(renderer, getLayer(), cell.x, cell.y, BotsnBoltsGame.DEPTH_FG, BotsnBoltsGame.pc.pi.highlightBox);
+            renderer.render(layer, BotsnBoltsGame.black, x + 8, y + 8, z, 0, 0, w16, h16);
         }
     }
     
