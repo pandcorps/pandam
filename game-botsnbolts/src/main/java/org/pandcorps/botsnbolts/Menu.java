@@ -632,14 +632,14 @@ public class Menu {
         
         private final static void addPortrait(final Panlayer layer, final int x, final int y, final Panmage image, final boolean right) {
             final Panctor portrait = new Panctor();
-            final int off;
+            final int sizeOff = (32 - Math.round(image.getSize().getX())) / 2, off;
             if (right) {
-                off = 0;
+                off = sizeOff;
             } else {
-                off = 31;
+                off = 31 - sizeOff;
                 portrait.setMirror(true);
             }
-            portrait.getPosition().set(x + off, y, BotsnBoltsGame.DEPTH_ENEMY);
+            portrait.getPosition().set(x + off, y + sizeOff, BotsnBoltsGame.DEPTH_ENEMY);
             portrait.setView(image);
             layer.addActor(portrait);
         }
