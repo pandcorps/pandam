@@ -749,13 +749,14 @@ public class Menu {
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             final Panmage box = BotsnBoltsGame.getBox();
+            final boolean gridEnabled = isGridEnabled();
             for (final LevelSelectCell[] row : cells) {
                 int y = 0;
                 for (final LevelSelectCell cell : row) {
                     if (!cell.isSelectable()) {
                         continue;
                     }
-                    renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, (cell == currentCell) ? BotsnBoltsGame.pc.pi.highlightBox : box);
+                    renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, (gridEnabled && (cell == currentCell)) ? BotsnBoltsGame.pc.pi.highlightBox : box);
                 }
                 renderBg(renderer, layer, y + 8);
             }
