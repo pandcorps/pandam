@@ -1353,6 +1353,7 @@ public abstract class RoomLoader {
         protected final StartScreenDefinition startScreen;
         protected final int startLineSize;
         protected final int endLineSize;
+        protected final Boolean portraitMirror;
         
         protected BotLevel(final Segment seg) {
             name1 = seg.getValue(0);
@@ -1381,6 +1382,7 @@ public abstract class RoomLoader {
             startScreen = (startScreenName == null) ? null : StartScreenDefinition.valueOf(startScreenName);
             startLineSize = seg.initInt(11);
             endLineSize = seg.initInt(12);
+            portraitMirror = seg.toBoolean(13);
         }
         
         protected final boolean isAllowed() {
