@@ -626,7 +626,8 @@ public class Menu {
         }
         
         private final static void addPortrait(final Panlayer layer, final int x, final int y, final BotLevel level) {
-            addPortrait(layer, x, y, level.portrait, (x < 176) || ((x == 176) && (y < 112)));
+            final Boolean portraitMirror = level.portraitMirror;
+            addPortrait(layer, x, y, level.portrait, (portraitMirror == null) ? ((x < 176) || ((x == 176) && (y < 112))) : !portraitMirror.booleanValue());
         }
         
         private final static void addPortrait(final Panlayer layer, final int x, final int y, final Panmage image, final boolean right) {
