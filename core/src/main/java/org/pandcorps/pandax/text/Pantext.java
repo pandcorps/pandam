@@ -592,7 +592,7 @@ public class Pantext extends Panctor {
 	
 	public final static List<? extends CharSequence> split(final CharSequence text) {
         if (Chartil.isEmpty(text)) {
-            return Collections.emptyList();
+            return Collections.singletonList(text); // Might be empty StringBuilder that will have content later
         }
         final String[] tokens = PAT_BR.split(text);
         if (tokens.length == 1) {
