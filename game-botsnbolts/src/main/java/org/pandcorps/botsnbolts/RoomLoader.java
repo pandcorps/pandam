@@ -1227,6 +1227,10 @@ public abstract class RoomLoader {
         }
     }
     
+    protected final static BotLevel getFirstLevel() {
+        return null;
+    }
+    
     protected final static BotRoom getStartRoom() {
         final BotRoom room = getRoom(startX, startY);
         if (room == null) {
