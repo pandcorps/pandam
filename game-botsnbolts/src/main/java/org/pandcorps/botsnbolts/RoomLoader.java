@@ -46,6 +46,7 @@ public abstract class RoomLoader {
     private final static Class<?>[] SEGMENT_TYPES = { Segment.class };
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
     protected final static List<BotLevel> levels = new ArrayList<BotLevel>();
+    private static BotLevel firstLevel = null;
     private final static List<Panctor> actors = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     protected final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
@@ -1228,7 +1229,7 @@ public abstract class RoomLoader {
     }
     
     protected final static BotLevel getFirstLevel() {
-        return null;
+        return firstLevel;
     }
     
     protected final static BotRoom getStartRoom() {
@@ -1360,6 +1361,9 @@ public abstract class RoomLoader {
         protected final Boolean portraitMirror;
         
         protected BotLevel(final Segment seg) {
+            if (firstLevel == null) {
+                firstLevel = this;
+            }
             name1 = seg.getValue(0);
             name2 = seg.getValue(1);
             selectX = seg.intValue(2);
