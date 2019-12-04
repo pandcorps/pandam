@@ -1384,13 +1384,13 @@ public abstract class RoomLoader {
                 prerequisites.add(prerequisiteFields.get(i).getValue());
             }
             musicName = seg.getValue(9, fullName);
-            bossClassName = fullName;
             bossDisplayName = Chartil.isEmpty(name2) ? name1 : (Chartil.isEmpty(name1) ? name2 : (name1 + " " + name2));
             final String startScreenName = seg.getValue(10);
             startScreen = (startScreenName == null) ? null : StartScreenDefinition.valueOf(startScreenName);
             startLineSize = seg.initInt(11);
             endLineSize = seg.initInt(12);
             portraitMirror = seg.toBoolean(13);
+            bossClassName = seg.getValue(14, fullName);
         }
         
         protected final boolean isAllowed() {
@@ -1401,6 +1401,10 @@ public abstract class RoomLoader {
                 }
             }
             return true;
+        }
+        
+        protected final boolean isFinished() {
+            return BotsnBoltsGame.pc.prf.disks.contains(bossClassName);
         }
     }
     
