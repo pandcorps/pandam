@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
+import org.pandcorps.botsnbolts.Story.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.img.process.*;
@@ -560,7 +561,7 @@ public class Menu {
     }
     
     protected final static void goLevelSelect() {
-        Panscreen.set(new LevelSelectScreen());
+        Panscreen.set(RoomLoader.getFirstLevel().isFinished() ? new LevelSelectScreen() : new LabScreen1());
     }
     
     protected final static class LevelSelectScreen extends Panscreen {
