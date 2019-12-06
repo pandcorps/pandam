@@ -675,13 +675,25 @@ public class Menu {
     private final static void startLevel(final BotLevel level) {
         Pangine.getEngine().getAudio().stop();
         BotsnBoltsGame.fxMenuClick.startSound();
+        prepareLevel(level);
+        startLevelIntroScreen(level);
+    }
+    
+    protected final static void prepareLevel(final BotLevel level) {
         Boss.dropping = false;
         RoomLoader.levelVariables.clear();
         RoomLoader.startX = level.levelX;
         RoomLoader.startY = level.levelY;
         RoomLoader.levelVersion = level.version;
         RoomLoader.level = level;
+    }
+    
+    protected final static void startLevelIntroScreen(final BotLevel level) {
         Panscreen.set((level.startScreen == null) ? new LevelStartScreen() : level.startScreen.screen);
+    }
+    
+    protected final static void startLevelGameplay() {
+        Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
     }
     
     protected final static class LevelSelectGrid extends Panctor {
@@ -877,7 +889,7 @@ public class Menu {
         private final static void startLevelTimer(final Panctor actor) {
             Pangine.getEngine().addTimer(actor, 300, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
-                    Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
+                    startLevelGameplay();
                 }});
         }
     }
