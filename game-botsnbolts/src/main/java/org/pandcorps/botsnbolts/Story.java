@@ -26,6 +26,7 @@ import org.pandcorps.botsnbolts.Boss.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Menu.*;
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
@@ -302,7 +303,7 @@ public class Story {
                         addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                             final Player p = new Player(BotsnBoltsGame.pc) { @Override protected final void onLanded() {
                                 destroy();
-                                dematerialize(newScreenRunner(new LabScreen1()));
+                                dematerialize(newLevelRunner(RoomLoader.getFirstLevel()));
                             }};
                             replaceActor(player, p);
                             p.startScript(new StillAi(), null);
@@ -880,6 +881,14 @@ public class Story {
         return new Runnable() {
             @Override public final void run() {
                 Panscreen.set(screen);
+            }};
+    }
+    
+    protected final static Runnable newLevelRunner(final BotLevel level) {
+        return new Runnable() {
+            @Override public final void run() {
+                Menu.prepareLevel(level);
+                Menu.startLevelGameplay();
             }};
     }
     
