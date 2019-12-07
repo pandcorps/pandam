@@ -1359,6 +1359,7 @@ public abstract class RoomLoader {
         protected final int startLineSize;
         protected final int endLineSize;
         protected final Boolean portraitMirror;
+        protected final String replayPrerequisite;
         
         protected BotLevel(final Segment seg) {
             if (firstLevel == null) {
@@ -1391,6 +1392,11 @@ public abstract class RoomLoader {
             endLineSize = seg.initInt(12);
             portraitMirror = seg.toBoolean(13);
             bossClassName = seg.getValue(14, fullName);
+            replayPrerequisite = seg.getValue(15);
+        }
+        
+        protected final boolean isSpecialLevel() {
+            return Chartil.isValued(replayPrerequisite);
         }
         
         protected final boolean isAllowed() {
@@ -1401,6 +1407,10 @@ public abstract class RoomLoader {
                 }
             }
             return true;
+        }
+        
+        protected final boolean isReplayable() {
+            return Chartil.isEmpty(replayPrerequisite) || BotsnBoltsGame.pc.prf.disks.contains(replayPrerequisite);
         }
         
         protected final boolean isFinished() {

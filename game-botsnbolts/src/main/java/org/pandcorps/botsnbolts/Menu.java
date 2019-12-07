@@ -591,17 +591,25 @@ public class Menu {
             grid = new LevelSelectGrid();
             layer.addActor(grid);
             Player.registerCapture(grid);
+            BotLevel centerLevel = null;
             for (final BotLevel level : RoomLoader.levels) {
-                if (!level.isAllowed()) {
-                    continue;
+                if (level.isSpecialLevel()) {
+                    if (!level.isAllowed()) {
+                        continue;
+                    } else if (!level.isReplayable()) {
+                        centerLevel = level;
+                        continue;
+                    }
                 }
-                final int x = LEVEL_SELECT_X + (level.selectX * LEVEL_W), y = LEVEL_SELECT_Y + (level.selectY * LEVEL_H), x24 = x + 24;
-                BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
-                BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
-                addPortrait(layer, x + 8, y + 8, level);
-                addLevelButton(room, x, y, level);
+                addLevelButton(room, level.selectX, level.selectY, level);
             }
-            addPortrait(layer, 176, 96, pc.pi.portrait, true);
+            if (centerLevel == null) {
+                final int x = 176, y = 96;
+                addPortrait(layer, x, y, pc.pi.portrait, true);
+                grid.pupils = new Pupils(layer, x, y);
+            } else {
+                addLevelButton(room, 2, 1, centerLevel);
+            }
             final TouchButton quit = addButton(layer, "Quit", roomW - 17, roomH - 17, true, true, null, imgQuit, imgQuit, false, null, false, 16);
             grid.register(quit, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
@@ -645,7 +653,11 @@ public class Menu {
             layer.addActor(portrait);
         }
         
-        private final static void addLevelButton(final Panlayer layer, final int x, final int y, final BotLevel level) {
+        private final static void addLevelButton(final Panlayer layer, final int selectX, final int selectY, final BotLevel level) {
+            final int x = LEVEL_SELECT_X + (selectX * LEVEL_W), y = LEVEL_SELECT_Y + (selectY * LEVEL_H), x24 = x + 24;
+            BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
+            BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
+            addPortrait(layer, x + 8, y + 8, level);
             final Pangine engine = Pangine.getEngine();
             final TouchButton btn = new TouchButton(engine.getInteraction(), layer, "level." + x + "." + y, x, y, BotsnBoltsGame.DEPTH_FG, imgEmpty, null, true);
             engine.registerTouchButton(btn);
@@ -653,7 +665,7 @@ public class Menu {
                 @Override public final void onGridEnd() {
                     startLevel(level);
                 }});
-            final LevelSelectCell cell = grid.cells[level.selectY][level.selectX];
+            final LevelSelectCell cell = grid.cells[selectY][selectX];
             cell.level = level;
             grid.register(btn, new GridStartListener() {
                 @Override public final void onGridStart() {
@@ -696,10 +708,50 @@ public class Menu {
         Panscreen.set(new BotsnBoltsGame.BotsnBoltsScreen());
     }
     
+    protected final static class Pupils extends Panctor {
+        private final float leftX;
+        private final float rightX;
+        private final float y;
+        private float leftOff = 0;
+        private float rightOff = 0;
+        private float yOff = 0;
+        
+        protected Pupils(final Panlayer layer, final float x, final float y) {
+            layer.addActor(this);
+            this.leftX = x + 12;
+            this.rightX = x + 19;
+            this.y = y + 10;
+        }
+        
+        private final void lookAt(final LevelSelectCell cell) {
+            final int i = cell.i - 2, j = cell.j - 1;
+            yOff = j * 2;
+            if (i < 0) {
+                leftOff = (j == 0) ? -4 : -3;
+                rightOff = -1;
+            } else if (i > 0) {
+                leftOff = 1;
+                rightOff = (j == 0) ? 4 : 3;
+            } else {
+                leftOff = 0;
+                rightOff = 0;
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panmage img = BotsnBoltsGame.pupil;
+            renderer.render(layer, img, leftX + leftOff, y + yOff, BotsnBoltsGame.DEPTH_HUD_TEXT);
+            renderer.render(layer, img, rightX + rightOff, y + yOff, BotsnBoltsGame.DEPTH_HUD_TEXT);
+        }
+    }
+    
     protected final static class LevelSelectGrid extends Panctor {
         private static Panmage bg = null;
         private final LevelSelectCell[][] cells = new LevelSelectCell[LEVEL_ROWS][LEVEL_COLUMNS];
         private LevelSelectCell currentCell;
+        private Pupils pupils = null;
         
         {
             for (int j = 0; j < LEVEL_ROWS; j++) {
@@ -748,6 +800,9 @@ public class Menu {
         protected final void setCurrentCell(final LevelSelectCell currentCell) {
             if (this.currentCell != currentCell) {
                 this.currentCell = currentCell;
+                if (pupils != null) {
+                    pupils.lookAt(currentCell);
+                }
                 BotsnBoltsGame.fxMenuHover.startSound();
             }
         }
