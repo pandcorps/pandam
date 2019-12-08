@@ -59,6 +59,7 @@ public class Story {
         protected final TextTyper typer;
         private final Panmage portrait;
         private final boolean portraitLeft;
+        private final boolean pupils;
         private final int xText;
         private final int xPortrait;
         private Runnable finishHandler = null;
@@ -67,6 +68,7 @@ public class Story {
             this.typer = typer;
             this.portrait = portrait;
             this.portraitLeft = portraitLeft;
+            this.pupils = portrait == Boss.getPlayerPortrait();
             if (portraitLeft) {
                 xText = 88;
                 xPortrait = 40;
@@ -102,8 +104,12 @@ public class Story {
             final Panlayer layer = getLayer();
             final Panmage box = BotsnBoltsGame.getBox();
             Menu.LevelSelectGrid.renderBox(renderer, layer, xText, 136, BotsnBoltsGame.DEPTH_HUD, box, 15, 4);
-            Menu.LevelSelectGrid.renderBox(renderer, layer, xPortrait, 168, BotsnBoltsGame.DEPTH_HUD, box, 2, 2);
-            renderer.render(layer, portrait, xPortrait + 8, 176, BotsnBoltsGame.DEPTH_HUD_TEXT, 0, 0, 32, 32, 0, !portraitLeft, false);
+            final int xp = xPortrait + 8, yPortrait = 168, yp = yPortrait + 8;
+            Menu.LevelSelectGrid.renderBox(renderer, layer, xPortrait, yPortrait, BotsnBoltsGame.DEPTH_HUD, box, 2, 2);
+            renderer.render(layer, portrait, xp, yp, BotsnBoltsGame.DEPTH_HUD_TEXT, 0, 0, 32, 32, 0, !portraitLeft, false);
+            if (pupils) {
+                Pupils.renderView(renderer, layer, xp, yp, 0, 0, 0);
+            }
         }
         
         private final void finish() {
