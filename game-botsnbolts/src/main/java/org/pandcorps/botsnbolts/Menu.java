@@ -709,8 +709,7 @@ public class Menu {
     }
     
     protected final static class Pupils extends Panctor {
-        private final float leftX;
-        private final float rightX;
+        private final float x;
         private final float y;
         private float leftOff = 0;
         private float rightOff = 0;
@@ -718,14 +717,13 @@ public class Menu {
         
         protected Pupils(final Panlayer layer, final float x, final float y) {
             layer.addActor(this);
-            this.leftX = x + 12;
-            this.rightX = x + 19;
-            this.y = y + 10;
+            this.x = x;
+            this.y = y;
         }
         
         private final void lookAt(final LevelSelectCell cell) {
             final int i = cell.i - 2, j = cell.j - 1;
-            yOff = j * 2;
+            yOff = (Math.abs(i) > 1) ? j : (j * 2);
             if (i < 0) {
                 leftOff = (j == 0) ? -4 : -3;
                 rightOff = -1;
@@ -741,9 +739,15 @@ public class Menu {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
+            renderView(renderer, layer, x, y, leftOff, rightOff, yOff);
+        }
+        
+        protected final static void renderView(final Panderer renderer, final Panlayer layer, final float x, final float y,
+                                               final float leftOff, final float rightOff, final float yOff) {
             final Panmage img = BotsnBoltsGame.pupil;
-            renderer.render(layer, img, leftX + leftOff, y + yOff, BotsnBoltsGame.DEPTH_HUD_TEXT);
-            renderer.render(layer, img, rightX + rightOff, y + yOff, BotsnBoltsGame.DEPTH_HUD_TEXT);
+            final float yp = y + 10 + yOff;
+            renderer.render(layer, img, x + 12 + leftOff, yp, BotsnBoltsGame.DEPTH_HUD_OVERLAY);
+            renderer.render(layer, img, x + 19 + rightOff, yp, BotsnBoltsGame.DEPTH_HUD_OVERLAY);
         }
     }
     
