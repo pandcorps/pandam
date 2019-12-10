@@ -4267,7 +4267,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onAward(final Player player) {
+        public void onAward(final Player player) {
             onAwardBoss(this, player);
         }
         
@@ -6329,6 +6329,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean isAwardNeeded() {
             return false;
+        }
+        
+        @Override
+        public final void onAward(final Player player) {
+            player.dematerialize(Story.newScreenRunner(new LabScreenEnding1()));
         }
         
         protected final static Panmage getCoat() {
