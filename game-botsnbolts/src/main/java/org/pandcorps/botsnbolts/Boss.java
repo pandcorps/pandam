@@ -228,6 +228,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return true;
     }
     
+    protected String[] getIntroMessages() {
+        return null;
+    }
+    
     @Override
     public final void onHealthMaxDisplayReached() {
         tauntState = TAUNT_FINISHED;
