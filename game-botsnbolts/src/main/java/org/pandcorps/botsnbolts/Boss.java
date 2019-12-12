@@ -219,13 +219,24 @@ public abstract class Boss extends Enemy implements SpecBoss {
         if (tauntState == TAUNT_FINISHED) {
             return false;
         }
-        health = HudMeter.MAX_VALUE;
+        startIntro();
         tauntState = TAUNT_WAITING; // TAUNT_FINISHED will be set when health bar is full
         if (tauntFinishHandler != null) {
             tauntFinishHandler.run();
             tauntFinishHandler = null;
         }
         return true;
+    }
+    
+    private final void startIntro() {
+        final String[] introMessages = getIntroMessages();
+        if (introMessages == null) {
+            health = HudMeter.MAX_VALUE;
+        } else {
+            dialogue(null, new Runnable() { @Override public final void run() {
+                health = HudMeter.MAX_VALUE;
+            }}, introMessages);
+        }
     }
     
     protected String[] getIntroMessages() {
