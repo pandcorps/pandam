@@ -29,6 +29,7 @@ import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.PowerUp.*;
 import org.pandcorps.botsnbolts.Profile.*;
+import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.botsnbolts.Story.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
@@ -229,8 +230,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     private final void startIntro() {
-        final String[] introMessages = getIntroMessages();
-        if (introMessages == null) {
+        final String[] introMessages = isFirstEncounter() ? getIntroMessages() : getRematchMessages();
+        if ((introMessages == null) || !isDuringGameplay()) {
             health = HudMeter.MAX_VALUE;
         } else {
             dialogue(null, new Runnable() { @Override public final void run() {
@@ -239,7 +240,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    private final boolean isFirstEncounter() {
+        final BotLevel level = RoomLoader.level;
+        return (level != null) && getClass().getSimpleName().equals(level.bossClassName);
+    }
+    
     protected String[] getIntroMessages() {
+        return null;
+    }
+    
+    protected String[] getRematchMessages() {
         return null;
     }
     
