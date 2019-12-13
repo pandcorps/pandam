@@ -55,6 +55,16 @@ public class Story {
         return box;
     }
     
+    protected final static DialogueBox portrait(final Panmage portrait, final int x, final int y, final boolean mirror) {
+        final DialogueBox box = new DialogueBox(portrait, x, y, mirror);
+        BotsnBoltsGame.addActor(box);
+        return box;
+    }
+    
+    protected final static boolean isPupilNeeded(final Panmage portrait) {
+        return portrait == Boss.getPlayerPortrait();
+    }
+    
     protected final static class DialogueBox extends Panctor {
         protected final TextTyper typer;
         private final Panmage portrait;
@@ -62,13 +72,14 @@ public class Story {
         private final boolean pupils;
         private final int xText;
         private final int xPortrait;
+        private final int yPortrait;
         private Runnable finishHandler = null;
         
         protected DialogueBox(final TextTyper typer, final Panmage portrait, final boolean portraitLeft) {
             this.typer = typer;
             this.portrait = portrait;
             this.portraitLeft = portraitLeft;
-            this.pupils = portrait == Boss.getPlayerPortrait();
+            this.pupils = isPupilNeeded(portrait);
             if (portraitLeft) {
                 xText = 88;
                 xPortrait = 40;
@@ -76,6 +87,17 @@ public class Story {
                 xText = 40;
                 xPortrait = 296;
             }
+            yPortrait = 168;
+        }
+        
+        private DialogueBox(final Panmage portrait, final int x, final int y, final boolean mirror) {
+            this.portrait = portrait;
+            xPortrait = x;
+            yPortrait = y;
+            portraitLeft = !mirror;
+            pupils = isPupilNeeded(portrait);
+            typer = null;
+            xText = 0;
         }
         
         protected final DialogueBox add() {
@@ -103,8 +125,10 @@ public class Story {
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             final Panmage box = BotsnBoltsGame.getBox();
-            Menu.LevelSelectGrid.renderBox(renderer, layer, xText, 136, BotsnBoltsGame.DEPTH_HUD, box, 15, 4);
-            final int xp = xPortrait + 8, yPortrait = 168, yp = yPortrait + 8;
+            if (typer != null) {
+                Menu.LevelSelectGrid.renderBox(renderer, layer, xText, 136, BotsnBoltsGame.DEPTH_HUD, box, 15, 4);
+            }
+            final int xp = xPortrait + 8, yp = yPortrait + 8;
             Menu.LevelSelectGrid.renderBox(renderer, layer, xPortrait, yPortrait, BotsnBoltsGame.DEPTH_HUD, box, 2, 2);
             final float ps = portrait.getSize().getX(), off = (32.0f - ps) / 2.0f;
             renderer.render(layer, portrait, xp + off, yp + off, BotsnBoltsGame.DEPTH_HUD_TEXT, 0, 0, ps, ps, 0, !portraitLeft, false);
