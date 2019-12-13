@@ -106,7 +106,8 @@ public class Story {
             Menu.LevelSelectGrid.renderBox(renderer, layer, xText, 136, BotsnBoltsGame.DEPTH_HUD, box, 15, 4);
             final int xp = xPortrait + 8, yPortrait = 168, yp = yPortrait + 8;
             Menu.LevelSelectGrid.renderBox(renderer, layer, xPortrait, yPortrait, BotsnBoltsGame.DEPTH_HUD, box, 2, 2);
-            renderer.render(layer, portrait, xp, yp, BotsnBoltsGame.DEPTH_HUD_TEXT, 0, 0, 32, 32, 0, !portraitLeft, false);
+            final float ps = portrait.getSize().getX(), off = (32.0f - ps) / 2.0f;
+            renderer.render(layer, portrait, xp + off, yp + off, BotsnBoltsGame.DEPTH_HUD_TEXT, 0, 0, ps, ps, 0, !portraitLeft, false);
             if (pupils) {
                 Pupils.renderView(renderer, layer, xp, yp, 0, 0, 0);
             }
