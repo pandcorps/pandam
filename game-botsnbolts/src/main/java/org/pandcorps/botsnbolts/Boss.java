@@ -234,7 +234,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         if ((introMessages == null) || !isDuringGameplay()) {
             health = HudMeter.MAX_VALUE;
         } else {
-            dialogue(null, new Runnable() { @Override public final void run() {
+            dialogue(getPortrait(), new Runnable() { @Override public final void run() {
                 health = HudMeter.MAX_VALUE;
             }}, introMessages);
         }
@@ -541,6 +541,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static Panmage getImageChr(final Panmage img, final String name, final Panple o, final Panple min, final Panple max) {
         return getImage(img, "boss.", RES_CHR, name, o, min, max);
+    }
+    
+    protected final Panmage getPortrait() {
+        return RoomLoader.portraits.get(getClass().getSimpleName());
     }
     
     protected abstract Panmage getStill();
@@ -3530,6 +3534,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void taunt() {
             startMorph();
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "There can be no life without water.  I will not rest until the dried, empty husk of all that once lived has crumbled into dust.",
+                "I am a protector of life, and I won't be intimidated by mere words.",
+                "Then let us battle.  Prepare yourself!"
+            };
         }
         
         @Override
