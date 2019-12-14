@@ -2991,6 +2991,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "You poor thing.  You have the weight of the world on your shoulders.  What a burden.  I could help you drown your sorrows.",
+                "I'm putting an end to this.",
+                "Give it your best shot!"
+            };
+        }
+        
+        @Override
         protected float getG() {
             return gWater;
         }
