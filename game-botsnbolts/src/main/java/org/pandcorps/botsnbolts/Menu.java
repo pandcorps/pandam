@@ -919,13 +919,16 @@ public class Menu {
             final int bossY = floorY + 1;
             final Boss boss = RoomLoader.newBoss(16, bossY, level.bossClassName);
             room.addActor(boss);
+            final int textX = 8 * BotsnBoltsGame.DIM;
             boss.tauntFinishHandler = new Runnable() {
                 @Override public final void run() {
                     final TextTyper nameTyper = new TextTyper(BotsnBoltsGame.font, level.bossDisplayName).setTime(8).setTimer(0);
-                    nameTyper.getPosition().set(8 * BotsnBoltsGame.DIM, bossY * BotsnBoltsGame.DIM, BotsnBoltsGame.DEPTH_HUD);
+                    nameTyper.getPosition().set(textX, bossY * BotsnBoltsGame.DIM, BotsnBoltsGame.DEPTH_HUD);
                     nameTyper.centerX();
                     room.addActor(nameTyper);
                 }};
+            final Boolean portraitMirror = level.portraitMirror;
+            Story.portrait(boss.getPortrait(), textX - 24, 96, (portraitMirror != null) && portraitMirror.booleanValue());
             Pangine.getEngine().addTimer(bg, 16, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     startMusic();
