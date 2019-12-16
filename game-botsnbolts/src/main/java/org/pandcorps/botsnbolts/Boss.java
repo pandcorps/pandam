@@ -1375,6 +1375,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "So Dr. Root thinks that a little runt like you can defeat me?",
+                "That's right.",
+                "Pathetic.  I will throw your broken body off the side of this mountain.  I'll destroy you!"
+            };
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_SHOOT) {
                 if (waitTimer == (WAIT_SHOOT - 1)) {
