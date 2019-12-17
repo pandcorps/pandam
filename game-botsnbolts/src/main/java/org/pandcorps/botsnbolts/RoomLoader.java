@@ -46,6 +46,7 @@ public abstract class RoomLoader {
     private final static Class<?>[] SEGMENT_TYPES = { Segment.class };
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
     protected final static List<BotLevel> levels = new ArrayList<BotLevel>();
+    protected final static Map<String, BotLevel> levelMap = new HashMap<String, BotLevel>();
     private static BotLevel firstLevel = null;
     private final static List<Panctor> actors = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
@@ -1395,6 +1396,7 @@ public abstract class RoomLoader {
             bossClassName = seg.getValue(14, fullName);
             replayPrerequisite = seg.getValue(15);
             portraits.put(bossClassName, portrait);
+            levelMap.put(bossDisplayName, this);
         }
         
         protected final boolean isSpecialLevel() {
