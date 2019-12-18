@@ -437,11 +437,13 @@ public class Story {
     
     private abstract static class CharacterDefinition {
         private final String name;
+        private final BotLevel level;
         private int x = 0;
         private int y = 0;
         
         private CharacterDefinition(final String name) {
             this.name = name;
+            level = RoomLoader.levelMap.get(name);
         }
         
         protected final CharacterDefinition setX(final int x) {
@@ -452,6 +454,15 @@ public class Story {
         protected final CharacterDefinition setY(final int y) {
             this.y = y;
             return this;
+        }
+        
+        protected final Panmage getPortrait() {
+            return (level == null) ? null : level.portrait;
+        }
+        
+        protected final boolean isPortraitMirror() {
+            final Boolean portraitMirror = (level == null) ? null : level.portraitMirror;
+            return (portraitMirror == null) || portraitMirror.booleanValue();
         }
         
         protected abstract Panmage getImage();
