@@ -400,8 +400,16 @@ public class Story {
             final CharacterDefinition def = defs[index];
             actor.setView(def.getImage());
             final float num = BotsnBoltsGame.GAME_W * (index + 0.5f), den = n;
-            final float x = Math.round(num / den);
-            actor.getPosition().set(x + def.x, 58 + textHeight + def.y, BotsnBoltsGame.DEPTH_ENEMY);
+            final int x = Math.round(num / den), y = 58 + textHeight;
+            final Panmage portrait = def.getPortrait();
+            final int xOff;
+            if (portrait == null) {
+                xOff = 0;
+            } else {
+                xOff = 32;
+                portrait(portrait, x - xOff - 20, y, def.isPortraitMirror());
+            }
+            actor.getPosition().set(x + def.x + xOff, y + def.y, BotsnBoltsGame.DEPTH_ENEMY);
             actor.setMirror(mirror);
             BotsnBoltsGame.addActor(actor);
             final TextTyper typer = new TextTyper(BotsnBoltsGame.font, def.name)
@@ -418,7 +426,7 @@ public class Story {
             }});
             typer.setLinesPerPage(3);
             typer.setGapY(1);
-            typer.getPosition().set(x, 48 + textHeight, BotsnBoltsGame.DEPTH_HUD_TEXT);
+            typer.getPosition().set(x, y - 10, BotsnBoltsGame.DEPTH_HUD_TEXT);
             typer.centerX();
             BotsnBoltsGame.addActor(typer);
         }
