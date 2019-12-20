@@ -407,7 +407,7 @@ public class Story {
                 xOff = 0;
             } else {
                 xOff = 32;
-                portrait(portrait, x - xOff - 20, y, def.isPortraitMirror());
+                portrait(portrait, x - xOff - 24, y, def.isPortraitMirror());
             }
             actor.getPosition().set(x + def.x + xOff, y + def.y, BotsnBoltsGame.DEPTH_ENEMY);
             actor.setMirror(mirror);
@@ -595,9 +595,7 @@ public class Story {
         protected ArrayScreen1() {
             super(
                 new CharacterDefinition("DFA[0][0]\nVolcano\nBot") { @Override protected final Panmage getImage() { return VolcanoBot.getImage(); }},
-                new CharacterDefinition("DFA[0][1]\nHail\nBot") { @Override protected final Panmage getImage() { return HailBot.getImage(); }},
-                new CharacterDefinition("DFA[0][2]\nRockslide\nBot") { @Override protected final Panmage getImage() { return RockslideBot.getImage(); }},
-                new CharacterDefinition("DFA[0][3]\nLightning\nBot") { @Override protected final Panmage getImage() { return LightningBot.getImage(); }}
+                new CharacterDefinition("DFA[0][1]\nHail\nBot") { @Override protected final Panmage getImage() { return HailBot.getImage(); }}
             );
         }
         
@@ -610,8 +608,34 @@ public class Story {
     protected final static class ArrayScreen2 extends ArrayScreen {
         protected ArrayScreen2() {
             super(
+                new CharacterDefinition("DFA[0][2]\nRockslide\nBot") { @Override protected final Panmage getImage() { return RockslideBot.getImage(); }},
+                new CharacterDefinition("DFA[0][3]\nLightning\nBot") { @Override protected final Panmage getImage() { return LightningBot.getImage(); }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new ArrayScreen3());
+        }
+    }
+    
+    protected final static class ArrayScreen3 extends ArrayScreen {
+        protected ArrayScreen3() {
+            super(
                 new CharacterDefinition("DFA[0][4]\nEarthquake\nBot") { @Override protected final Panmage getImage() { return EarthquakeBot.getImage(); }},
-                new CharacterDefinition("DFA[0][5]\nCyclone\nBot") { @Override protected final Panmage getImage() { return CycloneBot.getImage(); }},
+                new CharacterDefinition("DFA[0][5]\nCyclone\nBot") { @Override protected final Panmage getImage() { return CycloneBot.getImage(); }}
+            );
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new ArrayScreen4());
+        }
+    }
+    
+    protected final static class ArrayScreen4 extends ArrayScreen {
+        protected ArrayScreen4() {
+            super(
                 new CharacterDefinition("DFA[0][6]\nFlood\nBot") { @Override protected final Panmage getImage() { return FloodBot.getStart1(); }},
                 new CharacterDefinition("DFA[0][7]\nDrought\nBot") { @Override protected final Panmage getImage() { return DroughtBot.getImage(); }}
             );
@@ -619,17 +643,41 @@ public class Story {
         
         @Override
         protected final void finish() {
-            Panscreen.set(new InnerLoopScreen());
+            Panscreen.set(new InnerLoopScreen1());
         }
     }
     
-    protected final static class InnerLoopScreen extends CharacterScreen {
-        protected InnerLoopScreen() {
-            super("The Inner Loop", true, 1,
-                new CharacterDefinition("Cyan Titan") { @Override protected final Panmage getImage() { return CyanTitan.getImage(); }},
-                new CharacterDefinition("Volatile") { @Override protected final Panmage getImage() { return BotsnBoltsGame.volatileImages.basicSet.stand; }},
-                new CharacterDefinition("Dr. Final") { @Override protected final Panmage getImage() { return Final.getCoat(); }}
-            );
+    protected abstract static class InnerLoopScreen extends CharacterScreen {
+        protected InnerLoopScreen(final CharacterDefinition... defs) {
+            super("The Inner Loop", true, 1, defs);
+        }
+    }
+    
+    protected final static class InnerLoopScreen1 extends InnerLoopScreen {
+        protected InnerLoopScreen1() {
+            super(new CharacterDefinition("Cyan Titan") { @Override protected final Panmage getImage() { return CyanTitan.getImage(); }});
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new InnerLoopScreen2());
+        }
+    }
+    
+    protected final static class InnerLoopScreen2 extends InnerLoopScreen {
+        protected InnerLoopScreen2() {
+            super(new CharacterDefinition("Volatile") { @Override protected final Panmage getImage() { return BotsnBoltsGame.volatileImages.basicSet.stand; }});
+        }
+        
+        @Override
+        protected final void finish() {
+            Panscreen.set(new InnerLoopScreen3());
+        }
+    }
+    
+    protected final static class InnerLoopScreen3 extends InnerLoopScreen {
+        protected InnerLoopScreen3() {
+            super(new CharacterDefinition("Dr. Final") { @Override protected final Panmage getImage() { return Final.getCoat(); }});
         }
         
         @Override
