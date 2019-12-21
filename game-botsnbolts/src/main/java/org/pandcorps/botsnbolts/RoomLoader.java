@@ -77,7 +77,6 @@ public abstract class RoomLoader {
     private static int waterWidth = -1;
     protected static Pantexture waterTexture = null;
     protected static boolean changing = false;
-    protected final static Map<String, Panmage> portraits = new HashMap<String, Panmage>();
     
     private static BotRoom room = null;
     
@@ -1234,6 +1233,10 @@ public abstract class RoomLoader {
         return firstLevel;
     }
     
+    protected final static Panmage getPortrait(final BotLevel level) {
+        return (level == null) ? null : level.portrait;
+    }
+    
     protected final static BotRoom getStartRoom() {
         final BotRoom room = getRoom(startX, startY);
         if (room == null) {
@@ -1395,8 +1398,7 @@ public abstract class RoomLoader {
             portraitMirror = seg.toBoolean(13);
             bossClassName = seg.getValue(14, fullName);
             replayPrerequisite = seg.getValue(15);
-            portraits.put(bossClassName, portrait);
-            levelMap.put(bossDisplayName, this);
+            levelMap.put(bossClassName, this);
         }
         
         protected final boolean isSpecialLevel() {

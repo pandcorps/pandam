@@ -451,7 +451,17 @@ public class Story {
         
         private CharacterDefinition(final String name) {
             this.name = name;
-            level = RoomLoader.levelMap.get(name);
+            final StringBuilder b = new StringBuilder();
+            final int size = name.length();
+            for (int i = 0; i < size; i++) {
+                final char c = name.charAt(i);
+                if (c == ']') {
+                    Chartil.clear(b);
+                } else if (!Character.isWhitespace(c)) {
+                    b.append(c);
+                }
+            }
+            level = RoomLoader.levelMap.get(b.toString());
         }
         
         protected final CharacterDefinition setX(final int x) {
@@ -465,7 +475,7 @@ public class Story {
         }
         
         protected final Panmage getPortrait() {
-            return (level == null) ? null : level.portrait;
+            return RoomLoader.getPortrait(level);
         }
         
         protected final boolean isPortraitMirror() {

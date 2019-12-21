@@ -544,7 +544,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final Panmage getPortrait() {
-        return RoomLoader.portraits.get(getClass().getSimpleName());
+        return RoomLoader.getPortrait(RoomLoader.levelMap.get(getClass().getSimpleName()));
     }
     
     protected abstract Panmage getStill();
