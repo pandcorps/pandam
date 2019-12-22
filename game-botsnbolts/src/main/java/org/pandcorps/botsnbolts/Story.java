@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.Boss.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Menu.*;
@@ -61,8 +63,10 @@ public class Story {
         return box;
     }
     
+    protected final static Set<Panmage> pupilNeededSet = new HashSet<Panmage>();
+    
     protected final static boolean isPupilNeeded(final Panmage portrait) {
-        return portrait == Boss.getPlayerPortrait();
+        return pupilNeededSet.contains(portrait);
     }
     
     protected final static class DialogueBox extends Panctor {
@@ -172,11 +176,12 @@ public class Story {
     protected abstract static class TextScreen extends Panscreen {
         @Override
         protected final void load() {
+            BotsnBoltsGame.room = Pangame.getGame().getCurrentRoom();
             Pangine.getEngine().setBgColor(Pancolor.BLACK);
-            loadText();
+            Player.registerCapture(loadText());
         }
         
-        protected abstract void loadText();
+        protected abstract TextTyper loadText();
     }
     
     protected final static class LabScreen1 extends LabScreen {
@@ -202,8 +207,8 @@ public class Story {
     
     protected final static class TextScreen1 extends TextScreen {
         @Override
-        protected final void loadText() {
-            newLabTextTyper("But one day...").setFinishHandler(newScreenRunner(new LabScreen2()));
+        protected final TextTyper loadText() {
+            return newLabTextTyper("But one day...").setFinishHandler(newScreenRunner(new LabScreen2()));
         }
     }
     
@@ -261,16 +266,16 @@ public class Story {
     
     protected final static class TextScreen2 extends TextScreen {
         @Override
-        protected final void loadText() {
-            newLabTextTyper("So Dr. Root began a search for Dr. Final's secret base of operations, developing plans and contingency plans to stop him.")
+        protected final TextTyper loadText() {
+            return newLabTextTyper("So Dr. Root began a search for Dr. Final's secret base of operations, developing plans and contingency plans to stop him.")
                 .setFinishHandler(newScreenRunner(new VoidBootScreen()));
         }
     }
     
     protected abstract static class BootScreen extends TextScreen {
         @Override
-        protected final void loadText() {
-            newBootTextTyper(
+        protected final TextTyper loadText() {
+            return newBootTextTyper(
                 "Initiating boot sequence\n" +
                 "* Dr. Root robotics " + getName() + " Test\n" +
                 "* Version " + getVersion() + "\n" +
@@ -367,6 +372,11 @@ public class Story {
         }
     }
     
+    private final static void enableCharacterBg() {
+        Pangine.getEngine().setBgColor(new FinPancolor(96, 96, 96));
+        BotsnBoltsGame.addActor(new CharacterBg());
+    }
+    
     protected abstract static class CharacterScreen extends Panscreen {
         private final String title;
         private final boolean mirror;
@@ -383,8 +393,7 @@ public class Story {
         @Override
         protected final void load() throws Exception {
             BotsnBoltsGame.room = Pangame.getGame().getCurrentRoom();
-            Pangine.getEngine().setBgColor(new FinPancolor(96, 96, 96));
-            BotsnBoltsGame.addActor(new CharacterBg());
+            enableCharacterBg();
             final Pantext text = new Pantext(Pantil.vmid(), BotsnBoltsGame.font, title);
             text.getPosition().set(192, 159, BotsnBoltsGame.DEPTH_HUD_TEXT);
             text.centerX();
@@ -406,7 +415,7 @@ public class Story {
             if (portrait == null) {
                 xOff = 0;
             } else {
-                xOff = 32;
+                xOff = (n == 1) ? 96 : 32;
                 portrait(portrait, x - xOff - 24, y, def.isPortraitMirror());
             }
             actor.getPosition().set(x + def.x + xOff, y + def.y, BotsnBoltsGame.DEPTH_ENEMY);
@@ -450,18 +459,25 @@ public class Story {
         private int y = 0;
         
         private CharacterDefinition(final String name) {
+            this(name, null);
+        }
+        
+        private CharacterDefinition(final String name, String levelBossName) {
             this.name = name;
-            final StringBuilder b = new StringBuilder();
-            final int size = name.length();
-            for (int i = 0; i < size; i++) {
-                final char c = name.charAt(i);
-                if (c == ']') {
-                    Chartil.clear(b);
-                } else if (!Character.isWhitespace(c)) {
-                    b.append(c);
+            if (levelBossName == null) {
+                final StringBuilder b = new StringBuilder();
+                final int size = name.length();
+                for (int i = 0; i < size; i++) {
+                    final char c = name.charAt(i);
+                    if (c == ']') {
+                        Chartil.clear(b);
+                    } else if (!Character.isWhitespace(c)) {
+                        b.append(c);
+                    }
                 }
+                levelBossName = b.toString();
             }
-            level = RoomLoader.levelMap.get(b.toString());
+            level = RoomLoader.levelMap.get(levelBossName);
         }
         
         protected final CharacterDefinition setX(final int x) {
@@ -676,7 +692,7 @@ public class Story {
     
     protected final static class InnerLoopScreen2 extends InnerLoopScreen {
         protected InnerLoopScreen2() {
-            super(new CharacterDefinition("Volatile") { @Override protected final Panmage getImage() { return BotsnBoltsGame.volatileImages.basicSet.stand; }});
+            super(new CharacterDefinition("Volatile", "Volatile2") { @Override protected final Panmage getImage() { return BotsnBoltsGame.volatileImages.basicSet.stand; }});
         }
         
         @Override
@@ -698,11 +714,12 @@ public class Story {
     
     protected final static class ProgressScreen extends TextScreen {
         @Override
-        protected final void loadText() {
+        protected final TextTyper loadText() {
+            enableCharacterBg();
             final Profile prf = BotsnBoltsGame.pc.prf;
             final int numUpgrades = prf.upgrades.size(), numDisks = prf.disks.size();
             final float percentage = Math.round((numUpgrades + numDisks) * 1000.0f / 36.0f) / 10.0f;
-            newBootTextTyper(
+            final TextTyper typer = newStoryTyper(
                 "Status Report\n" +
                 "-------------\n" +
                 "Upgrades:\n" +
@@ -712,8 +729,10 @@ public class Story {
                 numDisks + " / " + 28 + "\n" +
                 "-------------\n" +
                 "Percentage:\n" +
-                percentage + "%")
+                percentage + "%", 153)
                 .setFinishHandler(newScreenRunner(new LabScreenStinger1()));
+            typer.setLinesPerPage(16);
+            return typer;
         }
     }
     
@@ -740,8 +759,8 @@ public class Story {
     
     protected final static class ShipScreen extends TextScreen {
         @Override
-        protected final void loadText() {
-            newBootTextTyper(
+        protected final TextTyper loadText() {
+            return newBootTextTyper(
                 "Navigation system online\n" +
                 "Proximity alert\n" +
                 "Approaching target\n" +
