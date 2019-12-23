@@ -129,6 +129,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static PlayerImages voidImages = null;
     protected static PlayerImages volatileImages = null;
     protected static PlayerImages finalImages = null;
+    protected final static Map<String, PlayerImages> playerImages = new HashMap<String, PlayerImages>();
     protected static Panframe[] doorTunnel = null;
     protected static Panframe[] doorTunnelOverlay = null;
     protected static Panframe[] doorTunnelSmall = null;
@@ -596,12 +597,12 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadPlayer() {
         final String dir = "betabot", name = "Void";
         openPlayerImages(dir, name);
-        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null);
+        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true);
         final short s0 = 0, s192 = 192;
         filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), new FinPancolor(s0, s192, s192));
         playerMirror = false;
-        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null);
-        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages);
+        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true);
+        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false);
         closePlayerImages();
         pc = new PlayerContext(new Profile(), voidImages);
     }
@@ -746,7 +747,7 @@ public final class BotsnBoltsGame extends BaseGame {
         return RES + "chr/" + dir + "/" + name;
     }
     
-    private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName, final PlayerImages src) {
+    private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName, final PlayerImages src, final boolean pupilNeeded) {
         final String pre = getCharacterPrefix(dir, name);
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
@@ -826,12 +827,19 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage diskBox = (src == null) ? engine.createImage(pre + "DiskBox", CENTER_16, minCube, maxCube, playerDiskBox) : src.diskBox;
         final Panmage highlightBox = (src == null) ? engine.createImage(pre + "HighlightBox", playerHighlightBox) : src.highlightBox;
         
-        final Panmage portrait = engine.createImage(pre + "Portrait", pre + "Portrait.png");
+        final String portraitLoc = pre + "Portrait.png";
+        final Panmage portrait = engine.createImage(pre + "Portrait", portraitLoc);
+        if (pupilNeeded) {
+            Story.pupilNeededSet.add(portrait);
+        }
         
         final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
-        return new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
+        final PlayerImages pi;
+        pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
             burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, animalName, birdName);
+        playerImages.put(portraitLoc, pi);
+        return pi;
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
