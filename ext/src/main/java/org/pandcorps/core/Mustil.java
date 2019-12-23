@@ -249,7 +249,7 @@ public class Mustil {
     }
 	
 	private final static int[] generateWhiteKeys() {
-	    final int numScales = 8, numNotes = 7;
+	    final int numScales = 9, numNotes = 7;
 	    final int[] whiteKeys = new int[numScales * numNotes];
 	    for (int i = 0; i < numScales; i++) {
 	        final int baseIndex = i * numNotes;
@@ -582,6 +582,10 @@ public class Mustil {
 	
 	public final static void setPitch(final Track track, final long tick, final int channel, final int amt) throws Exception {
 		addShort(track, ShortMessage.PITCH_BEND, tick, channel, 0, amt); // < 64 to lower, > 65 to raise
+	}
+	
+	public final static void setPitch(final long tick, final int amt) throws Exception {
+	    setPitch(track, tick, channel, amt);
 	}
 	
 	/*

@@ -100,7 +100,7 @@ public final class ChampionsOfSlamGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         engine.setTitle(TITLE);
         engine.setEntityMapEnabled(false);
-        Pansound.setReplayThreshold(3);
+        Pansound.setDefaultReplayThreshold(3);
         Imtil.onlyResources = true;
         if (loaders != null) {
             loaders.add(new Runnable() {
