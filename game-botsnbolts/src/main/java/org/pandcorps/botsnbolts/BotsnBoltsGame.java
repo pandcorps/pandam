@@ -196,8 +196,14 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicLevelSelect = null;
     protected static Pansound musicLevelStart = null;
+    protected static Pansound musicBoss = null;
     protected static Pansound fxMenuHover = null;
     protected static Pansound fxMenuClick = null;
+    protected static Pansound fxAttack = null;
+    protected static Pansound fxImpact = null;
+    protected static Pansound fxRicochet = null;
+    protected static Pansound fxJump = null;
+    protected static Pansound fxBossDoor = null;
     
     protected static PlayerContext pc = null;
     private static final float defPlayerStartX = 48;
@@ -1098,8 +1104,14 @@ public final class BotsnBoltsGame extends BaseGame {
         audio.ensureCapacity(6);
         musicLevelSelect = audio.createMusic(RES + "music/LevelSelect.mid");
         musicLevelStart = audio.createTransition(RES + "music/LevelStart.mid");
+        musicBoss = audio.createMusic(RES + "music/Boss.mid");
         fxMenuHover = audio.createSound(RES + "sound/MenuHover.mid");
         fxMenuClick = audio.createSound(RES + "sound/MenuClick.mid");
+        fxAttack = audio.createSound(RES + "sound/Attack.mid");
+        fxImpact = audio.createSound(RES + "sound/Impact.mid").setReplayThreshold(6);
+        fxRicochet = audio.createSound(RES + "sound/Ricochet.mid");
+        fxJump = audio.createSound(RES + "sound/Jump.mid");
+        fxBossDoor = audio.createSound(RES + "sound/BossDoor.mid");
     }
     
     private final static class TitleScreen extends Panscreen {
