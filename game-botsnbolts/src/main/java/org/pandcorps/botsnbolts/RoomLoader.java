@@ -1381,7 +1381,13 @@ public abstract class RoomLoader {
             if (Chartil.isEmpty(portraitLoc)) {
                 portraitLoc = "boss/" + name1.toLowerCase() + name2.toLowerCase() + "/" + fullName + "Portrait";
             }
-            portrait = Pangine.getEngine().createImage(portraitLoc, BotsnBoltsGame.RES + portraitLoc + ".png");
+            final String portraitPath = BotsnBoltsGame.RES + portraitLoc + ".png";
+            final PlayerImages pi = BotsnBoltsGame.playerImages.get(portraitPath);
+            if (pi == null) {
+                portrait = Pangine.getEngine().createImage(portraitLoc, portraitPath);
+            } else {
+                portrait = pi.portrait;
+            }
             version = seg.getInt(7, 0);
             final List<Field> prerequisiteFields = seg.getRepetitions(8);
             final int prerequisitesSize = Coltil.size(prerequisiteFields);
@@ -1399,6 +1405,10 @@ public abstract class RoomLoader {
             bossClassName = seg.getValue(14, fullName);
             replayPrerequisite = seg.getValue(15);
             levelMap.put(bossClassName, this);
+            final boolean pupilNeeded = seg.getBoolean(16, false);
+            if (pupilNeeded) {
+                Story.pupilNeededSet.add(portrait);
+            }
         }
         
         protected final boolean isSpecialLevel() {

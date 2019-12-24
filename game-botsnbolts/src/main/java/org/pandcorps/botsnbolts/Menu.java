@@ -657,7 +657,11 @@ public class Menu {
             final int x = LEVEL_SELECT_X + (selectX * LEVEL_W), y = LEVEL_SELECT_Y + (selectY * LEVEL_H), x24 = x + 24;
             BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
             BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
-            addPortrait(layer, x + 8, y + 8, level);
+            final int portraitX = x + 8, portraitY = y + 8;
+            addPortrait(layer, portraitX, portraitY, level);
+            if (Story.isPupilNeeded(level.portrait)) {
+                new Pupils(layer, portraitX, portraitY);
+            }
             final Pangine engine = Pangine.getEngine();
             final TouchButton btn = new TouchButton(engine.getInteraction(), layer, "level." + x + "." + y, x, y, BotsnBoltsGame.DEPTH_FG, imgEmpty, null, true);
             engine.registerTouchButton(btn);
