@@ -203,6 +203,9 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Pansound fxImpact = null;
     protected static Pansound fxRicochet = null;
     protected static Pansound fxJump = null;
+    protected static Pansound fxHurt = null;
+    protected static Pansound fxDefeat = null;
+    protected static Pansound fxHealth = null;
     protected static Pansound fxBossDoor = null;
     
     protected static PlayerContext pc = null;
@@ -1111,6 +1114,9 @@ public final class BotsnBoltsGame extends BaseGame {
         fxImpact = audio.createSound(RES + "sound/Impact.mid").setReplayThreshold(6);
         fxRicochet = audio.createSound(RES + "sound/Ricochet.mid");
         fxJump = audio.createSound(RES + "sound/Jump.mid");
+        fxHurt = audio.createSound(RES + "sound/Hurt.mid");
+        fxDefeat = audio.createSound(RES + "sound/Defeat.mid");
+        fxHealth = audio.createSound(RES + "sound/Health.mid");
         fxBossDoor = audio.createSound(RES + "sound/BossDoor.mid");
     }
     
