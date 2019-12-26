@@ -111,6 +111,7 @@ public class Animal {
         private final void startSpring() {
             changeView(getActive());
             timer = 15;
+            BotsnBoltsGame.fxJump.startSound();
         }
 
         @Override
@@ -216,6 +217,7 @@ public class Animal {
             mode = MODE_CARRY;
             getPosition().set(dst.getX(), dst.getY());
             p.startRescued(this);
+            BotsnBoltsGame.fxJump.startSound();
         }
         
         protected final void onCarrying() {
