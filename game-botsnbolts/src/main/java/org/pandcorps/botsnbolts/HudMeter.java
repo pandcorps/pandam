@@ -52,6 +52,7 @@ public abstract class HudMeter extends Panctor {
             if (displayValue == MAX_VALUE) {
                 onMaxDisplayReached();
             }
+            BotsnBoltsGame.fxHealth.startSound();
         }
         final int value = displayValue;
         final int end = MAX_VALUE - 1;
