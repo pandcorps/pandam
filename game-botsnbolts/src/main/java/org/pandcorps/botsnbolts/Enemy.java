@@ -139,6 +139,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         final int oldHealth = health, oldPower = prj.power;
         health -= oldPower;
         enemy.setHealth(health);
+        BotsnBoltsGame.fxImpact.startSound();
         if (health <= 0) {
             if (enemy.isBurstNeeded()) {
                 prj.burst(enemy);
