@@ -55,6 +55,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         this.pi = pi;
         this.shootMode = shootMode;
         init(this, this, src, pi, shootMode, ref, vx, vy, power);
+        BotsnBoltsGame.fxAttack.startSound();
     }
     
     protected final static void init(final SpecProjectile sp, final Pandy prj, final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
@@ -122,6 +123,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     
     protected final void bounce() {
         new Bounce(this);
+        BotsnBoltsGame.fxRicochet.startSound();
         destroy();
     }
 
