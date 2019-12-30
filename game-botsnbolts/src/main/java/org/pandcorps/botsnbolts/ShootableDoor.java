@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
@@ -258,6 +259,10 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         throw new IllegalArgumentException("Unrecognized door type: " + doorType);
     }
     
+    protected final static boolean isBossEntranceRoom() {
+        return Coltil.size(RoomLoader.bossDoors) > 1;
+    }
+    
     private final static Player getPlayer() {
         return PlayerContext.getPlayer(BotsnBoltsGame.pc);
     }
@@ -475,6 +480,9 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
         
         protected final void open() {
+            if (isBossEntranceRoom()) {
+                Pangine.getEngine().getAudio().stopMusic();
+            }
             start(1);
             setBehavior(Tile.BEHAVIOR_OPEN);
         }
@@ -509,10 +517,13 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 if (base < 0) {
                     base = 0;
                     vel = 0;
+                    BotsnBoltsGame.musicBoss.startMusic();
                 } else if (base > h) {
                     base = h;
                     vel = 0;
                     getPlayer().onBossDoorOpened(this);
+                } else {
+                    BotsnBoltsGame.fxBossDoor.startSound();
                 }
             }
             for (int j = base; j < h; j++) {
