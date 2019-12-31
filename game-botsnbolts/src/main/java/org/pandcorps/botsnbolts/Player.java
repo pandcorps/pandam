@@ -373,6 +373,7 @@ public class Player extends Chr implements Warpable {
             v -= 2;
         }
         lastJump = getClock();
+        BotsnBoltsGame.fxJump.startSound();
     }
     
     protected final void releaseJump() {
@@ -554,6 +555,7 @@ public class Player extends Chr implements Warpable {
             return false;
         }
         hurtForce(damage);
+        BotsnBoltsGame.fxHurt.startSound();
         return true;
     }
     
@@ -1520,6 +1522,7 @@ public class Player extends Chr implements Warpable {
                     safeMirror = startMirror;
                 }
                 availableRescues--;
+                BotsnBoltsGame.fxHurt.startSound();
                 startRescue();
                 return true;
             }
@@ -2097,6 +2100,7 @@ public class Player extends Chr implements Warpable {
                 return; // Don't let the Player end a grapple so soon that another grapple isn't allowed
             }
             player.endGrapple();
+            BotsnBoltsGame.fxJump.startSound();
         }
         
         @Override
