@@ -169,6 +169,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             tm.setForeground(doorX, y + j, opening[base + j]);
         }
         addOpenTimer(1);
+        BotsnBoltsGame.fxDoor.startSound();
     }
     
     private final void addOpenTimer(final int nextIndex) {
@@ -218,11 +219,14 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             }
             temperature += (5 * projectilePower);
             if (temperature >= def.nextTemperature
-                    && (def.requiredShootMode == null || def.requiredShootMode == projectile.shootMode)
-                    && (def.requiredPower == null || def.requiredPower.intValue() <= projectilePower)) {
-                if (def.next == null) {
+                    && (def.requiredShootMode == null || def.requiredShootMode == projectile.shootMode)) {
+                if ((def.requiredPower != null && def.requiredPower.intValue() > projectilePower)) {
+                    projectile.bounce();
+                    return;
+                } else if (def.next == null) {
                     openDoor();
                 } else {
+                    BotsnBoltsGame.fxImpact.startSound();
                     setDefinition(def.next);
                 }
             } else {
@@ -331,6 +335,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         protected final void openDoor() {
             setBehavior(Tile.BEHAVIOR_OPEN);
             openIndex = 2;
+            BotsnBoltsGame.fxDoor.startSound();
         }
         
         @Override
