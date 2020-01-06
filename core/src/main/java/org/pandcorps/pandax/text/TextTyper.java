@@ -38,6 +38,7 @@ public class TextTyper extends Pantext implements StepListener {
     private boolean loop = false;
     private Runnable finishHandler = null;
     private int timer = time;
+    private Pansound sound = null;
     private boolean finishTextNeeded = false;
     private boolean newPageNeeded = false;
     private int lineIndex = 0;
@@ -88,6 +89,11 @@ public class TextTyper extends Pantext implements StepListener {
     
     public final TextTyper setTimer(final int timer) {
         this.timer = timer;
+        return this;
+    }
+    
+    public final TextTyper setSound(final Pansound sound) {
+        this.sound = sound;
         return this;
     }
     
@@ -259,7 +265,9 @@ public class TextTyper extends Pantext implements StepListener {
         }
         timer = time;
         SubSequence seq = lines.get(lineIndex);
-        if (!seq.increment()) {
+        if (seq.increment()) {
+            Pansound.startSound(sound);
+        } else {
             if (isAnotherLineAvailable()) {
                 incrementLine();
                 return;
