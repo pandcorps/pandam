@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -49,7 +49,7 @@ import org.pandcorps.pandax.visual.*;
 public final class BotsnBoltsGame extends BaseGame {
     protected final static String TITLE = "Bots 'n Bolts";
     protected final static String VERSION = "0.0.1";
-    protected final static String YEAR = "2016-2019";
+    protected final static String YEAR = "2016-2020";
     protected final static String AUTHOR = "Andrew M. Martin";
     
     /*
@@ -203,6 +203,10 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Pansound fxImpact = null;
     protected static Pansound fxRicochet = null;
     protected static Pansound fxJump = null;
+    protected static Pansound fxCharge = null;
+    protected static Pansound fxChargedAttack = null;
+    protected static Pansound fxSuperCharge = null;
+    protected static Pansound fxSuperChargedAttack = null;
     protected static Pansound fxHurt = null;
     protected static Pansound fxDefeat = null;
     protected static Pansound fxHealth = null;
@@ -1114,7 +1118,11 @@ public final class BotsnBoltsGame extends BaseGame {
         fxAttack = audio.createSound(RES + "sound/Attack.mid");
         fxImpact = audio.createSound(RES + "sound/Impact.mid").setReplayThreshold(6);
         fxRicochet = audio.createSound(RES + "sound/Ricochet.mid");
-        fxJump = audio.createSound(RES + "sound/Jump.mid");
+        fxJump = audio.createSound(RES + "sound/Jump.mid").setReplayThreshold(4);
+        fxCharge = audio.createSound(RES + "sound/Charge.mid");
+        fxChargedAttack = audio.createSound(RES + "sound/ChargedAttack.mid");
+        fxSuperCharge = audio.createSound(RES + "sound/SuperCharge.mid");
+        fxSuperChargedAttack = audio.createSound(RES + "sound/SuperChargedAttack.mid");
         fxHurt = audio.createSound(RES + "sound/Hurt.mid");
         fxDefeat = audio.createSound(RES + "sound/Defeat.mid");
         fxHealth = audio.createSound(RES + "sound/Health.mid");
