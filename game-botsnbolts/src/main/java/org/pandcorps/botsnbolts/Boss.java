@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -232,10 +232,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final void startIntro() {
         final String[] introMessages = isFirstEncounter() ? getIntroMessages() : getRematchMessages();
         if ((introMessages == null) || !isDuringGameplay()) {
-            health = HudMeter.MAX_VALUE;
+            finishIntro();
         } else {
             dialogue(getPortrait(), new Runnable() { @Override public final void run() {
-                health = HudMeter.MAX_VALUE;
+                finishIntro();
             }}, introMessages);
         }
     }
@@ -251,6 +251,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected String[] getRematchMessages() {
         return null;
+    }
+    
+    private final void finishIntro() {
+        health = HudMeter.MAX_VALUE;
+        finishIntroStatic();
+    }
+    
+    protected final static void finishIntroStatic() {
+        if (isDuringGameplay()) {
+            BotsnBoltsGame.musicBoss.startMusic();
+        }
     }
     
     @Override
@@ -825,6 +836,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "You shouldn't be here.  You know what they say.  If you play with lava, you get burned.",
+                "I think they say fire.",
+                "Fine.  If you play with lava, you catch on fire.  I'll incinerate you!"
+            };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return null;
+        }
+        
+        @Override
         protected final int getDamage() {
             return (state == STATE_DIVE) ? 6 : super.getDamage();
         }
@@ -1107,6 +1132,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final void taunt() {
+            waitTimer = 0; //TODO Replace this
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return null;
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return null;
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_SLIDE) {
                 new TimedDecoration(this, getTrail(), WAIT_SLIDE, -14, -1, BotsnBoltsGame.DEPTH_CARRIER);
@@ -1375,12 +1415,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final void taunt() {
+            waitTimer = 0; //TODO Replace this
+        }
+        
+        @Override
         protected final String[] getIntroMessages() {
             return new String[] {
                 "So Dr. Root thinks that a little runt like you can defeat me?",
                 "That's right.",
                 "Pathetic.  I will throw your broken body off the side of this mountain.  I'll destroy you!"
             };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return null;
         }
         
         @Override
@@ -1743,6 +1793,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void taunt() {
             startBurst();
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "Hey!  Let's play a game.  Let's see who can absorb the most electricity without frying a circuit board.",
+                "I have a surge suppression rating of 10 billion joules.",
+                "That's... actually pretty good.  But not good enough.  It's time to play!"
+            };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return null;
         }
         
         @Override
@@ -2221,6 +2285,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final String[] getIntroMessages() {
+            return null;
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return null;
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_JUMP_DRILL) {
                 drillTimer++;
@@ -2591,6 +2665,27 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final int getInitialOffsetX() {
             return 0;
+        }
+        
+        @Override
+        protected final void taunt() {
+            waitTimer = 0; //TODO Replace this
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "Hello there.",
+                "I'm going to stop you and all of Dr. Final's minions.",
+                "Oh please.  Dr. Final might have built me, but I don't care about his agenda.  I go wherever the wind takes me.  I'm only helping him now because it's fun.",
+                "How can you talk like that when lives are at stake?",
+                "You're boring.  I want to fight you now!"
+            };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return null;
         }
         
         @Override
@@ -3000,12 +3095,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final void taunt() {
+            waitTimer = 0; //TODO Replace this
+        }
+        
+        @Override
         protected final String[] getIntroMessages() {
             return new String[] {
                 "You poor thing.  You have the weight of the world on your shoulders.  What a burden.  I could help you drown your sorrows.",
                 "I'm putting an end to this.",
                 "Give it your best shot!"
             };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return null;
         }
         
         @Override
@@ -3564,6 +3669,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final String[] getRematchMessages() {
+            return null;
+        }
+        
+        @Override
         protected final boolean onBossLanded() {
             if (Panctor.isVisible(tex)) {
                 startFade();
@@ -4055,10 +4165,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             super.onMaterialized();
             final String[] introMsgs = getIntroMessages();
             if (introMsgs == null) {
-                health = HudMeter.MAX_VALUE;
+                finishIntro();
             } else {
                 dialogue(new Runnable() { @Override public final void run() {
-                    health = HudMeter.MAX_VALUE;
+                    finishIntro();
                 }}, introMsgs);
             }
             onBossMaterialized();
@@ -4066,6 +4176,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected String[] getIntroMessages() {
             return null;
+        }
+        
+        private final void finishIntro() {
+            health = HudMeter.MAX_VALUE;
+            finishIntroStatic();
         }
         
         //@OverrideMe
