@@ -840,13 +840,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return new String[] {
                 "You shouldn't be here.  You know what they say.  If you play with lava, you get burned.",
                 "I think they say fire.",
-                "Fine.  If you play with lava, you catch on fire.  I'll incinerate you!"
+                "Fine.  If you play with lava, you catch on fire.",
+                "No, that's still not-",
+                "I'll incinerate you!"
             };
         }
         
         @Override
         protected final String[] getRematchMessages() {
-            return null;
+            return new String[] { "I'll incinerate you!" };
         }
         
         @Override
@@ -1430,7 +1432,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getRematchMessages() {
-            return null;
+            return new String[] { "I'll destroy you!" };
         }
         
         @Override
@@ -1806,7 +1808,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getRematchMessages() {
-            return null;
+            return new String[] { "It's time to play!" };
         }
         
         @Override
@@ -2685,7 +2687,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getRematchMessages() {
-            return null;
+            return new String[] { "You again?  Fine.  Let's fight!" };
         }
         
         @Override
@@ -3110,7 +3112,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getRematchMessages() {
-            return null;
+            return new String[] { "I'll give you a burial at sea!" };
         }
         
         @Override
