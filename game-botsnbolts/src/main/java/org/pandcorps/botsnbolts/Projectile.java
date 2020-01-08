@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -55,7 +55,13 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         this.pi = pi;
         this.shootMode = shootMode;
         init(this, this, src, pi, shootMode, ref, vx, vy, power);
-        BotsnBoltsGame.fxAttack.startSound();
+        if (power > POWER_MEDIUM) {
+            BotsnBoltsGame.fxSuperChargedAttack.startSound();
+        } else if (power > 1) {
+            BotsnBoltsGame.fxChargedAttack.startSound();
+        } else {
+            BotsnBoltsGame.fxAttack.startSound();
+        }
     }
     
     protected final static void init(final SpecProjectile sp, final Pandy prj, final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
