@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -104,6 +104,7 @@ public class Player extends Chr implements Warpable {
     private boolean prevUnderwater = false;
     private boolean sanded = false;
     private int queuedX = 0;
+    private boolean air = false;
     private int wallTimer = 0;
     private boolean wallMirror = false;
     protected boolean movedDuringJump = false;
@@ -1144,6 +1145,7 @@ public class Player extends Chr implements Warpable {
         this.stateHandler.onGrounded(this);
         grapplingAllowed = true;
         jumpStartedOnCarrier = false;
+        air = false;
     }
     
     private final void onGroundedNormal() {
@@ -1428,7 +1430,11 @@ public class Player extends Chr implements Warpable {
     
     @Override
     protected final boolean onAir() {
-        return stateHandler.onAir(this);
+        try {
+            return stateHandler.onAir(this);
+        } finally {
+            air = true;
+        }
     }
     
     private final boolean onAirNormal() {
@@ -1438,6 +1444,9 @@ public class Player extends Chr implements Warpable {
             return false;
         }
         changeView(stateHandler.getJumpView(this));
+        if (!air) {
+            BotsnBoltsGame.fxJump.startSound();
+        }
         return false;
     }
     
@@ -2557,9 +2566,9 @@ public class Player extends Chr implements Warpable {
                 player.blinkTimer = 0;
                 final PlayerImages pi = player.pi;
                 if (diff > CHARGE_TIME_BIG) {
-                    charge(player, pi.charge2, pi.chargeVert2);
+                    charge(player, pi.charge2, pi.chargeVert2, diff - CHARGE_TIME_BIG, BotsnBoltsGame.fxSuperCharge);
                 } else {
-                    charge(player, pi.charge, pi.chargeVert);
+                    charge(player, pi.charge, pi.chargeVert, diff - CHARGE_TIME_MEDIUM, BotsnBoltsGame.fxCharge);
                 }
             }
         }
@@ -2571,7 +2580,7 @@ public class Player extends Chr implements Warpable {
             }
         }
         
-        private final void charge(final Player player, final Panimation diag, final Panimation vert) {
+        private final void charge(final Player player, final Panimation diag, final Panimation vert, final long i, final Pansound sound) {
             final long c = getClock() % 8;
             if (c == 0) {
                 chargeDiag(player, diag, 1, 1, 0);
@@ -2589,6 +2598,9 @@ public class Player extends Chr implements Warpable {
                 charge(player, vert, 1, -4, 4, -1, 8, 16, 2);
             } else {
                 charge(player, vert, 1, 8, 16, 1, -4, 4, 3);
+            }
+            if ((i < 30) && ((i % 10) == 1)) {
+                sound.startSound();
             }
         }
         
