@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -50,7 +50,7 @@ public class Story {
         final TextTyper typer = newTextTyper(msg, 29);
         final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft);
         typer.getPosition().set(box.xText + 12, 197);
-        typer.setFinishHandler(new Runnable() {
+        typer.setSound(BotsnBoltsGame.fxHealth).setFinishHandler(new Runnable() {
             @Override public final void run() {
                 box.finish();
             }});
