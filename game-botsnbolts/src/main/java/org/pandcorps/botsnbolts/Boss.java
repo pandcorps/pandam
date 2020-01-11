@@ -740,29 +740,28 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean onWaiting() {
-            stepFort();
             return true;
         }
         
         @Override
         protected final boolean pickState() {
-            stepFort();
             return true;
         }
 
         @Override
         protected final boolean continueState() {
-            stepFort();
             return true;
         }
         
-        private final void stepFort() {
+        @Override
+        protected boolean onStepBoss() {
             if (Panctor.isDestroyed(bot)) {
                 spawnTimer++;
                 if (spawnTimer >= 60) {
                     spawn();
                 }
             }
+            return false;
         }
         
         private final void spawn() {
