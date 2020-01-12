@@ -3048,13 +3048,16 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     protected final static class CyanEnemy extends HenchbotEnemy {
         private final static Panple scratch = new ImplPanple();
+        private final boolean awardAllowed;
         
         protected CyanEnemy(final int x, final int y) {
             super(BotsnBoltsGame.henchbotEnemy, x, y);
+            awardAllowed = false;
         }
         
         protected CyanEnemy(final Segment seg) {
             super(BotsnBoltsGame.henchbotEnemy, seg);
+            awardAllowed = true;
         }
         
         protected final static void shoot(final Enemy src, final int offX, final int offY, final boolean angleLimited) {
@@ -3085,6 +3088,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected final void onShoot() {
             shoot(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, true);
             hold(30);
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            if (awardAllowed) {
+                super.award(powerUp);
+            }
         }
     }
     
