@@ -1350,25 +1350,30 @@ public class Player extends Chr implements Warpable {
     
     protected final void endGrapple() {
         clearRun();
-        stateHandler = NORMAL_HANDLER;
-        if (v <= 0) {
+        if (stateHandler == GRAPPLING_HANDLER) {
+            stateHandler = NORMAL_HANDLER;
+        }
+        if (!destroyGrapplingHook()) {
+            return;
+        } else if (v <= 0) {
             v = VEL_JUMP / 4;
         } else if (v < VEL_JUMP) {
             v = (v + (3 * VEL_JUMP)) / 4;
         }
         hv = 0;
-        destroyGrapplingHook();
     }
     
     private final boolean isGrapplingHookConnected() {
         return (grapplingHook != null) && grapplingHook.finished;
     }
     
-    private final void destroyGrapplingHook() {
+    private final boolean destroyGrapplingHook() {
         if (grapplingHook != null) {
             grapplingHook.destroy();
             grapplingHook = null;
+            return true;
         }
+        return false;
     }
     
     private final void startSpring() {
@@ -1612,6 +1617,7 @@ public class Player extends Chr implements Warpable {
         lastShotByAnyPlayer = NULL_CLOCK;
         startRoomNeeded = true; // Can also be initialized in RoomLoader, but only if a ROM segment is present
         initAvailableRescues();
+        endGrapple();
         safeX = safeY = NULL_COORD;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
