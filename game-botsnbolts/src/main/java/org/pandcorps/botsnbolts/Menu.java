@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -908,12 +908,27 @@ public class Menu {
         public abstract void onGridEnd();
     }
     
-    protected final static class LevelStartScreen extends Panscreen {
+    protected abstract static class StartScreen extends Panscreen {
+        @Override
+        protected final void load() throws Exception {
+            final Panctor actor = draw();
+            Pangine.getEngine().addTimer(actor, 16, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    startMusic();
+                }});
+        }
+        
+        protected abstract Panctor draw() throws Exception;
+        
+        protected abstract void startMusic();
+    }
+    
+    protected final static class LevelStartScreen extends StartScreen {
         private final static int floorY = 4;
         private LevelStartBg bg = null;
         
         @Override
-        protected final void load() throws Exception {
+        protected final Panctor draw() throws Exception {
             final Panroom room = Pangame.getGame().getCurrentRoom();
             BotsnBoltsGame.room = room;
             final BotLevel level = RoomLoader.level;
@@ -933,10 +948,7 @@ public class Menu {
                 }};
             final Boolean portraitMirror = level.portraitMirror;
             Story.portrait(boss.getPortrait(), textX - 24, 96, (portraitMirror != null) && portraitMirror.booleanValue());
-            Pangine.getEngine().addTimer(bg, 16, new TimerListener() {
-                @Override public final void onTimer(final TimerEvent event) {
-                    startMusic();
-                }});
+            return bg;
         }
         
         private final static TileMap newTileMap() {
@@ -947,7 +959,8 @@ public class Menu {
             return tm;
         }
         
-        private final void startMusic() {
+        @Override
+        protected final void startMusic() {
             BotsnBoltsGame.musicLevelStart.startSound();
             startLevelTimer(bg);
         }
@@ -969,12 +982,12 @@ public class Menu {
         }
     }
     
-    protected final static class FortressStartScreen extends Panscreen {
+    protected final static class FortressStartScreen extends StartScreen {
         private static Panmage imgFortress = null;
         private static Panmage imgTiles = null;
         
         @Override
-        protected final void load() throws Exception {
+        protected final Panctor draw() throws Exception {
             final Panroom room = Pangame.getGame().getCurrentRoom();
             final Panctor fortress = new Panctor();
             final Pangine engine = Pangine.getEngine();
@@ -988,6 +1001,12 @@ public class Menu {
                     room.addActor(new FortressMap(RoomLoader.StartScreenDefinition.Fortress));
                 }});
             LevelStartScreen.startLevelTimer(fortress);
+            return fortress;
+        }
+        
+        @Override
+        protected final void startMusic() {
+            BotsnBoltsGame.musicFortressStart.startSound();
         }
         
         private final static TileMap newTileMap() {
