@@ -631,8 +631,19 @@ public class Player extends Chr implements Warpable {
             return;
         }
         defeatOrbs(this, pi.defeat);
-        Pangine.getEngine().addTimer(BotsnBoltsGame.tm, 120, new TimerListener() {
+        Pangine.getEngine().getAudio().stopMusic();
+        startDefeatTimer(5);
+        destroy();
+    }
+    
+    private final void startDefeatTimer(final int i) {
+        BotsnBoltsGame.fxDefeat.startSound();
+        Pangine.getEngine().addTimer(BotsnBoltsGame.tm, (i == 0) ? 70 : 10, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
+                if (i > 0) {
+                    startDefeatTimer(i - 1);
+                    return;
+                }
                 healthMeter.destroy();
                 if (startRoom == null) {
                     RoomLoader.reloadCurrentRoom();
@@ -643,7 +654,6 @@ public class Player extends Chr implements Warpable {
                     RoomLoader.loadRoom(startRoom);
                 }
             }});
-        destroy();
     }
     
     @Override
