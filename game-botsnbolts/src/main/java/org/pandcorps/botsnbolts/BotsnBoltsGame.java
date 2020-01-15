@@ -196,6 +196,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicLevelSelect = null;
     protected static Pansound musicLevelStart = null;
+    protected static Pansound musicFortressStart = null;
     protected static Pansound musicBoss = null;
     protected static Pansound fxMenuHover = null;
     protected static Pansound fxMenuClick = null;
@@ -1113,6 +1114,7 @@ public final class BotsnBoltsGame extends BaseGame {
         audio.ensureCapacity(6);
         musicLevelSelect = audio.createMusic(RES + "music/LevelSelect.mid");
         musicLevelStart = audio.createTransition(RES + "music/LevelStart.mid");
+        musicFortressStart = audio.createTransition(RES + "music/FortressStart.mid");
         musicBoss = audio.createMusic(RES + "music/Boss.mid");
         fxMenuHover = audio.createSound(RES + "sound/MenuHover.mid");
         fxMenuClick = audio.createSound(RES + "sound/MenuClick.mid");
