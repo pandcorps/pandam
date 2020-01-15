@@ -72,9 +72,11 @@ public abstract class Panaudio {
 		return Pansound.currentMusic;
 	}
 	
-	public final void stopMusic() {
+	public final Pansound stopMusic() {
 		setEnabled(true, false);
+		final Pansound oldMusic = Pansound.currentMusic;
 		Pansound.currentMusic = null;
+		return oldMusic;
 	}
 	
 	public abstract void pauseMusic();
