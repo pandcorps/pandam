@@ -194,6 +194,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
+    protected static Pansound musicIntro = null;
     protected static Pansound musicLevelSelect = null;
     protected static Pansound musicLevelStart = null;
     protected static Pansound musicFortressStart = null;
@@ -211,6 +212,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Pansound fxHurt = null;
     protected static Pansound fxDefeat = null;
     protected static Pansound fxHealth = null;
+    protected static Pansound fxText = null;
     protected static Pansound fxEnemyAttack = null;
     protected static Pansound fxDoor = null;
     protected static Pansound fxBossDoor = null;
@@ -1112,6 +1114,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadAudio() {
         final Panaudio audio = Pangine.getEngine().getAudio();
         audio.ensureCapacity(6);
+        musicIntro = audio.createMusic(RES + "music/Intro.mid");
         musicLevelSelect = audio.createMusic(RES + "music/LevelSelect.mid");
         musicLevelStart = audio.createTransition(RES + "music/LevelStart.mid");
         musicFortressStart = audio.createTransition(RES + "music/FortressStart.mid");
@@ -1129,6 +1132,7 @@ public final class BotsnBoltsGame extends BaseGame {
         fxHurt = audio.createSound(RES + "sound/Hurt.mid");
         fxDefeat = audio.createSound(RES + "sound/Defeat.mid");
         fxHealth = audio.createSound(RES + "sound/Health.mid");
+        fxText = fxHealth;
         fxEnemyAttack = audio.createSound(RES + "sound/EnemyAttack.mid");
         fxDoor = audio.createSound(RES + "sound/Door.mid");
         fxBossDoor = audio.createSound(RES + "sound/BossDoor.mid");
@@ -1163,6 +1167,7 @@ public final class BotsnBoltsGame extends BaseGame {
                         ctrl = ControlScheme.getDefault(device);
                     }
                     pc.setControlScheme(ctrl);
+                    fxMenuClick.startSound();
                     Menu.goLevelSelect();
                 }});
         }
