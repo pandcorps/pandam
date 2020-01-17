@@ -199,6 +199,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Pansound musicLevelStart = null;
     protected static Pansound musicFortressStart = null;
     protected static Pansound musicBoss = null;
+    protected static Pansound musicEnding = null;
     protected static Pansound fxMenuHover = null;
     protected static Pansound fxMenuClick = null;
     protected static Pansound fxAttack = null;
@@ -1119,6 +1120,7 @@ public final class BotsnBoltsGame extends BaseGame {
         musicLevelStart = audio.createTransition(RES + "music/LevelStart.mid");
         musicFortressStart = audio.createTransition(RES + "music/FortressStart.mid");
         musicBoss = audio.createMusic(RES + "music/Boss.mid");
+        musicEnding = audio.createMusic(RES + "music/Ending.mid");
         fxMenuHover = audio.createSound(RES + "sound/MenuHover.mid");
         fxMenuClick = audio.createSound(RES + "sound/MenuClick.mid");
         fxAttack = audio.createSound(RES + "sound/Attack.mid");
