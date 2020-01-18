@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -347,6 +347,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected final static void addBySource(final Panctor toAdd, final Panmage img, final Panctor src, final int ox, final int oy) {
             final Panple srcPos = src.getPosition();
             addBySource(toAdd, img, srcPos.getX(), srcPos.getY(), src.isMirror(), src.getRot(), ox, oy);
+            if (img == BotsnBoltsGame.getEnemyProjectile()) {
+                BotsnBoltsGame.fxEnemyAttack.startSound();
+            }
         }
         
         protected final static void addBySource(final Panctor toAdd, final Panmage img, final float srcX, final float srcY, final boolean srcMirror, final int srcRot, final int ox, final int oy) {
