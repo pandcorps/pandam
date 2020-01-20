@@ -50,7 +50,7 @@ public class Story {
         final TextTyper typer = newTextTyper(msg, 29);
         final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft);
         typer.getPosition().set(box.xText + 12, 197);
-        typer.setSound(BotsnBoltsGame.fxHealth).setFinishHandler(new Runnable() {
+        typer.setSound(BotsnBoltsGame.fxText).setFinishHandler(new Runnable() {
             @Override public final void run() {
                 box.finish();
             }});
@@ -190,6 +190,7 @@ public class Story {
         
         @Override
         protected final void loadLab() {
+            BotsnBoltsGame.musicIntro.startMusic();
             initActor(drRoot = newRootTalker(), 96, false);
             initActor(drFinal = newFinalMaskTalker(), 128, true);
             stepLab();
@@ -275,6 +276,7 @@ public class Story {
     protected abstract static class BootScreen extends TextScreen {
         @Override
         protected final TextTyper loadText() {
+            Pangine.getEngine().getAudio().stopMusic();
             return newBootTextTyper(
                 "Initiating boot sequence\n" +
                 "* Dr. Root robotics " + getName() + " Test\n" +
@@ -292,7 +294,7 @@ public class Story {
                 "* Ambulatory... READY\n" +
                 "* Audio input... READY\n" +
                 "* Visual input... READY\n") // Last line, eyes open after visual input is activated
-                .setFinishHandler(getFinishHandler());
+                .setSound(BotsnBoltsGame.fxText).setFinishHandler(getFinishHandler());
         }
         
         protected abstract String getName();
@@ -329,8 +331,10 @@ public class Story {
             final Panctor player = newActor(playerBlink, 224, true);
             openEyes(player, playerBlink, playerStand, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                 drRoot.setTalking(true);
-                final TextTyper typer = newLabTextTyper("\"I know that you're still just a beta test, but there's no time to finish you.  You need to stop Dr. Final.  I'm counting on you, Void!\"");
+                final TextTyper typer = newLabTextTyper("\"I know that you're still just a beta test, but there's no time to finish you.  You need to stop Dr. Final.  I'm counting on you, Void!\"")
+                        .setSound(BotsnBoltsGame.fxText);
                 typer.setFinishHandler(new Runnable() { @Override public final void run() {
+                    BotsnBoltsGame.musicLevelStart.startSound();
                     typer.destroy();
                     drRoot.setTalking(false);
                     player.setView(pi.shootSet.stand);
@@ -739,6 +743,7 @@ public class Story {
     protected final static class LabScreenStinger1 extends LabScreen {
         @Override
         protected final void loadLab() {
+            Pangine.getEngine().getAudio().stopMusic();
             final Talker drRoot = newRootTalker().setTalking(false);
             initActor(drRoot, 96, true);
             final Talker player = newPlayerTalker().setTalking(false);
@@ -750,7 +755,7 @@ public class Story {
                     addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                         drRoot.setMirror(false);
                         player.setTalking(true).setMirror(true);
-                        newLabTextTyper("\"Dr. Root...  It looks like we're receiving some kind of transmission.\"").setFinishHandler(newScreenRunner(new ShipScreen()));
+                        newLabTextTyper("\"Dr. Root...  It looks like we're receiving some kind of transmission.\"").setSound(BotsnBoltsGame.fxText).setFinishHandler(newScreenRunner(new ShipScreen()));
                     }});
                 }});
             }});
@@ -760,6 +765,7 @@ public class Story {
     protected final static class ShipScreen extends TextScreen {
         @Override
         protected final TextTyper loadText() {
+            Pangine.getEngine().getAudio().stopMusic();
             return newBootTextTyper(
                 "Navigation system online\n" +
                 "Proximity alert\n" +
@@ -776,7 +782,7 @@ public class Story {
                 "Contacting Tree\n" +
                 "* Success\n" +
                 "Activating payload")
-                .setFinishHandler(newScreenRunner(new NullBootScreen()));
+                .setSound(BotsnBoltsGame.fxText).setFinishHandler(newScreenRunner(new NullBootScreen()));
         }
     }
     
@@ -814,7 +820,7 @@ public class Story {
                 "\"Void...  I need to tell you something...  Something that I should have told you long ago...\"",
                 "\"Dr. Root?\"",
                 "\"Void...  You were not my first child.\"" },
-                newScreenRunner(new LabScreenStinger1()));
+                newScreenRunner(new LabScreenStinger1()), BotsnBoltsGame.fxText);
         }
     }
     
@@ -836,23 +842,27 @@ public class Story {
     }
     
     protected final static void startLabConversation(final Talker talker1, final Talker talker2, final CharSequence[] msgs, final Runnable finishHandler) {
-        talker1.setTalking(false); // continueLabConversion will invert these
-        talker2.setTalking(true);
-        continueLabConversation(talker1, talker2, finishHandler, 0, msgs);
+        startLabConversation(talker1, talker2, msgs, finishHandler, null);
     }
     
-    protected final static void continueLabConversation(final Talker talker1, final Talker talker2, final Runnable finishHandler, final int msgIndex, final CharSequence... msgs) {
+    protected final static void startLabConversation(final Talker talker1, final Talker talker2, final CharSequence[] msgs, final Runnable finishHandler, final Pansound sound) {
+        talker1.setTalking(false); // continueLabConversion will invert these
+        talker2.setTalking(true);
+        continueLabConversation(talker1, talker2, finishHandler, sound, 0, msgs);
+    }
+    
+    protected final static void continueLabConversation(final Talker talker1, final Talker talker2, final Runnable finishHandler, final Pansound sound, final int msgIndex, final CharSequence... msgs) {
         talker1.toggleTalking();
         talker2.toggleTalking();
         final TextTyper typer = newLabTextTyper(msgs[msgIndex]);
-        typer.setFinishHandler(new Runnable() {
+        typer.setSound(sound).setFinishHandler(new Runnable() {
             @Override public final void run() {
                 typer.destroy();
                 final int nextIndex = msgIndex + 1;
                 if (nextIndex >= msgs.length) {
                     finishHandler.run();
                 } else {
-                    continueLabConversation(talker1, talker2, finishHandler, nextIndex, msgs);
+                    continueLabConversation(talker1, talker2, finishHandler, sound, nextIndex, msgs);
                 }
             }});
     }
