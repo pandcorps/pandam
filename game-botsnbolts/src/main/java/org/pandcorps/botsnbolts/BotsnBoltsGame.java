@@ -215,8 +215,10 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Pansound fxHealth = null;
     protected static Pansound fxText = null;
     protected static Pansound fxEnemyAttack = null;
+    protected static Pansound fxCrumble = null;
     protected static Pansound fxDoor = null;
     protected static Pansound fxBossDoor = null;
+    protected static Pansound fxThunder = null;
     
     protected static PlayerContext pc = null;
     private static final float defPlayerStartX = 48;
@@ -1136,8 +1138,10 @@ public final class BotsnBoltsGame extends BaseGame {
         fxHealth = audio.createSound(RES + "sound/Health.mid");
         fxText = fxHealth;
         fxEnemyAttack = audio.createSound(RES + "sound/EnemyAttack.mid");
+        fxCrumble = audio.createSound(RES + "sound/Crumble.mid");
         fxDoor = audio.createSound(RES + "sound/Door.mid");
         fxBossDoor = audio.createSound(RES + "sound/BossDoor.mid");
+        fxThunder = audio.createSound(RES + "sound/Thunder.mid");
     }
     
     private final static class TitleScreen extends Panscreen {
