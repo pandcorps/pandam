@@ -587,6 +587,7 @@ public class Player extends Chr implements Warpable {
         }
         stateHandler.onHurt(this);
         lastFrozen = getClock();
+        BotsnBoltsGame.fxRicochet.startSound();
         return true;
     }
     
