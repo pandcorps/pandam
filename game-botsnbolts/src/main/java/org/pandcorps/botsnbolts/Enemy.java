@@ -578,6 +578,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         protected FreezeRayProjectile(final Enemy src, final int ox, final int oy) {
             super(src, ox, oy, DURATION_FREEZE);
+            BotsnBoltsGame.fxEnemyAttack.startSound();
         }
         
         @Override
@@ -1571,8 +1572,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                     shatter(-2);
                     partialTileLeft = newPartialTile(true);
                     partialTileRight = newPartialTile(false);
+                    BotsnBoltsGame.fxCrumble.startSound();
                 } else if (digTimer == 2) {
                     destroyPartialTiles();
+                    BotsnBoltsGame.fxCrumble.startSound();
                 }
                 getPosition().addY(-1);
                 return true;
@@ -2667,6 +2670,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             super(DEPTH_CHARGE_OFF_X, DEPTH_CHARGE_H, x, y, DEPTH_CHARGE_HEALTH);
             getPosition().add(-8, -4);
             setView(getImage());
+            BotsnBoltsGame.fxEnemyAttack.startSound();
         }
         
         @Override
@@ -2862,11 +2866,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         private final void startWake() {
             this.state = STATE_WAKING;
             changeView(1);
+            BotsnBoltsGame.fxBossDoor.startSound();
         }
         
         private final void startFall() {
             this.state = STATE_FALLING;
             timer = 1;
+            BotsnBoltsGame.fxBossDoor.startSound();
         }
         
         private final void changeView(final int imgIndex) {
@@ -3131,6 +3137,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 img = BotsnBoltsGame.flame4[0];
                 ox = (i == 0) ? 13 : 17;
                 oy = 9;
+                if (i == 0) {
+                    BotsnBoltsGame.fxDefeat.startSound();
+                }
             } else if (i < 4) {
                 img = BotsnBoltsGame.flame4[1];
                 ox = (i == 2) ? 21 : 25;
@@ -3351,6 +3360,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 active = !active;
                 if (active) {
                     turnTowardPlayer();
+                    BotsnBoltsGame.fxCrumble.startSound();
                 } else {
                     setStillImage();
                 }
@@ -3363,6 +3373,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 }
                 if (timer == 2) {
                     Player.addActor(this, new DirtCluster(x, yCluster));
+                    BotsnBoltsGame.fxBossDoor.startSound();
                 }
             }
             timer--;
@@ -3410,6 +3421,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         private final void shatter() {
             Player.shatter(this, DrillEnemy.getDirtShatter());
+            BotsnBoltsGame.fxBossDoor.startSound();
             destroy();
         }
         
@@ -3450,12 +3462,14 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             timer++;
             if (timer == 5) {
                 setView(1);
+                BotsnBoltsGame.fxBossDoor.startSound();
             } else if (timer == 6) {
                 final Panple pos = getPosition();
                 final int m = getMirrorMultiplier();
                 Player.newDiver(layer, true, DrillEnemy.getDirtShatter(), pos.getX() + (12 * m), pos.getY(), 2 * m, 2, Mathtil.rand(), Mathtil.rand(), true);
             } else if (timer == 30) {
                 setView(2);
+                BotsnBoltsGame.fxBossDoor.startSound();
             } else if (timer == 31) {
                 final DirtCluster dirtCluster = new DirtCluster(x, y);
                 dirtCluster.hv = getMirrorMultiplier() * -6;
