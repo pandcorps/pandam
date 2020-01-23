@@ -972,6 +972,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startDive() {
+            BotsnBoltsGame.fxDefeat.startSound();
             hv = getVelDiveX();
             startStateIndefinite(STATE_DIVE, getBurn());
         }
@@ -1044,6 +1045,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             super(getCurrentImage(), src, 11, 34, 0, 16, gTuple);
             this.src = src;
             this.t = t;
+            BotsnBoltsGame.fxDefeat.startSound();
         }
         
         @Override
@@ -1296,6 +1298,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected HailCluster(final HailBot src, final int ox, final int oy, final float vx, final float vy) {
             super(getCurrentImage(), src, ox, oy, vx * src.getMirrorMultiplier(), vy);
+            BotsnBoltsGame.fxEnemyAttack.startSound();
         }
         
         @Override
@@ -1332,6 +1335,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void shatter() {
+            BotsnBoltsGame.fxCrumble.startSound();
             onShatter();
             destroy();
         }
@@ -1620,6 +1624,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             setView(rots.getFrame(frames));
             hv = src.getMirrorMultiplier() * speed;
             v = -speed;
+            BotsnBoltsGame.fxEnemyAttack.startSound();
         }
         
         @Override
@@ -1639,6 +1644,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void shatter() {
+            BotsnBoltsGame.fxCrumble.startSound();
             destroy();
         }
         
@@ -1815,6 +1821,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (state == STATE_STRIKE) {
                 if (waitTimer == (WAIT_STRIKE - 1)) {
                     new Lightning(this);
+                    BotsnBoltsGame.fxDefeat.startSound();
                 }
                 return true;
             } else if (state == STATE_BURST) {
@@ -1824,6 +1831,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     new LightningBurst(burst, this, -32, 15, 29, 0);
                     new LightningBurst(burst, this, 30, 14, 29, 2);
                     new LightningBurst(burst, this, 0, 44, 29, 3);
+                    BotsnBoltsGame.fxDefeat.startSound();
                 } else if (waitTimer == (WAIT_BURST - 2)) {
                     final Panmage burst2 = LightningBurst.getBurst2();
                     new LightningBurst(burst2, this, -19, 34, 27, 0);
@@ -2337,6 +2345,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startEarthquake(final int backOx, final int remaining, final int maxIndex) {
+            BotsnBoltsGame.fxCrumble.startSound();
             new Earthquake(this, backOx, 0, remaining, maxIndex);
             new Earthquake(this, 12, 0, remaining, maxIndex).setMirror(!isMirror());
         }
@@ -2831,6 +2840,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startSpin() {
+            BotsnBoltsGame.fxDefeat.startSound();
             startState(STATE_SPIN, WAIT_SPIN, getSpinStart1());
         }
         
@@ -2965,6 +2975,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected Whirlwind(final Panctor src) {
             super(getWind(duration), src, -2, 20, speed * src.getMirrorMultiplier(), 6, gTuple, duration);
+            BotsnBoltsGame.fxDefeat.startSound();
         }
         
         @Override
@@ -3517,6 +3528,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected Torpedo(final FloodBot src) {
             super(TORPEDO_OFF_X, TORPEDO_H, 0, 0, 2);
             EnemyProjectile.addBySource(this, getTorpedoImage(0), src, 14, 8);
+            BotsnBoltsGame.fxEnemyAttack.startSound();
         }
         
         @Override
@@ -3853,6 +3865,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startFlare() {
+            BotsnBoltsGame.fxDefeat.startSound();
             startState(STATE_FLARE, WAIT_FLARE, getFlare());
         }
         
@@ -4018,6 +4031,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             timer = 0;
             launched = true;
             src.setView(DroughtBot.getLaunch());
+            BotsnBoltsGame.fxDefeat.startSound();
         }
         
         @Override
