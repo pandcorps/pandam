@@ -81,6 +81,12 @@ public abstract class Pansound {
 	
 	protected abstract void runSound() throws Exception;
 	
+	public final static void changeMusic(final Pansound music) {
+        if (music != null) {
+            music.changeMusic();
+        }
+    }
+	
 	public final static void startMusic(final Pansound music) {
 		if (music != null) {
 			music.startMusic();

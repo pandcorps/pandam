@@ -123,7 +123,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected Spring spring = null;
     protected Carrier carrier = null;
     protected float carrierOff = 0;
-    protected float carrierX = 0;
+    protected float carrierX = NULL_COORD;
     private Wrapper wrapper = null;
     private int ladderColumn = -1;
     protected boolean startRoomNeeded = true;
