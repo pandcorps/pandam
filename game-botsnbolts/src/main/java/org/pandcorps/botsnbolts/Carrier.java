@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -28,7 +28,6 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 
 public final class Carrier extends Panctor implements StepListener, CollisionListener {
-    protected Player carried;
     private final int velX;
     private final int velY;
     private final int duration;
@@ -58,18 +57,31 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
             dir *= -1;
             timer = 0;
         }
+    }
+    
+    protected final void onStepCarried(final Player carried) {
         if (carried != null) {
-            final Panple pos = getPosition();
-            final int off = carried.getMirrorMultiplier();
-            carried.getPosition().set(pos.getX() + off, pos.getY());
+            final Panple pos = getPosition(), cpos = carried.getPosition();
+            final float carrierX = carried.carrierX;
+            if (carrierX != Player.NULL_COORD) {
+                final float diff = cpos.getX() - carrierX;
+                carried.carrierOff += diff;
+            }
+            final float carrierOff = carried.carrierOff;
+            if (Math.abs(carrierOff) > 22) {
+                carried.v = 0;
+                carried.walkedOffCarrier = this;
+                carried.endCarried();
+                return;
+            }
+            final float cx = pos.getX() + carrierOff;
+            cpos.set(cx, pos.getY());
+            carried.carrierX = cx;
         }
     }
     
     @Override
     public final void onCollision(final CollisionEvent event) {
-        if (carried != null) {
-            return;
-        }
         final Collidable collider = event.getCollider();
         if (collider.getClass() != Player.class) {
             return;
@@ -77,13 +89,17 @@ public final class Carrier extends Panctor implements StepListener, CollisionLis
         final Player player = (Player) collider;
         if (player.v > 0) {
             return;
+        } else if (player.carrier != null) {
+            return;
+        } else if (player.walkedOffCarrier == this) {
+            return;
         }
         final Panple ppos = player.getPosition(), pos = getPosition();
         if (ppos.getY() < (pos.getY() - Player.MAX_V)) {
             return;
         } else if (player.isGrounded()) {
             return;
-        } else if (player.jumpStartedOnCarrier) {
+        } else if (player.jumpStartedOnCarrier == this) {
             final float px = ppos.getX(), x = pos.getX();
             final float phv = player.chv;
             if ((phv < 0) && (px < (x - 6))) {

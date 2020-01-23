@@ -43,7 +43,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
 
-public class Player extends Chr implements Warpable {
+public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
     protected final static int BALL_H = 15;
@@ -75,7 +75,7 @@ public class Player extends Chr implements Warpable {
     private final static double GRAPPLING_ANGLE_MAX_DIAG = 3.0 * GRAPPLING_ANGLE_MAX_UP;
     private final static int GRAPPLING_OFF_Y = 12;
     private final static int VEL_ROOM_CHANGE = 10;
-    private final static float NULL_COORD = -2000;
+    protected final static float NULL_COORD = -2000;
     
     protected final PlayerContext pc;
     protected final Profile prf;
@@ -97,7 +97,8 @@ public class Player extends Chr implements Warpable {
     private long lastLift = NULL_CLOCK;
     private long lastBall = NULL_CLOCK;
     private int wrappedJumps = 0;
-    protected boolean jumpStartedOnCarrier = false;
+    protected Carrier jumpStartedOnCarrier = null;
+    protected Carrier walkedOffCarrier = null;
     private boolean jumpAllowed = true;
     private float minX = Integer.MIN_VALUE;
     private float maxX = Integer.MAX_VALUE;
@@ -121,6 +122,8 @@ public class Player extends Chr implements Warpable {
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected Spring spring = null;
     protected Carrier carrier = null;
+    protected float carrierOff = 0;
+    protected float carrierX = 0;
     private Wrapper wrapper = null;
     private int ladderColumn = -1;
     protected boolean startRoomNeeded = true;
@@ -364,10 +367,10 @@ public class Player extends Chr implements Warpable {
     }
     
     private final void startJump() {
-        startJump(false);
+        startJump(null);
     }
     
-    private final void startJump(final boolean jumpStartedOnCarrier) {
+    private final void startJump(final Carrier jumpStartedOnCarrier) {
         this.jumpStartedOnCarrier = jumpStartedOnCarrier;
         v = VEL_JUMP;
         if (sanded) {
@@ -653,7 +656,7 @@ public class Player extends Chr implements Warpable {
                     BotsnBoltsGame.playerStartY = startY;
                     BotsnBoltsGame.playerStartMirror = startMirror;
                     RoomLoader.loadRoom(startRoom);
-                    music.changeMusic();
+                    Pansound.changeMusic(music);
                 }
             }});
     }
@@ -1105,7 +1108,10 @@ public class Player extends Chr implements Warpable {
     }
     
     @Override
-    protected final void onStepEnd() {
+    public final void onStepEnd(final StepEndEvent event) {
+        if (carrier != null) {
+            carrier.onStepCarried(this);
+        }
         hv = 0;
         final Panple pos = getPosition();
         final float x = pos.getX();
@@ -1156,7 +1162,8 @@ public class Player extends Chr implements Warpable {
         movedDuringJump = false;
         this.stateHandler.onGrounded(this);
         grapplingAllowed = true;
-        jumpStartedOnCarrier = false;
+        jumpStartedOnCarrier = null;
+        walkedOffCarrier = null;
         air = false;
     }
     
@@ -1406,14 +1413,16 @@ public class Player extends Chr implements Warpable {
     }
     
     protected final void startCarried(final Carrier carrier) {
-        carrier.carried = this;
+        carrierX = NULL_COORD;
+        carrierOff = getPosition().getX() - carrier.getPosition().getX();
         this.carrier = carrier;
+        jumpStartedOnCarrier = null;
+        walkedOffCarrier = null;
         startState(CARRIED_HANDLER);
     }
     
-    private final void endCarried() {
+    protected final void endCarried() {
         stateHandler = NORMAL_HANDLER;
-        carrier.carried = null;
         carrier = null;
     }
     
@@ -2023,7 +2032,7 @@ public class Player extends Chr implements Warpable {
     protected final static StateHandler CARRIED_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
-            player.startJump(true);
+            player.startJump(player.carrier);
             player.endCarried();
         }
         
@@ -2044,21 +2053,19 @@ public class Player extends Chr implements Warpable {
         
         @Override
         protected final void onRight(final Player player) {
-            player.setMirror(false);
+            player.onRightNormal();
         }
         
         @Override
         protected final void onLeft(final Player player) {
-            player.setMirror(true);
+            player.onLeftNormal();
         }
         
         @Override
         protected final boolean onStep(final Player player) {
             // The Carrier moves the Player, so don't need to do that here
-            player.setView(player.getCurrentImagesSubSet().stand);
             player.ladderColumn = -1;
-            player.prf.shootMode.onStep(player);
-            return true;
+            return player.onStepNormal();
         }
         
         @Override
@@ -2068,7 +2075,8 @@ public class Player extends Chr implements Warpable {
         
         @Override
         protected final boolean onAir(final Player player) {
-            return player.onAirNormal();
+            player.onGroundedNormal();
+            return false;
         }
     };
     
