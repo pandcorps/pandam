@@ -58,6 +58,7 @@ public abstract class BlockPuzzle {
     
     protected final void fade(final int[] indicesToFadeOut, final int[] indicesToFadeIn) {
         fade(indicesToFadeOut, indicesToFadeIn, 1);
+        BotsnBoltsGame.fxMenuHover.startSound();
     }
     
     protected final void fade(final int[] indicesToFadeOut, final int[] indicesToFadeIn, final int step) {
@@ -684,6 +685,7 @@ public abstract class BlockPuzzle {
         
         protected Electricity(final Panctor src, final int ox, final int oy, final int numParts, final boolean vertical, final boolean flip) {
             super(null, src, ox, oy, DURATION_ELECTRICITY);
+            BotsnBoltsGame.fxDefeat.startSound();
             NUM_PARTS = numParts;
             parts = new int[NUM_PARTS];
             this.vertical = vertical;
@@ -981,6 +983,7 @@ public abstract class BlockPuzzle {
         protected Fire(final float x, final float y, final Integer key) {
             super(null, x, y, false, 0, 0, 16, 0, 0, Integer.MAX_VALUE);
             this.key = key;
+            BotsnBoltsGame.fxDefeat.startSound();
         }
         
         @Override
