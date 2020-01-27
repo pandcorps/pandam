@@ -259,9 +259,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static void finishIntroStatic() {
-        if (isDuringGameplay()) {
+        if (isDuringGameplay() && !isLevelMusicPlayedDuringBoss()) {
             BotsnBoltsGame.musicBoss.startMusic();
         }
+    }
+    
+    protected final static boolean isLevelMusicPlayedDuringBoss() {
+        return RoomLoader.variables.containsKey("levelMusicPlayedDuringBoss");
     }
     
     @Override
@@ -5643,6 +5647,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             setView(getRocket());
             setMirror(true);
             hv = -6;
+            BotsnBoltsGame.fxEnemyAttack.startSound();
         }
         
         @Override
