@@ -1072,6 +1072,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         protected Rocket(final int x, final int y) {
             super(ROCKET_OFF_X, ROCKET_H, x, y, 1);
+            BotsnBoltsGame.fxEnemyAttack.startSound();
             setView(getRocketImage());
             vertical = getPosition().getY() < 1;
             setMirror(true);
@@ -1116,6 +1117,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         private final void burst() {
             EnemyProjectile.burstEnemy(this, 8);
+            BotsnBoltsGame.fxCrumble.startSound();
             destroy();
         }
         
@@ -2686,6 +2688,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         private final void burst() {
             NavalMine.burst(this, -7);
+            BotsnBoltsGame.fxCrumble.startSound();
         }
         
         @Override
