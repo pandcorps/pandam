@@ -485,7 +485,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
         
         protected final void open() {
-            if (isBossEntranceRoom()) {
+            if (isBossEntranceRoom() && !Boss.isLevelMusicPlayedDuringBoss()) {
                 Pangine.getEngine().getAudio().stopMusic();
             }
             start(1);
