@@ -354,7 +354,7 @@ public abstract class RoomFunction {
             } else {
                 final int lightningStart = fadeStart - lightningDuration;
                 if (i >= lightningStart) {
-                    if (i == lightningStart) {
+                    if (i == lightningStart && !RoomLoader.variables.containsKey("inside")) {
                         BotsnBoltsGame.fxThunder.startSound();
                     }
                     c = 0;
