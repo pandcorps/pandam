@@ -51,6 +51,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static String VERSION = "0.0.1";
     protected final static String YEAR = "2016-2020";
     protected final static String AUTHOR = "Andrew M. Martin";
+    protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
     
     /*
     Pause info/menu
@@ -1160,7 +1161,7 @@ public final class BotsnBoltsGame extends BaseGame {
             final Panroom room = Pangame.getGame().getCurrentRoom();
             room.addActor(actor);
             addText(room, Menu.isTouchEnabled() ? "Tap to start" : "Press anything", w2, 56);
-            addText(room, "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR, w2, 26);
+            addText(room, COPYRIGHT, w2, 26);
             addText(room, AUTHOR, w2, 16);
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {

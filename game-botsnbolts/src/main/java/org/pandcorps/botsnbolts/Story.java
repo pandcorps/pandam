@@ -712,7 +712,22 @@ public class Story {
         
         @Override
         protected final void finish() {
-            Panscreen.set(new ProgressScreen());
+            Panscreen.set(new CreditsScreen());
+        }
+    }
+    
+    protected final static class CreditsScreen extends TextScreen {
+        @Override
+        protected final TextTyper loadText() {
+            enableCharacterBg();
+            final TextTyper typer = newStoryTyper(
+                BotsnBoltsGame.TITLE + "\n" +
+                "Created by:\n" +
+                BotsnBoltsGame.AUTHOR + "\n" +
+                BotsnBoltsGame.COPYRIGHT, 153)
+                .setFinishHandler(newScreenRunner(new ProgressScreen()));
+            typer.setLinesPerPage(16);
+            return typer;
         }
     }
     
@@ -820,7 +835,22 @@ public class Story {
                 "\"Void...  I need to tell you something...  Something that I should have told you long ago...\"",
                 "\"Dr. Root?\"",
                 "\"Void...  You were not my first child.\"" },
-                newScreenRunner(new LabScreenStinger1()), BotsnBoltsGame.fxText);
+                newScreenRunner(new ThankYouScreen()), BotsnBoltsGame.fxText);
+        }
+    }
+    
+    protected final static class ThankYouScreen extends TextScreen {
+        @Override
+        protected final TextTyper loadText() {
+            enableCharacterBg();
+            final TextTyper typer = newStoryTyper(
+                "Thank you for playing " + BotsnBoltsGame.TITLE + "!\n" +
+                "It means so much to me.\n" +
+                "I hope that you enjoyed it.\n" +
+                " - " + BotsnBoltsGame.AUTHOR, 153)
+                .setFinishHandler(newScreenRunner(new LevelSelectScreen()));
+            typer.setLinesPerPage(16);
+            return typer;
         }
     }
     
