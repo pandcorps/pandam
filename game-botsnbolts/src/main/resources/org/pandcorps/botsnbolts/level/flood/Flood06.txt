@@ -1,19 +1,22 @@
 IMP|Flood
 
-M|........................................................................
-M|.)                                    (..)mm                        mm(.
-M|.)                                    (..)m                          m(.
-M|.)                                    (..)                            (.
+M|l....x...o...o.......x.......o....x....l........x....o...x.x....o.......
+M|l)                                    (l.)mm                        mm(x
+M|o)                                    (l.)m                          m(.
+M|.)                                    (o.)                            (.
 M|.)                (..)                (..)                            (.
-M|.)                (..)                (..)    (                  )    (.
-M|.)                (..)                (..)    (                  )    (.
-M|                  (..)                (..)    (                  )      
-M|                  (..)                        (                  )      
-M|                (......)                      (                  )      
-M|                (......)                      (                  )      
-M|                                                                        
-M|                                                                        
-M|                                                                        
+M|.)                (..)                (.x)    (                  )    (x
+M|.)                (..)                (..)    (    t         x   )    (.
+M|                  (t.)                (..)    (    l   x         )      
+M|                  (l.)                        (    l        t    )      
+M|                (..l...)                      ( x  l        l    )      
+M|                (..l.x.)                      (  x l     t  l    )      
+M|                   l   )---------------------->    l     l  l  t        
+M|     t        t    o     x  l    t  x  l           o     l  o  l        
+M|     l     t  l        x    l    l     l   t  x      x   l     l        
+
+RPT|0|0|72|3|FloodForeground|||2|1
+RPT|47|3|18|6|FloodForeground|||2|1
 
 WTR|15
 
@@ -23,6 +26,3 @@ DOR|71|3|Cyan
 ENM|16|8|SwimEnemy
 ENM|36|7|SwimEnemy
 ENM|68|9|SwimEnemy
-
-RPT|0|0|72|3|FloodForeground|||2|1
-RPT|47|3|18|6|FloodForeground|||2|1
