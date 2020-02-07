@@ -1148,13 +1148,22 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             if (!isInView() && (Math.abs(targetX - x) > 224)) {
                 return true;
             }
-            hv = getDirection(x, targetX, -2, 2);
-            updateMirror();
+            final int nhv = getDirection(x, targetX, -6, 6);
             final float y = pos.getY();
-            v = getDirection(y, targetPos.getY(), -7, -3);
-            addX(hv);
+            final int nv = getDirection(y, targetPos.getY(), -11, 1);
+            if ((nhv != 0) || (nv != 0)) { // Don't freeze right on top of target
+                hv = nhv;
+                v = nv;
+            }
+            updateMirror();
+            if (addX(hv) != X_NORMAL) {
+                hv *= -1;
+            }
             if ((v > 0) || (y > (RoomLoader.waterLevel + 2))) {
-                addY();
+                final float ov = v;
+                if (addY() != Y_NORMAL) {
+                    v = -ov;
+                }
             }
             return true;
         }
