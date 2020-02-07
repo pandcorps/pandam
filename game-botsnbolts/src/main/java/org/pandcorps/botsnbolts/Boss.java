@@ -5768,6 +5768,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return false;
         }
         
+        @Override
+        protected boolean onWaiting() {
+            return true;
+        }
+        
+        @Override
+        protected boolean pickState() {
+            return true;
+        }
+
+        @Override
+        protected boolean continueState() {
+            return true;
+        }
+        
         protected final void startState(final byte state, final int waitTimer) {
             startState(state, waitTimer, getStill());
         }
@@ -5820,16 +5835,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean isHealthMeterNeeded() {
             return false;
-        }
-        
-        @Override
-        protected final boolean pickState() {
-            return true;
-        }
-
-        @Override
-        protected final boolean continueState() {
-            return true;
         }
         
         protected final void separate() {

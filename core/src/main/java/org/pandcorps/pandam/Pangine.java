@@ -700,6 +700,19 @@ public abstract class Pangine {
 		}
 		
 		room.applyActorChanges(true);
+		
+		/*
+		Used to run onStepEnd at very end of this method.
+		But it's generally used to update the position of a child actor after its parent's position was updated in onStep.
+		That must be done before collision checking.
+		Collision events generally destroy actors without changing their position.
+		So there shouldn't ever be any benefit to running onStepEnd after collision checking.
+		*/
+		for (final Panctor actor : actors) {
+            if (actor instanceof StepEndListener) {
+                ((StepEndListener) actor).onStepEnd(StepEndEvent.INSTANCE);
+            }
+        }
 
 		final ArrayList<FinPantry<Object, ArrayList<CollisionListener>>> colliderGroups = room.colliders;
 		final int numColliderGroups = colliderGroups.size();
@@ -765,12 +778,6 @@ public abstract class Pangine {
 			listener.onAnimationEnd(AnimationEndEvent.INSTANCE);
 		}
 		room.animationEndListeners.clear();
-		
-		for (final Panctor actor : actors) {
-            if (actor instanceof StepEndListener) {
-                ((StepEndListener) actor).onStepEnd(StepEndEvent.INSTANCE);
-            }
-        }
 		
 		room.applyActorChanges(false);
 	}
