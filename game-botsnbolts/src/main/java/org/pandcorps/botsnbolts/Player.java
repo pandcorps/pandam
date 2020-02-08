@@ -1396,6 +1396,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void startSpring() {
+        if (!Panctor.isDestroyed(spring) && !spring.isVisible()) {
+            // If spring is invisible, then it's still warping into place; let that finish before allowing another
+            return;
+        }
         destroySpring();
         spring = new Spring(this);
     }
