@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -253,20 +253,28 @@ public final class Mathtil {
         return Chartil.isValued(value) ? Double.valueOf(value) : null;
     }
 	
-	public final static void main(final String[] args) {
-		try {
-			final int[] a = new int[6];
-			for (int i = 0; i < 6; i++) {
-				a[i] = 0;
-			}
-			for (int i = 0; i < 1000; i++) {
-				a[randi(0, 5)]++;
-			}
-			for (int i = 0; i < 6; i++) {
-				System.out.println(i + ": " + a[i]);
-			}
-		} catch (final Throwable e) {
-			e.printStackTrace();
+	public final static class Sequence {
+		private final int min;
+		private final int max;
+		private int curr;
+		
+		public Sequence(final int min, final int max) {
+		    this(min, max, min);
+		}
+		
+		public Sequence(final int min, final int max, final int start) {
+		    this.min = min;
+		    this.max = max;
+		    curr = start;
+		}
+		
+		public final int next() {
+		    final int r = curr;
+		    curr++;
+		    if (curr > max) {
+		        curr = min;
+		    }
+		    return r;
 		}
 	}
 }

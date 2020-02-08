@@ -32,6 +32,7 @@ import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.Projectile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.Mathtil.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -1130,8 +1131,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     protected final static int PROP_HEALTH = 2, PROP_OFF_X = 4, PROP_H = 12, CRAWL_H = 14;
+    private final static Sequence propXSeq = new Sequence(-2, 2);
     
     protected final static class PropEnemy extends Enemy {
+        private final int threshOff = propXSeq.next();
+        
         protected PropEnemy(final Segment seg) {
             super(PROP_OFF_X, PROP_H, seg, PROP_HEALTH);
             setView(BotsnBoltsGame.propEnemy);
@@ -1148,9 +1152,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             if (!isInView() && (Math.abs(targetX - x) > 224)) {
                 return true;
             }
-            final int nhv = getDirection(x, targetX, -6, 6);
+            final int thv = 6 + threshOff;
+            final int nhv = getDirection(x, targetX, -thv, thv);
             final float y = pos.getY();
-            final int nv = getDirection(y, targetPos.getY(), -11, 1);
+            final int nv = getDirection(y, targetPos.getY(), -11 - threshOff, 1 + threshOff);
             if ((nhv != 0) || (nv != 0)) { // Don't freeze right on top of target
                 hv = nhv;
                 v = nv;
