@@ -1821,6 +1821,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             dir = isSolidTile(col + velX, row + velY) ? -1 : 1;
         }
         
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            award(powerUp, 8, 0);
+        }
+        
         private final void changeView(final int i) {
             changeView(getImage(i));
         }
