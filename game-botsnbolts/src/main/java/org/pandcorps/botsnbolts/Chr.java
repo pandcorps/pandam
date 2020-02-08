@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -81,9 +81,21 @@ public abstract class Chr extends GuyPlatform {
         return getSolid(off, true);
     }
     
+    protected final static boolean isDangerousTile(final int i, final int j) {
+        return isDangerousTile(BotsnBoltsGame.tm.getTile(i, j));
+    }
+    
+    protected final static boolean isDangerousTile(final Tile tile) {
+        return isDangerousBehavior(Tile.getBehavior(tile));
+    }
+    
+    protected final static boolean isDangerousBehavior(final byte b) {
+        return (b == BotsnBoltsGame.TILE_DEFEAT) || (b == BotsnBoltsGame.TILE_HURT);
+    }
+    
     @Override
     protected final boolean isFloorBehavior(final byte b) {
-        return b == BotsnBoltsGame.TILE_FLOOR || b == BotsnBoltsGame.TILE_LADDER_TOP;
+        return (b == BotsnBoltsGame.TILE_FLOOR) || (b == BotsnBoltsGame.TILE_LADDER_TOP);
     }
     
     protected final boolean isUnderWater() {

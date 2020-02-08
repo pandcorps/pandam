@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -80,17 +80,21 @@ public class Animal {
             final Panple ppos = p.getPosition();
             final float x = ppos.getX(), y = ppos.getY();
             final TileMap tm = BotsnBoltsGame.tm;
-            final int i = tm.getContainerColumn(x);
+            final int i = tm.getContainerColumn(x), iLeft = tm.getContainerColumn(x - ANM_OFF_X), iRight = tm.getContainerColumn(x + ANM_OFF_X);
             int j = tm.getContainerRow(y);
             for (; j >= 0; j--) {
-                if (Chr.isSolidTile(i, j)) {
+                final Tile tile = tm.getTile(i, j);
+                if (Chr.isDangerousTile(tile) || Chr.isDangerousTile(iLeft, j) || Chr.isDangerousTile(iRight, j)) {
+                    j = -1;
+                    break;
+                } else if (Chr.isSolidTile(tile)) {
                     break;
                 }
             }
             getPosition().set(x, (j + 1) * BotsnBoltsGame.tileSize, BotsnBoltsGame.DEPTH_ENEMY);
             setMirror(p.isMirror());
             p.addActor(this);
-            new Warp(this, pi);
+            new Warp(this, pi, j >= 0);
         }
         
         @Override

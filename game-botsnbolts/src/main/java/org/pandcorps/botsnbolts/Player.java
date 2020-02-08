@@ -2788,15 +2788,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected static class Warp extends Panctor implements StepListener {
         protected final Warpable actor;
         private final PlayerImages pi;
+        private final boolean success;
         
         protected Warp(final Player player) {
-            this(player, player.pi);
+            this(player, player.pi, true);
             player.stateHandler = WARP_HANDLER;
         }
         
         protected Warp(final Warpable actor, final PlayerImages pi) {
+            this(actor, pi, true);
+        }
+        
+        protected Warp(final Warpable actor, final PlayerImages pi, final boolean success) {
             this.actor = actor;
             this.pi = pi;
+            this.success = success;
             final Panple ppos = actor.getPosition();
             getPosition().set(ppos.getX(), BotsnBoltsGame.SCREEN_H, ppos.getZ());
             addActor(actor, this);
@@ -2828,7 +2834,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         protected final void finish() {
-            new Materialize(actor, pi.materialize);
+            if (success) {
+                new Materialize(actor, pi.materialize);
+            } else {
+                actor.destroy();
+            }
             destroy();
         }
     }
