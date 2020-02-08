@@ -104,6 +104,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private float maxX = Integer.MAX_VALUE;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
+    private long lastSanded = NULL_CLOCK;
     private int queuedX = 0;
     private boolean air = false;
     private int wallTimer = 0;
@@ -333,6 +334,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (!isGrounded()) {
             return;
         } else if (!startRoomNeeded && (availableRescues == 0)) {
+            return;
+        }
+        updateSafeCoordinates();
+    }
+    
+    private final void updateSafeCoordinates() {
+        if (sanded) {
             return;
         }
         final Panple pos = getPosition();
@@ -1076,6 +1084,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 }
                 thv = initCurrentHorizontalVelocitySand();
                 sanded = true;
+                lastSanded = getClock();
             } else if (belowLeft == TILE_ICE || belowRight == TILE_ICE) {
                 thv = initCurrentHorizontalVelocityIce();
             } else if (hv != 0 && isGrounded()) {
@@ -1552,7 +1561,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (changeRoom(0, -1)) {
             v = 0;
             return true;
-        } else if ((availableRescues > 0) && (safeX != NULL_COORD)) {
+        } else if ((availableRescues > 0) && (safeX != NULL_COORD) && ((getClock() - lastSanded) > 7)) {
             final String rescueDisabled = RoomLoader.variables.get("rescueDisabled");
             if (!"Y".equals(rescueDisabled)) {
                 if ("Start".equals(rescueDisabled)) {
