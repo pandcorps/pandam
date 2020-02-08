@@ -910,7 +910,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     private final void addQueuedX() {
         if (queuedX != 0) {
-            addX(queuedX);
+            addX(queuedX, false, false); // queuedX used by Conveyor belt, which shouldn't change mirror
         }
     }
     
