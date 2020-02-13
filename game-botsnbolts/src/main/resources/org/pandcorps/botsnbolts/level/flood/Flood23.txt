@@ -1,19 +1,19 @@
 IMP|Flood
 
-M|........................
+M|...x....o....o.....o.x..
 M|.)/DDDDDDDDDDDDDDDDDDDDD
 M|.)[                     
-M|.)[                     
-M|.)[                     
-M|.)[           (.........
-M|.........)    DDDDDDD\(.
-M| DDDDDDD()           ](.
-M|        (........)   ](.
-M|        DDDDDDDDDD   ](.
-M|                     ](.
-M|...)                (...
-M|...)                (...
-M|........................
+M|.)[             X       
+M|.)[  X                  
+M|x)[           (.........
+M|.........) X  DDDDDDD\(.
+M| DDDDDDD()           ](t
+M|     T  (........)   ](l
+M|     L  DDDDDDDDDD X ](o
+M|  X  L          T    ](.
+M|...) L X   T    L   (.t.
+M|t.x) L     L    L   (.l.
+M|l..)---------------->.l.
 
 DOR|0|3|Cyan
 DOR|23|9|Boss
