@@ -1188,9 +1188,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         public final void onRoomAdd(final RoomAddEvent event) {
             if (isMirrorable()) {
-                turnTowardPlayer();
+                assignMirror();
             }
             schedule();
+        }
+        
+        protected void assignMirror() {
+            turnTowardPlayer();
         }
         
         protected final void schedule() {
@@ -2952,6 +2956,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     protected abstract static class HenchbotEnemy extends JumpEnemy {
         private final Panmage[] imgs;
+        private final Boolean forcedMirror;
         protected boolean shooting = false;
         private long lastJump = NULL_CLOCK;
         private boolean anotherJumpReady = false;
@@ -2959,18 +2964,34 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected HenchbotEnemy(final Panmage[] imgs, final int x, final int y) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, x, y, HENCHBOT_HEALTH);
             this.imgs = imgs;
+            forcedMirror = null;
             init();
         }
         
         protected HenchbotEnemy(final Panmage[] imgs, final Segment seg) {
             super(HENCHBOT_OFF_X, HENCHBOT_H, seg, HENCHBOT_HEALTH);
             this.imgs = imgs;
+            forcedMirror = seg.toBoolean(3);
             init();
         }
         
         private final void init() {
             changeView(0);
-            turnTowardPlayer();
+            assignMirror();
+        }
+        
+        @Override
+        public final boolean isMirrorable() {
+            return forcedMirror == null;
+        }
+        
+        @Override
+        protected final void assignMirror() {
+            if (isMirrorable()) {
+                turnTowardPlayer();
+            } else {
+                setMirror(forcedMirror.booleanValue());
+            }
         }
         
         @Override
@@ -2994,7 +3015,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final void onSchedule() {
-            turnTowardPlayer(getNearestPlayer());
+            assignMirror();
             shooting = false;
         }
 
@@ -3005,7 +3026,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 schedule();
                 return;
             }
-            turnTowardPlayer(player);
+            assignMirror();
             // Now jumping only happens in onStepCustom when a Projectile is near
             //if (Mathtil.rand(20)) {
             //    jump();

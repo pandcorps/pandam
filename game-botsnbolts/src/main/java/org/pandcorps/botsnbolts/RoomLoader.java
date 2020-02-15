@@ -28,6 +28,7 @@ import java.util.*;
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
 import org.pandcorps.botsnbolts.Carrier.*;
 import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Menu.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomFunction.*;
@@ -643,7 +644,7 @@ public abstract class RoomLoader {
         final Panmage img = getTextureImage(src);
         final Panple size = img.getSize();
         final int _w = Math.round(size.getX() / d), _h = Math.round(size.getY() / d);
-        final Panctor actor = new Panctor();
+        final Decoration actor = new Decoration();
         actor.setView(img);
         actor.getPosition().set(x, y, z);
         tm.getLayer().addActor(actor);

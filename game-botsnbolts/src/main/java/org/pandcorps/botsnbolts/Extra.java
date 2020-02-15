@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -37,6 +37,9 @@ import org.pandcorps.pandax.visual.*;
 // Actors designed to be placed in levels; could be spawners, controllers, or just decorations
 public abstract class Extra extends Panctor {
     protected final static int TIMER_SPAWNER = 90;
+    
+    protected Extra() {
+    }
     
     protected Extra(final Segment seg, final int z) {
         final Panple pos = getPosition();
@@ -318,6 +321,13 @@ public abstract class Extra extends Panctor {
                 baseImgs[i] = img;
             }
             return img;
+        }
+    }
+    
+    protected final static class Decoration extends Extra {
+        @Override
+        protected final boolean isVisibleWhileRoomChanging() {
+            return true;
         }
     }
     
