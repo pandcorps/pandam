@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -212,6 +212,8 @@ public abstract class RoomLoader {
                 til(seg);
             } else if ("RPT".equals(name)) { // Repeating Texture
                 rpt(seg);
+            } else if ("IMG".equals(name)) { // Image
+                img(seg);
             } else if ("BOX".equals(name)) { // Power-up Box
                 box(seg);
             } else if ("VBX".equals(name)) { // Versioned Box
@@ -594,33 +596,59 @@ public abstract class RoomLoader {
         rct(seg.intValue(0), seg.intValue(1), 1, 1, seg, 2);
     }
     
+    private final static int getTextureDepth(final Record rec, final int i) {
+        final String value = rec.getValue(i);
+        if ("bg".equals(value)) {
+            return BotsnBoltsGame.DEPTH_BG;
+        } else if ("fg".equals(value)) {
+            return BotsnBoltsGame.DEPTH_FG;
+        } else if ("above".equals(value)) {
+            return BotsnBoltsGame.DEPTH_ABOVE;
+        }
+        return BotsnBoltsGame.DEPTH_TEXTURE + Record.parseInt(value, 0);
+    }
+    
     private final static void rpt(final Segment seg) throws Exception {
         final int d = BotsnBoltsGame.DIM;
         final TileMap tm = BotsnBoltsGame.tm;
         final int _x = seg.initInt(0), _y = seg.initInt(1);
         final int x = _x * d, y = _y * d;
-        final int _w = seg.getInt(2, tm.getWidth() - _x);
-        final int _h = seg.getInt(3, tm.getHeight() - _y);
+        final int _w = seg.getInt(2, tm.getWidth() - _x), _h = seg.getInt(3, tm.getHeight() - _y);
         final int w = _w * d, h = _h * d;
         String src = seg.getValue(4);
-        final int offX = seg.initInt(5), offY = seg.initInt(6), offZ = seg.initInt(7);
+        final int offX = seg.initInt(5), offY = seg.initInt(6), z = getTextureDepth(seg, 7);
         final byte b = seg.initByte(8);
         final String altSrc = seg.getValue(9);
         if ((altSrc != null) && (levelVersion > 0)) {
             src = altSrc;
         }
         final Pantexture tex = new Pantexture(getTextureImage(src));
-        tex.getPosition().set(x, y, BotsnBoltsGame.DEPTH_TEXTURE + offZ);
+        tex.getPosition().set(x, y, z);
         tex.setSize(w, h);
         tex.setOffset(offX, offY);
         tm.getLayer().addActor(tex);
         if (b != 0) {
-            for (int i = 0; i < _w; i++) {
-                final int xi = _x + i;
-                for (int j = 0; j < _h; j++) {
-                    tm.setBehavior(xi, _y + j, b);
-                }
-            }
+            tm.fillBehavior(b, _x, _y, _w, _h);
+        }
+    }
+    
+    private final static void img(final Segment seg) {
+        final int d = BotsnBoltsGame.DIM;
+        final TileMap tm = BotsnBoltsGame.tm;
+        final int _x = seg.initInt(0), _y = seg.initInt(1);
+        final int x = _x * d, y = _y * d;
+        String src = seg.getValue(2);
+        final int z = getTextureDepth(seg, 3);
+        final byte b = seg.initByte(4);
+        final Panmage img = getTextureImage(src);
+        final Panple size = img.getSize();
+        final int _w = Math.round(size.getX() / d), _h = Math.round(size.getY() / d);
+        final Panctor actor = new Panctor();
+        actor.setView(img);
+        actor.getPosition().set(x, y, z);
+        tm.getLayer().addActor(actor);
+        if (b != 0) {
+            tm.fillBehavior(b, _x, _y, _w, _h);
         }
     }
     

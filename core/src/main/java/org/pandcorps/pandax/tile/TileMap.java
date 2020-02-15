@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -208,11 +208,15 @@ public class TileMap extends Panctor implements Savable {
     }
     
     public final void fillBehavior(final byte behavior) {
-    	for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
+        fillBehavior(behavior, 0, 0, w, h);
+    }
+    
+    public final void fillBehavior(final byte behavior, final int x, final int y, final int w, final int h) {
+        for (int i = x + w - 1; i >= x; i--) {
+            for (int j = y + h - 1; j >= y; j--) {
                 setBehavior(i, j, behavior);
             }
-        } 
+        }
     }
     
     public final void replaceBehavior(final byte orig, final byte replace) {
