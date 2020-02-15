@@ -1145,12 +1145,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getIntroMessages() {
-            return null;
+            return new String[] {
+                    "Stones of ice will fall from the sky.  Do you think that you can survive such a plague?",
+                    "I will try to stop you, even if my survival is not certain.",
+                    "Then you are a fool.  The clouds are gathering.  And so it begins!"
+                };
         }
         
         @Override
         protected final String[] getRematchMessages() {
-            return null;
+            return new String[] { "It begins again!" };
         }
         
         @Override
@@ -2299,12 +2303,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getIntroMessages() {
-            return null;
+            return new String[] {
+                    "The rifts that I tear through the surface of the earth will swallow its cities.  Nothing will remain standing.",
+                    "I'm still standing, and I stand against you.",
+                    "Then I'll crack the ground beneath you!"
+                };
         }
         
         @Override
         protected final String[] getRematchMessages() {
-            return null;
+            return new String[] { "I'll crack the ground beneath you!" };
         }
         
         @Override
@@ -3687,7 +3695,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final String[] getRematchMessages() {
-            return null;
+            return new String[] { "Prepare yourself!" };
         }
         
         @Override
