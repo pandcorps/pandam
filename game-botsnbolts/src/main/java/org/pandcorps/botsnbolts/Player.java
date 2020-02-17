@@ -644,29 +644,41 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         defeatOrbs(this, pi.defeat);
         final Pansound oldMusic = Pangine.getEngine().getAudio().stopMusic();
-        startDefeatTimer(5, oldMusic);
+        startDefeatTimer(new Runnable() {
+            @Override public final void run() {
+                finishDefeat(oldMusic);
+            }});
         destroy();
     }
     
-    private final void startDefeatTimer(final int i, final Pansound music) {
+    protected final static void startDefeatTimer(final Runnable finisher) {
+        startDefeatTimer(5, finisher);
+    }
+    
+    private final static void startDefeatTimer(final int i, final Runnable finisher) {
         BotsnBoltsGame.fxDefeat.startSound();
         Pangine.getEngine().addTimer(BotsnBoltsGame.tm, (i == 0) ? 70 : 10, new TimerListener() {
             @Override public final void onTimer(final TimerEvent event) {
                 if (i > 0) {
-                    startDefeatTimer(i - 1, music);
+                    startDefeatTimer(i - 1, finisher);
                     return;
-                }
-                healthMeter.destroy();
-                if (startRoom == null) {
-                    RoomLoader.reloadCurrentRoom();
-                } else {
-                    BotsnBoltsGame.playerStartX = startX;
-                    BotsnBoltsGame.playerStartY = startY;
-                    BotsnBoltsGame.playerStartMirror = startMirror;
-                    RoomLoader.loadRoom(startRoom);
-                    Pansound.changeMusic(music);
+                } else if (finisher != null) {
+                    finisher.run();
                 }
             }});
+    }
+    
+    private final void finishDefeat(final Pansound music) {
+        healthMeter.destroy();
+        if (startRoom == null) {
+            RoomLoader.reloadCurrentRoom();
+        } else {
+            BotsnBoltsGame.playerStartX = startX;
+            BotsnBoltsGame.playerStartY = startY;
+            BotsnBoltsGame.playerStartMirror = startMirror;
+            RoomLoader.loadRoom(startRoom);
+            Pansound.changeMusic(music);
+        }
     }
     
     @Override

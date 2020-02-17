@@ -139,7 +139,7 @@ public abstract class Chr extends GuyPlatform {
         
         public void award(final Player player);
         
-        public void onDefeat();
+        public void onDefeat(final Player player);
         
         public boolean isDestroyedAfterDefeat();
     }

@@ -345,6 +345,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
     @Override
     protected final void award(final PowerUp powerUp) {
+        if (isDefeatOrbNeeded()) {
+            return;
+        }
+        spawnAward(powerUp);
+    }
+    
+    protected final void spawnAward(final PowerUp powerUp) {
         award(powerUp, getDropX());
     }
     
@@ -581,11 +588,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     @Override
-    public final void onDefeat() {
+    public final void onDefeat(final Player player) {
         onBossDefeat();
         if (isDefeatOrbNeeded()) {
             Player.defeatOrbs(this, BotsnBoltsGame.defeatOrbBoss);
+            Player.startDefeatTimer(new Runnable() {
+                @Override public final void run() {
+                    spawnAward(pickAward(player));
+                }});
         }
+        Pangine.getEngine().getAudio().stopMusic();
         if (isDestroyEnemiesNeeded()) {
             destroyEnemies();
         }
@@ -4414,7 +4426,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onDefeat() {
+        public final void onDefeat(final Player player) {
             if (defeated >= DEFEATED_YES) {
                 return;
             }

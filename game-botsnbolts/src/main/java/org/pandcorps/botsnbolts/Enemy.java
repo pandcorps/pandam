@@ -145,8 +145,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             if (enemy.isBurstNeeded()) {
                 prj.burst(enemy);
             }
-            enemy.award(prj.src);
-            enemy.onDefeat();
+            final Player src = prj.src;
+            enemy.award(src);
+            enemy.onDefeat(src);
             if (enemy.isDestroyedAfterDefeat()) {
                 enemy.destroy();
             }
@@ -172,7 +173,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     @Override
-    public void onDefeat() {
+    public void onDefeat(final Player player) {
     }
     
     @Override
@@ -1655,7 +1656,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public final void onDefeat() {
+        public final void onDefeat(final Player player) {
             if (!respawnable) {
                 return;
             }
@@ -2280,7 +2281,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public final void onDefeat() {
+        public final void onDefeat(final Player player) {
             final GuardedEnemy sibling = getSibling();
             if (sibling == null) {
                 respawn();
@@ -2614,7 +2615,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public final void onDefeat() {
+        public final void onDefeat(final Player player) {
             burst();
         }
         
@@ -2677,7 +2678,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public final void onDefeat() {
+        public final void onDefeat(final Player player) {
             NavalMine.burst(this, 24);
         }
         
@@ -2715,7 +2716,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public final void onDefeat() {
+        public final void onDefeat(final Player player) {
             burst();
         }
         
