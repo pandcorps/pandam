@@ -332,7 +332,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static void onAwardBoss(final SpecBoss boss, final Player player) {
         final String launchReturnX = boss.isLaunchPossible() ? RoomLoader.levelVariables.get(Extra.VAR_LAUNCH_RETURN_ROOM_X) : null;
         if (launchReturnX == null) {
-            player.dematerialize(Player.levelSelectHandler);
+            BotsnBoltsGame.musicVictory.startSound();
+            Pangine.getEngine().addTimer(player, 150, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    player.dematerialize(Player.levelSelectHandler);
+                }});
         } else {
             player.launch(Integer.parseInt(launchReturnX), Integer.parseInt(RoomLoader.levelVariables.get(Extra.VAR_LAUNCH_RETURN_ROOM_Y)));
         }

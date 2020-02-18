@@ -199,10 +199,12 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Pansound musicLevelSelect = null;
     protected static Pansound musicLevelStart = null;
     protected static Pansound musicFortressStart = null;
+    protected static Pansound musicVictory = null;
     protected static Pansound musicBoss = null;
     protected static Pansound musicEnding = null;
     protected static Pansound fxMenuHover = null;
     protected static Pansound fxMenuClick = null;
+    protected static Pansound fxWarp = null;
     protected static Pansound fxAttack = null;
     protected static Pansound fxImpact = null;
     protected static Pansound fxRicochet = null;
@@ -1122,10 +1124,12 @@ public final class BotsnBoltsGame extends BaseGame {
         musicLevelSelect = audio.createMusic(RES + "music/LevelSelect.mid");
         musicLevelStart = audio.createTransition(RES + "music/LevelStart.mid");
         musicFortressStart = audio.createTransition(RES + "music/FortressStart.mid");
+        musicVictory = audio.createTransition(RES + "music/Victory.mid");
         musicBoss = audio.createMusic(RES + "music/Boss.mid");
         musicEnding = audio.createMusic(RES + "music/Ending.mid");
         fxMenuHover = audio.createSound(RES + "sound/MenuHover.mid");
         fxMenuClick = audio.createSound(RES + "sound/MenuClick.mid");
+        fxWarp = audio.createSound(RES + "sound/Warp.mid");
         fxAttack = audio.createSound(RES + "sound/Attack.mid");
         fxImpact = audio.createSound(RES + "sound/Impact.mid").setReplayThreshold(6);
         fxRicochet = audio.createSound(RES + "sound/Ricochet.mid");

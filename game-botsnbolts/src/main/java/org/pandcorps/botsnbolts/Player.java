@@ -2893,6 +2893,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             setView(anm);
             getPosition().set(actor.getPosition());
             addActor(actor, this);
+            BotsnBoltsGame.fxWarp.startSound();
         }
         
         @Override
