@@ -40,6 +40,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         if (collider.getClass() == Player.class) {
             final Player player = (Player) collider;
             award(player);
+            BotsnBoltsGame.fxHealth.startSound();
             final Panple pos = getPosition();
             Projectile.burst(player, player.pi.burst, pos.getX(), pos.getY() + getCurrentDisplay().getBoundingMaximum().getY() / 2);
             destroy();

@@ -538,8 +538,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return true;
     }
     
+    protected final static boolean isPlayerDangerous() {
+        final Profile prf = getPlayerProfile();
+        return (prf != null) && (prf.shootMode == Player.SHOOT_RAPID);
+    }
+    
     protected final static int initStillTimer() {
-        return Mathtil.randi(15, 30);
+        return initStillTimer(15, 30);
+    }
+    
+    protected final static int initStillTimer(int min, int max) {
+        if (isPlayerDangerous()) {
+            min = Math.min(min, 3);
+            max = Math.min(max, 10);
+        }
+        return Mathtil.randi(min, max);
     }
     
     protected void startStill() {
@@ -588,6 +601,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static int adjustWaitTimerOnHurt(final int waitTimer, final int damage) {
+        if (waitTimer < 1) {
+            return waitTimer;
+        } else if (isPlayerDangerous()) {
+            return 1;
+        }
         return Math.max(1, waitTimer - (damage * 10));
     }
     
@@ -640,6 +658,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static Player getPlayer() {
         return PlayerContext.getPlayer(getPlayerContext());
+    }
+    
+    protected final static Profile getPlayerProfile() {
+        final PlayerContext pc = getPlayerContext();
+        return (pc == null) ? null : pc.prf;
     }
     
     protected final static void setPlayerActive(final boolean active) {
@@ -4517,7 +4540,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final int initStillTimer() {
-            return Mathtil.randi(30, 45);
+            return Boss.initStillTimer(30, 45);
         }
         
         @Override
@@ -4557,7 +4580,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final int initStillTimer() {
-            return Mathtil.randi(15, 30);
+            return Boss.initStillTimer(15, 30);
         }
         
         @Override
@@ -5008,7 +5031,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void startStill() {
-            startStill(scaleByHealthInt(2, 30)); // randomly 15 - 30 for other Bosses
+            int waitTimer = scaleByHealthInt(2, 30); // randomly 15 - 30 for other Bosses
+            if (isPlayerDangerous()) {
+                waitTimer = Math.min(waitTimer, initStillTimer());
+            }
+            startStill(waitTimer);
         }
         
         private final int scaleByHealthInt(final float min, final float max) {
@@ -6506,7 +6533,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final int initStillTimer() {
-            return Mathtil.randi(12, 15);
+            return Boss.initStillTimer(12, 15);
         }
         
         @Override
