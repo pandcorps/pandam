@@ -1119,6 +1119,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final VolcanoBot src;
         protected final float t;
+        private boolean soundNeeded = true;
         
         protected LavaBall(final VolcanoBot src, final float t) {
             super(getCurrentImage(), src, 11, 34, 0, 16, gTuple);
@@ -1147,6 +1148,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                         src.targetX = targetX;
                     }
                     getPosition().setX(sourceX + (t * (targetX - sourceX)));
+                } else if (soundNeeded && isInView()) {
+                    BotsnBoltsGame.fxDefeat.startSound();
+                    soundNeeded = false;
                 }
             }
         }
