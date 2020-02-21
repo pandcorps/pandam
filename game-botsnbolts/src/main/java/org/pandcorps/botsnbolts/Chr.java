@@ -150,5 +150,7 @@ public abstract class Chr extends GuyPlatform {
         public void onAward(final Player player);
         
         public boolean isLaunchPossible();
+        
+        public int pickResponseToDanger();
     }
 }

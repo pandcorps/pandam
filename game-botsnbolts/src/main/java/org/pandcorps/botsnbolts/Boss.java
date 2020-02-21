@@ -68,6 +68,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected HudMeter healthMeter = null;
     private static int prevRand = -1;
     private static int prevPrevRand = -1;
+    private static int overrideRand = -1;
+    protected static boolean endangeredDuringMove = false;
     private final boolean launchPossible;
     protected static AiBoss aiBoss = null;
     
@@ -81,6 +83,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         super(offX, h, x, y, 0);
         construct();
         launchPossible = true;
+    }
+    
+    protected static void initStatic() {
+        overrideRand = -1;
+        endangeredDuringMove = false;
     }
     
     private final void construct() {
@@ -115,6 +122,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     private final void onFirstStep() {
+        initStatic();
         if (isHealthMeterNeeded() && isDuringGameplay()) {
             healthMeter = addHealthMeter();
         }
@@ -375,6 +383,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static int rand(final int max) {
         if (max <= 1) {
             throw new IllegalArgumentException("Called rand(" + max + "), input must be at least 2");
+        } else if (overrideRand >= 0) {
+            try {
+                return addToRandHistory(overrideRand);
+            } finally {
+                overrideRand = -1;
+            }
         }
         while (true) {
             final int r = (Mathtil.randi(0, (max * 1000) - 1)) / 1000;
@@ -538,9 +552,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return true;
     }
     
+    @Override
+    public int pickResponseToDanger() {
+        return -1;
+    }
+    
     protected final static boolean isPlayerDangerous() {
         final Profile prf = getPlayerProfile();
         return (prf != null) && (prf.shootMode == Player.SHOOT_RAPID);
+    }
+    
+    protected final static void handleHurtIfDangerous(final SpecBoss boss) {
+        if (isPlayerDangerous()) {
+            overrideRand = boss.pickResponseToDanger();
+            endangeredDuringMove = true;
+        }
     }
     
     protected final static int initStillTimer() {
@@ -548,6 +574,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static int initStillTimer(int min, int max) {
+        if (endangeredDuringMove) {
+            endangeredDuringMove = false;
+            return Math.min(2, min);
+        }
         if (isPlayerDangerous()) {
             min = Math.min(min, 3);
             max = Math.min(max, 10);
@@ -592,6 +622,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected void onHurt(final Projectile prj) {
         final int oldHealth = health;
         super.onHurt(prj);
+        handleHurtIfDangerous(this);
         if (state == STATE_STILL) {
             final int damage = oldHealth - health;
             if (damage > 0) {
@@ -939,10 +970,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startLift();
             } else if (r == 1) {
                 startJumpDive();
-            } else {
+            } else { // 2 (also response to danger)
                 startJump();
             }
             return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 2;
         }
         
         @Override
@@ -1251,17 +1287,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean pickState() {
-            final int r = Mathtil.randi(0, 99);
-            if (r < 25) {
+            final int r = rand(4);
+            if (r == 0) {
                 startShoot();
-            } else if (r < 50) {
+            } else if (r == 1) {
                 startShootDiag();
-            } else if (r < 75) {
+            } else if (r == 2) {
                 startJump();
-            } else {
+            } else { // 3 (also response to danger)
                 startSlide();
             }
             return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 3;
         }
         
         @Override
@@ -1522,7 +1563,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             return false;
         }
-
+        
         @Override
         protected final boolean continueState() {
             switch (state) {
@@ -1918,7 +1959,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             return false;
         }
-
+        
         @Override
         protected final boolean continueState() {
             if (state == STATE_STRIKE) {
@@ -2428,11 +2469,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     startDrill1();
                 } else if (r == 1) {
                     startJumps();
-                } else {
+                } else { // 2 (also response to danger)
                     startJump();
                 }
             }
             return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 2;
         }
 
         @Override
@@ -2846,12 +2892,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final int r = rand(3);
             if (r == 0) {
                 startLaunch();
-            } else if (r == 1) {
+            } else if (r == 1) { // (also response to danger)
                 startSpin();
             } else {
                 startJump();
             }
             return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 1;
         }
 
         @Override
@@ -3391,13 +3442,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return;
             }
             final int r = rand(3);
-            if (r == 0) {
+            if (r == 0) { // (also response to danger)
                 startSwimVert();
             } else if (r == 1) {
                 startTorpedo();
             } else {
                 startSwim();
             }
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 0;
         }
 
         @Override
@@ -3852,7 +3908,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean pickState() {
             final int r = rand(3);
-            if (r == 0) {
+            if (r == 0) { // (also response to danger)
                 startMorph();
             } else if (r == 1) {
                 startHold();
@@ -3860,6 +3916,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startJump();
             }
             return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 0;
         }
 
         @Override
@@ -4186,6 +4247,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (!isHealthMeterNeeded()) {
                 return;
             }
+            initStatic();
             deactivateCharacters();
             BotsnBoltsGame.initHealthMeter(healthMeter = Enemy.newHealthMeter(this), false);
         }
@@ -4298,6 +4360,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected abstract int initStillTimer();
+        
+        @Override
+        public int pickResponseToDanger() {
+            return -1;
+        }
         
         protected final void moveX() {
             if (hv < 0) {
@@ -4436,9 +4503,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final void setHealth(final int health) {
-            if ((health < this.health) && isStill()) {
-                final int damage = this.health - health;
-                waitTimer = adjustWaitTimerOnHurt(waitTimer, damage);
+            if ((health < this.health)) {
+                handleHurtIfDangerous(this);
+                if (isStill()) {
+                    final int damage = this.health - health;
+                    waitTimer = adjustWaitTimerOnHurt(waitTimer, damage);
+                }
             }
             this.health = health;
         }
@@ -4525,8 +4595,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
             handlers.add(new AttackRunHandler());
             handlers.add(new AttackHandler());
             handlers.add(new AttackJumpHandler());
-            handlers.add(new JumpsHandler());
+            handlers.add(new JumpsHandler()); // 3 (also response to danger)
             deactivateCharacters();
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 3;
         }
         
         @Override
@@ -4553,11 +4628,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected Volatile2(final int x, final int y) {
             super(BotsnBoltsGame.volatileImages, x, y);
             handlers.add(new SpreadAttackRunHandler());
-            handlers.add(new ChargeAttackJumpsHandler());
+            handlers.add(new ChargeAttackJumpsHandler()); // 1 (also a response to danger)
             handlers.add(new RapidAttackHandler()); // If he has a turret attack, will be similar to this; then move this to Final
-            handlers.add(new RapidAttackJumpHandler());
+            handlers.add(new RapidAttackJumpHandler()); // 3 (also a response to danger)
             handlers.add(new BombRollHandler());
             deactivateCharacters();
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return Mathtil.rand() ? 1 : 3;
         }
         
         @Override
@@ -4970,7 +5050,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean pickState() {
             final int r = Mathtil.randi(0, 999);
             final int attackThreshold = scaleByHealthInt(100, 500);
-            if (r < attackThreshold) {
+            if ((r < attackThreshold) && !isPlayerDangerous()) {
                 startAttack();
             } else {
                 setH(TITAN_JUMP_H);
