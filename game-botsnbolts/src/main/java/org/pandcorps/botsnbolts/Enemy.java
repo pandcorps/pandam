@@ -48,6 +48,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     protected final static int VEL_PROJECTILE = 6;
     protected final static float VEL_PROJECTILE_45;
     
+    protected static boolean intro = false;
     protected int health;
     
     static {
@@ -76,6 +77,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     protected final static int getY(final Segment seg) {
         return seg.intValue(1);
+    }
+    
+    protected final static void initIntro() {
+        intro = RoomLoader.variables.containsKey("intro");
     }
     
     //@OverrideMe
@@ -1914,13 +1919,14 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             setMirror(seg.getBoolean(3, true));
             hv = getMirrorMultiplier();
             v = -1;
+            initIntro();
         }
         
         @Override
         protected final boolean onStepCustom() {
             changeView(getCurrentImage());
             final long sinceLastShot = Pangine.getEngine().getClock() - Player.lastShotByAnyPlayer;
-            final int desiredSpeedMultiplied = ((sinceLastShot < 45) ? 4 : 1) * speedMultiplier;
+            final int desiredSpeedMultiplied = (((sinceLastShot < 45) && !intro) ? 4 : 1) * speedMultiplier;
             if (speedMultiplied < desiredSpeedMultiplied) {
                 speedMultiplied++;
             } else if (speedMultiplied > desiredSpeedMultiplied) {
@@ -3106,18 +3112,20 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected CyanEnemy(final int x, final int y) {
             super(BotsnBoltsGame.henchbotEnemy, x, y);
             awardAllowed = false;
+            intro = false;
         }
         
         protected CyanEnemy(final Segment seg) {
             super(BotsnBoltsGame.henchbotEnemy, seg);
             awardAllowed = true;
+            initIntro();
         }
         
         protected final static void shoot(final Enemy src, final int offX, final int offY, final boolean angleLimited) {
             final Player player = src.getNearestPlayer();
             final float vx, vy;
             final int m = src.getMirrorMultiplier();
-            if (player == null) {
+            if (intro || (player == null)) {
                 vx = m * VEL_PROJECTILE;
                 vy = 0;
             } else {

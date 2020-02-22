@@ -60,7 +60,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int BUBBLE_TIME = 60;
     private final static int RUN_TIME = 5;
     protected final static int VEL_JUMP = 8;
-    protected final static int VEL_BOUNCE_BOMB = 7;
+    protected final static float VEL_BOUNCE_BOMB = 7.5f;
     protected final static int VEL_SPRING = 10;
     private final static int VEL_WALK = 3;
     protected final static int VEL_PROJECTILE = 8;
