@@ -1058,6 +1058,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             fire(ox, 3, vxMult * VEL_PROJECTILE_45, -VEL_PROJECTILE_45);
         }
         
+        @Override
+        protected final void award(final PowerUp powerUp) {
+            award(powerUp, 8, 0);
+        }
+        
         private final static Panmage getImage(final int i) {
             Panmage image = images[i];
             if (image != null) {
