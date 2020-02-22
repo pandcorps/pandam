@@ -4387,6 +4387,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startHandler(final AiHandler handler) {
+            if ((isPermanent(this.handler)) || (isPermanent(nextHandler))) {
+                return;
+            }
             if (this.handler != null) {
                 if (!this.handler.finish(this)) {
                     nextHandler = handler;
@@ -4730,6 +4733,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected boolean finish(final AiBoss boss) {
             return true;
         }
+        
+        protected boolean isPermanent() {
+            return false;
+        }
+    }
+    
+    protected final static boolean isPermanent(final AiHandler handler) {
+        return (handler != null) && handler.isPermanent();
     }
     
     private final static StillHandler stillHandler = new StillHandler();
@@ -4752,6 +4763,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (boss.isGrounded() && ((player == null) || player.isGrounded())) {
                 boss.afterDefeat();
             }
+        }
+        
+        @Override
+        protected final boolean isPermanent() {
+            return true;
         }
     }
     
