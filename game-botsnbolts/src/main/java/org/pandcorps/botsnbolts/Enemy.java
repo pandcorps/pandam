@@ -1976,7 +1976,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         private final static Panmage getCurrentImage() {
-            return getImage(((int) (Pangine.getEngine().getClock() % 9)) / 3);
+            return getImage(getCurrentIndex());
+        }
+        
+        protected final static int getCurrentIndex() {
+            return ((int) (Pangine.getEngine().getClock() % 9)) / 3;
         }
     }
     
@@ -2742,7 +2746,104 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             if (image != null) {
                 return image;
             }
-            return (image = getImage(image, "DepthCharge", new FinPanple2(8, 0), getMin(DEPTH_CHARGE_OFF_X), getMax(DEPTH_CHARGE_OFF_X, DEPTH_CHARGE_H)));
+            return (image = getImage(image, "DepthCharge", SLIDE_O, getMin(DEPTH_CHARGE_OFF_X), getMax(DEPTH_CHARGE_OFF_X, DEPTH_CHARGE_H)));
+        }
+    }
+    
+    protected final static int ARMORED_SAUCER_OFF_X = 5, ARMORED_SAUCER_H = 14;
+    protected final static Panple ARMORED_SAUCER_MIN = Chr.getMin(ARMORED_SAUCER_OFF_X), ARMORED_SAUCER_MAX = Chr.getMax(ARMORED_SAUCER_OFF_X, ARMORED_SAUCER_H);
+    
+    protected final static class ArmoredSaucerEnemy extends Enemy implements RoomAddListener {
+        private final static byte MODE_WAIT = 0;
+        private final static byte MODE_UNCOVER = 1;
+        private final static byte MODE_RISE = 2;
+        private final static byte MODE_HOVER = 3;
+        private final static byte MODE_FALL = 4;
+        private final static byte MODE_COVER = 5;
+        private final static Panmage[] images = new Panmage[5];
+        private int imageIndex;
+        private byte mode;
+        private int timer;
+        
+        protected ArmoredSaucerEnemy(final Segment seg) {
+            super(ARMORED_SAUCER_OFF_X, ARMORED_SAUCER_H, seg, PROP_HEALTH);
+            startWait();
+            turnTowardPlayer();
+        }
+        
+        private final void startWait() {
+            setMode(0, MODE_WAIT, 90);
+        }
+        
+        @Override
+        public final void onRoomAdd(final RoomAddEvent event) {
+            turnTowardPlayer();
+        }
+        
+        private final void setMode(final int imageIndex, final byte mode, final int timer) {
+            setView(imageIndex);
+            this.mode = mode;
+            this.timer = timer;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            timer--;
+            if (timer <= 0) {
+                final byte next = (byte) ((mode == MODE_COVER) ? MODE_WAIT : (mode + 1));
+                if (next == MODE_WAIT) {
+                    startWait();
+                } else if (next == MODE_UNCOVER || next == MODE_COVER) {
+                    setMode(1, next, 5);
+                    turnTowardPlayer();
+                } else {
+                    setMode(2, next, 80);
+                }
+            }
+            if ((mode >= MODE_RISE) && (mode <= MODE_FALL)) {
+                if (mode == MODE_HOVER) {
+                    turnTowardPlayer();
+                    if (timer == 40) {
+                        CyanEnemy.shoot(this, 0, 0, false);
+                    }
+                }
+                setView(2);
+                final int v = MODE_HOVER - mode;
+                if (addY(v) != Y_NORMAL) {
+                    timer = 0;
+                }
+            }
+            return true;
+        }
+        
+        @Override
+        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+            if (imageIndex == 0) {
+                startWait();
+            }
+            return (prj.power >= Projectile.POWER_MAXIMUM) || (imageIndex > 1);
+        }
+        
+        private final void setView(final int i) {
+            imageIndex = (i > 1) ? (SaucerEnemy.getCurrentIndex() + 2) : i;;
+            changeView(getImage(imageIndex));
+        }
+        
+        private final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image == null) {
+                final Panple max;
+                if (i == 0) {
+                    max = Chr.getMax(ARMORED_SAUCER_OFF_X, 11);
+                } else if (i == 1) {
+                    max = Chr.getMax(ARMORED_SAUCER_OFF_X, 12);
+                } else {
+                    max = ARMORED_SAUCER_MAX;
+                }
+                image = getImage(null, "ArmoredSaucerEnemy" + (i + 1), SLIDE_O, ARMORED_SAUCER_MIN, max);
+                images[i] = image;
+            }
+            return image;
         }
     }
     
@@ -3127,10 +3228,14 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         protected final static void shoot(final Enemy src, final int offX, final int offY, final boolean angleLimited) {
+            shoot(src, offX, offY, angleLimited, false);
+        }
+        
+        protected final static void shoot(final Enemy src, final int offX, final int offY, final boolean angleLimited, final boolean horizontalForced) {
             final Player player = src.getNearestPlayer();
             final float vx, vy;
             final int m = src.getMirrorMultiplier();
-            if (intro || (player == null)) {
+            if (horizontalForced || (player == null)) {
                 vx = m * VEL_PROJECTILE;
                 vy = 0;
             } else {
@@ -3152,7 +3257,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final void onShoot() {
-            shoot(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, true);
+            shoot(this, HENCHBOT_SHOOT_OFF_X, HENCHBOT_SHOOT_OFF_Y, true, intro);
             hold(30);
         }
         
