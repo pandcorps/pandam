@@ -711,6 +711,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return (player == null) ? 192 : player.getPosition().getX();
     }
     
+    protected final static float getPlayerY() {
+        final Player player = getPlayer();
+        return (player == null) ? 112 : player.getPosition().getY();
+    }
+    
     protected final static void clearPlayerExtras() {
         final Player player = getPlayer();
         if (player != null) {
@@ -3173,12 +3178,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_SWIM_UP = 7;
         protected final static byte STATE_SWIM_DOWN = 8;
         protected final static byte STATE_SWIM_STILL = 9;
+        protected final static byte STATE_TORPEDO_UP = 10;
+        protected final static byte STATE_TORPEDO_DOWN = 11;
         protected final static int FILL_FRAME_DURATION = 3;
         protected final static int WAIT_FILL = 4 * FILL_FRAME_DURATION;
         protected final static int RAISE_FRAMES = 28;
         protected final static int RAISE_FRAME_DURATION = 3;
         protected final static int WAIT_RAISE = RAISE_FRAMES * RAISE_FRAME_DURATION;
         protected final static int WAIT_TORPEDO = 30;
+        protected final static int WAIT_TORPEDO_VERTICAL = 6;
+        protected final static int WATER_THRESHOLD_MAX = 12;
         protected static Panmage still = null;
         protected static Panmage start1 = null;
         protected static Panmage start2 = null;
@@ -3191,6 +3200,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage swim2 = null;
         protected static Panmage swim3 = null;
         protected static Panmage launch = null;
+        protected static Panmage launchUp = null;
+        protected static Panmage launchDown = null;
         protected static Panmage whoosh = null;
         private final Valve valve;
         private final int xRight;
@@ -3199,6 +3210,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private Tile flowTile = null;
         private float prevY = 0;
         private boolean prevUnderwater = false;
+        private boolean torpedoNeeded = false;
         
         protected FloodBot(final Segment seg) {
             super(FLOOD_OFF_X, FLOOD_H, seg);
@@ -3265,7 +3277,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return true;
             } else if (state == STATE_TORPEDO) {
                 if (waitTimer == (WAIT_TORPEDO - 1)) {
-                    new Torpedo(this);
+                    new Torpedo(this, 14, 8, 0);
+                }
+                return true;
+            } else if (state == STATE_TORPEDO_UP) {
+                if (waitTimer == (WAIT_TORPEDO_VERTICAL - 1)) {
+                    new Torpedo(this, -1, 32, 1);
+                }
+                return true;
+            } else if (state == STATE_TORPEDO_DOWN) {
+                if (waitTimer == (WAIT_TORPEDO_VERTICAL - 1)) {
+                    new Torpedo(this, -4, -3, 3);
                 }
                 return true;
             }
@@ -3317,8 +3339,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (index < 18) {
                 if (((index % 2) == 0) && ((index < 16) || (RoomLoader.getWaterTile() < 6))) {
                     RoomLoader.raiseWaterTile();
-                    if (RoomLoader.getWaterTile() == 12) {
-                        valve.destroy();
+                    if (RoomLoader.getWaterTile() >= WATER_THRESHOLD_MAX) {
+                        Panctor.destroy(valve);
                     }
                 }
             } else if (index < RAISE_FRAMES) {
@@ -3330,6 +3352,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void onSwimming() {
+            if (torpedoNeeded) {
+                final Panple pos = getPosition();
+                if (Math.abs(getPlayerX() - pos.getX()) < 8) {
+                    torpedoNeeded = false;
+                    if (getPlayerY() < pos.getY()) {
+                        startTorpedoDown();
+                    } else if (RoomLoader.getWaterTile() >= WATER_THRESHOLD_MAX) {
+                        startTorpedoUp();
+                    }
+                    return;
+                }
+            }
             setCurrentSwim();
             if (!addBoundedX(xLeft, xRight)) {
                 endSwim();
@@ -3413,7 +3447,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return true;
             } else if ((health <= (HudMeter.MAX_VALUE - 7)) && (waterTile < 9)) {
                 pickRaiseWaterLevel();
-            } else if ((health <= (HudMeter.MAX_VALUE - 14)) && (waterTile < 12)) {
+            } else if ((health <= (HudMeter.MAX_VALUE - 14)) && (waterTile < WATER_THRESHOLD_MAX)) {
                 pickRaiseWaterLevel();
             } else {
                 pickBasic();
@@ -3504,11 +3538,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startSwim() {
             hv = 3 * getMirrorMultiplier();
+            torpedoNeeded = !isInMiddle();
             startStateIndefinite(STATE_SWIM, getCurrentSwim());
         }
         
         protected final void startTorpedo() {
             startState(STATE_TORPEDO, WAIT_TORPEDO, getLaunch());
+        }
+        
+        protected final void startTorpedoUp() {
+            startState(STATE_TORPEDO_UP, WAIT_TORPEDO_VERTICAL, getLaunchUp());
+        }
+        
+        protected final void startTorpedoDown() {
+            startState(STATE_TORPEDO_DOWN, WAIT_TORPEDO_VERTICAL, getLaunchDown());
         }
         
         private final void startSwimVert() {
@@ -3589,6 +3632,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return (launch = getFloodImage(launch, "floodbot/FloodBotLaunch"));
         }
         
+        protected final static Panmage getLaunchUp() {
+            return (launchUp = getFloodImage(launchUp, "floodbot/FloodBotLaunchUp"));
+        }
+        
+        protected final static Panmage getLaunchDown() {
+            return (launchDown = getFloodImage(launchDown, "floodbot/FloodBotLaunchDown"));
+        }
+        
         protected final static Panmage getWhoosh() {
             if (whoosh == null) {
                 whoosh = Pangine.getEngine().createImage("whoosh", BotsnBoltsGame.CENTER_16, null, null, BotsnBoltsGame.RES + "misc/Whoosh.png");
@@ -3636,22 +3687,28 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final static Panmage[] imgs = new Panmage[2];
         private int timer = 0;
         
-        protected Torpedo(final FloodBot src) {
+        protected Torpedo(final FloodBot src, final int ox, final int oy, final int rot) {
             super(TORPEDO_OFF_X, TORPEDO_H, 0, 0, 2);
-            EnemyProjectile.addBySource(this, getTorpedoImage(0), src, 14, 8);
+            EnemyProjectile.addBySource(this, getTorpedoImage(0), src, ox, oy);
             BotsnBoltsGame.fxEnemyAttack.startSound();
+            setRot(rot);
         }
         
         @Override
         public boolean onStepCustom() {
             final int t = timer / 2;
             changeView(getTorpedoImage(t % 2));
-            final int v = Math.min(t, 8) * getMirrorMultiplier();
-            if (addX(v) != X_NORMAL) {
+            final int speed = Math.min(t, 8), rot = getRot();
+            if (rot == 0) {
+                if (addX(speed * getMirrorMultiplier()) != X_NORMAL) {
+                    EnemyProjectile.burstEnemy(this);
+                    destroy();
+                } else if ((timer % 10) == 9) {
+                    new Bubble(this, 0);
+                }
+            } else if (addY(speed * ((rot == 1) ? 1 : -1)) != Y_NORMAL) {
                 EnemyProjectile.burstEnemy(this);
                 destroy();
-            } else if ((timer % 10) == 9) {
-                new Bubble(this, 0);
             }
             timer++;
             return true;
