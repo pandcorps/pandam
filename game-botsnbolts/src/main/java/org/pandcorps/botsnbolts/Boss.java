@@ -56,6 +56,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     private boolean initializationNeeded = true;
     protected int waitTimer = 0; // Will be assigned by startStillBeforeTaunt()
+    protected int waitCounter = 0;
     protected byte state = 0;
     protected Queue<Jump> pendingJumps = null;
     private boolean jumping = false;
@@ -181,6 +182,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return false;
         } else if (waitTimer > 0) {
             waitTimer--;
+            waitCounter++;
             return onWaiting();
         } else if (isStill()) {
             if (taunting()) {
@@ -411,6 +413,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final void startState(final byte state, final int waitTimer, final Panmage img) {
         this.state = state;
         this.waitTimer = waitTimer;
+        waitCounter = 0;
         setView(img);
     }
     
@@ -595,6 +598,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected void startStill(final int waitTimer) {
         startState(STATE_STILL, waitTimer, getStill());
+    }
+    
+    protected void startStill(final Panmage image) {
+        startState(STATE_STILL, initStillTimer(), image);
     }
     
     protected static Panmage getImage(final Panmage img, final String name, final Panmage ref) {
@@ -3181,7 +3188,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_TORPEDO_UP = 10;
         protected final static byte STATE_TORPEDO_DOWN = 11;
         protected final static int FILL_FRAME_DURATION = 3;
-        protected final static int WAIT_FILL = 4 * FILL_FRAME_DURATION;
+        protected final static int WAIT_FILL = 5 * FILL_FRAME_DURATION;
         protected final static int RAISE_FRAMES = 28;
         protected final static int RAISE_FRAME_DURATION = 3;
         protected final static int WAIT_RAISE = RAISE_FRAMES * RAISE_FRAME_DURATION;
@@ -3202,6 +3209,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage launch = null;
         protected static Panmage launchUp = null;
         protected static Panmage launchDown = null;
+        protected static Panmage taunt = null;
         protected static Panmage whoosh = null;
         private final Valve valve;
         private final int xRight;
@@ -3226,7 +3234,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void taunt() {
-            waitTimer = 0; //TODO Replace this
+            startFill();
         }
         
         @Override
@@ -3302,8 +3310,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 changeView(getStart2());
             } else if (index < 3) {
                 changeView(getStart3());
-            } else {
+            } else if (index < 4) {
                 changeView(getStillNormal());
+            } else {
+                changeView(getTaunt());
             }
         }
         
@@ -3640,6 +3650,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return (launchDown = getFloodImage(launchDown, "floodbot/FloodBotLaunchDown"));
         }
         
+        protected final static Panmage getTaunt() {
+            return (taunt = getFloodImage(taunt, "floodbot/FloodBotTaunt"));
+        }
+        
         protected final static Panmage getWhoosh() {
             if (whoosh == null) {
                 whoosh = Pangine.getEngine().createImage("whoosh", BotsnBoltsGame.CENTER_16, null, null, BotsnBoltsGame.RES + "misc/Whoosh.png");
@@ -3828,6 +3842,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final int xRight;
         private final int xLeft;
         private Pantexture tex = null;
+        private Scythe scythe = null;
         
         protected DroughtBot(final Segment seg) {
             super(DROUGHT_OFF_X, DROUGHT_H, seg);
@@ -3837,7 +3852,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void taunt() {
-            startMorph();
+            startHold(WAIT_INDEFINITE);
         }
         
         @Override
@@ -3891,8 +3906,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return onFlaring();
             } else if (state == STATE_FADE) {
                 onFading();
-            } else if ((state == STATE_HOLD) && (waitTimer == (WAIT_HOLD - 1))) {
-                new Scythe(this);
+            } else if ((state == STATE_HOLD) && (waitCounter == 1)) {
+                scythe = new Scythe(this);
             } else if ((state == STATE_JUMP) && (Math.abs(getPosition().getX() + hv - 192.0f) < 4.0f)) {
                 startFlare();
             }
@@ -3966,8 +3981,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
             super.onAttack(player);
         }
         
+        private final boolean isFirstLaunchNeeded() {
+            return (moves <= 0) && (scythe != null);
+        }
+        
         @Override
         protected final boolean pickState() {
+            if (isFirstLaunchNeeded()) {
+                addToRandHistory(1);
+                state = STATE_HOLD;
+                scythe.launch();
+                waitTimer = WAIT_HOLD - Scythe.TIME_LAUNCH;
+                scythe = null;
+                return false;
+            }
             final int r = rand(3);
             if (r == 0) { // (also response to danger)
                 startMorph();
@@ -3990,6 +4017,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startSand();
             } else if (state == STATE_FLARE) {
                 finishJump();
+            } else if (isFirstLaunchNeeded()) {
+                startStill(getHold());
             } else {
                 startStill();
             }
@@ -4022,7 +4051,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startHold() {
-            startState(STATE_HOLD, WAIT_HOLD, getHold());
+            startHold(WAIT_HOLD);
+        }
+        
+        protected final void startHold(final int waitTimer) {
+            startState(STATE_HOLD, waitTimer, getHold());
         }
         
         protected final void startJump() {
@@ -4137,6 +4170,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static Panple SCYTHE_SUB_SIZE = new FinPanple2(3, 16);
     
     protected final static class Scythe extends EnemyProjectile {
+        protected final static int TIME_LAUNCH = 26;
         private static Panmage grow = null;
         private static Panmage grow1 = null;
         private static Panmage grow2 = null;
@@ -4176,7 +4210,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 changeView(getGrow4());
             } else if (timer == 16) {
                 changeView(getScythe1());
-            } else if (timer == 26) {
+            } else if ((timer == TIME_LAUNCH) && !src.finishTaunt()) {
                 launch();
             }
         }
