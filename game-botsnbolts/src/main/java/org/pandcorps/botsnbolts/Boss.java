@@ -1214,11 +1214,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_JUMP = 3;
         protected final static byte STATE_SLIDE = 4;
         protected final static byte STATE_SLIDE_JUMP = 5;
+        protected final static byte STATE_SHOOT_UP = 6;
         protected final static int WAIT_SHOOT = 30;
         protected final static int WAIT_SLIDE = 20;
         protected static Panmage still = null;
         protected static Panmage aim = null;
         protected static Panmage aimDiag = null;
+        protected static Panmage aimUp = null;
         protected static Panmage jump = null;
         protected static Panmage fall = null;
         protected static Panmage slide1 = null;
@@ -1231,7 +1233,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void taunt() {
-            waitTimer = 0; //TODO Replace this
+            startShootUp();
         }
         
         @Override
@@ -1282,6 +1284,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     new HailCluster(this, 21, 13, VEL_PROJECTILE, 0);
                 } else if (state == STATE_SHOOT_DIAG) {
                     shootDiag(15, 24);
+                } else if (state == STATE_SHOOT_UP) {
+                    new HailCluster(this, 7, 32, 0, VEL_PROJECTILE);
                 }
             }
             return false;
@@ -1339,6 +1343,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             startState(STATE_SHOOT_DIAG, WAIT_SHOOT, getAimDiag());
         }
         
+        protected final void startShootUp() {
+            startState(STATE_SHOOT_UP, WAIT_SHOOT, getAimUp());
+        }
+        
         protected final void startJump() {
             startJump(STATE_JUMP, getJump(), 9, 0);
         }
@@ -1366,6 +1374,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getAimDiag() {
             return (aimDiag = getHailImage(aimDiag, "hailbot/HailBotAimDiag"));
+        }
+        
+        protected final static Panmage getAimUp() {
+            return (aimUp = getHailImage(aimUp, "hailbot/HailBotAimUp"));
         }
         
         @Override
