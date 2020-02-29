@@ -3446,7 +3446,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean pickState() {
             if (fillNeeded) {
                 startFill();
-                fillNeeded = false;
                 return false;
             }
             final int waterTile = RoomLoader.getWaterTile();
@@ -3508,6 +3507,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean continueState() {
             if (state == STATE_RAISE) {
                 startFall();
+            } else if (getView() == getTaunt()) {
+                startStill(getTaunt());
             } else {
                 startStill();
                 return true;
@@ -3523,7 +3524,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void startStill() {
             super.startStill();
-            if (!isOnGround()) {
+            if (!isOnGround() && isDuringGameplay()) {
                 state = STATE_SWIM_STILL;
                 setCurrentSwim();
             }
@@ -3531,6 +3532,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startFill() {
             startState(STATE_FILL, WAIT_FILL, getStart1());
+            fillNeeded = false;
         }
         
         protected final void startJump() {
