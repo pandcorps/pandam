@@ -1519,6 +1519,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_CURL = 4;
         protected final static byte STATE_ROLL = 5;
         protected final static byte STATE_JUMP = 6;
+        protected final static byte STATE_TAUNT = 7;
         protected final static int WAIT_SHOOT = 30;
         protected static Panmage still = null;
         protected static Panmage aim = null;
@@ -1528,6 +1529,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage roll1 = null;
         protected static Panmage roll2 = null;
         protected static Panmage jump = null;
+        protected static Panmage taunt1 = null;
+        protected static Panmage taunt2 = null;
         private final static Rotator rots = new RollRotator();
         private final static Panframe[] frames = new Panframe[Rotator.numFrames];
         
@@ -1537,7 +1540,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void taunt() {
-            waitTimer = 0; //TODO Replace this
+            BotsnBoltsGame.fxCrumble.startSound();
+            startState(STATE_TAUNT, 32, getTaunt1());
         }
         
         @Override
@@ -1570,8 +1574,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 } else {
                     rots.onStep(this, frames);
                 }
+            } else if (state == STATE_TAUNT) {
+                onTaunting();
             }
             return false;
+        }
+        
+        private final void onTaunting() {
+            if (waitCounter == 13) {
+                setView(getStill());
+            } else if (waitCounter == 19) {
+                BotsnBoltsGame.fxCrumble.startSound();
+                setView(getTaunt2());
+            }
         }
 
         @Override
@@ -1606,6 +1621,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     setH(ROCKSLIDE_H);
                 case STATE_SHOOT :
                 case STATE_SHOOT_HORIZONTAL :
+                case STATE_TAUNT :
                     startStill();
                     break;
                 default :
@@ -1690,6 +1706,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final Panmage getJump() {
             return (jump = getRockslideImage(jump, "rockslidebot/RockslideBotJump"));
+        }
+        
+        protected final static Panmage getTaunt1() {
+            return (taunt1 = getRockslideImage(taunt1, "rockslidebot/RockslideBotTaunt1"));
+        }
+        
+        protected final static Panmage getTaunt2() {
+            return (taunt2 = getRockslideImage(taunt2, "rockslidebot/RockslideBotTaunt2"));
         }
         
         protected final static Panmage getRockslideImage(final Panmage img, final String name) {
