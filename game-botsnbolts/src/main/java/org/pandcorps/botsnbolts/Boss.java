@@ -244,7 +244,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         if ((introMessages == null) || !isDuringGameplay()) {
             finishIntro();
         } else {
-            dialogue(getPortrait(), new Runnable() { @Override public final void run() {
+            dialogue(getPortrait(), getDialogueYOff(), new Runnable() { @Override public final void run() {
                 finishIntro();
             }}, introMessages);
         }
@@ -261,6 +261,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected String[] getRematchMessages() {
         return null;
+    }
+    
+    protected int getDialogueYOff() {
+        return 0;
     }
     
     private final void finishIntro() {
@@ -746,7 +750,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return getPlayerContext().pi.portrait;
     }
     
-    protected final static void dialogue(final Panmage bossPortrait, final Runnable finishHandler, final String... msgs) {
+    protected final static void dialogue(final Panmage bossPortrait, final int yOff, final Runnable finishHandler, final String... msgs) {
         setPlayerActive(false);
         final Panmage playerPortrait = getPlayerPortrait();
         DialogueBox box = null;
@@ -754,7 +758,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         for (final String msg : msgs) {
             final Panmage portrait = portraitLeft ? playerPortrait : bossPortrait;
             if (box == null) {
-                box = Story.dialogue(portrait, portraitLeft, msg).add();
+                box = Story.dialogue(portrait, portraitLeft, yOff, msg).add();
             } else {
                 box = box.setNext(portrait, portraitLeft, msg);
             }
@@ -1556,6 +1560,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final String[] getRematchMessages() {
             return new String[] { "I'll destroy you!" };
+        }
+        
+        @Override
+        protected final int getDialogueYOff() {
+            return -80;
         }
         
         @Override
@@ -4404,7 +4413,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void dialogue(final Runnable finishHandler, final String... msgs) {
             deactivateCharacters();
-            Boss.dialogue(getPortrait(), finishHandler, msgs);
+            Boss.dialogue(getPortrait(), 0, finishHandler, msgs);
         }
         
         protected final Panmage getPortrait() {
@@ -6504,7 +6513,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             finalActor = Final.newFinalActor(FINAL_BOSS_X, FINAL_BOSS_Y, true);
             setVisible(false);
-            dialogue(BotsnBoltsGame.finalImages.portrait, new Runnable() {
+            dialogue(BotsnBoltsGame.finalImages.portrait, 0, new Runnable() {
                 @Override public final void run() {
                     startArmor();
                 }},
@@ -6796,7 +6805,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                             Final.this.exit();
                             engine.addTimer(BotsnBoltsGame.tm, 30, new TimerListener() {
                                 @Override public final void onTimer(final TimerEvent event) {
-                                    Story.dialogue(getPlayerPortrait(), true, "And I will never stop defending it.").add().setFinishHandler(new Runnable() {
+                                    Story.dialogue(getPlayerPortrait(), true, 0, "And I will never stop defending it.").add().setFinishHandler(new Runnable() {
                                         @Override public final void run() {
                                             Boss.award(new VictoryDisk(getPlayer(), Final.this), getPlayerX());
                                         }});

@@ -46,10 +46,10 @@ public class Story {
         return typer;
     }
     
-    protected final static DialogueBox dialogue(final Panmage portrait, final boolean portraitLeft, final CharSequence msg) {
+    protected final static DialogueBox dialogue(final Panmage portrait, final boolean portraitLeft, final int yOff, final CharSequence msg) {
         final TextTyper typer = newTextTyper(msg, 29);
-        final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft);
-        typer.getPosition().set(box.xText + 12, 197);
+        final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft, yOff);
+        typer.getPosition().set(box.xText + 12, 197 + yOff);
         typer.setSound(BotsnBoltsGame.fxText).setFinishHandler(new Runnable() {
             @Override public final void run() {
                 box.finish();
@@ -73,16 +73,18 @@ public class Story {
         protected final TextTyper typer;
         private final Panmage portrait;
         private final boolean portraitLeft;
+        private final int yOff;
         private final boolean pupils;
         private final int xText;
         private final int xPortrait;
         private final int yPortrait;
         private Runnable finishHandler = null;
         
-        protected DialogueBox(final TextTyper typer, final Panmage portrait, final boolean portraitLeft) {
+        protected DialogueBox(final TextTyper typer, final Panmage portrait, final boolean portraitLeft, final int yOff) {
             this.typer = typer;
             this.portrait = portrait;
             this.portraitLeft = portraitLeft;
+            this.yOff = yOff;
             this.pupils = isPupilNeeded(portrait);
             if (portraitLeft) {
                 xText = 88;
@@ -91,7 +93,7 @@ public class Story {
                 xText = 40;
                 xPortrait = 296;
             }
-            yPortrait = 168;
+            yPortrait = 168 + yOff;
         }
         
         private DialogueBox(final Panmage portrait, final int x, final int y, final boolean mirror) {
@@ -99,6 +101,7 @@ public class Story {
             xPortrait = x;
             yPortrait = y;
             portraitLeft = !mirror;
+            yOff = 0;
             pupils = isPupilNeeded(portrait);
             typer = null;
             xText = 0;
@@ -117,7 +120,7 @@ public class Story {
         }
         
         protected final DialogueBox setNext(final Panmage portrait, final boolean portraitLeft, final CharSequence msg) {
-            final DialogueBox next = dialogue(portrait, portraitLeft, msg);
+            final DialogueBox next = dialogue(portrait, portraitLeft, yOff, msg);
             setFinishHandler(new Runnable() {
                 @Override public final void run() {
                     next.add();
@@ -130,7 +133,7 @@ public class Story {
             final Panlayer layer = getLayer();
             final Panmage box = BotsnBoltsGame.getBox();
             if (typer != null) {
-                Menu.LevelSelectGrid.renderBox(renderer, layer, xText, 136, BotsnBoltsGame.DEPTH_HUD, box, 15, 4);
+                Menu.LevelSelectGrid.renderBox(renderer, layer, xText, 136 + yOff, BotsnBoltsGame.DEPTH_HUD, box, 15, 4);
             }
             final int xp = xPortrait + 8, yp = yPortrait + 8;
             Menu.LevelSelectGrid.renderBox(renderer, layer, xPortrait, yPortrait, BotsnBoltsGame.DEPTH_HUD, box, 2, 2);
