@@ -1924,6 +1924,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_STRIKE = 2;
         protected final static byte STATE_BURST = 3;
         protected final static byte STATE_JUMPS = 4;
+        protected final static byte STATE_TAUNT_WAIT = 5;
         protected final static int WAIT_STRIKE = 15;
         protected final static int WAIT_BURST = 31;
         private final static int VEL_JUMPS = 10;
@@ -1932,6 +1933,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage strike = null;
         protected static Panmage fall = null;
         protected static Panmage burst = null;
+        protected static Panmage taunt = null;
         
         protected LightningBot(final Segment seg) {
             super(LIGHTNING_OFF_X, LIGHTNING_H, seg);
@@ -2016,8 +2018,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean continueState() {
             if (state == STATE_STRIKE) {
                 finishJump();
-            } else if ((state == STATE_BURST) && finishTaunt()) {
-                startStateIndefinite(STATE_STILL, getBurst());
+            } else if ((state == STATE_BURST) && !isTauntFinished()) {
+                startState(STATE_TAUNT_WAIT, 15, getStill());
+            } else if ((state == STATE_TAUNT_WAIT) && finishTaunt()) {
+                startStateIndefinite(STATE_STILL, getTaunt());
             } else {
                 startStill();
             }
@@ -2091,6 +2095,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return burst;
             }
             return (burst = getLightningImage(burst, "lightningbot/LightningBotBurst", new FinPanple2(LIGHTNING_O.getX() + 2, LIGHTNING_O.getY())));
+        }
+        
+        protected final static Panmage getTaunt() {
+            return (taunt = getLightningImage(taunt, "lightningbot/LightningBotTaunt"));
         }
         
         protected final static Panmage getLightningImage(final Panmage img, final String name) {
