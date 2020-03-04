@@ -59,6 +59,10 @@ public class Pancolor {
         this(v, v, v);
     }
     
+    public Pancolor(final int v) {
+        this(v, v, v);
+    }
+    
     public Pancolor(final short r, final short g, final short b) {
         this(r, g, b, MAX_VALUE);
     }
