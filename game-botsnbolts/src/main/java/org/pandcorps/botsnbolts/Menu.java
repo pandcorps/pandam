@@ -636,7 +636,9 @@ public class Menu {
         
         private final static void addPortrait(final Panlayer layer, final int x, final int y, final BotLevel level) {
             final Boolean portraitMirror = level.portraitMirror;
-            addPortrait(layer, x, y, level.portrait, (portraitMirror == null) ? ((x < 176) || ((x == 176) && (y < 112))) : !portraitMirror.booleanValue());
+            final boolean allFinished = RoomLoader.levels.get(RoomLoader.levels.size() - 1).isReplayable();
+            final Panmage portrait = (!allFinished && level.isFinished() && (level.portraitGrey != null)) ? level.portraitGrey : level.portrait;
+            addPortrait(layer, x, y, portrait, (portraitMirror == null) ? ((x < 176) || ((x == 176) && (y < 112))) : !portraitMirror.booleanValue());
         }
         
         private final static void addPortrait(final Panlayer layer, final int x, final int y, final Panmage image, final boolean right) {

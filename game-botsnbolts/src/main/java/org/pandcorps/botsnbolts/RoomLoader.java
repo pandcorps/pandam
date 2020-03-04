@@ -1250,8 +1250,35 @@ public abstract class RoomLoader {
     
     protected final static void loadLevels(final SegmentStream in) throws Exception {
         Segment seg;
+        final Pancolor g64 = new FinPancolor(64), g96 = new FinPancolor(96), g128 = Pancolor.DARK_GREY, g160 = new FinPancolor(160), g192 = Pancolor.GREY;
+        final PixelFilter greyFilter = new ReplacePixelFilter(
+            new FinPancolor( 96,  64,  48), g64,
+            new FinPancolor(144,  96,  72), g96,
+            new FinPancolor(192, 128,  96), g128,
+            new FinPancolor(240, 160, 120), g160,
+            new FinPancolor(224, 192, 160), g160,
+            new FinPancolor(255, 224, 192), g192,
+            new FinPancolor( 56,  64,  72), g64,
+            new FinPancolor( 80,  96, 112), g96,
+            new FinPancolor(128,  24,   0), g64,
+            new FinPancolor(192,  32,   0), g96,
+            new FinPancolor(  0,   0, 224), g64,
+            new FinPancolor( 80,  80, 255), g96,
+            new FinPancolor(  0, 128, 192), g96,
+            new FinPancolor(  0, 168, 255), g128,
+            new FinPancolor(128, 128,  48), g96,
+            new FinPancolor(192, 192,  72), g128,
+            new FinPancolor(120,  96, 144), g128,
+            new FinPancolor(160, 128, 192), g160,
+            new FinPancolor(255, 255,   0), g128,
+            new FinPancolor(192, 192,   0), g160,
+            new FinPancolor( 96, 176, 255), g160,
+            new FinPancolor(160, 208, 255), g192,
+            new FinPancolor( 96, 144, 192), g160,
+            new FinPancolor(128, 192, 255), g192
+        );
         while ((seg = in.readIf("LVL")) != null) {
-            levels.add(new BotLevel(seg));
+            levels.add(new BotLevel(seg, greyFilter));
         }
         while ((seg = in.readIf("SCR")) != null) {
             loadScreen(seg);
@@ -1384,6 +1411,7 @@ public abstract class RoomLoader {
         protected final int levelX;
         protected final int levelY;
         protected final Panmage portrait;
+        protected final Panmage portraitGrey;
         protected final int version;
         protected final List<String> prerequisites;
         protected final String musicName;
@@ -1395,7 +1423,7 @@ public abstract class RoomLoader {
         protected final Boolean portraitMirror;
         protected final String replayPrerequisite;
         
-        protected BotLevel(final Segment seg) {
+        protected BotLevel(final Segment seg, final PixelFilter greyFilter) {
             if (firstLevel == null) {
                 firstLevel = this;
             }
@@ -1413,9 +1441,16 @@ public abstract class RoomLoader {
             final String portraitPath = BotsnBoltsGame.RES + portraitLoc + ".png";
             final PlayerImages pi = BotsnBoltsGame.playerImages.get(portraitPath);
             if (pi == null) {
-                portrait = Pangine.getEngine().createImage(portraitLoc, portraitPath);
+                final Img portraitImg = Imtil.load(portraitPath);
+                portraitImg.setTemporary(false);
+                final Pangine engine = Pangine.getEngine();
+                portrait = engine.createImage(portraitLoc, portraitImg);
+                Imtil.filterImg(portraitImg, greyFilter);
+                portraitGrey = engine.createImage(portraitLoc + "Grey", portraitImg);
+                portraitImg.close();
             } else {
                 portrait = pi.portrait;
+                portraitGrey = null;
             }
             version = seg.getInt(7, 0);
             final List<Field> prerequisiteFields = seg.getRepetitions(8);
