@@ -3298,7 +3298,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private Tile flowTile = null;
         private float prevY = 0;
         private boolean prevUnderwater = false;
-        private boolean torpedoNeeded = false;
+        private int torpedoCount = 0;
+        private int torpedoWait = 0;
         
         protected FloodBot(final Segment seg) {
             super(FLOOD_OFF_X, FLOOD_H, seg);
@@ -3442,10 +3443,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void onSwimming() {
-            if (torpedoNeeded) {
+            torpedoWait--;
+            if ((torpedoCount > 0) && (torpedoWait <= 0)) {
                 final Panple pos = getPosition();
-                if (Math.abs(getPlayerX() - pos.getX()) < 8) {
-                    torpedoNeeded = false;
+                if (Math.abs(getPlayerX() - pos.getX()) < 40) {
+                    torpedoCount--;
+                    torpedoWait = 8;
                     if (getPlayerY() < pos.getY()) {
                         startTorpedoDown();
                     } else if (RoomLoader.getWaterTile() >= WATER_THRESHOLD_MAX) {
@@ -3587,6 +3590,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean continueState() {
             if (state == STATE_RAISE) {
                 startFall();
+            } else if ((state == STATE_TORPEDO_UP) || (state == STATE_TORPEDO_DOWN)) {
+                startSwim();
+                return true;
             } else if (getView() == getTaunt()) {
                 startStill(getTaunt());
             } else {
@@ -3630,7 +3636,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startSwim() {
             hv = 3 * getMirrorMultiplier();
-            torpedoNeeded = !isInMiddle();
+            if (!isInMiddle()) {
+                torpedoCount = 3;
+                torpedoWait = 0;
+            }
             startStateIndefinite(STATE_SWIM, getCurrentSwim());
         }
         
