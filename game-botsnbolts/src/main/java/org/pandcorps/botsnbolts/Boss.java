@@ -239,6 +239,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return true;
     }
     
+    protected void onTauntFinished() {
+    }
+    
     private final void startIntro() {
         final String[] introMessages = isFirstEncounter() ? getIntroMessages() : getRematchMessages();
         if ((introMessages == null) || !isDuringGameplay()) {
@@ -285,6 +288,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     @Override
     public final void onHealthMaxDisplayReached() {
         tauntState = TAUNT_FINISHED;
+        onTauntFinished();
         waitTimer = 0;
         if (isPlayerActivationAfterHealthMaxNeeded()) {
             setPlayerActive(true);
@@ -2808,6 +2812,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_LAUNCH_END = 2;
         protected final static byte STATE_SPIN = 3;
         protected final static byte STATE_JUMP = 4;
+        protected final static byte STATE_TAUNT = 5;
+        protected final static byte STATE_TAUNT_END = 6;
         protected final static int WAIT_LAUNCH = 19;
         protected final static int WAIT_SPIN = 171;
         protected static Panmage still = null;
@@ -2845,7 +2851,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void taunt() {
-            waitTimer = 0; //TODO Replace this
+            age = 0;
+            startState(STATE_TAUNT, 15, getStill());
+        }
+        
+        @Override
+        protected final void onTauntFinished() {
+            age = 0;
         }
         
         @Override
@@ -2869,20 +2881,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
             age++;
             if (state == STATE_JUMP) {
                 changeView(getJump());
-            } else if (age < 10) {
-                return false;
-            } else if (age < 12) {
-                changeView(getWhirlStart1());
-                return false;
-            } else if (age < 14) {
-                changeView(getWhirlStart2());
-                return false;
-            } else if (state == STATE_STILL) {
-                changeView(getWhirl());
+            } else if (((state == STATE_STILL) && isTauntFinished()) || (state == STATE_TAUNT)) {
+                if (age < 2) {
+                    return false;
+                } else if (age < 4) {
+                    changeView(getWhirlStart1());
+                    return false;
+                } else if (age < 6) {
+                    changeView(getWhirlStart2());
+                    return false;
+                } else {
+                    changeView(getWhirl());
+                }
             } else if (state == STATE_LAUNCH) {
                 final int index = WAIT_LAUNCH - waitTimer;
                 if (index == 1) {
-                    new Whirlwind(this);
+                    new Whirlwind(this, isTauntFinished() ? 300 : 45);
                 } else if (index > 1) {
                     changeView(((index % 4) < 2) ? getLaunch1() : getLaunch2());
                 }
@@ -2891,7 +2905,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     changeView(getWhirlStart1());
                 } else if (waitTimer == 0) {
                     age = 0;
-                    startStill();
+                    if (finishTaunt()) {
+                        startStateIndefinite(STATE_TAUNT_END, getStill());
+                    } else {
+                        startStill();
+                    }
                 }
             } else if (state == STATE_SPIN) {
                 final int index = WAIT_SPIN - waitTimer;
@@ -2982,6 +3000,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 getPosition().addX(getMirrorMultiplier());
                 setMirror(!isMirror());
                 startStill();
+            } else if (state == STATE_TAUNT) {
+                startLaunch();
             } else {
                 startStill();
             }
@@ -3138,14 +3158,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static class Whirlwind extends TimedEnemyProjectile {
-        protected final static int duration = 300;
         protected final static int speed = 2;
         protected static Panmage wind1 = null;
         protected static Panmage wind2 = null;
         protected static Panmage wind3 = null;
+        private final int minY;
         
-        protected Whirlwind(final Panctor src) {
+        protected Whirlwind(final Panctor src, final int duration) {
             super(getWind(duration), src, -2, 20, speed * src.getMirrorMultiplier(), 6, gTuple, duration);
+            minY = isDuringGameplay() ? 52 : 84;
             BotsnBoltsGame.fxDefeat.startSound();
         }
         
@@ -3169,7 +3190,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 setMirror(!m);
                 getVelocity().setX(speed * getMirrorMultiplier());
             }
-            if (pos.getY() < 52) {
+            if (pos.getY() < minY) {
                 getVelocity().setY(4);
             }
             changeView(getWind(timer));
