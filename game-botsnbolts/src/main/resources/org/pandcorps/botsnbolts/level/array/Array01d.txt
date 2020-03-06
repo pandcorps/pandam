@@ -1,0 +1,20 @@
+IMP|Array
+
+M|    _  }i4    6i{   _ _ 
+M|       }i4    6i{}Q{    
+M|  }q{_ }i4   12i{   _   
+M|{      }i4   4 i{    }q{
+M|    }QQ#i4   4 i{ _     
+M|{_     }i4   78i{  }q{  
+M|{     _}i4    6i{    _  
+M| }q#q{ }i23   6i{_    _ 
+M|       }i 6   6i{ }QQ{  
+M|#Q{ }q{}i89   6i{_      
+M|   _   }i4    6i{   }Q{ 
+M|  _    }i4    6i#q{     
+M|   }Q{ }i4    6i{     _ 
+M|       }i4    6i{  }q{  
+
+RPT|0|0|8|14|ArrayForeground
+RPT|9|0|6|14|Array
+RPT|16|0|8|14|ArrayForeground
