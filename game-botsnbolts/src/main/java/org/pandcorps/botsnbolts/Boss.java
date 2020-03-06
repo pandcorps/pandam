@@ -3163,6 +3163,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage wind2 = null;
         protected static Panmage wind3 = null;
         private final int minY;
+        private int health = 3;
         
         protected Whirlwind(final Panctor src, final int duration) {
             super(getWind(duration), src, -2, 20, speed * src.getMirrorMultiplier(), 6, gTuple, duration);
@@ -3208,9 +3209,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
-            prj.burst();
-            onExpire();
-            destroy();
+            BotsnBoltsGame.fxDefeat.startSound();
+            final int oldHealth = health, oldPower = prj.power;
+            health -= oldPower;
+            if (health <= 0) {
+                onExpire();
+                destroy();
+            }
+            prj.setPower(oldPower - oldHealth);
         }
         
         protected final static Panmage getWind(final int timer) {
