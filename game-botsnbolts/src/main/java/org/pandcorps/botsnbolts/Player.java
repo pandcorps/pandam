@@ -132,6 +132,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private float startX = NULL_COORD;
     private float startY = NULL_COORD;
     private boolean startMirror = false;
+    private Pansound startMusic = null;
     private int availableRescues = 0;
     protected Rescue rescue = null;
     private float safeX = NULL_COORD;
@@ -348,6 +349,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         safeY = pos.getY();
         safeMirror = isMirror();
         if (startRoomNeeded) {
+            if (RoomLoader.variables.containsKey(RoomLoader.VAR_RESTART_FORBIDDEN)) {
+                startRoomNeeded = false;
+                return;
+            }
             final BotRoom currentRoom = RoomLoader.getCurrentRoom();
             if (currentRoom == startRoom) {
                 return;
@@ -356,6 +361,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             startX = safeX;
             startY = safeY;
             startMirror = safeMirror;
+            startMusic = Pangine.getEngine().getAudio().getMusic();
             startRoomNeeded = false;
         }
     }
@@ -643,10 +649,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return;
         }
         defeatOrbs(this, pi.defeat);
-        final Pansound oldMusic = Pangine.getEngine().getAudio().stopMusic();
+        Pangine.getEngine().getAudio().stopMusic();
         startDefeatTimer(new Runnable() {
             @Override public final void run() {
-                finishDefeat(oldMusic);
+                finishDefeat();
             }});
         destroy();
     }
@@ -668,7 +674,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }});
     }
     
-    private final void finishDefeat(final Pansound music) {
+    private final void finishDefeat() {
         healthMeter.destroy();
         if (startRoom == null) {
             RoomLoader.reloadCurrentRoom();
@@ -677,7 +683,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             BotsnBoltsGame.playerStartY = startY;
             BotsnBoltsGame.playerStartMirror = startMirror;
             RoomLoader.loadRoom(startRoom);
-            Pansound.changeMusic(music);
+            Pansound.changeMusic(startMusic);
         }
     }
     

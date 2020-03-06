@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -82,13 +82,17 @@ public abstract class Pansound {
 	protected abstract void runSound() throws Exception;
 	
 	public final static void changeMusic(final Pansound music) {
-        if (music != null) {
+        if (music == null) {
+            stopMusic();
+        } else {
             music.changeMusic();
         }
     }
 	
 	public final static void startMusic(final Pansound music) {
-		if (music != null) {
+		if (music == null) {
+		    stopMusic();
+		} else {
 			music.startMusic();
 		}
 	}
@@ -99,9 +103,13 @@ public abstract class Pansound {
 		}
 	}
 	
+	private final static void stopMusic() {
+	    Pangine.getEngine().getAudio().stopMusic();
+	}
+	
 	public final void destroy() {
 	    if (this == currentMusic) {
-	        Pangine.getEngine().getAudio().stopMusic();
+	        stopMusic();
 	        currentMusic = null;
 	    }
 	    runDestroy();

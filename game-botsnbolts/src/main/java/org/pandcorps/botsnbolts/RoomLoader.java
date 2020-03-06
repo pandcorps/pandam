@@ -43,6 +43,7 @@ import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.visual.*;
 
 public abstract class RoomLoader {
+    protected final static String VAR_RESTART_FORBIDDEN = "restartForbidden";
     private final static int OFF_ALT = 256;
     private final static Class<?>[] SEGMENT_TYPES = { Segment.class };
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
@@ -747,6 +748,7 @@ public abstract class RoomLoader {
     }
     
     private final static void bos(final Segment seg) throws Exception {
+        variables.put(VAR_RESTART_FORBIDDEN, "Y");
         addActor(newBoss(seg));
     }
     
