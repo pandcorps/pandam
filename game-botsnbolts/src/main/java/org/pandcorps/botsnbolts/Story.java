@@ -42,7 +42,7 @@ public class Story {
         final TextTyper typer = new TextTyper(BotsnBoltsGame.font, msg, charactersPerLine).enableWaitForInput();
         typer.setLinesPerPage(6);
         typer.setGapY(2);
-        typer.getPosition().setZ(BotsnBoltsGame.DEPTH_HUD_TEXT);
+        typer.getPosition().setZ(BotsnBoltsGame.DEPTH_DIALOGUE_TEXT);
         return typer;
     }
     
@@ -133,12 +133,12 @@ public class Story {
             final Panlayer layer = getLayer();
             final Panmage box = BotsnBoltsGame.getBox();
             if (typer != null) {
-                Menu.LevelSelectGrid.renderBox(renderer, layer, xText, 136 + yOff, BotsnBoltsGame.DEPTH_HUD, box, 15, 4);
+                Menu.LevelSelectGrid.renderBox(renderer, layer, xText, 136 + yOff, BotsnBoltsGame.DEPTH_DIALOGUE_BOX, box, 15, 4);
             }
             final int xp = xPortrait + 8, yp = yPortrait + 8;
-            Menu.LevelSelectGrid.renderBox(renderer, layer, xPortrait, yPortrait, BotsnBoltsGame.DEPTH_HUD, box, 2, 2);
+            Menu.LevelSelectGrid.renderBox(renderer, layer, xPortrait, yPortrait, BotsnBoltsGame.DEPTH_DIALOGUE_BOX, box, 2, 2);
             final float ps = portrait.getSize().getX(), off = (32.0f - ps) / 2.0f;
-            renderer.render(layer, portrait, xp + off, yp + off, BotsnBoltsGame.DEPTH_HUD_TEXT, 0, 0, ps, ps, 0, !portraitLeft, false);
+            renderer.render(layer, portrait, xp + off, yp + off, BotsnBoltsGame.DEPTH_DIALOGUE_TEXT, 0, 0, ps, ps, 0, !portraitLeft, false);
             if (pupils) {
                 Pupils.renderView(renderer, layer, xp, yp, 0, 0, 0);
             }

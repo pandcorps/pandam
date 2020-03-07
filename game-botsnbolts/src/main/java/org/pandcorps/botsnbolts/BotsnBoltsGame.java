@@ -102,12 +102,14 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_PROJECTILE = 30;
     protected final static int DEPTH_OVERLAY = 32;
     protected final static int DEPTH_BURST = 66;
-    protected final static int DEPTH_HUD = 68;
-    protected final static int DEPTH_HUD_TEXT = 70;
-    protected final static int DEPTH_HUD_OVERLAY = 72;
+    protected final static int DEPTH_DIALOGUE_BOX = 68;
+    protected final static int DEPTH_DIALOGUE_TEXT = 70;
+    protected final static int DEPTH_HUD = 72;
+    protected final static int DEPTH_HUD_TEXT = 74;
+    protected final static int DEPTH_HUD_OVERLAY = 76;
     protected final static byte Z_OFF_OVERLAY = 2;
     protected final static byte Z_OFF_TEXT = 4;
-    protected final static int DEPTH_CURSOR = 74;
+    protected final static int DEPTH_CURSOR = 78;
     
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);
