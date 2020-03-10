@@ -47,6 +47,7 @@ public class Story {
     }
     
     protected final static DialogueBox dialogue(final Panmage portrait, final boolean portraitLeft, final int yOff, final CharSequence msg) {
+        BotsnBoltsGame.clearNotifications();
         final TextTyper typer = newTextTyper(msg, 29);
         final DialogueBox box = new DialogueBox(typer, portrait, portraitLeft, yOff);
         typer.getPosition().set(box.xText + 12, 197 + yOff);

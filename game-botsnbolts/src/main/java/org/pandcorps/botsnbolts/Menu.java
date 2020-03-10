@@ -573,7 +573,8 @@ public class Menu {
             final Pangine engine = Pangine.getEngine();
             BotsnBoltsGame.musicLevelSelect.changeMusic();
             final PlayerContext pc = BotsnBoltsGame.pc;
-            pc.prf.saveProfile();
+            final Profile prf = pc.prf;
+            prf.saveProfile();
             BotsnBoltsGame.initPlayerStart();
             if (imgEmpty == null) {
                 imgEmpty = engine.createEmptyImage("select.level", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(48, 48));
@@ -587,21 +588,34 @@ public class Menu {
             room = Pangine.getEngine().createRoom(Pantil.vmid(), roomW, roomH, roomZ);
             final Panroom newRoom = room;
             game.setCurrentRoom(room);
+            BotsnBoltsGame.room = room;
             final Panlayer layer = engine.createLayer("layer.grid", roomW, roomH, roomZ, room);
             grid = new LevelSelectGrid();
             layer.addActor(grid);
             Player.registerCapture(grid);
             BotLevel centerLevel = null;
+            boolean allBasicFinished = true;
             for (final BotLevel level : RoomLoader.levels) {
                 if (level.isSpecialLevel()) {
                     if (!level.isAllowed()) {
                         continue;
                     } else if (!level.isReplayable()) {
-                        centerLevel = level;
+                        if (!level.isFinished()) {
+                            centerLevel = level;
+                        }
                         continue;
                     }
+                } else if (!level.isFinished()) {
+                    allBasicFinished = false;
                 }
                 addLevelButton(room, level.selectX, level.selectY, level);
+            }
+            if (allBasicFinished && (centerLevel == null)) {
+                if (prf.upgrades.isEmpty()) {
+                    BotsnBoltsGame.notify("Collect upgrades to reach the next level!");
+                } else {
+                    BotsnBoltsGame.notify("Keep looking for more upgrades!");
+                }
             }
             if (centerLevel == null) {
                 final int x = 176, y = 96;

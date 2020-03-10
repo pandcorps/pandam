@@ -245,6 +245,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panlayer bgLayer = null;
     protected static TileMap bgTm = null;
     protected static Pantexture bgTexture = null;
+    private static Notifications notifications = null;
 
     @Override
     protected final boolean isFullScreen() {
@@ -1347,6 +1348,18 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static void addActor(final Panctor actor) {
         getLayer().addActor(actor);
+    }
+    
+    protected final static void notify(final String msg) {
+        if (Panctor.isDestroyed(notifications)) {
+            notifications = new Notifications(Panlayer.isDetached(hud) ? room : hud, font);
+            notifications.getLabel().getPosition().set(8, GAME_H - 16, DEPTH_DIALOGUE_TEXT);
+        }
+        notifications.enqueue(msg);
+    }
+    
+    protected final static void clearNotifications() {
+        Panctor.destroy(notifications);
     }
     
     public final static void main(final String[] args) {
