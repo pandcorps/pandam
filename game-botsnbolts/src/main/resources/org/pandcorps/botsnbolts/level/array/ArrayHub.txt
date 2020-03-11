@@ -1,19 +1,19 @@
 IMP|Array
 
-M|========================
+M|===}q+Q{=======}QQ{=_===
 M|}/-------)    (-------\{
 M|}i..122222    222223..i{
 M|}i  4              6  i{
-M|}i  4    .    .    6  i{
+M|Qi  4    .    .    6  iq
 M|}i  4   ........   6  i{
 M|}i  .   DDDECDDD   .  i{
-M|}i  ..     64     ..  i{
+M|qi  ..     64     ..  i{
 M|}i  CD     64     DE  i{
-M|}i  4              6  i{
+M|}i  4              6  iQ
 M|}i  S .          .S   i{
 M|}i..  ..88    88..  ..i{
 M|}`-------)    (-------,{
-M|========================
+M|==}q{===_=======}Q#q{===
 
 ROM|12|5||true
 
@@ -29,6 +29,6 @@ EXT|12|10|LaunchCapsule|42|462|VolcanoBot
 EXT|20|4|LaunchCapsule|44|459|DroughtBot
 EXT|20|8|LaunchCapsule|44|461|FloodBot
 
-EXT|11|6|LaunchCapsule|40|460||CycloneBot~DroughtBot~EarthquakeBot~FloodBot~HailBot~LightningBot~RockslideBot~VolcanoBot
+EXT|11|6|LaunchCapsule|46|460||CycloneBot~DroughtBot~EarthquakeBot~FloodBot~HailBot~LightningBot~RockslideBot~VolcanoBot
 
 RPT|2|2|20|10|Array
