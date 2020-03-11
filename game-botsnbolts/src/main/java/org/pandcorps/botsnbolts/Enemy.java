@@ -914,6 +914,94 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
     }
     
+    protected static class SprayCannon extends TileUnawareEnemy {
+        private final static Panmage[] imgs = new Panmage[3];
+        private static Panmage mount = null;
+        private final Direction dir;
+        private int timer = 0;
+        
+        protected SprayCannon(final Segment seg) {
+            super(seg, CANNON_HEALTH);
+            final int i = getX(seg), j = getY(seg);
+            if (isSolidTile(i, j - 1)) {
+                dir = Direction.North;
+            } else if (isSolidTile(i, j + 1)) {
+                dir = Direction.South;
+            } else if (isSolidTile(i - 1, j)) {
+                dir = Direction.East;
+            } else if (isSolidTile(i + 1, j)) {
+                dir = Direction.West;
+            } else {
+                throw new IllegalStateException("No wall adjacent to (" + i + ", " + j + ")");
+            }
+            setView(Pangine.getEngine().createEmptyImage("Spray.null", null, null, BotsnBoltsGame.CENTER_32)); //TODO
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
+        protected final void onStepEnemy() {
+            timer++;
+            if (timer == 120) {
+                timer = 0;
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panmage img = getImage(0); //TODO
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            final int off;
+            if (timer < 90) {
+                off = 0;
+            } else if (timer < 92) {
+                off = 4;
+            } else if (timer < 118) {
+                off = 8;
+            } else {
+                off = 4;
+            }
+            final int xb, xm, yb, ym, rot, mountRot;
+            final boolean mirror, mountMirror, mountFlip;
+            if (dir == Direction.North) {
+                xb = 0; xm = 0; yb = 0; ym = 1; rot = 0; mirror = false;
+                mountRot = 0; mountMirror = false; mountFlip = false;
+            } else if (dir == Direction.South) {
+                xb = 0; xm = 0; yb = 8; ym = -1; rot = 0; mirror = false;
+                mountRot = 0; mountMirror = false; mountFlip = true;
+            } else if (dir == Direction.East) {
+                xb = -8; xm = 1; yb = 0; ym = 0; rot = 3; mirror = true;
+                mountRot = 3; mountMirror = false; mountFlip = false;
+            } else {
+                xb = 0; xm = -1; yb = 0; ym = 0; rot = 3; mirror = true;
+                mountRot = 3; mountMirror = true; mountFlip = false;
+            }
+            renderer.render(layer, img, x + xb + (xm * off), y + yb + (ym * off), BotsnBoltsGame.DEPTH_ENEMY, 0, 0, 16, 16, rot, mirror, false);
+            if (off > 0) {
+                renderer.render(layer, getMount(), x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, 0, 16, 16, mountRot, mountMirror, mountFlip);
+            }
+        }
+        
+        protected final static Panmage getImage(final int i) {
+            final Panmage img = imgs[i];
+            if (img != null) {
+                return img;
+            }
+            return (imgs[i] = getImage(img, "SprayCannon" + (i + 1), null, null, null));
+        }
+        
+        protected final static Panmage getMount() {
+            return (mount = getImage(mount, "SprayCannonMount", null, null, null));
+        }
+    }
+    
+    private final static int CANNON_HEALTH = 3;
+    
     protected static class WallCannon extends TileUnawareEnemy {
         private final static int DURATION = 60;
         private int timer;
@@ -923,7 +1011,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         protected WallCannon(final Segment seg) {
-            super(seg, 3);
+            super(seg, CANNON_HEALTH);
         }
         
         @Override
@@ -997,7 +1085,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         private int timer;
         
         protected CeilingCannon(final Segment seg) {
-            super(seg, 3);
+            super(seg, CANNON_HEALTH);
             setDown();
         }
         
