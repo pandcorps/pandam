@@ -953,7 +953,6 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
-            final Panmage img = getImage(0); //TODO
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
             final int off;
@@ -966,6 +965,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             } else {
                 off = 4;
             }
+            final int imgIndex;
+            if (off == 8) {
+                imgIndex = ((timer - 92) / 3) % 3;
+            } else {
+                imgIndex = 0;
+            }
+            final Panmage img = getImage(imgIndex);
             final int xb, xm, yb, ym, rot, mountRot;
             final boolean mirror, mountMirror, mountFlip;
             if (dir == Direction.North) {
