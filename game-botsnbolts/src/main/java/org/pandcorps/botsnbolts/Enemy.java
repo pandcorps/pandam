@@ -917,6 +917,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     private static Panmage boxSprayNorth = null, boxSpraySouth = null, boxSprayEast = null, boxSprayWest = null, boxSprayExtended = null;
     
     protected static class SprayCannon extends TileUnawareEnemy {
+        private final static int TIME_EXTEND_START = 92;
+        private final static int TIME_EXTEND_END = 148;
+        private final static int DUR_INTERMEDIATE = 2;
+        private final static int DUR_ATTACK = 8;
         private final static Panmage[] imgs = new Panmage[3];
         private static Panmage mount = null;
         private final Direction dir;
@@ -966,9 +970,51 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         protected final void onStepEnemy() {
             timer++;
-            if (timer == 120) {
+            if (timer == (TIME_EXTEND_START + DUR_ATTACK)) {
+                attack3();
+            } else if (timer == (TIME_EXTEND_END - DUR_ATTACK)) {
+                attack2();
+            } else if (timer == (TIME_EXTEND_END + DUR_INTERMEDIATE)) {
                 timer = 0;
             }
+        }
+        
+        private final void attack3() {
+            if (dir == Direction.North) {
+                attack(0, VEL_PROJECTILE); attack(-VEL_PROJECTILE, 0); attack(VEL_PROJECTILE, 0);
+            } else if (dir == Direction.South) {
+                attack(0, -VEL_PROJECTILE); attack(-VEL_PROJECTILE, 0); attack(VEL_PROJECTILE, 0);
+            } else if (dir == Direction.East) {
+                attack(VEL_PROJECTILE, 0); attack(0, -VEL_PROJECTILE); attack(0, VEL_PROJECTILE);
+            } else {
+                attack(-VEL_PROJECTILE, 0); attack(0, -VEL_PROJECTILE); attack(0, VEL_PROJECTILE);
+            }
+        }
+        
+        private final void attack2() {
+            if (dir == Direction.North) {
+                attack(VEL_PROJECTILE_45, VEL_PROJECTILE_45); attack(-VEL_PROJECTILE_45, VEL_PROJECTILE_45);
+            } else if (dir == Direction.South) {
+                attack(VEL_PROJECTILE_45, -VEL_PROJECTILE_45); attack(-VEL_PROJECTILE_45, -VEL_PROJECTILE_45);
+            } else if (dir == Direction.East) {
+                attack(VEL_PROJECTILE_45, VEL_PROJECTILE_45); attack(VEL_PROJECTILE_45, -VEL_PROJECTILE_45);
+            } else {
+                attack(-VEL_PROJECTILE_45, VEL_PROJECTILE_45); attack(-VEL_PROJECTILE_45, -VEL_PROJECTILE_45);
+            }
+        }
+        
+        private final void attack(final float vx, final float vy) {
+            final int ox, oy;
+            if (dir == Direction.North) {
+                ox = 8; oy = 12;
+            } else if (dir == Direction.South) {
+                ox = 8; oy = 4;
+            } else if (dir == Direction.East) {
+                ox = 12; oy = 8;
+            } else {
+                ox = 4; oy = 8;
+            }
+            new EnemyProjectile(this, ox, oy, vx, vy);
         }
         
         @Override
@@ -977,18 +1023,18 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
             final int off;
-            if (timer < 90) {
+            if (timer < (TIME_EXTEND_START - DUR_INTERMEDIATE)) {
                 off = 0;
-            } else if (timer < 92) {
+            } else if (timer < TIME_EXTEND_START) {
                 off = 4;
-            } else if (timer < 118) {
+            } else if (timer < TIME_EXTEND_END) {
                 off = 8;
             } else {
                 off = 4;
             }
             final int imgIndex;
             if (off == 8) {
-                imgIndex = ((timer - 92) / 3) % 3;
+                imgIndex = ((timer - TIME_EXTEND_START) / 3) % 3;
                 setView(boxSprayExtended);
             } else {
                 imgIndex = 0;
