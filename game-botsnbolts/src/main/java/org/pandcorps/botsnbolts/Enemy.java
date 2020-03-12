@@ -914,27 +914,48 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
     }
     
+    private static Panmage boxSprayNorth = null, boxSpraySouth = null, boxSprayEast = null, boxSprayWest = null, boxSprayExtended = null;
+    
     protected static class SprayCannon extends TileUnawareEnemy {
         private final static Panmage[] imgs = new Panmage[3];
         private static Panmage mount = null;
         private final Direction dir;
+        private final Panmage boxWaiting;
         private int timer = 0;
         
         protected SprayCannon(final Segment seg) {
             super(seg, CANNON_HEALTH);
+            initBoundingBoxes();
             final int i = getX(seg), j = getY(seg);
             if (isSolidTile(i, j - 1)) {
                 dir = Direction.North;
+                boxWaiting = boxSprayNorth;
             } else if (isSolidTile(i, j + 1)) {
                 dir = Direction.South;
+                boxWaiting = boxSpraySouth;
             } else if (isSolidTile(i - 1, j)) {
                 dir = Direction.East;
+                boxWaiting = boxSprayEast;
             } else if (isSolidTile(i + 1, j)) {
                 dir = Direction.West;
+                boxWaiting = boxSprayWest;
             } else {
                 throw new IllegalStateException("No wall adjacent to (" + i + ", " + j + ")");
             }
-            setView(Pangine.getEngine().createEmptyImage("Spray.null", null, null, BotsnBoltsGame.CENTER_32)); //TODO
+            setView(boxWaiting);
+        }
+        
+        private final static void initBoundingBoxes() {
+            if (boxSprayNorth != null) {
+                return;
+            }
+            final Pangine engine = Pangine.getEngine();
+            final Panple max = BotsnBoltsGame.CENTER_32;
+            boxSprayNorth = engine.createEmptyImage("box.spray.north", null, null, new FinPanple2(16, 8));
+            boxSpraySouth = engine.createEmptyImage("box.spray.south", null, new FinPanple2(0, 8), max);
+            boxSprayEast = engine.createEmptyImage("box.spray.east", null, null, new FinPanple2(8, 16));
+            boxSprayWest = engine.createEmptyImage("box.spray.west", null, new FinPanple2(8, 0), max);
+            boxSprayExtended = engine.createEmptyImage("box.spray.extended", null, null, max);
         }
         
         @Override
@@ -968,8 +989,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             final int imgIndex;
             if (off == 8) {
                 imgIndex = ((timer - 92) / 3) % 3;
+                setView(boxSprayExtended);
             } else {
                 imgIndex = 0;
+                changeView(boxWaiting);
             }
             final Panmage img = getImage(imgIndex);
             final int xb, xm, yb, ym, rot, mountRot;
