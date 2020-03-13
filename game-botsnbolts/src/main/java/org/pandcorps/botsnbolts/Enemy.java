@@ -2918,12 +2918,12 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     protected final static class ArmoredSaucerEnemy extends Enemy implements RoomAddListener {
         private final static byte MODE_WAIT = 0;
-        private final static byte MODE_UNCOVER = 1;
-        private final static byte MODE_RISE = 2;
+        private final static byte MODE_RISE = 1;
+        private final static byte MODE_UNCOVER = 2;
         private final static byte MODE_HOVER = 3;
-        private final static byte MODE_FALL = 4;
-        private final static byte MODE_COVER = 5;
-        private final static Panmage[] images = new Panmage[5];
+        private final static byte MODE_COVER = 4;
+        private final static byte MODE_FALL = 5;
+        private final static Panmage[] images = new Panmage[7];
         private int imageIndex;
         private byte mode;
         private int timer;
@@ -2953,25 +2953,26 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected final boolean onStepCustom() {
             timer--;
             if (timer <= 0) {
-                final byte next = (byte) ((mode == MODE_COVER) ? MODE_WAIT : (mode + 1));
+                final byte next = (byte) ((mode == MODE_FALL) ? MODE_WAIT : (mode + 1));
                 if (next == MODE_WAIT) {
                     startWait();
-                } else if (next == MODE_UNCOVER || next == MODE_COVER) {
-                    setMode(1, next, 5);
-                    turnTowardPlayer();
+                } else if ((next == MODE_UNCOVER) || (next == MODE_COVER)) {
+                    setMode(2, next, 5);
+                    getPosition().addY((next == MODE_COVER) ? 2 : -2);
                 } else {
-                    setMode(2, next, 80);
+                    setMode(1, next, 80);
+                    getPosition().addY((next == MODE_HOVER) ? -2 : ((next == MODE_FALL) ? 2 : 0));
                 }
             }
-            if ((mode >= MODE_RISE) && (mode <= MODE_FALL)) {
-                if (mode == MODE_HOVER) {
-                    turnTowardPlayer();
-                    if (timer == 40) {
-                        CyanEnemy.shoot(this, 0, 0, false);
-                    }
+            if (mode == MODE_HOVER) {
+                setView(3);
+                turnTowardPlayer();
+                if (timer == 40) {
+                    CyanEnemy.shoot(this, 0, 0, false);
                 }
-                setView(2);
-                final int v = MODE_HOVER - mode;
+            } else if ((mode == MODE_RISE) || (mode == MODE_FALL)) {
+                setView(1);
+                final int v = (mode == MODE_RISE) ? 1 : -1;
                 if (addY(v) != Y_NORMAL) {
                     timer = 0;
                 }
@@ -2981,14 +2982,22 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final boolean isVulnerableToProjectile(final Projectile prj) {
-            if (imageIndex == 0) {
+            if (mode == MODE_WAIT) {
                 startWait();
             }
-            return (prj.power >= Projectile.POWER_MAXIMUM) || (imageIndex > 1);
+            return (prj.power >= Projectile.POWER_MAXIMUM) || (mode == MODE_HOVER);
         }
         
         private final void setView(final int i) {
-            imageIndex = (i > 1) ? (SaucerEnemy.getCurrentIndex() + 2) : i;;
+            if (i == 0) {
+                imageIndex = 0;
+            } else if (i == 1) {
+                imageIndex = SaucerEnemy.getCurrentIndex();
+            } else if (i == 2) {
+                imageIndex = 3;
+            } else {
+                imageIndex = SaucerEnemy.getCurrentIndex() + 4;
+            }
             changeView(getImage(imageIndex));
         }
         
@@ -2996,9 +3005,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             Panmage image = images[i];
             if (image == null) {
                 final Panple max;
-                if (i == 0) {
+                if (i < 3) {
                     max = Chr.getMax(ARMORED_SAUCER_OFF_X, 11);
-                } else if (i == 1) {
+                } else if (i < 4) {
                     max = Chr.getMax(ARMORED_SAUCER_OFF_X, 12);
                 } else {
                     max = ARMORED_SAUCER_MAX;
