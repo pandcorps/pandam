@@ -1020,6 +1020,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
+        protected final void award(final PowerUp powerUp) {
+            award(powerUp, 8, 0);
+        }
+        
+        @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
