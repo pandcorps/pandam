@@ -918,7 +918,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     protected static class SprayCannon extends TileUnawareEnemy {
         private final static int TIME_EXTEND_START = 92;
-        private final static int TIME_EXTEND_END = 148;
+        private final static int TIME_EXTEND_END = 178;
         private final static int DUR_INTERMEDIATE = 2;
         private final static int DUR_ATTACK = 8;
         private final static Panmage[] imgs = new Panmage[3];
@@ -971,9 +971,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected final void onStepEnemy() {
             timer++;
             if (timer == (TIME_EXTEND_START + DUR_ATTACK)) {
-                attack3();
+                attack2();
             } else if (timer == (TIME_EXTEND_END - DUR_ATTACK)) {
                 attack2();
+            } else if (timer == ((TIME_EXTEND_START + TIME_EXTEND_END) / 2)) {
+                attack3();
             } else if (timer == (TIME_EXTEND_END + DUR_INTERMEDIATE)) {
                 timer = 0;
             }

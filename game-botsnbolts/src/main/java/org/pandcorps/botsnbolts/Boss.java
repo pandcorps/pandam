@@ -247,6 +247,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         if ((introMessages == null) || !isDuringGameplay()) {
             finishIntro();
         } else {
+            onDialogueStart();
             dialogue(getPortrait(), getDialogueYOff(), new Runnable() { @Override public final void run() {
                 finishIntro();
             }}, introMessages);
@@ -264,6 +265,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected String[] getRematchMessages() {
         return null;
+    }
+    
+    protected void onDialogueStart() {
     }
     
     protected int getDialogueYOff() {
@@ -3268,7 +3272,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_TORPEDO_UP = 10;
         protected final static byte STATE_TORPEDO_DOWN = 11;
         protected final static int FILL_FRAME_DURATION = 3;
-        protected final static int WAIT_FILL = 5 * FILL_FRAME_DURATION;
+        protected final static int WAIT_FILL = (5 * FILL_FRAME_DURATION) + 15;
         protected final static int RAISE_FRAMES = 28;
         protected final static int RAISE_FRAME_DURATION = 3;
         protected final static int WAIT_RAISE = RAISE_FRAMES * RAISE_FRAME_DURATION;
@@ -3330,6 +3334,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final String[] getRematchMessages() {
             return new String[] { "I'll give you a burial at sea!" };
+        }
+        
+        @Override
+        protected final void onDialogueStart() {
+            setView(getStill());
         }
         
         @Override
