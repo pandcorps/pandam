@@ -2931,6 +2931,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         private final static byte MODE_COVER = 4;
         private final static byte MODE_FALL = 5;
         private final static Panmage[] images = new Panmage[7];
+        private final int timeHover;
         private int imageIndex;
         private byte mode;
         private int timer;
@@ -2939,6 +2940,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             super(ARMORED_SAUCER_OFF_X, ARMORED_SAUCER_H, seg, PROP_HEALTH);
             startWait();
             turnTowardPlayer();
+            initIntro();
+            timeHover = intro ? 112 : 80;
         }
         
         private final void startWait() {
@@ -2967,14 +2970,20 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                     setMode(2, next, 5);
                     getPosition().addY((next == MODE_COVER) ? 2 : -2);
                 } else {
-                    setMode(1, next, 80);
+                    final int timer;
+                    if (intro) {
+                        timer = (next == MODE_HOVER) ? timeHover : 64;
+                    } else {
+                        timer = timeHover;
+                    }
+                    setMode(1, next, timer);
                     getPosition().addY((next == MODE_HOVER) ? -2 : ((next == MODE_FALL) ? 2 : 0));
                 }
             }
             if (mode == MODE_HOVER) {
                 setView(3);
                 turnTowardPlayer();
-                if (timer == 40) {
+                if (timer == (timeHover / 2)) {
                     CyanEnemy.shoot(this, 0, 0, false);
                 }
             } else if ((mode == MODE_RISE) || (mode == MODE_FALL)) {
