@@ -2,7 +2,7 @@ IMP|Array
 
 PUT|@||5^4|1
 PUT|!||5^5|1
-PUT|_||5^6|1
+PUT|x||5^6|1
 
 PUT|D|4^1||0
 PUT|e|4^2||0
@@ -14,7 +14,7 @@ SHD|4^1
 
 M|==}i!!!!!!i{======_=}ieeei{==_===}ieeei{=_==}q#Q#q{===}qq{==_=}Q{==}q{====}QQ{==_=_=}q{=_==}iei{
 M|_=}i!!!!!!i{}/-------,eee`--------,eee`-----------------------------------------------------,ei{
-M|==}i______i{}iDDDDDDDD e DDDDDDDDDDe eDDDDDDbDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD i+
+M|==}ixxxxxxi{}iDDDDDDDD e DDDDDDDDDDe eDDDDDDbDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD i+
 M|}/-,DDDDDD`--,      e   e         e e       b     e        e     e      eee e                 i{
 M|qiDD      DDDD     e       e          e     B        ee     ee           eee          eee     i{
 M|}i                    e         e  e       eb       ee     eeee e  e          e               iq
@@ -24,7 +24,7 @@ M| ee        D    e     ...   D      ...  bbbbbbbbbbbbbbbb  ?   ? e ?   D   D   
 M| e e    e     e   e   DDD      e   DDD                    D   D   De         eeDDD            i{
 M| e   e      e  e           e               e     e   e         e               e       eee    iQ
 M|---\e    e/-\eeee/-\ e      e   .   e    e      eee     e               e   e         eeeee   i{
-M|==}i@@@@@@i#ieeeei+i     e      D     e          eee e          e  eee     e     e     ee  e  i{
+M|{=}i@@@@@@i#ieeeei+i     e      D     e          eee e          e  eee     e     e     ee  e  i{
 M|=_}i!!!!!!i#ieeeei#i   e      e             e  e            e     eeee e            e         i{
 
 DOR|0|3|Silver

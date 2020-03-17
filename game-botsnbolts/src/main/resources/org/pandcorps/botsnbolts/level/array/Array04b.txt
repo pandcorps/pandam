@@ -1,13 +1,13 @@
 IMP|Array
 
-PAN|q|9|1^7^true||5|2^7^true||5|3^7^true||5
+PAN|x|9|1^7^true||5|2^7^true||5|3^7^true||5
 PAN|T|9|1^7^true|4^7^true|5|2^7^true|4^7^true|5|3^7^true|4^7^true|5
 PAN|d|10|1^7^true||5|2^7^true||5|3^7^true||5
 
 M|==}Q{==_=====}q{===}i6i{
 M|}/------------------,9iQ
-M|}i1224   6    62222223i{
-M|}i4  78889    6 1223 6`\
+M|}i12222CDDDDDDE2222223i{
+M|}i4    6      6 1223 6`\
 M|}i223  78888889 4  6 64i
 M|qi  6      64   7889 64i
 M|qi5565(---------------)i
@@ -15,7 +15,7 @@ M|}i889 DDDDDECDDDDDDDDE/,
 M|}i4       122223     6i{
 M|}`-\88888845555688/-\9i{
 M|}q#iTTTTTTTTTTTTTTi#i3i{
-M|==}iqqqqqqqqqqqqqqi+i6i{
+M|==}ixxxxxxxxxxxxxxi+i6i{
 M|Q{}iddddddddddddddi#i6i{
 M|==}`--------------,#i6i{
 
