@@ -362,6 +362,7 @@ public class Story {
     protected final static class LabScreenEnding1 extends LabScreen {
         @Override
         protected final void loadLab() {
+            BotsnBoltsGame.musicEnding.startSound();
             final Talker drRoot = newRootTalker().setTalking(false);
             initActor(drRoot, 96, true);
             addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {

@@ -669,7 +669,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     spawnAward(pickAward(player));
                 }});
         }
-        Pangine.getEngine().getAudio().stopMusic();
+        if (!isLevelMusicPlayedDuringBoss()) {
+            Pangine.getEngine().getAudio().stopMusic();
+        }
         if (isDestroyEnemiesNeeded()) {
             destroyEnemies();
         }
@@ -804,16 +806,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void onBossDefeat() {
             Panctor.destroy(bot);
-            burst(10);
+            Player.startDefeatTimer(null);
+            burst(BotsnBoltsGame.enemyBurst, 342, 382, 56, 184, 10);
         }
         
-        private final void burst(final int n) {
+        private final static void burst(final Panimation anm, final int minX, final int maxX, final int minY, final int maxY, final int n) {
             final Panctor src = BotsnBoltsGame.tm;
-            EnemyProjectile.burstEnemy(src, Mathtil.randi(342, 382), Mathtil.randi(56, 184));
+            Projectile.burst(src, anm, Mathtil.randi(minX, maxX), Mathtil.randi(minY, maxY));
             if (n > 1) {
                 Pangine.getEngine().addTimer(src, 3, new TimerListener() {
                     @Override public final void onTimer(final TimerEvent event) {
-                        burst(n - 1);
+                        burst(anm, minX, maxX, minY, maxY, n - 1);
                     }});
             }
         }
@@ -4736,7 +4739,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return;
             }
             defeated = DEFEATED_AFTER;
-            onAfterDefeat();
+            deactivateCharacters();
+            final Panple pos = getPosition();
+            final int x = Math.round(pos.getX()), y = Math.round(pos.getY());
+            Fort.burst(pi.burst, x - 15, x + 15, y, y + 30, 10);
+            Player.startDefeatTimer(new Runnable() {
+                @Override public final void run() {
+                    onAfterDefeat();
+                }});
         }
         
         protected void onAfterDefeat() {
@@ -4746,11 +4756,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     exit();
                 }
             } else {
-                deactivateCharacters();
-                Pangine.getEngine().addTimer(this, 30, new TimerListener() {
-                    @Override public final void onTimer(final TimerEvent event) {
-                        dialogue(newDialogueFinishExitHandler(), defeatMsgs);
-                    }});
+                dialogue(newDialogueFinishExitHandler(), defeatMsgs);
             }
         }
         
@@ -5420,6 +5426,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         public final void onRoomAdd(final RoomAddEvent event) {
             addActor(saucer);
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "You must feel very confident after defeating my Array of underlings, but I won't be stopped so easily.  You think that you've reached the end of your mission?  You fool!  You've only reached your own destruction.",
+                "I am not afraid.",
+                "You will be nothing but a pile of bolts and batteries when I'm done with you.",
+                "Don't keep me waiting.",
+                "I'm going to crush you!"
+            };
         }
         
         @Override
