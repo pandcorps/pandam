@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -823,6 +823,7 @@ public abstract class BlockPuzzle {
         tm.savePosition(pos, tileIndex);
         pos.addX(8);
         Player.shatter(pos, DrillEnemy.getDirtShatter());
+        BotsnBoltsGame.fxCrumble.startSound();
     }
     
     private final static Panmage[] crumble = new Panmage[3];
@@ -884,6 +885,7 @@ public abstract class BlockPuzzle {
             this.tileIndex = tileIndex;
             tm.setBehavior(tileIndex, Tile.BEHAVIOR_OPEN);
             RoomLoader.removeShadowBelow(tm, tileIndex);
+            BotsnBoltsGame.fxMenuHover.startSound();
         }
         
         @Override

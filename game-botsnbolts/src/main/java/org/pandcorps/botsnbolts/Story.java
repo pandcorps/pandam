@@ -344,7 +344,7 @@ public class Story {
                     player.setView(pi.shootSet.stand);
                     lookAround(player, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                         player.setView(playerStand);
-                        addTimer(30, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                        addTimer(90, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                             final Player p = new Player(BotsnBoltsGame.pc) { @Override protected final void onLanded() {
                                 destroy();
                                 dematerialize(newLevelRunner(RoomLoader.getFirstLevel()));

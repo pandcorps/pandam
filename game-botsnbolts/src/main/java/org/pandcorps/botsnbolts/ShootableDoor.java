@@ -612,6 +612,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             if (isClosed()) {
                 size = maxSize - 1;
             }
+            BotsnBoltsGame.fxDoor.startSound();
         }
         
         private final boolean isClosed() {

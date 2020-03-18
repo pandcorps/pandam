@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -40,7 +40,7 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         if (collider.getClass() == Player.class) {
             final Player player = (Player) collider;
             award(player);
-            BotsnBoltsGame.fxHealth.startSound();
+            getSound().startSound();
             final Panple pos = getPosition();
             Projectile.burst(player, player.pi.burst, pos.getX(), pos.getY() + getCurrentDisplay().getBoundingMaximum().getY() / 2);
             destroy();
@@ -48,6 +48,10 @@ public abstract class PowerUp extends Chr implements CollisionListener {
     }
     
     protected abstract void award(final Player player);
+    
+    protected Pansound getSound() {
+        return BotsnBoltsGame.fxHealth;
+    }
     
     @Override
     protected int getSolid(final int off) {
@@ -160,6 +164,11 @@ public abstract class PowerUp extends Chr implements CollisionListener {
                 prf.saveDisks();
             }
         }
+        
+        @Override
+        protected final Pansound getSound() {
+            return BotsnBoltsGame.fxMenuClick;
+        }
     }
     
     public final static class VictoryDisk extends Disk {
@@ -198,6 +207,11 @@ public abstract class PowerUp extends Chr implements CollisionListener {
         @Override
         protected final void award(final Player player) {
             upgrade.award(player);
+        }
+        
+        @Override
+        protected final Pansound getSound() {
+            return BotsnBoltsGame.fxMenuClick;
         }
     }
 }

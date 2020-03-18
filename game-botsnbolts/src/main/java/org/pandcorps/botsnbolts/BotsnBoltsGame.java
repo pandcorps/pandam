@@ -1130,7 +1130,7 @@ public final class BotsnBoltsGame extends BaseGame {
         musicVictory = audio.createTransition(RES + "music/Victory.mid");
         musicBoss = audio.createMusic(RES + "music/Boss.mid");
         musicEnding = audio.createMusic(RES + "music/Ending.mid");
-        fxMenuHover = audio.createSound(RES + "sound/MenuHover.mid");
+        fxMenuHover = audio.createSound(RES + "sound/MenuHover.mid").setReplayThreshold(4);
         fxMenuClick = audio.createSound(RES + "sound/MenuClick.mid");
         fxWarp = audio.createSound(RES + "sound/Warp.mid");
         fxAttack = audio.createSound(RES + "sound/Attack.mid");
@@ -1146,7 +1146,7 @@ public final class BotsnBoltsGame extends BaseGame {
         fxHealth = audio.createSound(RES + "sound/Health.mid");
         fxText = fxHealth;
         fxEnemyAttack = audio.createSound(RES + "sound/EnemyAttack.mid");
-        fxCrumble = audio.createSound(RES + "sound/Crumble.mid");
+        fxCrumble = audio.createSound(RES + "sound/Crumble.mid").setReplayThreshold(4);
         fxDoor = audio.createSound(RES + "sound/Door.mid");
         fxBossDoor = audio.createSound(RES + "sound/BossDoor.mid");
         fxThunder = audio.createSound(RES + "sound/Thunder.mid");

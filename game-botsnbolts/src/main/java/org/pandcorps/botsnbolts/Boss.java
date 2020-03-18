@@ -4727,6 +4727,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             defeated = DEFEATED_YES;
             destroyEnemies();
+            Pangine.getEngine().getAudio().stopMusic();
             startHandler(new DefeatedHandler());
         }
         
@@ -4745,7 +4746,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     exit();
                 }
             } else {
-                dialogue(newDialogueFinishExitHandler(), defeatMsgs);
+                deactivateCharacters();
+                Pangine.getEngine().addTimer(this, 30, new TimerListener() {
+                    @Override public final void onTimer(final TimerEvent event) {
+                        dialogue(newDialogueFinishExitHandler(), defeatMsgs);
+                    }});
             }
         }
         

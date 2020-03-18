@@ -354,7 +354,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected final static void addBySource(final Panctor toAdd, final Panmage img, final Panctor src, final int ox, final int oy) {
             final Panple srcPos = src.getPosition();
             addBySource(toAdd, img, srcPos.getX(), srcPos.getY(), src.isMirror(), src.getRot(), ox, oy);
-            if (img == BotsnBoltsGame.getEnemyProjectile()) {
+            if ((img == BotsnBoltsGame.getEnemyProjectile()) && toAdd.isInView()) {
                 BotsnBoltsGame.fxEnemyAttack.startSound();
             }
         }
@@ -1016,7 +1016,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             } else {
                 ox = 4; oy = 8;
             }
-            new EnemyProjectile(this, ox, oy, vx, vy);
+            newEnemyProjectile(this, ox, oy, vx, vy);
         }
         
         @Override
