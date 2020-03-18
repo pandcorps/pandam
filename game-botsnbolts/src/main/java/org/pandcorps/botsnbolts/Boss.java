@@ -6863,7 +6863,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     final VolatileActor volatileActor = new VolatileActor(BotsnBoltsGame.tm.getContainerColumn(getPosition().getX()) + (leftSide ? 1 : -1), 3);
                     volatileActor.setMirrorTowardPlayer();
                     new Warp(volatileActor);
-                    volatileActor.materializedDialogueMessages = new String[] { "I'm impressed.  You're far stronger than I realized.  But Dr. Final will never stop trying to conquer your world." };
+                    volatileActor.materializedDialogueMessages = new String[] {
+                            "I'm impressed.  You're far stronger than I realized.",
+                            "Why are you helping Dr. Final?  You can choose to fight against his awful plans.",
+                            "One day he will win, and I will stand at his right hand when he does.  Dr. Final will never stop trying to conquer your world." };
                     volatileActor.materializedDialogueFinishHandler = new Runnable() {
                         @Override public final void run() {
                             volatileActor.exit();
