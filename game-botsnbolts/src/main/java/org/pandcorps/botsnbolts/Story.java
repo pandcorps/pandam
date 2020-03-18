@@ -362,7 +362,7 @@ public class Story {
     protected final static class LabScreenEnding1 extends LabScreen {
         @Override
         protected final void loadLab() {
-            BotsnBoltsGame.musicEnding.startSound();
+            BotsnBoltsGame.musicEnding.changeMusic();
             final Talker drRoot = newRootTalker().setTalking(false);
             initActor(drRoot, 96, true);
             addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
@@ -729,7 +729,7 @@ public class Story {
                 BotsnBoltsGame.TITLE + "\n" +
                 "Created by:\n" +
                 BotsnBoltsGame.AUTHOR + "\n" +
-                BotsnBoltsGame.COPYRIGHT, 153)
+                BotsnBoltsGame.COPYRIGHT, 123)
                 .setFinishHandler(newScreenRunner(new ProgressScreen()));
             typer.setLinesPerPage(16);
             return typer;
@@ -849,10 +849,10 @@ public class Story {
         protected final TextTyper loadText() {
             enableCharacterBg();
             final TextTyper typer = newStoryTyper(
-                "Thank you for playing " + BotsnBoltsGame.TITLE + "!\n" +
+                "Thanks for playing " + BotsnBoltsGame.TITLE + "!\n" +
                 "It means so much to me.\n" +
                 "I hope that you enjoyed it.\n" +
-                " - " + BotsnBoltsGame.AUTHOR, 153)
+                " - " + BotsnBoltsGame.AUTHOR, 40, 123)
                 .setFinishHandler(newScreenRunner(new LevelSelectScreen()));
             typer.setLinesPerPage(16);
             return typer;
@@ -870,7 +870,11 @@ public class Story {
     }
     
     protected final static TextTyper newStoryTyper(final CharSequence msg, final float y) {
-        final TextTyper typer = newTextTyper(msg, 32).registerAdvanceListener();
+        return newStoryTyper(msg, 32, y);
+    }
+    
+    protected final static TextTyper newStoryTyper(final CharSequence msg, final int charactersPerLine, final float y) {
+        final TextTyper typer = newTextTyper(msg, charactersPerLine).registerAdvanceListener();
         typer.getPosition().set(64, y);
         BotsnBoltsGame.addActor(typer);
         return typer;
