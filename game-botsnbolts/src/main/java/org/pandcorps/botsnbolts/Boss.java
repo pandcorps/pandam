@@ -4596,7 +4596,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return;
             }
             if (this.handler != null) {
-                if (!this.handler.finish(this)) {
+                if (!this.handler.finish(this) && ((health > 0))) {
                     nextHandler = handler;
                     return;
                 }
@@ -5189,7 +5189,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean finish(final AiBoss boss) {
-            if (boss.isFacingPlayer()) {
+            if (boss.health <= 0) {
+                return true;
+            } else if (boss.isFacingPlayer()) {
                 boss.attack(); // AiBoss uses autoCharge, so don't need to start charging; just attack when ready
                 return true;
             } else {
@@ -5450,7 +5452,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 "I am not afraid.",
                 "You will be nothing but a pile of bolts and batteries when I'm done with you.",
                 "Don't keep me waiting.",
-                "I'm going to crush you!"
+                "I'll disconnect your drives.  I'll terminate your processes.  I'll crash your system.  I'll ruin you!"
             };
         }
         
@@ -5459,10 +5461,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return BotsnBoltsGame.finalImages.portrait;
         }
         
+        private final boolean isRetreatNeeded() {
+            return advanceIndex > 0;
+        }
+        
         @Override
         protected final boolean pickState() {
-            if (advanceIndex > 0) {
+            if (isRetreatNeeded()) {
                 startRetreat();
+            } else if (health <= 0) {
+                separate();
             } else {
                 if (counter > 2) {
                     final int r = rand((counter == 3) ? 2 : 3);
@@ -5838,12 +5846,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void onBossDefeat() {
             if (state == STATE_DEFEATED) {
                 return;
-            } else if (saucer != null) {
+            }
+            setPlayerActive(false);
+            if (isRetreatNeeded()) {
+                startRetreat();
+            } else {
+                separate();
+            }
+        }
+        
+        private final void separate() {
+            if (saucer != null) {
                 saucer.separate();
             }
             saucer = null;
             startDefeated();
-            setPlayerActive(false);
         }
         
         private final void clear() {
@@ -6871,6 +6888,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected void onAfterDefeat() {
+            setMirrorTowardPlayer();
             setHidden(true);
             final Panctor finalActor = newFinalActor(getWounded(), this);
             finalActor.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT);
@@ -6880,8 +6898,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final float playerDstX = leftSide ? 256 : 128;
             player.startScript(player.getWalkAi(playerDstX), new Runnable() {
                 @Override public final void run() {
-                    final VolatileActor volatileActor = new VolatileActor(BotsnBoltsGame.tm.getContainerColumn(getPosition().getX()) + (leftSide ? 1 : -1), 3);
+                    final float finalX = getPosition().getX();
+                    final int volatileDirection = leftSide ? 1 : -1;
+                    final VolatileActor volatileActor = new VolatileActor(BotsnBoltsGame.tm.getContainerColumn(finalX) + volatileDirection, 3);
+                    volatileActor.getPosition().setX(finalX + (volatileDirection * 16));
                     volatileActor.setMirrorTowardPlayer();
+                    finalActor.setMirror(volatileActor.isMirror());
                     new Warp(volatileActor);
                     volatileActor.materializedDialogueMessages = new String[] {
                             "I'm impressed.  You're far stronger than I realized.",
