@@ -124,6 +124,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     private final void onFirstStep() {
         initStatic();
+        stopMusic();
         if (isHealthMeterNeeded() && isDuringGameplay()) {
             healthMeter = addHealthMeter();
         }
@@ -675,13 +676,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     spawnAward(pickAward(player));
                 }});
         }
-        if (!isLevelMusicPlayedDuringBoss()) {
-            Pangine.getEngine().getAudio().stopMusic();
-        }
+        stopMusic();
         if (isDestroyEnemiesNeeded()) {
             destroyEnemies();
         }
         RoomLoader.levelVariables.put(getClass().getSimpleName(), "");
+    }
+    
+    protected final static void stopMusic() {
+        if (!isLevelMusicPlayedDuringBoss()) {
+            Pangine.getEngine().getAudio().stopMusic();
+        }
     }
     
     protected void onBossDefeat() {
