@@ -522,7 +522,7 @@ public abstract class BlockPuzzle {
         private final Spike negativeSpike;
         
         protected SpikeBlock(final int tileIndex, final int baseRot) {
-            BotsnBoltsGame.tm.setForeground(tileIndex, BotsnBoltsGame.getBlockSpike(), Tile.BEHAVIOR_SOLID);
+            BotsnBoltsGame.tm.setTile(tileIndex, BotsnBoltsGame.getTileSpike());
             positiveSpike = new Spike(tileIndex, baseRot);
             negativeSpike = new Spike(tileIndex, baseRot + 2);
         }
@@ -547,7 +547,7 @@ public abstract class BlockPuzzle {
         protected Spike(final int tileIndex, final int rot) {
             super(BotsnBoltsGame.tm.getColumn(tileIndex), BotsnBoltsGame.tm.getRow(tileIndex), 1);
             final Panple pos = getPosition();
-            pos.setZ(BotsnBoltsGame.DEPTH_BETWEEN);
+            pos.setZ(BotsnBoltsGame.DEPTH_ABOVE);
             baseX = pos.getX();
             baseY = pos.getY();
             setDirection(rot);

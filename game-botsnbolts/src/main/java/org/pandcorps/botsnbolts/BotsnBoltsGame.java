@@ -159,6 +159,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panframe[][][] conveyorBelt = null;
     protected static Tile[][] conveyorBeltTiles = null;
     protected static Panmage blockSpike = null;
+    private static Tile tileSpike = null;
     protected static Panmage spike = null;
     protected static Panmage spikeTile = null;
     protected static Panmage[] sentryGun = null;
@@ -468,6 +469,13 @@ public final class BotsnBoltsGame extends BaseGame {
             blockSpike = Pangine.getEngine().createImage("block.spike", RES + "bg/BlockSpike.png");
         }
         return blockSpike;
+    }
+    
+    protected final static Tile getTileSpike() {
+        if (tileSpike == null) {
+            tileSpike = tm.getTile(null, Pangine.getEngine().createFrame("frame.spike", getBlockSpike(), 1, 0, false, false, new FinPanple(0, 0, DEPTH_CARRIER - DEPTH_FG), null, null), Tile.BEHAVIOR_SOLID);
+        }
+        return tileSpike;
     }
     
     protected final static Panmage getSpike() {
