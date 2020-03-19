@@ -5431,6 +5431,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final void onRoomAdd(final RoomAddEvent event) {
+            final Player player = getPlayer();
+            if (player != null) {
+                player.setMirror(false);
+            }
             addActor(saucer);
         }
         
