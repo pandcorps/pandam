@@ -243,7 +243,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     private final void startIntro() {
-        final String[] introMessages = isFirstEncounter() ? getIntroMessages() : getRematchMessages();
+        final String[] introMessages;
+        if (isFirstEncounter()) {
+            introMessages = getIntroMessages();
+        } else {
+            final String[] rematchMessages = getRematchMessages();
+            introMessages = (rematchMessages == null) ? getIntroMessages() : rematchMessages;
+        }
         if ((introMessages == null) || !isDuringGameplay()) {
             finishIntro();
         } else {
@@ -631,7 +637,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return getImage(img, "boss.", RES_CHR, name, o, min, max);
     }
     
-    protected final Panmage getPortrait() {
+    protected Panmage getPortrait() {
         return RoomLoader.getPortrait(RoomLoader.levelMap.get(getClass().getSimpleName()));
     }
     
@@ -5437,6 +5443,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 "Don't keep me waiting.",
                 "I'm going to crush you!"
             };
+        }
+        
+        @Override
+        protected final Panmage getPortrait() {
+            return BotsnBoltsGame.finalImages.portrait;
         }
         
         @Override
