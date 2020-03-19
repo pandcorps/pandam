@@ -370,6 +370,30 @@ public class Panlayer extends BasePantity {
         beneath = null;
     }
     
+    public final boolean isDetached() {
+        final Panroom room = Pangame.getGame().getCurrentRoom();
+        if (room == this) {
+            return false;
+        }
+        Panlayer layer = room;
+        while ((layer = layer.getAbove()) != null) {
+            if (layer == this) {
+                return false;
+            }
+        }
+        layer = room;
+        while ((layer = layer.getBeneath()) != null) {
+            if (layer == this) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public final static boolean isDetached(final Panlayer layer) {
+        return (layer == null) || layer.isDetached();
+    }
+    
     @Override
     public void destroy() {
         destroyAllActors();
