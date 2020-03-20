@@ -595,6 +595,7 @@ public class Menu {
             Player.registerCapture(grid);
             BotLevel centerLevel = null;
             boolean allBasicFinished = true, anyDenied = false;
+            LevelSelectCell suggestedCell = null;
             for (final BotLevel level : RoomLoader.levels) {
                 if (level.isSpecialLevel()) {
                     if (!level.isAllowed()) {
@@ -609,7 +610,10 @@ public class Menu {
                 } else if (!level.isFinished()) {
                     allBasicFinished = false;
                 }
-                addLevelButton(room, level.selectX, level.selectY, level);
+                final LevelSelectCell cell = addLevelButton(room, level.selectX, level.selectY, level);
+                if ((suggestedCell == null) && (level.boltName) != null && !prf.isUpgradeAvailable(level.boltName)) {
+                    suggestedCell = cell;
+                }
             }
             if (allBasicFinished && anyDenied && (centerLevel == null)) {
                 if (prf.upgrades.isEmpty()) {
@@ -624,6 +628,9 @@ public class Menu {
                 grid.pupils = new Pupils(layer, x, y);
             } else {
                 addLevelButton(room, 2, 1, centerLevel);
+            }
+            if (suggestedCell != null) {
+                grid.setCurrentCell(suggestedCell, false);
             }
             final TouchButton quit = addButton(layer, "Quit", roomW - 17, roomH - 17, true, true, null, imgQuit, imgQuit, false, null, false, 16);
             grid.register(quit, new ActionEndListener() {
@@ -670,7 +677,7 @@ public class Menu {
             layer.addActor(portrait);
         }
         
-        private final static void addLevelButton(final Panlayer layer, final int selectX, final int selectY, final BotLevel level) {
+        private final static LevelSelectCell addLevelButton(final Panlayer layer, final int selectX, final int selectY, final BotLevel level) {
             final int x = LEVEL_SELECT_X + (selectX * LEVEL_W), y = LEVEL_SELECT_Y + (selectY * LEVEL_H), x24 = x + 24;
             BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
             BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
@@ -698,6 +705,7 @@ public class Menu {
                         grid.setCurrentCell(cell);
                     }
                 }});
+            return cell;
         }
     }
     
@@ -823,12 +831,18 @@ public class Menu {
         }
         
         protected final void setCurrentCell(final LevelSelectCell currentCell) {
+            setCurrentCell(currentCell, true);
+        }
+        
+        protected final void setCurrentCell(final LevelSelectCell currentCell, final boolean soundNeeded) {
             if (this.currentCell != currentCell) {
                 this.currentCell = currentCell;
                 if (pupils != null) {
                     pupils.lookAt(currentCell);
                 }
-                BotsnBoltsGame.fxMenuHover.startSound();
+                if (soundNeeded) {
+                    BotsnBoltsGame.fxMenuHover.startSound();
+                }
             }
         }
         

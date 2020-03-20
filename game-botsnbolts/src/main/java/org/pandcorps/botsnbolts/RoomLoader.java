@@ -1424,6 +1424,7 @@ public abstract class RoomLoader {
         protected final int endLineSize;
         protected final Boolean portraitMirror;
         protected final String replayPrerequisite;
+        protected final String boltName;
         
         protected BotLevel(final Segment seg, final PixelFilter greyFilter) {
             if (firstLevel == null) {
@@ -1475,6 +1476,7 @@ public abstract class RoomLoader {
             if (pupilNeeded) {
                 Story.pupilNeededSet.add(portrait);
             }
+            boltName = seg.getValue(17);
         }
         
         protected final boolean isSpecialLevel() {
@@ -1484,7 +1486,7 @@ public abstract class RoomLoader {
         protected final boolean isAllowed() {
             final Profile prf = BotsnBoltsGame.pc.prf;
             for (final String prerequisite : prerequisites) {
-                if (!(prf.disks.contains(prerequisite) || prf.isUpgradeAvailable(Profile.getUpgrade(prerequisite)))) {
+                if (!(prf.disks.contains(prerequisite) || prf.isUpgradeAvailable(prerequisite))) {
                     return false;
                 }
             }

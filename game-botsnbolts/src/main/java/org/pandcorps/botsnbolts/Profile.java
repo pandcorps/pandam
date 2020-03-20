@@ -180,6 +180,10 @@ public class Profile {
         return (upgrade instanceof JumpUpgrade) ? ((JumpUpgrade) upgrade).getJumpMode() : Player.JUMP_NORMAL;
     }
     
+    /*package*/ final boolean isUpgradeAvailable(final String name) {
+        return isUpgradeAvailable(getUpgrade(name));
+    }
+    
     /*package*/ final boolean isUpgradeAvailable(final Upgrade upgrade) {
         return upgrades.contains(upgrade);
     }
