@@ -38,6 +38,7 @@ public class Notifications extends Panctor implements StepListener {
     private Panctor icon = null;
     private boolean destroyAllowed = true;
     private int displayTime = 90;
+    private int rushedTime = 0;
     
     private Notifications(final Panlayer layer, final Pantext label) {
         layer.addActor(label);
@@ -61,6 +62,11 @@ public class Notifications extends Panctor implements StepListener {
         return this;
     }
     
+    public final Notifications setRushedTime(final int rushedTime) {
+        this.rushedTime = rushedTime;
+        return this;
+    }
+    
     public void enqueue(final String msg) {
         enqueue(new Notification(msg));
     }
@@ -72,6 +78,9 @@ public class Notifications extends Panctor implements StepListener {
             init(n);
             label.setVisible(true);
         } else {
+            if ((rushedTime > 0) && (timer > rushedTime)) {
+                timer = rushedTime;
+            }
         	if (n.priority == 0) {
         		queue.offer(n);
         	} else {
