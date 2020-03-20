@@ -205,22 +205,34 @@ public class Profile {
     
     protected final static Upgrade UPGRADE_CHARGE = new ChargeUpgrade();
     
-    protected final static Upgrade UPGRADE_BOMB = new Upgrade("Bomb");
+    protected final static Upgrade UPGRADE_BOMB = new Upgrade("Bomb") {
+        @Override public final String getDisplayName(final PlayerContext pc) {
+            return "Shift Bomb";
+        }};
     
     protected final static Upgrade UPGRADE_GRAPPLING_BEAM = new GrapplingBeamUpgrade();
     
     protected final static Upgrade UPGRADE_SPRING = new SpringUpgrade();
     
-    protected final static Upgrade UPGRADE_RESCUE = new Upgrade("Rescue");
+    protected final static Upgrade UPGRADE_RESCUE = new Upgrade("Rescue") {
+        @Override public final String getDisplayName(final PlayerContext pc) {
+            return pc.pi.birdName + " Rescue";
+        }};
     
-    protected final static Upgrade BASIC_JUMP = new Upgrade("BasicJump");
+    protected final static Upgrade BASIC_JUMP = new Upgrade("BasicJump") {
+        @Override public final String getDisplayName(final PlayerContext pc) {
+            return "Jump";
+        }};
     
-    protected final static Upgrade BASIC_ATTACK = new Upgrade("BasicAttack");
+    protected final static Upgrade BASIC_ATTACK = new Upgrade("BasicAttack") {
+        @Override public final String getDisplayName(final PlayerContext pc) {
+            return pc.pi.name + " Cannon";
+        }};
     
     protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM, UPGRADE_SPRING,
             UPGRADE_RESCUE, BASIC_ATTACK, BASIC_JUMP };
     
-    protected static class Upgrade {
+    protected abstract static class Upgrade {
         protected final String name;
         
         protected Upgrade(final String name) {
@@ -230,6 +242,7 @@ public class Profile {
         protected final void award(final Player player) {
             final Profile prf = player.prf;
             if (prf.upgrades.add(this)) {
+                BotsnBoltsGame.notify("You got " + getDisplayName(player.pc));
                 prf.saveBolts();
             }
             enable(player);
@@ -246,6 +259,8 @@ public class Profile {
         public final String toString() {
             return name;
         }
+        
+        public abstract String getDisplayName(final PlayerContext pc);
     }
     
     protected abstract static class JumpUpgrade extends Upgrade {
@@ -270,6 +285,11 @@ public class Profile {
         protected final JumpMode getJumpMode() {
             return Player.JUMP_BALL;
         }
+        
+        @Override
+        public final String getDisplayName(final PlayerContext pc) {
+            return "Shift Ball";
+        }
     }
     
     protected final static class GrapplingBeamUpgrade extends JumpUpgrade {
@@ -280,6 +300,11 @@ public class Profile {
         @Override
         protected final JumpMode getJumpMode() {
             return Player.JUMP_GRAPPLING_HOOK;
+        }
+        
+        @Override
+        public final String getDisplayName(final PlayerContext pc) {
+            return "Grappling Beam";
         }
     }
     
@@ -292,11 +317,19 @@ public class Profile {
         protected final JumpMode getJumpMode() {
             return Player.JUMP_SPRING;
         }
+        
+        @Override
+        public final String getDisplayName(final PlayerContext pc) {
+            return pc.pi.animalName + " Spring";
+        }
     }
     
     protected abstract static class ShootUpgrade extends Upgrade {
+        protected final String displayName;
+        
         protected ShootUpgrade(final String name) {
             super(name);
+            this.displayName = name + " Cannon";
         }
         
         @Override
@@ -307,6 +340,11 @@ public class Profile {
         }
         
         protected abstract ShootMode getShootMode();
+        
+        @Override
+        public final String getDisplayName(final PlayerContext pc) {
+            return this.displayName;
+        }
     }
     
     protected final static class RapidUpgrade extends ShootUpgrade {

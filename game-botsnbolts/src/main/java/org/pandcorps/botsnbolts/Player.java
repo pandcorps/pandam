@@ -2461,6 +2461,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panmage highlightBox;
         protected final Panmage portrait;
         protected final HudMeterImages hudMeterImages;
+        protected final String name;
         protected final String animalName;
         protected final String birdName;
         
@@ -2474,7 +2475,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
                                final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox, final Panmage highlightBox,
-                               final Panmage portrait, final HudMeterImages hudMeterImages, final String animalName, final String birdName) {
+                               final Panmage portrait, final HudMeterImages hudMeterImages, final String name, final String animalName, final String birdName) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.hurt = hurt;
@@ -2512,6 +2513,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.highlightBox = highlightBox;
             this.portrait = portrait;
             this.hudMeterImages = hudMeterImages;
+            this.name = name;
             this.animalName = animalName;
             this.birdName = birdName;
         }
