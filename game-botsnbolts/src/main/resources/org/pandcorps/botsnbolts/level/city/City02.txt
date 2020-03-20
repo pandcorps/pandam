@@ -3,16 +3,16 @@ IMP|City
 M|xxxxxxxxxxxxxxxxxxxxi ix
 M|--------------------, ix
 M|xiDDDDDGDDDDDDDDGDDDD ix
-M|--\    g        g     ix
-M|xxi    g        g     ix
-M|xxi    g        g     ix
-M|--,    g        g     ix
-M| DD    g        g /---,x
-M|       g        g ixxxxx
-M|      /--\    /---,xxxxx
+M|--\ 8  g        g  6  ix
+M|xxi v  g 1      g  v  ix
+M|xxi v  g        g  5  ix
+M|--, v  g        g     ix
+M| DD v  g     2  g /---,x
+M|    v  g        g ixxxxx
+M|    7 /--\    /---,xxxxx
 M|      ixxi    ixxxxxxxxx
 M|------,xxi    ixxxxxxxxx
-M|xxxxxxxxxi    ixxxxxxxxx
+M|xxxxxxxxxi 3  ixxxxxxxxx
 M|xxxxxxxxxi    ixxxxxxxxx
 
 VDR|0|3

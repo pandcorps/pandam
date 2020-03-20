@@ -1,18 +1,18 @@
 IMP|City
 
-M|xi     g        g      i
-M|-,     g        g      i
-M|iD     g        g      i
-M|-\     g        g      i
-M|xi     g        g      i
-M|xi     g        g      i
-M|-,     g        g      i
-M| D     g        g      i
-M|       g        g  (--\`
+M|xi     g        g v    i
+M|-,     g        g v 6  i
+M|iD  3  g        g v v  i
+M|-\     g        g v v  i
+M|xi 5   g     4  g v v  i
+M|xi v   g        g v 5  i
+M|-, v   g        g 9    i
+M| D v   g 1      g      i
+M|   7   g        g  (--\`
 M|       g      % g  DDDix
 M|       g %    D g     ix
 M|----\  g D      g     ix
-M|xxxxi  g        g     ix
+M|xxxxi  g        g 2   ix
 M|xxxxi  g        g     ix
 
 VDR|0|3
@@ -21,7 +21,7 @@ LDR|22|10|4
 
 VBX|21|6
 
-ENM|20|11|SaucerEnemy
+ENM|20|6|ArmoredSaucerEnemy
 
 VER|0
 M|(-)|8|3
@@ -31,6 +31,7 @@ M|DDD|13|3
 VND
 
 VER|1
+ENM|20|11|SaucerEnemy
 SPP|9^3|14^4
 VND
 

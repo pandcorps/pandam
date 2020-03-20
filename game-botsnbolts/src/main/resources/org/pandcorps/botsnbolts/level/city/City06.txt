@@ -1,23 +1,24 @@
 IMP|City
 
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g      `
+M|xi   v g        g      i
+M|xi   5 g        g      i
+M|xi     g     3  g      i
+M|xi     g        g 1    i
+M|xi 2   g        g      `
 M|xi    .g   .    .    (-\
 M|x`)   Dg   D    G    DDi
-M|-\D    g        g      i
-M|xi     g        g      i
-M|xi .   g        g      i
-M|xi D   g        g      i
-M|xi    .g   .    .    . i
-M|xi    Dg   D    G    D i
-M|xi     g        g      i
+M|-\D    g      9 g      i
+M|xi     g      v g      i
+M|xi .   g      v g   2  i
+M|xi D   g 4    v g 8    i
+M|xi6   .g   .  v . v  . i
+M|xi    Dg   D  7 G v  D i
+M|xi     g        g v    i
 
 LDR|22|0|3
 LDR|22|11|3
 
+ENM|4|4|SprayCannon
 ENM|22|9|CyanEnemy
 
 VER|0
