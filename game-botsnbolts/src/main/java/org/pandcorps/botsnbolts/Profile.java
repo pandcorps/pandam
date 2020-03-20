@@ -37,6 +37,7 @@ public class Profile {
     private final static String SEG_BOLT = "BLT";
     private final static String SEG_DISK = "DSK";
     private final static String SEG_PROFILE = "PRF";
+    private final static String TUTORIAL_DOUBLE_JUMP = "Double-jump to use";
     
     /*package*/ final Set<Upgrade> upgrades;
     /*package*/ final Set<String> disks;
@@ -243,6 +244,10 @@ public class Profile {
             final Profile prf = player.prf;
             if (prf.upgrades.add(this)) {
                 BotsnBoltsGame.notify("You got " + getDisplayName(player.pc));
+                final String tutorial = getTutorial();
+                if (tutorial != null) {
+                    BotsnBoltsGame.notify(tutorial);
+                }
                 prf.saveBolts();
             }
             enable(player);
@@ -261,6 +266,10 @@ public class Profile {
         }
         
         public abstract String getDisplayName(final PlayerContext pc);
+        
+        public String getTutorial() {
+            return null;
+        }
     }
     
     protected abstract static class JumpUpgrade extends Upgrade {
@@ -306,6 +315,11 @@ public class Profile {
         public final String getDisplayName(final PlayerContext pc) {
             return "Grappling Beam";
         }
+        
+        @Override
+        public final String getTutorial() {
+            return TUTORIAL_DOUBLE_JUMP;
+        }
     }
     
     protected final static class SpringUpgrade extends JumpUpgrade {
@@ -321,6 +335,11 @@ public class Profile {
         @Override
         public final String getDisplayName(final PlayerContext pc) {
             return pc.pi.animalName + " Spring";
+        }
+        
+        @Override
+        public final String getTutorial() {
+            return TUTORIAL_DOUBLE_JUMP;
         }
     }
     
