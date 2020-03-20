@@ -594,10 +594,11 @@ public class Menu {
             layer.addActor(grid);
             Player.registerCapture(grid);
             BotLevel centerLevel = null;
-            boolean allBasicFinished = true;
+            boolean allBasicFinished = true, anyDenied = false;
             for (final BotLevel level : RoomLoader.levels) {
                 if (level.isSpecialLevel()) {
                     if (!level.isAllowed()) {
+                        anyDenied = true;
                         continue;
                     } else if (!level.isReplayable()) {
                         if (!level.isFinished()) {
@@ -610,7 +611,7 @@ public class Menu {
                 }
                 addLevelButton(room, level.selectX, level.selectY, level);
             }
-            if (allBasicFinished && (centerLevel == null)) {
+            if (allBasicFinished && anyDenied && (centerLevel == null)) {
                 if (prf.upgrades.isEmpty()) {
                     BotsnBoltsGame.notify("Collect upgrades to reach the next level!");
                 } else {

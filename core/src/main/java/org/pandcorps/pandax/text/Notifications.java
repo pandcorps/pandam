@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -37,6 +37,7 @@ public class Notifications extends Panctor implements StepListener {
     private int timer = 0;
     private Panctor icon = null;
     private boolean destroyAllowed = true;
+    private int displayTime = 90;
     
     private Notifications(final Panlayer layer, final Pantext label) {
         layer.addActor(label);
@@ -53,6 +54,11 @@ public class Notifications extends Panctor implements StepListener {
     
     public Notifications(final Panlayer layer, final MultiFont fonts) {
         this(layer, new Pantext(Pantil.vmid(), fonts, new StringBuilder()));
+    }
+    
+    public final Notifications setDisplayTime(final int displayTime) {
+        this.displayTime = displayTime;
+        return this;
     }
     
     public void enqueue(final String msg) {
@@ -158,7 +164,7 @@ public class Notifications extends Panctor implements StepListener {
     
     private final void init(final Notification n) {
         Chartil.set(seq, n.msg);
-        timer = 90;
+        timer = displayTime;
         if (n.icon != null) {
             icon = n.icon;
             initLayer().addActor(icon);
