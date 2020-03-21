@@ -538,7 +538,13 @@ public abstract class BlockPuzzle {
         }
     }
     
-    protected final static int DAMAGE_SPIKE = HudMeter.MAX_VALUE / 4;
+    protected final static int DAMAGE_SPIKE_ENDURABLE = HudMeter.MAX_VALUE / 4;
+    protected final static int DAMAGE_SPIKE_UNENDURABLE = HudMeter.MAX_VALUE * 4;
+    
+    protected final static int getDamageSpike() {
+        final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.pc);
+        return ((prf == null) || prf.endureSpikes) ? DAMAGE_SPIKE_ENDURABLE : DAMAGE_SPIKE_UNENDURABLE;
+    }
     
     protected final static class Spike extends TileUnawareEnemy {
         private final float baseX;
@@ -590,7 +596,7 @@ public abstract class BlockPuzzle {
         
         @Override
         protected final int getDamage() {
-            return DAMAGE_SPIKE;
+            return getDamageSpike();
         }
 
         @Override

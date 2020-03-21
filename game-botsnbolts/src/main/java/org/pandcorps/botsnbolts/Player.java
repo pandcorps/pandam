@@ -1051,7 +1051,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 break;
             case BotsnBoltsGame.TILE_HURT :
                 if (!isCollisionStandingOnTile(index)) {
-                    hurt(BlockPuzzle.DAMAGE_SPIKE);
+                    hurt(BlockPuzzle.getDamageSpike());
                 }
                 break;
             case BotsnBoltsGame.TILE_CRUMBLE :

@@ -629,7 +629,7 @@ public class Menu {
             } else {
                 addLevelButton(room, 2, 1, centerLevel);
             }
-            if (suggestedCell != null) {
+            if ((suggestedCell != null) && prf.levelSuggestions) {
                 grid.setCurrentCell(suggestedCell, false);
             }
             final TouchButton quit = addButton(layer, "Quit", roomW - 17, roomH - 17, true, true, null, imgQuit, imgQuit, false, null, false, 16);

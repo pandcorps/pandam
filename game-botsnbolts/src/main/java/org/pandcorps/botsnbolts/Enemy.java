@@ -2733,7 +2733,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final int getDamage() {
-            return BlockPuzzle.DAMAGE_SPIKE;
+            return BlockPuzzle.getDamageSpike();
         }
         
         @Override
@@ -2886,7 +2886,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final int getDamage() {
-            return BlockPuzzle.DAMAGE_SPIKE;
+            return BlockPuzzle.getDamageSpike();
         }
         
         @Override
@@ -3126,7 +3126,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final int getDamage() {
-            return BlockPuzzle.DAMAGE_SPIKE;
+            return BlockPuzzle.getDamageSpike();
         }
         
         private final static Panmage getIcicleImage() {

@@ -229,7 +229,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 if (ineffectiveCount > ineffectiveThreshold) {
                     final Player player = projectile.src;
                     final Profile prf = Player.getProfile(player);
-                    if (prf != null) {
+                    if ((prf != null) && prf.boltUsageHints) {
                         final Upgrade hintUpgrade = hintShootMode.getRequiredUpgrade();
                         if ((hintUpgrade != null) && !prf.isUpgradeAvailable(hintUpgrade)) {
                             BotsnBoltsGame.notify("Find new Bolts and try again later");

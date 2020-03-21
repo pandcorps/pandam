@@ -45,6 +45,10 @@ public class Profile {
     /*package*/ JumpMode jumpMode = Player.JUMP_NORMAL;
     /*package*/ boolean autoClimb = true;
     /*package*/ boolean autoCharge = true;
+    /*package*/ boolean levelSuggestions = true;
+    /*package*/ boolean frequentCheckpoints = true;
+    /*package*/ boolean boltUsageHints = true;
+    /*package*/ boolean endureSpikes = true;
     private final Profile old;
     
     /*package*/ Profile() {
@@ -76,10 +80,16 @@ public class Profile {
         jumpMode = src.jumpMode;
         autoClimb = src.autoClimb;
         autoCharge = src.autoCharge;
+        levelSuggestions = src.levelSuggestions;
+        frequentCheckpoints = src.frequentCheckpoints;
+        boltUsageHints = src.boltUsageHints;
+        endureSpikes = src.endureSpikes;
     }
     
     private final boolean isSame() {
-        return (shootMode == old.shootMode) && (jumpMode == old.jumpMode) && (autoClimb == old.autoClimb) && (autoCharge == old.autoCharge);
+        return (shootMode == old.shootMode) && (jumpMode == old.jumpMode) && (autoClimb == old.autoClimb) && (autoCharge == old.autoCharge)
+                && (levelSuggestions == old.levelSuggestions) && (frequentCheckpoints == old.frequentCheckpoints)
+                && (boltUsageHints == old.boltUsageHints) && (endureSpikes = old.endureSpikes);
     }
     
     private final void loadBolts() {
@@ -140,6 +150,10 @@ public class Profile {
         jumpMode = getJumpMode(seg.getValue(1));
         autoClimb = seg.getBoolean(2, touchEnabled);
         autoCharge = seg.getBoolean(3, touchEnabled);
+        levelSuggestions = seg.getBoolean(4, levelSuggestions);
+        frequentCheckpoints = seg.getBoolean(5, frequentCheckpoints);
+        boltUsageHints = seg.getBoolean(6, boltUsageHints);
+        endureSpikes = seg.getBoolean(7, endureSpikes);
     }
     
     /*package*/ final void saveBolts() {
@@ -167,6 +181,10 @@ public class Profile {
         seg.setValue(1, jumpMode.getName());
         seg.setBoolean(2, autoClimb);
         seg.setBoolean(3, autoCharge);
+        seg.setBoolean(4, levelSuggestions);
+        seg.setBoolean(5, frequentCheckpoints);
+        seg.setBoolean(6, boltUsageHints);
+        seg.setBoolean(7, endureSpikes);
         Savtil.save(seg, LOC_PROFILE);
         old.load(this);
     }
