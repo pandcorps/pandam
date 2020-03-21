@@ -240,6 +240,9 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                         } else if (hintUpgrade != null) {
                             BotsnBoltsGame.notify("Use " + hintUpgrade.getDisplayName(player));
                         }
+                        if ((hintShootMode != null) && (hintShootMode != shootMode) && (hintShootMode != Player.SHOOT_BOMB) && prf.isUpgradeAvailable(hintUpgrade)) {
+                            player.setShootMode(hintShootMode);
+                        }
                         ineffectiveCount = Integer.MIN_VALUE;
                     }
                 }

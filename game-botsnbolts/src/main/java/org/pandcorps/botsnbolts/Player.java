@@ -267,8 +267,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void toggleShootMode(final int dir) {
-        prf.shootMode = toggleInputMode(SHOOT_MODES, prf.shootMode, dir);
-        prf.shootMode.onSelect(this);
+        setShootMode(toggleInputMode(SHOOT_MODES, prf.shootMode, dir));
+    }
+    
+    protected final void setShootMode(final ShootMode shootMode) {
+        prf.shootMode = shootMode;
+        shootMode.onSelect(this);
     }
     
     private final <T extends InputMode> T toggleInputMode(final T[] modes, final T currentMode, final int dir) {
