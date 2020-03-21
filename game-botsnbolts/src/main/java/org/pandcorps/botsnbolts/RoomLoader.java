@@ -175,6 +175,10 @@ public abstract class RoomLoader {
                 imp(segImp, ctxRequired, tm); // Import
             }
         }
+        final Player p = getPlayer();
+        if (p != null) {
+            p.startRoomNeeded = true;
+        }
         while ((seg = in.read()) != null) {
             final String name = seg.getName();
             if ("IMP".equals(name)) { // Import
@@ -303,10 +307,14 @@ public abstract class RoomLoader {
         processSegmentFile(seg.getValue(0), ctxRequired, tm);
     }
     
+    protected final static Player getPlayer() {
+        return PlayerContext.getPlayer(BotsnBoltsGame.pc);
+    }
+    
     private final static void rom(final Segment seg) {
         final boolean launchReturn = seg.getBoolean(3, false);
         setBgColor(seg, 4);
-        final Player p = PlayerContext.getPlayer(BotsnBoltsGame.pc);
+        final Player p = getPlayer();
         if (p != null) {
             p.startRoomNeeded = seg.getBoolean(5, true);
         }

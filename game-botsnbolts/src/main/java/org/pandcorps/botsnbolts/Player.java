@@ -459,6 +459,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
+    protected final void initMirror() {
+        setMirror(isOnLeftSide() ? 1 : -1);
+    }
+    
     @Override
     protected final void setMirror(final int v) {
         final boolean oldMirror = isMirror();
@@ -1676,7 +1680,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return false;
         }
         lastShotByAnyPlayer = NULL_CLOCK;
-        startRoomNeeded = true; // Can also be initialized in RoomLoader, but only if a ROM segment is present
         initAvailableRescues();
         endGrapple();
         safeX = safeY = NULL_COORD;
@@ -1970,6 +1973,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                     }
                     player.endLadder();
                     player.changeView(player.pi.basicSet.stand);
+                    player.initMirror();
                     return true;
                 }
                 final int frameLength = VEL_WALK * RUN_TIME, animLength = frameLength * 2;
@@ -3055,6 +3059,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final boolean isOnLeftSide() {
-        return getPosition().getX() < (BotsnBoltsGame.GAME_W / 2);
+        final Panlayer layer = getLayerRequired();
+        final float w = (layer == null) ? BotsnBoltsGame.GAME_W : layer.getSize().getX();
+        return getPosition().getX() < (w / 2);
     }
 }
