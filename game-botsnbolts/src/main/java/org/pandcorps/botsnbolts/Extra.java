@@ -86,12 +86,16 @@ public abstract class Extra extends Panctor {
         @Override
         public final void onStep(final StepEvent event) {
             waitTimer--;
+            onWait(waitTimer);
             if (waitTimer <= 0) {
                 if (isSpawningAllowed()) {
                     spawnEnemy();
                 }
                 initTimer();
             }
+        }
+        
+        protected void onWait(final int waitTimer) {
         }
         
         protected boolean isSpawningAllowed() {
@@ -121,6 +125,11 @@ public abstract class Extra extends Panctor {
     protected final static class BoulderSpawner extends EnemySpawner {
         protected BoulderSpawner(final Segment seg) {
             super(seg);
+        }
+        
+        @Override
+        protected final void onWait(final int waitTimer) {
+            Enemy.onBoulderWait(this, waitTimer, 8);
         }
         
         @Override

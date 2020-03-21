@@ -3237,6 +3237,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected BoulderEnemy(final int x, final int y) {
             super(PROP_OFF_X, PROP_H, x, y, 1);
             setView(getImage());
+            BotsnBoltsGame.fxDefeat.startSound();
         }
         
         @Override
@@ -3573,6 +3574,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
     }
     
+    protected final static void onBoulderWait(final Panctor src, final int waitTimer, final int offX) {
+        if (waitTimer == 30) {
+            BotsnBoltsGame.fxCrumble.startSound();
+            Player.puff(src, offX, 0).getPosition().setY(BotsnBoltsGame.GAME_H - 8);
+        }
+    }
+    
     protected final static class RockEnemy extends Enemy {
         private static Panmage rockCatch = null;
         private static Panmage rockThrow = null;
@@ -3608,6 +3616,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                     holdTimer--;
                     if (holdTimer < 0) {
                         changeView(getRockThrow());
+                        BotsnBoltsGame.fxEnemyAttack.startSound();
                         boulder.hv = getMirrorMultiplier() * 5;
                         boulder.v = 5;
                         boulder.held = false;
@@ -3636,6 +3645,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 }
             }
             boulderTimer--;
+            onBoulderWait(this, boulderTimer, -1);
             if (boulderTimer <= 0) {
                 //turnTowardPlayer(); // This enemy can't turn around; otherwise boulders won't land where intended
                 boulder = new BoulderEnemy(x, BotsnBoltsGame.tm.getHeight());
