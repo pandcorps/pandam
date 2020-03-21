@@ -243,7 +243,7 @@ public class Profile {
         protected final void award(final Player player) {
             final Profile prf = player.prf;
             if (prf.upgrades.add(this)) {
-                BotsnBoltsGame.notify("You got " + getDisplayName(player.pc));
+                BotsnBoltsGame.notify("You got " + getDisplayName(player));
                 final String tutorial = getTutorial();
                 if (tutorial != null) {
                     BotsnBoltsGame.notify(tutorial);
@@ -263,6 +263,10 @@ public class Profile {
         @Override
         public final String toString() {
             return name;
+        }
+        
+        public final String getDisplayName(final Player player) {
+            return getDisplayName(player.pc);
         }
         
         public abstract String getDisplayName(final PlayerContext pc);
@@ -396,6 +400,12 @@ public class Profile {
         @Override
         protected final ShootMode getShootMode() {
             return Player.SHOOT_CHARGE;
+        }
+        
+        @Override
+        public final String getTutorial() {
+            final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.pc);
+            return ((prf != null) && !prf.autoCharge) ? "Hold fire button to charge" : null;
         }
     }
 }

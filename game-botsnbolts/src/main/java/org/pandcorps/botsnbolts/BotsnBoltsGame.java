@@ -313,36 +313,36 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] imgsClosed = Imtil.loadStrip(RES + "bg/DoorCyan.png", 16, false);
         final Img[] imgsOpening = Imtil.loadStrip(RES + "bg/DoorCyanOpening.png", 16, false);
         final Img[] imgsBarrier = Imtil.loadStrip(RES + "bg/BarrierCyan.png", 8, false);
-        doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null, imgsBarrier);
+        doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null, imgsBarrier, null, null);
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
         final Pancolor cyan = Pancolor.CYAN, silver = Pancolor.GREY, darkCyan = new FinPancolor(s0, s192, s192), darkSilver = Pancolor.DARK_GREY;
         doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, cyan, silver, darkCyan, darkSilver, null, 0, null,
-            Integer.valueOf(Projectile.POWER_MAXIMUM), imgsBarrier);
+            Integer.valueOf(Projectile.POWER_MAXIMUM), imgsBarrier, Player.SHOOT_CHARGE, null);
         final Pancolor blue = newColorBlue(), darkBlue = newColorBlueDark();
         doorBlue = filterDoor("door.blue", imgsClosed, imgsOpening, silver, blue, darkSilver, darkBlue, null, 0, null,
-            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier);
+            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier, Player.SHOOT_SPREAD, "Aim for the switch");
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
         final Pancolor red = Pancolor.RED, darkRed = new FinPancolor(s192, s0, s0);
-        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, blue, red, darkBlue, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier);
+        doorRed = filterDoor("door.red", imgsClosed, imgsOpening, blue, red, darkBlue, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier, Player.SHOOT_RAPID, null);
         final Pancolor redOrange = new FinPancolor(smax, s64, s0), darkRedOrange = new FinPancolor(s192, s48, s0);
-        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, red, redOrange, darkRed, darkRedOrange, doorRed, 10, Player.SHOOT_RAPID, null, imgsBarrier);
+        doorRedOrange = filterDoor("door.red.orange", imgsClosed, null, red, redOrange, darkRed, darkRedOrange, doorRed, 10, Player.SHOOT_RAPID, null, imgsBarrier, Player.SHOOT_RAPID, null);
         final Pancolor orange = new FinPancolor(smax, s128, s0), darkOrange = new FinPancolor(s192, s96, s0);
-        doorOrange = filterDoor("door.orange", imgsClosed, null, redOrange, orange, darkRedOrange, darkOrange, doorRedOrange, 6, null, null, imgsBarrier);
+        doorOrange = filterDoor("door.orange", imgsClosed, null, redOrange, orange, darkRedOrange, darkOrange, doorRedOrange, 6, null, null, imgsBarrier, Player.SHOOT_RAPID, null);
         final Pancolor orangeGold = new FinPancolor(smax, s192, s0), darkOrangeGold = new FinPancolor(s192, s144, s0);
-        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, orange, orangeGold, darkOrange, darkOrangeGold, doorOrange, 3, null, null, imgsBarrier);
+        doorOrangeGold = filterDoor("door.orange.gold", imgsClosed, null, orange, orangeGold, darkOrange, darkOrangeGold, doorOrange, 3, null, null, imgsBarrier, Player.SHOOT_RAPID, null);
         final Pancolor gold = Pancolor.YELLOW, darkGold = new FinPancolor(s192, s192, s0);
-        doorGold = filterDoor("door.gold", imgsClosed, null, orangeGold, gold, darkOrangeGold, darkGold, doorOrangeGold, 1, null, null, imgsBarrier);
+        doorGold = filterDoor("door.gold", imgsClosed, null, orangeGold, gold, darkOrangeGold, darkGold, doorOrangeGold, 1, null, null, imgsBarrier, Player.SHOOT_RAPID, null);
         // No black barrier; it's not used; all barriers use grey 96 which is the black door's light color; do last so door/barrier images stay synchronized
         final Pancolor black = new FinPancolor(s96), darkBlack = new FinPancolor(s64);
         doorBlack = filterDoor("door.black", imgsClosed, imgsOpening, gold, black, darkGold, darkBlack, null, 0, null,
-            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), null); 
+            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), null, null, "Clear the enemies"); 
         Img.close(imgsClosed);
         Img.close(imgsOpening);
         final Img[] imgsSmallClosed = Imtil.loadStrip(RES + "bg/DoorSmall.png", 16, false);
         final Img[] imgsSmallOpening = Imtil.loadStrip(RES + "bg/DoorSmallOpening.png", 16, false);
         final Pancolor colSmall = new FinPancolor(smax, s64, smax), darkColSmall = new FinPancolor(s192, s48, s192);
         filterImgs(imgsBarrier, newFilter(gold, colSmall, darkGold, darkColSmall));
-        doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, imgsBarrier);
+        doorSmall = newDoorDefinition("door.small", imgsSmallClosed, imgsSmallOpening, null, 0, Player.SHOOT_BOMB, null, imgsBarrier, Player.SHOOT_BOMB, null);
         Img.close(imgsSmallClosed);
         Img.close(imgsSmallOpening);
         filterImgs(imgsBarrier, newFilter(colSmall, newColorHidden(), darkColSmall, newColorHiddenDark()));
@@ -606,12 +606,12 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
             final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2,
             final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
-            final Img[] imgsBarrier) {
+            final Img[] imgsBarrier, final ShootMode hintShootMode, final String hintText) {
         final PixelFilter filter = newFilter(s1, d1, s2, d2);
         filterImgs(imgsClosed, filter);
         filterImgs(imgsOpening, filter);
         filterImgs(imgsBarrier, filter);
-        return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower, imgsBarrier);
+        return newDoorDefinition(id, imgsClosed, imgsOpening, next, nextTemperature, requiredShootMode, requiredPower, imgsBarrier, hintShootMode, hintText);
     }
     
     private final static ReplacePixelFilter newFilter(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
@@ -1044,7 +1044,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
             final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
-            final Img[] imgsBarrier) {
+            final Img[] imgsBarrier, final ShootMode hintShootMode, final String hintText) {
         final boolean small = imgsClosed.length <= 1;
         final Panframe[] door = newDoor(id, imgsClosed, 0, small);
         final Panframe[][] opening;
@@ -1058,7 +1058,7 @@ public final class BotsnBoltsGame extends BaseGame {
             opening = new Panframe[][] { open1, open2, open3 };
         }
         final Panmage[] barrier = newBarrier(id, imgsBarrier);
-        return new ShootableDoorDefinition(door, opening, next, nextTemperature, requiredShootMode, requiredPower, barrier);
+        return new ShootableDoorDefinition(door, opening, next, nextTemperature, requiredShootMode, requiredPower, barrier, hintShootMode, hintText);
     }
     
     private final static Panmage[] newBarrier(final String id, final Img[] imgsBarrier) {

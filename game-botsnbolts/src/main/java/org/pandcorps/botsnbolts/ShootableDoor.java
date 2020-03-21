@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -47,6 +48,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     private final int doorX;
     protected ShootableDoorDefinition def = null;
     private int temperature = 0;
+    private int ineffectiveCount = 0;
     
     static {
         final Panple min = new FinPanple2(-12, 0);
@@ -217,10 +219,35 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             if (projectilePower <= 0) {
                 return;
             }
+            final Integer requiredPower = def.requiredPower;
+            final boolean powerInsufficient = (requiredPower != null) && (requiredPower.intValue() > projectilePower);
+            final ShootMode shootMode = projectile.shootMode, hintShootMode = def.hintShootMode, requiredShootMode = def.requiredShootMode;
+            final String hintText = def.hintText;
+            if (powerInsufficient || (hintText != null) || ((hintShootMode != null) && (hintShootMode != shootMode))) {
+                ineffectiveCount += projectilePower;
+                final int ineffectiveThreshold = (shootMode == Player.SHOOT_RAPID) ? 4 : 2;
+                if (ineffectiveCount > ineffectiveThreshold) {
+                    final Player player = projectile.src;
+                    final Profile prf = Player.getProfile(player);
+                    if (prf != null) {
+                        final Upgrade hintUpgrade = hintShootMode.getRequiredUpgrade();
+                        if ((hintUpgrade != null) && !prf.isUpgradeAvailable(hintUpgrade)) {
+                            BotsnBoltsGame.notify("Find new Bolts and try again later");
+                        } else if (hintText != null) {
+                            BotsnBoltsGame.notify(hintText);
+                        } else if (powerInsufficient) {
+                            BotsnBoltsGame.notify("Use a fully charged blast");
+                        } else if (hintUpgrade != null) {
+                            BotsnBoltsGame.notify("Use " + hintUpgrade.getDisplayName(player));
+                        }
+                        ineffectiveCount = Integer.MIN_VALUE;
+                    }
+                }
+            }
             temperature += (5 * projectilePower);
-            if (temperature >= def.nextTemperature
-                    && (def.requiredShootMode == null || def.requiredShootMode == projectile.shootMode)) {
-                if ((def.requiredPower != null && def.requiredPower.intValue() > projectilePower)) {
+            if ((temperature >= def.nextTemperature)
+                    && ((requiredShootMode == null) || (requiredShootMode == shootMode))) {
+                if (powerInsufficient) {
                     projectile.bounce();
                     return;
                 } else if (def.next == null) {
@@ -280,10 +307,12 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         protected final Integer requiredPower;
         private ShootableDoorDefinition prev = null;
         private final Panmage[] barrierImgs;
+        private final ShootMode hintShootMode;
+        private final String hintText;
         
         protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next,
                                           final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
-                                          final Panmage[] barrierImgs) {
+                                          final Panmage[] barrierImgs, final ShootMode hintShootMode, final String hintText) {
             this.door = door;
             this.opening = opening;
             this.next = next;
@@ -291,6 +320,8 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             this.requiredShootMode = requiredShootMode;
             this.requiredPower = requiredPower;
             this.barrierImgs = barrierImgs;
+            this.hintShootMode = hintShootMode;
+            this.hintText = hintText;
             if (next != null) {
                 next.prev = this;
             }

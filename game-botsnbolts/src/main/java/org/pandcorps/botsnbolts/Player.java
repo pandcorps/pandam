@@ -712,6 +712,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return (layer == null) ? BotsnBoltsGame.getLayer() : layer;
     }
     
+    protected final static Profile getProfile(final Player player) {
+        return (player == null) ? null : player.prf;
+    }
+    
     protected final void addActor(final Panctor actor) {
         addActor(this, actor);
     }
@@ -2420,6 +2424,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         protected final static Player getPlayer(final PlayerContext pc) {
             return (pc == null) ? null : pc.player;
+        }
+        
+        protected final static Profile getProfile(final PlayerContext pc) {
+            return (pc == null) ? null : pc.prf;
         }
     }
     
