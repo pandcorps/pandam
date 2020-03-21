@@ -353,7 +353,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         safeY = pos.getY();
         safeMirror = isMirror();
         if (startRoomNeeded) {
-            if (RoomLoader.variables.containsKey(RoomLoader.VAR_RESTART_FORBIDDEN)) {
+            if (RoomLoader.variables.containsKey(RoomLoader.VAR_RESTART_FORBIDDEN)
+                    || (!prf.frequentCheckpoints && (startRoom != null) && !RoomLoader.variables.containsKey(RoomLoader.VAR_CHECKPOINT))) {
                 startRoomNeeded = false;
                 return;
             }

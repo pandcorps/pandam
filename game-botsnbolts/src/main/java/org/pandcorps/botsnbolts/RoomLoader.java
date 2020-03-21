@@ -44,6 +44,7 @@ import org.pandcorps.pandax.visual.*;
 
 public abstract class RoomLoader {
     protected final static String VAR_RESTART_FORBIDDEN = "restartForbidden";
+    protected final static String VAR_CHECKPOINT = "checkpoint";
     private final static int OFF_ALT = 256;
     private final static Class<?>[] SEGMENT_TYPES = { Segment.class };
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
@@ -104,7 +105,11 @@ public abstract class RoomLoader {
             BotsnBoltsGame.tileSize = room.tileSize;
             nextRoom = BotsnBoltsGame.BotsnBoltsScreen.newRoom(room.w * BotsnBoltsGame.GAME_W);
             init();
-            processSegmentFile(room.roomId, true, BotsnBoltsGame.tm);
+            final String roomId = room.roomId;
+            if ((roomId != null) && roomId.endsWith("BossEntrance")) {
+                variables.put(VAR_CHECKPOINT, "Y");
+            }
+            processSegmentFile(roomId, true, BotsnBoltsGame.tm);
             return nextRoom;
         }
     }
