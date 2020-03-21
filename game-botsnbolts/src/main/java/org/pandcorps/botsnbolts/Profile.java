@@ -49,6 +49,7 @@ public class Profile {
     /*package*/ boolean frequentCheckpoints = true;
     /*package*/ boolean boltUsageHints = true;
     /*package*/ boolean endureSpikes = true;
+    /*package*/ boolean adaptiveBatteries = true;
     private final Profile old;
     
     /*package*/ Profile() {
@@ -84,12 +85,13 @@ public class Profile {
         frequentCheckpoints = src.frequentCheckpoints;
         boltUsageHints = src.boltUsageHints;
         endureSpikes = src.endureSpikes;
+        adaptiveBatteries = src.adaptiveBatteries;
     }
     
     private final boolean isSame() {
         return (shootMode == old.shootMode) && (jumpMode == old.jumpMode) && (autoClimb == old.autoClimb) && (autoCharge == old.autoCharge)
                 && (levelSuggestions == old.levelSuggestions) && (frequentCheckpoints == old.frequentCheckpoints)
-                && (boltUsageHints == old.boltUsageHints) && (endureSpikes = old.endureSpikes);
+                && (boltUsageHints == old.boltUsageHints) && (endureSpikes == old.endureSpikes) && (adaptiveBatteries == old.adaptiveBatteries);
     }
     
     private final void loadBolts() {
@@ -154,6 +156,7 @@ public class Profile {
         frequentCheckpoints = seg.getBoolean(5, frequentCheckpoints);
         boltUsageHints = seg.getBoolean(6, boltUsageHints);
         endureSpikes = seg.getBoolean(7, endureSpikes);
+        adaptiveBatteries = seg.getBoolean(8, adaptiveBatteries);
     }
     
     /*package*/ final void saveBolts() {
@@ -185,6 +188,7 @@ public class Profile {
         seg.setBoolean(5, frequentCheckpoints);
         seg.setBoolean(6, boltUsageHints);
         seg.setBoolean(7, endureSpikes);
+        seg.setBoolean(8, adaptiveBatteries);
         Savtil.save(seg, LOC_PROFILE);
         old.load(this);
     }

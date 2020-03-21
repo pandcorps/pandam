@@ -219,7 +219,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     protected PowerUp pickAward(final Player player) {
-        final int health = player.getHealth(); // 1 to MAX
+        final int health = player.prf.adaptiveBatteries ? player.getHealth() : (HudMeter.MAX_VALUE * 3 / 4); // 1 to MAX
         final float damage = HudMeter.MAX_VALUE - health; // 0 to (MAX - 1)
         final float damageNormalized = damage / (HudMeter.MAX_VALUE - 1); // 0 to 1
         final int rewardPercentage = Math.round(damageNormalized * 80) + 10; // 10 to 90
