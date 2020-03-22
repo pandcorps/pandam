@@ -753,6 +753,7 @@ public class Menu {
         RoomLoader.startY = level.levelY;
         RoomLoader.levelVersion = level.version;
         RoomLoader.level = level;
+        RoomLoader.visitedRooms.clear();
     }
     
     protected final static void startLevelIntroScreen(final BotLevel level) {

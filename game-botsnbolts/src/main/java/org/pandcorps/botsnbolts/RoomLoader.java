@@ -80,6 +80,7 @@ public abstract class RoomLoader {
     protected static boolean changing = false;
     
     private static BotRoom room = null;
+    protected final static Set<BotRoom> visitedRooms = new HashSet<BotRoom>();
     
     protected final static void setRoom(final BotRoom room) {
         RoomLoader.room = room;
@@ -157,6 +158,7 @@ public abstract class RoomLoader {
     
     private final static void processSegments(final SegmentStream in, final boolean ctxRequired, final TileMap tm) throws Exception {
         Segment seg = in.readIf("CTX"); // Context
+        boolean importFound = false;
         if (seg != null) {
             ctx(seg, in);
         } else {
@@ -167,19 +169,11 @@ public abstract class RoomLoader {
                 }
             } else {
                 imp(segImp, ctxRequired, tm); // Import
+                importFound = true;
             }
         }
-        final Player p = getPlayer();
-        if (p != null) {
-            if (p.startRoom == null) {
-                p.startRoomNeeded = true;
-            } else if (isAutomaticCheckpoint()) {
-                p.startRoomNeeded = true;
-            } else if (isFrequentCheckpointEnabled(p)) {
-                p.startRoomNeeded = true;
-            } else {
-                p.startRoomNeeded = false;
-            }
+        if (ctxRequired && importFound) {
+            visitRoom();
         }
         while ((seg = in.read()) != null) {
             final String name = seg.getName();
@@ -284,6 +278,24 @@ public abstract class RoomLoader {
     private final static void postprocess() {
         addShadows();
         addHiddenTiles();
+    }
+    
+    private final static void visitRoom() {
+        final Player p = getPlayer();
+        if (p != null) {
+            if (p.startRoom == null) {
+                p.startRoomNeeded = true;
+            } else if (visitedRooms.contains(room)) {
+                p.startRoomNeeded = false;
+            } else if (isAutomaticCheckpoint()) {
+                p.startRoomNeeded = true;
+            } else if (isFrequentCheckpointEnabled(p)) {
+                p.startRoomNeeded = true;
+            } else {
+                p.startRoomNeeded = false;
+            }
+        }
+        visitedRooms.add(room);
     }
     
     private final static boolean isAutomaticCheckpoint() {
