@@ -134,12 +134,12 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         for (int j = 0; j < n; j++) {
             tm.setBackground(x, y + j, doorTunnelOverlay[base + j], Tile.BEHAVIOR_OPEN);
         }
-        enableOverlay(x, y - 1);
-        enableOverlay(x, y + n);
+        enableAdjacentOverlay(x, y - 1);
+        enableAdjacentOverlay(x, y + n);
         return n;
     }
     
-    protected final void enableOverlay(final int x, final int y) {
+    private final void enableAdjacentOverlay(final int x, final int y) {
         final TileMap tm = BotsnBoltsGame.tm;
         final int index = tm.getIndex(x, y);
         final Object bgRaw = DynamicTileMap.getRawBackground(tm.getTile(index));
@@ -147,7 +147,8 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             return;
         }
         final TileMapImage bg = (TileMapImage) bgRaw;
-        tm.setBackground(index, new AdjustedTileMapImage(bg, BotsnBoltsGame.DEPTH_OVERLAY, 0, false, false));
+        // Use DEPTH_OVERLAY for tunnel (so player and projectiles go behind it); adjacent tiles should only hide player; should still see projectiles
+        tm.setBackground(index, new AdjustedTileMapImage(bg, BotsnBoltsGame.DEPTH_ENEMY_FRONT - BotsnBoltsGame.DEPTH_BG, 0, false, false));
     }
     
     protected final void disableOverlay(final int x, final int y) {
