@@ -128,7 +128,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private Wrapper wrapper = null;
     private int ladderColumn = -1;
     protected boolean startRoomNeeded = true;
-    private BotRoom startRoom = null;
+    protected BotRoom startRoom = null;
     private float startX = NULL_COORD;
     private float startY = NULL_COORD;
     private boolean startMirror = false;
@@ -353,16 +353,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         safeY = pos.getY();
         safeMirror = isMirror();
         if (startRoomNeeded) {
-            if (RoomLoader.variables.containsKey(RoomLoader.VAR_RESTART_FORBIDDEN)
-                    || (!prf.frequentCheckpoints && (startRoom != null) && !RoomLoader.variables.containsKey(RoomLoader.VAR_CHECKPOINT))) {
-                startRoomNeeded = false;
-                return;
-            }
-            final BotRoom currentRoom = RoomLoader.getCurrentRoom();
-            if (currentRoom == startRoom) {
-                return;
-            }
-            startRoom = currentRoom;
+            startRoom = RoomLoader.getCurrentRoom();
             startX = safeX;
             startY = safeY;
             startMirror = safeMirror;

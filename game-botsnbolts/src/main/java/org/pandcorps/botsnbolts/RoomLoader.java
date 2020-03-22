@@ -43,8 +43,6 @@ import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.visual.*;
 
 public abstract class RoomLoader {
-    protected final static String VAR_RESTART_FORBIDDEN = "restartForbidden";
-    protected final static String VAR_CHECKPOINT = "checkpoint";
     private final static int OFF_ALT = 256;
     private final static Class<?>[] SEGMENT_TYPES = { Segment.class };
     private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
@@ -105,11 +103,7 @@ public abstract class RoomLoader {
             BotsnBoltsGame.tileSize = room.tileSize;
             nextRoom = BotsnBoltsGame.BotsnBoltsScreen.newRoom(room.w * BotsnBoltsGame.GAME_W);
             init();
-            final String roomId = room.roomId;
-            if ((roomId != null) && roomId.endsWith("BossEntrance")) {
-                variables.put(VAR_CHECKPOINT, "Y");
-            }
-            processSegmentFile(roomId, true, BotsnBoltsGame.tm);
+            processSegmentFile(room.roomId, true, BotsnBoltsGame.tm);
             return nextRoom;
         }
     }
@@ -177,7 +171,15 @@ public abstract class RoomLoader {
         }
         final Player p = getPlayer();
         if (p != null) {
-            p.startRoomNeeded = true;
+            if (p.startRoom == null) {
+                p.startRoomNeeded = true;
+            } else if (isAutomaticCheckpoint()) {
+                p.startRoomNeeded = true;
+            } else if (isFrequentCheckpointEnabled(p)) {
+                p.startRoomNeeded = true;
+            } else {
+                p.startRoomNeeded = false;
+            }
         }
         while ((seg = in.read()) != null) {
             final String name = seg.getName();
@@ -284,6 +286,23 @@ public abstract class RoomLoader {
         addHiddenTiles();
     }
     
+    private final static boolean isAutomaticCheckpoint() {
+        final String roomId = room.roomId;
+        return (roomId != null) && roomId.endsWith("BossEntrance");
+    }
+    
+    private final static boolean isFrequentCheckpointEnabled(final Player p) {
+        final Profile prf = p.prf;
+        return (prf == null) || prf.frequentCheckpoints;
+    }
+    
+    private final static void setStartRoomNeeded(final boolean startRoomNeeded) {
+        final Player p = getPlayer();
+        if (p != null) {
+            p.startRoomNeeded = startRoomNeeded;
+        }
+    }
+    
     private final static void ctx(Segment seg, final SegmentStream in) throws Exception {
         int version = seg.getInt(3, 0);
         while (version != levelVersion) {
@@ -314,9 +333,9 @@ public abstract class RoomLoader {
     private final static void rom(final Segment seg) {
         final boolean launchReturn = seg.getBoolean(3, false);
         setBgColor(seg, 4);
-        final Player p = getPlayer();
-        if (p != null) {
-            p.startRoomNeeded = seg.getBoolean(5, true);
+        final Boolean startRoomNeeded = seg.toBoolean(5);
+        if (startRoomNeeded != null) {
+            setStartRoomNeeded(startRoomNeeded.booleanValue());
         }
         if (launchReturn) {
             final String launchReturnPosX = levelVariables.get(Extra.VAR_LAUNCH_RETURN_POS_X);
@@ -761,7 +780,7 @@ public abstract class RoomLoader {
     }
     
     private final static void bos(final Segment seg) throws Exception {
-        variables.put(VAR_RESTART_FORBIDDEN, "Y");
+        setStartRoomNeeded(false);
         addActor(newBoss(seg));
     }
     
