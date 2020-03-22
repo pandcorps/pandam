@@ -190,6 +190,10 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panimation splash = null;
     protected static Panmage[] ripple = null;
     protected static Panmage wind = null;
+    protected static Panmage iconBlank = null;
+    protected static Panmage iconBolt = null;
+    protected static Panmage iconDisk = null;
+    protected static Panmage iconBoss = null;
     protected static Panmage black = null;
     protected static Panmage pupil = null;
     protected static Panimation defeatOrbBoss = null;
@@ -425,6 +429,10 @@ public final class BotsnBoltsGame extends BaseGame {
         splash = newAnimation("splash", RES + "misc/Splash.png", 16, new FinPanple2(8, 0), 3);
         ripple = newSheet("ripple", RES + "misc/Ripple.png", 16, null, null, null);
         wind = engine.createImage("wind", RES + "misc/Wind.png");
+        iconBlank = engine.createImage("icon.blank", RES + "misc/IconBlank.png");
+        iconBolt = engine.createImage("icon.bolt", RES + "misc/IconBolt.png");
+        iconDisk = engine.createImage("icon.disk", RES + "misc/IconDisk.png");
+        iconBoss = engine.createImage("icon.boss", RES + "misc/IconBoss.png");
     }
     
     protected final static void initConveyorBeltTiles() {

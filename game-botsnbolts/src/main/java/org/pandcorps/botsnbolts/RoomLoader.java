@@ -1457,6 +1457,8 @@ public abstract class RoomLoader {
         protected final Boolean portraitMirror;
         protected final String replayPrerequisite;
         protected final String boltName;
+        protected final List<String> diskNames;
+        protected final List<String> otherBossNames;
         
         protected BotLevel(final Segment seg, final PixelFilter greyFilter) {
             if (firstLevel == null) {
@@ -1488,12 +1490,7 @@ public abstract class RoomLoader {
                 portraitGrey = null;
             }
             version = seg.getInt(7, 0);
-            final List<Field> prerequisiteFields = seg.getRepetitions(8);
-            final int prerequisitesSize = Coltil.size(prerequisiteFields);
-            prerequisites = new ArrayList<String>(prerequisitesSize);
-            for (int i = 0; i < prerequisitesSize; i++) {
-                prerequisites.add(prerequisiteFields.get(i).getValue());
-            }
+            prerequisites = seg.getValues(8);
             musicName = seg.getValue(9, fullName);
             bossDisplayName = Chartil.isEmpty(name2) ? name1 : (Chartil.isEmpty(name1) ? name2 : (name1 + " " + name2));
             final String startScreenName = seg.getValue(10);
@@ -1509,6 +1506,8 @@ public abstract class RoomLoader {
                 Story.pupilNeededSet.add(portrait);
             }
             boltName = seg.getValue(17);
+            diskNames = seg.getValues(18);
+            otherBossNames = seg.getValues(19);
         }
         
         protected final boolean isSpecialLevel() {
@@ -1516,9 +1515,8 @@ public abstract class RoomLoader {
         }
         
         protected final boolean isAllowed() {
-            final Profile prf = BotsnBoltsGame.pc.prf;
-            for (final String prerequisite : prerequisites) {
-                if (!(prf.disks.contains(prerequisite) || prf.isUpgradeAvailable(prerequisite))) {
+            for (final String prerequisite : Coltil.unnull(prerequisites)) {
+                if (!Profile.isRequirementMet(prerequisite)) {
                     return false;
                 }
             }

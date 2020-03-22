@@ -22,6 +22,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import java.util.*;
+
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
@@ -705,7 +707,31 @@ public class Menu {
                         grid.setCurrentCell(cell);
                     }
                 }});
+            int iconX = x + 23;
+            iconX = addLevelIcon(iconX, y, level.boltName, BotsnBoltsGame.iconBolt);
+            iconX = addLevelIcons(iconX, y, level.diskNames, BotsnBoltsGame.iconDisk);
+            iconX = addLevelIcons(iconX, y, level.otherBossNames, BotsnBoltsGame.iconBoss);
+            iconX = addLevelIcon(iconX, y, level.bossClassName, BotsnBoltsGame.iconBoss);
             return cell;
+        }
+        
+        private final static int addLevelIcon(final int x, final int y, final String req, final Panmage iconIfMet) {
+            if (req == null) {
+                return x;
+            }
+            final Panmage icon = Profile.isRequirementMet(req) ? iconIfMet : BotsnBoltsGame.iconBlank;
+            final Panctor actor = new Panctor();
+            actor.setView(icon);
+            actor.getPosition().set(x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK);
+            BotsnBoltsGame.addActor(actor);
+            return x + 8;
+        }
+        
+        private final static int addLevelIcons(int x, final int y, final List<String> reqs, final Panmage iconIfMet) {
+            for (final String req : Coltil.unnull(reqs)) {
+                x = addLevelIcon(x, y, req, iconIfMet);
+            }
+            return x;
         }
     }
     

@@ -211,6 +211,15 @@ public class Profile {
         return upgrades.contains(upgrade);
     }
     
+    /*package*/ final boolean isAvailable(final String name) {
+        return (disks.contains(name) || isUpgradeAvailable(name));
+    }
+    
+    /*package*/ final static boolean isRequirementMet(final String name) {
+        final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.pc);
+        return (prf != null) && prf.isAvailable(name);
+    }
+    
     /*package*/ final static Upgrade getUpgrade(final String name) {
         for (final Upgrade upgrade : UPGRADES) {
             if (upgrade.name.equals(name)) {

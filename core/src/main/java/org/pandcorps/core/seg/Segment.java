@@ -118,6 +118,19 @@ public class Segment extends Record {
         return Field.getValue(getField(i));
     }
     
+    public final List<String> getValues(final int i) {
+        final List<Field> fields = getRepetitions(i);
+        final int size = Coltil.size(fields);
+        if (size == 0) {
+            return null;
+        }
+        final List<String> values = new ArrayList<String>(size);
+        for (int j = 0; j < size; j++) {
+            values.add(fields.get(j).getValue());
+        }
+        return values;
+    }
+    
     public final int[] getIntArray(final int i) {
         final List<Field> reps = getRepetitions(i);
         final int size = Coltil.size(reps);
