@@ -438,6 +438,9 @@ public class Menu {
     }
     
     private final static void addPauseMenu(final Panlayer layer, final PlayerContext pc, final Panctor registrar, final Player player, final boolean levelSelectNeeded) {
+        for (final TouchButton btn : levelButtons) {
+            btn.setEnabled(false);
+        }
         final int numBtns = 3, btnSize = 32, spaceBetween = 32, nextOffset = btnSize + spaceBetween;
         int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
         final int py = (BotsnBoltsGame.GAME_H - btnSize) / 2;
@@ -564,6 +567,9 @@ public class Menu {
         play = null;
         TouchButton.destroy(levelSelect);
         TouchButton.destroy(quit);
+        for (final TouchButton btn : levelButtons) {
+            btn.setEnabled(true);
+        }
     }
     
     protected final static boolean isPauseMenuEnabled() {
@@ -585,6 +591,8 @@ public class Menu {
     protected final static void goLevelSelect() {
         Panscreen.set(RoomLoader.getFirstLevel().isFinished() ? new LevelSelectScreen() : new LabScreen1());
     }
+    
+    private final static List<TouchButton> levelButtons = new ArrayList<TouchButton>(12);
     
     protected final static class LevelSelectScreen extends Panscreen {
         private static Panmage imgEmpty = null;
@@ -618,6 +626,7 @@ public class Menu {
             BotLevel centerLevel = null;
             boolean allBasicFinished = true, anyDenied = false;
             LevelSelectCell suggestedCell = null;
+            levelButtons.clear();
             for (final BotLevel level : RoomLoader.levels) {
                 if (level.isSpecialLevel()) {
                     if (!level.isAllowed()) {
@@ -654,7 +663,7 @@ public class Menu {
             if ((suggestedCell != null) && prf.levelSuggestions) {
                 grid.setCurrentCell(suggestedCell, false);
             }
-            final TouchButton quit = addTopRightButton(layer, "Quit", imgOptions, grid, new ActionEndListener() {
+            addTopRightButton(layer, "Quit", imgOptions, grid, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     if (isGridEnabled()) {
                         addQuitMenu(newRoom, pc);
@@ -671,6 +680,11 @@ public class Menu {
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);
+        }
+        
+        @Override
+        protected final void destroy() {
+            levelButtons.clear();
         }
         
         private final static void addQuitMenu(final Panlayer layer, final PlayerContext pc) {
@@ -709,6 +723,7 @@ public class Menu {
             }
             final Pangine engine = Pangine.getEngine();
             final TouchButton btn = new TouchButton(engine.getInteraction(), layer, "level." + x + "." + y, x, y, BotsnBoltsGame.DEPTH_FG, imgEmpty, null, true);
+            levelButtons.add(btn);
             engine.registerTouchButton(btn);
             grid.register(btn, new GridEndListener() {
                 @Override public final void onGridEnd() {
@@ -759,6 +774,7 @@ public class Menu {
     }
     
     private final static void startLevel(final BotLevel level) {
+        levelButtons.clear();
         Pangine.getEngine().getAudio().stop();
         BotsnBoltsGame.fxMenuClick.startSound();
         prepareLevel(level);
