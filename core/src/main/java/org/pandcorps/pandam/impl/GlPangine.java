@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -819,9 +819,16 @@ public abstract class GlPangine extends Pangine {
 	private final void draw(final Panlayer room) {
 	    final boolean visible = room.isVisible();
 	    if (room.isClearDepthEnabled()) {
-	        if (!visible) {
-	            throw new UnsupportedOperationException("Don't clear depth if not visible");
-	        }
+	        /*
+	        Used to throw this Exception.
+	        But if we have multiple layers, we might only want to clear the depth buffer for the bottom layer.
+	        We also might want to hide that layer.
+	        We shouldn't need to disable depth clearing for that layer and enable it for the next layer.
+	        We should be able to simply hide that layer but still use that layer to clear the depth buffer for other screens.
+	        */
+	        //if (!visible) {
+	        //    throw new UnsupportedOperationException("Don't clear depth if not visible");
+	        //}
 //if (room instanceof Panroom) {
 	        gl.glClear(gl.GL_DEPTH_BUFFER_BIT);
 //}

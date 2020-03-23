@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -428,6 +428,12 @@ public class Panlayer extends BasePantity {
     
     public final void setVisible(final boolean visible) {
         this.visible = visible;
+    }
+    
+    public final static void setVisible(final Panlayer layer, final boolean visible) {
+        if (layer != null) {
+            layer.setVisible(visible);
+        }
     }
     
     public final boolean isVisible() {

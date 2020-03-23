@@ -441,7 +441,8 @@ public class Menu {
         for (final TouchButton btn : levelButtons) {
             btn.setEnabled(false);
         }
-        final int numBtns = 3, btnSize = 32, spaceBetween = 32, nextOffset = btnSize + spaceBetween;
+        Panlayer.setVisible(levelSelectLayer, false);
+        final int numBtns = 3, btnSize = 32, spaceBetween = 48, nextOffset = btnSize + spaceBetween;
         int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
         final int py = (BotsnBoltsGame.GAME_H - btnSize) / 2;
         final Panmage active = pc.pi.highlightBox;
@@ -563,6 +564,7 @@ public class Menu {
         if (!(Panscreen.get() instanceof LevelSelectScreen)) {
             Panctor.destroy(cursor);
         }
+        Panlayer.setVisible(levelSelectLayer, true);
         TouchButton.destroy(play);
         play = null;
         TouchButton.destroy(levelSelect);
@@ -593,6 +595,15 @@ public class Menu {
     }
     
     private final static List<TouchButton> levelButtons = new ArrayList<TouchButton>(12);
+    private static Panlayer levelSelectLayer = null;
+    
+    private final static void clearLevelButtons() {
+        if (BotsnBoltsGame.room != null) {
+            BotsnBoltsGame.room.setClearDepthEnabled(true);
+        }
+        levelButtons.clear();
+        levelSelectLayer = null;
+    }
     
     protected final static class LevelSelectScreen extends Panscreen {
         private static Panmage imgEmpty = null;
@@ -600,6 +611,7 @@ public class Menu {
         
         @Override
         protected final void load() throws Exception {
+            clearLevelButtons();
             final Pangine engine = Pangine.getEngine();
             BotsnBoltsGame.musicLevelSelect.changeMusic();
             final PlayerContext pc = BotsnBoltsGame.pc;
@@ -619,14 +631,14 @@ public class Menu {
             final Panroom newRoom = room;
             game.setCurrentRoom(room);
             BotsnBoltsGame.room = room;
-            final Panlayer layer = engine.createLayer("layer.grid", roomW, roomH, roomZ, room);
+            room.setClearDepthEnabled(false);
+            final Panlayer layer = levelSelectLayer = engine.createLayer("layer.grid", roomW, roomH, roomZ, room);
             grid = new LevelSelectGrid();
-            layer.addActor(grid);
+            room.addActor(grid);
             Player.registerCapture(grid);
             BotLevel centerLevel = null;
             boolean allBasicFinished = true, anyDenied = false;
             LevelSelectCell suggestedCell = null;
-            levelButtons.clear();
             for (final BotLevel level : RoomLoader.levels) {
                 if (level.isSpecialLevel()) {
                     if (!level.isAllowed()) {
@@ -641,7 +653,7 @@ public class Menu {
                 } else if (!level.isFinished()) {
                     allBasicFinished = false;
                 }
-                final LevelSelectCell cell = addLevelButton(room, level.selectX, level.selectY, level);
+                final LevelSelectCell cell = addLevelButton(layer, level.selectX, level.selectY, level);
                 if ((suggestedCell == null) && (level.boltName) != null && !prf.isUpgradeAvailable(level.boltName)) {
                     suggestedCell = cell;
                 }
@@ -684,7 +696,7 @@ public class Menu {
         
         @Override
         protected final void destroy() {
-            levelButtons.clear();
+            clearLevelButtons();
         }
         
         private final static void addQuitMenu(final Panlayer layer, final PlayerContext pc) {
@@ -757,7 +769,7 @@ public class Menu {
             final Panctor actor = new Panctor();
             actor.setView(icon);
             actor.getPosition().set(x, y, BotsnBoltsGame.DEPTH_ENEMY_BACK);
-            BotsnBoltsGame.addActor(actor);
+            levelSelectLayer.addActor(actor);
             return x + 8;
         }
         
@@ -774,7 +786,7 @@ public class Menu {
     }
     
     private final static void startLevel(final BotLevel level) {
-        levelButtons.clear();
+        clearLevelButtons();
         Pangine.getEngine().getAudio().stop();
         BotsnBoltsGame.fxMenuClick.startSound();
         prepareLevel(level);
