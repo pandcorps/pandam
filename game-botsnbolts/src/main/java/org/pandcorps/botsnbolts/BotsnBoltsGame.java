@@ -54,7 +54,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
     
     /*
-    Pause info/menu
+    Pause info
     */
     
     protected final static String RES = "org/pandcorps/botsnbolts/";

@@ -62,6 +62,9 @@ public class Menu {
     protected static Panmage imgPlay = null;
     protected static Panmage imgLevelSelect = null;
     protected static Panmage imgQuit = null;
+    protected static Panmage imgOptions = null;
+    protected static Panmage imgOn = null;
+    protected static Panmage imgOff = null;
     
     protected static Cursor cursor = null;
     protected static TouchButton jump = null;
@@ -127,6 +130,9 @@ public class Menu {
         imgPlay = Pangine.getEngine().createImage("Play", BotsnBoltsGame.RES + "menu/Play.png");
         imgLevelSelect = Pangine.getEngine().createImage("LevelSelect", BotsnBoltsGame.RES + "menu/LevelSelect.png");
         imgQuit = Pangine.getEngine().createImage("Quit", BotsnBoltsGame.RES + "menu/Quit.png");
+        imgOptions = Pangine.getEngine().createImage("Options", BotsnBoltsGame.RES + "menu/Options.png");
+        imgOn = Pangine.getEngine().createImage("On", BotsnBoltsGame.RES + "menu/On.png");
+        imgOff = Pangine.getEngine().createImage("Off", BotsnBoltsGame.RES + "menu/Off.png");
     }
     
     private final static void loadTriangleButton(final int white, final int grey, final int darkGrey, final int black, final PixelFilter clearFilter) {
@@ -405,6 +411,12 @@ public class Menu {
         return button;
     }
     
+    private final static TouchButton addTopRightButton(final Panlayer layer, final String name, final Panmage img, final Panctor src, final ActionEndListener listener) {
+        final TouchButton btn = addButton(layer, name, BotsnBoltsGame.GAME_W - 17, BotsnBoltsGame.GAME_H - 17, true, true, null, img, img, false, null, false, 16);
+        src.register(btn, listener);
+        return btn;
+    }
+    
     protected final static void showUpDown() {
         if (TouchButton.reattach(up)) {
             TouchButton.reattach(down);
@@ -426,7 +438,7 @@ public class Menu {
     }
     
     private final static void addPauseMenu(final Panlayer layer, final PlayerContext pc, final Panctor registrar, final Player player, final boolean levelSelectNeeded) {
-        final int numBtns = levelSelectNeeded ? 3 : 2, btnSize = 32, spaceBetween = 32, nextOffset = btnSize + spaceBetween;
+        final int numBtns = 3, btnSize = 32, spaceBetween = 32, nextOffset = btnSize + spaceBetween;
         int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
         final int py = (BotsnBoltsGame.GAME_H - btnSize) / 2;
         final Panmage active = pc.pi.highlightBox;
@@ -452,6 +464,14 @@ public class Menu {
                     destroyPauseMenu();
                     RoomLoader.clear(); // Exit from Bolt room to Menu; start Earthquake level; TileMapImage Map wasn't cleared without this, causing graphical bug
                     goLevelSelect();
+                }});
+        } else {
+            pauseMenuButtons[currIndex++] = levelSelect = addPauseMenuButton(layer, "Options", px, py, active, imgOptions);
+            px += nextOffset;
+            registrar.register(levelSelect, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    destroyPauseMenu();
+                    goOptions();
                 }});
         }
         pauseMenuButtons[currIndex++] = quit = addPauseMenuButton(layer, "Quit", px, py, active, imgQuit);
@@ -581,7 +601,7 @@ public class Menu {
             if (imgEmpty == null) {
                 imgEmpty = engine.createEmptyImage("select.level", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(48, 48));
             }
-            engine.setBgColor(new FinPancolor(96, 96, 96));
+            engine.setBgColor(new FinPancolor(96));
             final Pangame game = Pangame.getGame();
             Panroom room = game.getCurrentRoom();
             final int roomW = BotsnBoltsGame.GAME_W, roomH = BotsnBoltsGame.GAME_H;
@@ -634,8 +654,7 @@ public class Menu {
             if ((suggestedCell != null) && prf.levelSuggestions) {
                 grid.setCurrentCell(suggestedCell, false);
             }
-            final TouchButton quit = addButton(layer, "Quit", roomW - 17, roomH - 17, true, true, null, imgQuit, imgQuit, false, null, false, 16);
-            grid.register(quit, new ActionEndListener() {
+            final TouchButton quit = addTopRightButton(layer, "Quit", imgOptions, grid, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     if (isGridEnabled()) {
                         addQuitMenu(newRoom, pc);
@@ -966,6 +985,70 @@ public class Menu {
         public abstract void onGridEnd();
     }
     
+    protected final static void goOptions() {
+        Panscreen.set(new OptionsScreen());
+    }
+    
+    private final static int optionsX = 48;
+    private static int optionsY = 0;
+    
+    protected final static class OptionsScreen extends Panscreen {
+        @Override
+        protected final void load() throws Exception {
+            final Panroom room = Pangame.getGame().getCurrentRoom();
+            BotsnBoltsGame.room = room;
+            Pangine.getEngine().setBgColor(new FinPancolor(96));
+            final Panctor bg = new LevelStartBg(24);
+            room.addActor(bg);
+            optionsY = 156;
+            final Profile prf = BotsnBoltsGame.pc.prf;
+            addOption(bg, "Suggest next level", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.levelSuggestions = !prf.levelSuggestions); }});
+            addOption(bg, "Upgrade bolt usage hints", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.boltUsageHints = !prf.boltUsageHints); }});
+            addOption(bg, "Frequent checkpoints", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.frequentCheckpoints = !prf.frequentCheckpoints); }});
+            addOption(bg, "Adaptive health batteries", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.adaptiveBatteries = !prf.adaptiveBatteries); }});
+            addOption(bg, "Endure spikes", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.endureSpikes = !prf.endureSpikes); }});
+            addTopRightButton(room, "LevelSelect", imgLevelSelect, bg, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    prf.saveProfile(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
+                    goLevelSelect();
+                }});
+            Player.registerCapture(bg);
+            addCursor(room);
+        }
+    }
+    
+    private final static void addOption(final Panctor src, final String label, final OptionSetter setter) {
+        final Pantext text = new Pantext(Pantil.vmid(), BotsnBoltsGame.font, label);
+        text.getPosition().set(optionsX, optionsY);
+        BotsnBoltsGame.addActor(text);
+        setter.set(); // Flip current value just to flip it back to see what it was below
+        final boolean on = setter.set();
+        final Panmage img = on ? imgOn : imgOff;
+        final TouchButton btn;
+        btn = addButton(BotsnBoltsGame.room, label, BotsnBoltsGame.GAME_W - 16 - optionsX, optionsY - 4, true, true, null, img, img, true, null, false, 16);
+        src.register(btn, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                final Panmage imgNew = setter.set() ? imgOn : imgOff;
+                btn.setImageActive(imgNew);
+                btn.setImageInactive(imgNew);
+            }});
+        optionsY -= 24;
+    }
+    
+    private static interface OptionSetter {
+        public boolean set();
+    }
+    
     protected abstract static class StartScreen extends Panscreen {
         @Override
         protected final void load() throws Exception {
@@ -1032,11 +1115,21 @@ public class Menu {
     }
     
     protected final static class LevelStartBg extends Panctor {
+        private final int marginY;
+        
+        protected LevelStartBg() {
+            this(40);
+        }
+        
+        protected LevelStartBg(final int marginY) {
+            this.marginY = marginY;
+        }
+        
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
-            LevelSelectGrid.renderBg(renderer, layer, 40);
-            LevelSelectGrid.renderBg(renderer, layer, 152);
+            LevelSelectGrid.renderBg(renderer, layer, marginY);
+            LevelSelectGrid.renderBg(renderer, layer, BotsnBoltsGame.GAME_H - 32 - marginY);
         }
     }
     
