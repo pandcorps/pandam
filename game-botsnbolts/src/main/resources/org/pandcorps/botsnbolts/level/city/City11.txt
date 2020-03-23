@@ -1,26 +1,28 @@
 IMP|City
 
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g (----,
-M|-,     g        g DDDD/-
+M|xi     g        g v    i
+M|xi   6 g        g v    i
+M|xi   v g     9  g v    i
+M|xi   v g     v  g 5    i
+M|xi   v g  3  v  g      i
+M|xi   v g     7  g (----,
+M|-,   8 g        g DDDD/-
 M| D     g        g     ix
-M|       g(------)g     ix
-M|       gDDDDDDDDg     ix
+M|       g(------)g   6 ix
+M|   1   gDDDDDDDDg     ix
 M|       g        g  (-\`-
-M|-----\ g        g  DDixx
-M|xxxxxi g        g    ixx
-M|xxxxxi g        g    ixx
+M|-----\ g 5      g  DDixx
+M|xxxxxi g v   2  g    ixx
+M|xxxxxi g v      g    ixx
 
 VDR|0|3
 
 LDR|22|11|3
 
 ENM|6|12|SaucerEnemy
+ENM|12|6|ArmoredSaucerEnemy
 ENM|20|4|CyanEnemy
+ENM|22|10|SprayCannon
 
 VER|1
 ENM|21|9|GearEnemy||3

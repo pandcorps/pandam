@@ -1,19 +1,19 @@
 IMP|City
 
+M|xi     g v      g      i
+M|xi     g 9      g      i
 M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g  (----)g      i
+M|xi 3   g  (----)g      i
 M|xi     g  DDDDDDg      i
-M|xi    %g        g      i
+M|xi    %g        g  2   i
+M|xi     g        g    7 i
+M|xi     g     1  g    v i
+M|xi     g        g    v i
+M|xi    %g        g    5 i
 M|xi     g        g      i
-M|xi     g        g      i
-M|xi     g        g      i
-M|xi    %g        g      i
-M|xi     g        g      i
-M|xi     g  %    %g   () i
-M|xi     g        g   DD i
-M|xi     g        g      i
+M|xi     g  %    %g 8 () i
+M|xi  4  g        g v DD i
+M|xi     g        g v    i
 
 LDR|22|0|3
 LDR|15|11|3

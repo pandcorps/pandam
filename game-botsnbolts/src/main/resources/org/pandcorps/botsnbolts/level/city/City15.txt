@@ -15,8 +15,11 @@ M|-\ /---------------\   /
 M|xiDixxxxxxxxxxxxxxxiDDDi
 M|xi `---------------,   i
 
+ROM||||||true
+
 LDR|2|0|3
 
+ENM|17|3|ArmoredSaucerEnemy
 ENM|21|11|SaucerEnemy
 
 VER|1
@@ -25,4 +28,4 @@ ENM|-5|5|GuardedEnemy
 ENM|28|6|GuardedEnemy
 VND
 
-RPT|0|0|24|1|CityDay|||||CityNight
+RPT|0|0|24|2|CityDay|||||CityNight

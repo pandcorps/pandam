@@ -36,17 +36,17 @@ VND
 
 VER|1
 M|xi i          |0|11
-M|xi i          |0|10
-M|xi i          |0|9
-M|xi `--------\ |0|8
-M|xi DDDDGDDDDi i g /----,|0|7
-M|x`--------) i i g ixxxxx|0|6
-M|-\DDDDDGDDD i.i g ixxxxx|0|5
-M|xi (--------,Di g `-----|0|4
-M|xi DDDDGDDDDD i g DDDDD |0|3
-BRR|4|3|Small
-BRR|9|5|Small
-BRR|4|7|Small
+M|xi `---------)|0|10
+M|xi DDDDGDDDDDD|0|9
+M|x`---------\  |0|8
+M|x/---------,  i g /----,|0|7
+M|xiDDDDDGDDDD  i g ixxxxx|0|6
+M|xi  /--------)i g ixxxxx|0|5
+M|xi  `-------)Di g `-----|0|4
+M|xi  DDDGDDDDD i g DDDDD |0|3
+BRR|5|3|Small
+BRR|10|6|Small
+BRR|5|9|Small
 DOR|23|3|Small
 VND
 

@@ -15,12 +15,15 @@ M|-\ /--------------\   /-
 M|xiDixxxxxxxxxxxxxxiDDDix
 M|xi i(-------------,   ix
 
+ROM||||||true
+
 LDR|2|0|3
 
-ENM|21|11|SaucerEnemy
+ENM|6|3|SprayCannon
+ENM|15|3|ArmoredSaucerEnemy
 
 VER|1
 ENM|28|6|GuardedEnemy
 VND
 
-RPT|0|0|24|1|CityDay|||||CityNight
+RPT|0|0|24|2|CityDay|||||CityNight

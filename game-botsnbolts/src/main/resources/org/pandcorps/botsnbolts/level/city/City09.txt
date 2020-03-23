@@ -5,19 +5,21 @@ M|xxxxxxxxxxxxxxxxxxxxxxxx
 M|----------------------\x
 M| DDDDDDGDDDDDDDDGDDDDDix
 M|       g        g     ix
-M|       g        g     ix
-M|       g        g     `-
-M|(--\   g        g     D 
-M|xxxi   g        g       
-M|xxxi   g        g       
-M|xxxi   g        g       
-M|xxxi   g        g   /---
-M|xxxi   g        g   ixxx
-M|xxxi   g        g   ixxx
+M|   7   g        g   9 ix
+M|       g 2    6 g   v `-
+M|(--\   g      v g   5 D 
+M|xxxi   g      7 g       
+M|xxxi 5 g        g 3     
+M|xxxi v g  8     g       
+M|xxxi v g  v  1  g   /---
+M|xxxi v g  v     g   ixxx
+M|xxxi v g  v     g   ixxx
 
 VDR|0|7
 VDR|23|3
 
+ENM|5|10|SprayCannon
+ENM|18|10|SprayCannon
 ENM|18|8|SaucerEnemy
 
 VER|0
@@ -26,8 +28,6 @@ M|DD    DD|8|3
 VND
 
 VER|1
-ENM|5|10|CeilingCannon
-ENM|18|10|CeilingCannon
 M|SSSSSS|9|10
 VND
 
