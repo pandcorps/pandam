@@ -589,7 +589,7 @@ public class Menu {
     }
     
     protected final static void goLevelSelect() {
-        Panscreen.set(RoomLoader.getFirstLevel().isFinished() ? new LevelSelectScreen() : new LabScreen1());
+        Panscreen.set(RoomLoader.isFirstLevelFinished() ? new LevelSelectScreen() : new LabScreen1());
     }
     
     private final static List<TouchButton> levelButtons = new ArrayList<TouchButton>(12);
@@ -1033,7 +1033,7 @@ public class Menu {
             addOption(bg, "Endure spikes", new OptionSetter() {
                 @Override public final boolean set() {
                     return (prf.endureSpikes = !prf.endureSpikes); }});
-            addTopRightButton(room, "LevelSelect", imgLevelSelect, bg, new ActionEndListener() {
+            addTopRightButton(room, "LevelSelect", RoomLoader.isFirstLevelFinished() ? imgLevelSelect : imgPlay, bg, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     prf.saveProfile(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
                     goLevelSelect();
@@ -1057,6 +1057,7 @@ public class Menu {
                 final Panmage imgNew = setter.set() ? imgOn : imgOff;
                 btn.setImageActive(imgNew);
                 btn.setImageInactive(imgNew);
+                BotsnBoltsGame.fxMenuClick.startSound();
             }});
         optionsY -= 24;
     }

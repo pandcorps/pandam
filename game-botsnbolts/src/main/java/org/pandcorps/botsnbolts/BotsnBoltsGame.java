@@ -1198,7 +1198,11 @@ public final class BotsnBoltsGame extends BaseGame {
                     }
                     pc.setControlScheme(ctrl);
                     fxMenuClick.startSound();
-                    Menu.goLevelSelect();
+                    if (RoomLoader.isFirstLevelFinished()) {
+                        Menu.goLevelSelect();
+                    } else {
+                        Menu.goOptions();
+                    }
                 }});
         }
         

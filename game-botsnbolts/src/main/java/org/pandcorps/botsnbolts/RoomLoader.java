@@ -1335,6 +1335,10 @@ public abstract class RoomLoader {
         return firstLevel;
     }
     
+    protected final static boolean isFirstLevelFinished() {
+        return getFirstLevel().isFinished();
+    }
+    
     protected final static Panmage getPortrait(final BotLevel level) {
         return (level == null) ? null : level.portrait;
     }
