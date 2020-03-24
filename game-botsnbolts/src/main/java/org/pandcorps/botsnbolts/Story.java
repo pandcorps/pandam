@@ -371,8 +371,14 @@ public class Story {
                     final Talker player = newPlayerTalker().setTalking(false);
                     replaceActor(this, player);
                     addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
-                        drRoot.setTalking(true).setMirror(false);
-                        newLabTextTyper("\"Welcome back, Void!  You defeated Dr. Final and forced him to retreat to his base offworld.  Our whole world can breath a sigh of relief.  I'm so proud of you, Void!\"").setFinishHandler(newScreenRunner(new RootFamilyScreen()));
+                        drRoot.setMirror(false);
+                        startLabConversation(drRoot, player, new CharSequence[] {
+                                "\"Welcome back, Void!  You defeated Dr. Final and thwarted his attempt to conquer our planet.\"",
+                                "\"He should be in prison for his crimes right now, but he escaped...\"",
+                                "\"You forced him to retreat to his base offworld.  Our whole world can breath a sigh of relief.  I'm so proud of you, Void!\"",
+                                "\"Thank you, Dr. Root.\"",
+                                "\"No!  Thank you, Void!\""
+                        }, newScreenRunner(new RootFamilyScreen()));
                     }});
                 }};
                 initActor(p, 128, true);
