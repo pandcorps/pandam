@@ -2,38 +2,30 @@ IMP|City
 
 M|xi (------------------\x
 M|xi DDDDGDDDDDDDDGDDDDDix
-M|-,     g        g     ix
-M|x/-----------------)  ix
-M|xiDDDDDGDDDDDDDDGDDD  ix
-M|xi     g        g     ix
-M|xi    /----\    g /---,x
-M|xi    ixxxxi    g ixxxxx
-M|xi  (-,(--)`------,(--\x
-M|xi  DDDGDDDDDDDDGDDDDDix
-M|xi     g        g     ix
-M|x`------\      /----\ ix
-M|xxxxxxxx`------,xxxxi ix
-M|xxxxxxxxxxxxxxxxxxxxi ix
+M|xi  9  g   8    g     ix
+M|x`------\  v    g 1   ix
+M|xxxxxxxxi  7 2  g    6ix
+M|xxxxxxxx`-\     g    vix
+M|          i   5 g  3 vix
+M|          `-\   g    vix
+M|          xxi   g    8ix
+M|          xx`-\ g 4   ix
+M|          xxxxi g     ix
+M|          xxxx`-----\ ix
+M|          xxxxxxxxxxi ix
+M|          xxxxxxxxxxi ix
 
 LDR|21|0|3
 LDR|2|11|3
 
-ENM|8|4|SaucerEnemy|false
-ENM|19|9|SaucerEnemy
-ENM|2|12|SaucerEnemy|false
+ENM|20|11|SaucerEnemy
 
-VBR|18|3
-VBR|8|8
-VBR|13|11
+VBR|6|11
 
 VER|1
-ENM|16|3|SlideEnemy
-ENM|11|2|GearEnemy|false
-ENM|5|3|SlideEnemy
-ENM|10|8|SlideEnemy
-ENM|15|6|GearEnemy
-ENM|20|8|SlideEnemy
-ENM|12|11|SlideEnemy
+ENM|4|11|SlideEnemy
+ENM|7|11|GearEnemy|false
 VND
 
 RPT|||||CityDay|||||CityNight
+RPT|0|0|10|8|CityForeground|||bg
