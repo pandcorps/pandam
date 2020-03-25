@@ -1,0 +1,29 @@
+IMP|Array
+
+PUT|D|4^1||0
+PUT|e|4^2||0
+
+M|==}Q{==_==}q{===_==_====
+M|----------------------\{
+M| DDDDDDDDDDDDDDDDDDDDDi{
+M| e e        e      e  i#
+M| ee e  e     eee      i{
+M| eee e      eee      ei#
+M|-\      e  e e     e  i{
+M|#i          e   e     iQ
+M|}iS           e   e   i{
+M|}i         e     e ee i{
+M|#iS S             e  ei{
+M|}i            e    eee`-
+M|qi........       ee eeD  
+M|}`----------------------
+
+DOR|0|8|Blue
+SBT|20|11|Door
+DOR|23|1|Small
+
+ENM|2|6|SentryGun
+DSK|4|4
+ENM|6|2|SentryGun
+
+RPT|2|1|20|11|EarthquakeDirtDark

@@ -1,0 +1,34 @@
+IMP|Array
+
+PUT|D|4^1||0
+PUT|e|4^2||0
+
+FNC|B|BurstTile
+FNC|b|BurstableTile
+
+SHD|4^1
+
+M|==}q{=_==_===}Q#Q{===_==
+M|}/----------------------
+M|}iDDDDDDDDDDDDDDDDDDDDD 
+M|}i bbbbbbbb    e  e   e 
+M|}i b      b     e     e 
+M|}i b   e  b  e      e e 
+M|qi b  e e b ........../-
+M|}i be     b DDDDDDbDDDi{
+M|qieb   bbbb    e  b  eiQ
+M|}i B  e     e   e B e iQ
+M|}i b eee   e      b   i{
+M|}`------------------\3i{
+M|=_=}Q{==}q{====}Q{=}i6i{
+M|==_===}Q{=}qq{=_=_=}i9i{
+
+LDR|21|0|3
+DOR|23|8|Silver
+
+ENM|5|3|GearEnemy|false
+ENM|7|3|GearEnemy|false
+ENM|9|3|GearEnemy|false
+ENM|11|3|GearEnemy|false
+
+RPT|2|3|20|9|EarthquakeDirtDark

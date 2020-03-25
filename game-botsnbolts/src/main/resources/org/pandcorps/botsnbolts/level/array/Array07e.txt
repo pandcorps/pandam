@@ -1,0 +1,40 @@
+IMP|Array
+
+PUT|D|4^1||0
+PUT|e|4^2||0
+
+FNC|B|BurstTile
+FNC|b|BurstableTile
+
+SHD|4^1
+
+M|}ieeeei{=}q{=}Q{=}q{==_=}QQ{=_=_=}q#Q#q{=_==_==}q+Q{=_=}Q{==_=}q{}Q#iei{
+M|}ieeee`-------------------------------------------------------------,ei{
+M|}ieee DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDbDDDD i{
+M|qiee e                 e         e     e    e                 e be   ei{
+M|}i ee e       e  e e ee e      e    e      eee       ee      e eb   e i{
+M|qie eeee          e eeee e    e e  e      ee      e ee        e b     i{
+M|}i e e      eee    eee  e    eee      e  e  e   e       e e     b     iQ
+M|+i  e      ee     e e       e e     e   e e    e ee   e  e ee   b   . iQ
+M|}i     e        e  e       e e                  eeee        ee  b   D i{
+M|}ie   eee  e e    ebbb   e     bbb    e    bbb e ee    bbb      B   e i+
+M|}iee        e e    b b  e e  e b b   e ee  b b  ee     b b      b .e ei{
+M|-,....bbbbbbbbbbbbbbebbbbbbbbbbb bbbbbbbbbbbebbbbbbbbbbbebbbbbbbb D eei{
+M| DDDDD   eee   ee  eee   ee     e   eee   eeee     eee eee  e  ee eeeeiq
+M|---------\eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeei{
+
+DOR|0|1|Small
+
+LDR|69|9|5
+
+ENM|20|11|SprayCannon
+ENM|32|11|SprayCannon
+ENM|44|11|SprayCannon
+ENM|56|11|SprayCannon
+ENM|29|3|GearEnemy
+ENM|41|3|GearEnemy
+ENM|53|3|GearEnemy
+
+VAR|rescueDisabled|Y
+
+RPT|2|1|68|11|EarthquakeDirtDark
