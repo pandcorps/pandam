@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 import java.util.Map.*;
+import java.util.concurrent.*;
 
 import org.pandcorps.botsnbolts.Boss.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
@@ -32,6 +33,7 @@ import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.chr.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
@@ -324,7 +326,9 @@ public final class BotsnBoltsGame extends BaseGame {
             Integer.valueOf(Projectile.POWER_MAXIMUM), imgsBarrier, Player.SHOOT_CHARGE, null);
         final Pancolor blue = newColorBlue(), darkBlue = newColorBlueDark();
         doorBlue = filterDoor("door.blue", imgsClosed, imgsOpening, silver, blue, darkSilver, darkBlue, null, 0, null,
-            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier, Player.SHOOT_SPREAD, "Aim for the switch");
+            Integer.valueOf(Projectile.POWER_IMPOSSIBLE), imgsBarrier, Player.SHOOT_SPREAD, new CallSequence(new Callable<String>() {
+                @Override public final String call() throws Exception {
+                    return (RoomLoader.getShootableButton() == null) ? "Can only open from other side" : "Aim for the switch"; }}));
         final ShootableDoorDefinition doorRed, doorRedOrange, doorOrange, doorOrangeGold;
         final Pancolor red = Pancolor.RED, darkRed = new FinPancolor(s192, s0, s0);
         doorRed = filterDoor("door.red", imgsClosed, imgsOpening, blue, red, darkBlue, darkRed, null, 15, Player.SHOOT_RAPID, null, imgsBarrier, Player.SHOOT_RAPID, null);
@@ -614,7 +618,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static ShootableDoorDefinition filterDoor(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
             final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2,
             final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
-            final Img[] imgsBarrier, final ShootMode hintShootMode, final String hintText) {
+            final Img[] imgsBarrier, final ShootMode hintShootMode, final CharSequence hintText) {
         final PixelFilter filter = newFilter(s1, d1, s2, d2);
         filterImgs(imgsClosed, filter);
         filterImgs(imgsOpening, filter);
@@ -1052,7 +1056,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static ShootableDoorDefinition newDoorDefinition(final String id, final Img[] imgsClosed, final Img[] imgsOpening,
             final ShootableDoorDefinition next, final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
-            final Img[] imgsBarrier, final ShootMode hintShootMode, final String hintText) {
+            final Img[] imgsBarrier, final ShootMode hintShootMode, final CharSequence hintText) {
         final boolean small = imgsClosed.length <= 1;
         final Panframe[] door = newDoor(id, imgsClosed, 0, small);
         final Panframe[][] opening;
@@ -1370,12 +1374,12 @@ public final class BotsnBoltsGame extends BaseGame {
         getLayer().addActor(actor);
     }
     
-    protected final static void notify(final String msg) {
+    protected final static void notify(final CharSequence msg) {
         if (Panctor.isDestroyed(notifications)) {
             notifications = new Notifications(Panlayer.isDetached(hud) ? room : hud, font).setDisplayTime(240).setRushedTime(105);
             notifications.getLabel().getPosition().set(8, GAME_H - 16, DEPTH_DIALOGUE_TEXT);
         }
-        notifications.enqueue(msg);
+        notifications.enqueue(Chartil.toString(msg));
     }
     
     protected final static void clearNotifications() {

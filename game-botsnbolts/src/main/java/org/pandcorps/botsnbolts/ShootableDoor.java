@@ -223,7 +223,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             final Integer requiredPower = def.requiredPower;
             final boolean powerInsufficient = (requiredPower != null) && (requiredPower.intValue() > projectilePower);
             final ShootMode shootMode = projectile.shootMode, hintShootMode = def.hintShootMode, requiredShootMode = def.requiredShootMode;
-            final String hintText = def.hintText;
+            final CharSequence hintText = def.hintText;
             if (powerInsufficient || (hintText != null) || ((hintShootMode != null) && (hintShootMode != shootMode))) {
                 ineffectiveCount += projectilePower;
                 final int ineffectiveThreshold = (shootMode == Player.SHOOT_RAPID) ? 4 : 2;
@@ -312,11 +312,11 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private ShootableDoorDefinition prev = null;
         private final Panmage[] barrierImgs;
         private final ShootMode hintShootMode;
-        private final String hintText;
+        private final CharSequence hintText;
         
         protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next,
                                           final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
-                                          final Panmage[] barrierImgs, final ShootMode hintShootMode, final String hintText) {
+                                          final Panmage[] barrierImgs, final ShootMode hintShootMode, final CharSequence hintText) {
             this.door = door;
             this.opening = opening;
             this.next = next;

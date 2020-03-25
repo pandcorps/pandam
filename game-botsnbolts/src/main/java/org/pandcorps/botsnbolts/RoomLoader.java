@@ -971,6 +971,19 @@ public abstract class RoomLoader {
         addActor(new ShootableButton(seg.intValue(0), seg.intValue(1), handler));
     }
     
+    protected final static ShootableButton getShootableButton() {
+        final Panlayer layer = getLayer();
+        if (layer == null) {
+            return null;
+        }
+        for (final Panctor actor : Coltil.unnull(layer.getActors())) {
+            if (actor instanceof ShootableButton) {
+                return (ShootableButton) actor;
+            }
+        }
+        return null;
+    }
+    
     private final static void crr(final Segment seg) throws Exception {
         addActor(new Carrier(seg.intValue(0), seg.intValue(1), seg.intValue(2), seg.intValue(3), seg.intValue(4)));
     }

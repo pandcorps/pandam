@@ -581,7 +581,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         private int index = 0;
         private int start = 0;
         private int end = 0;
-        private Pansplay display; // If initialized here, that's too late for super constructor, so do it in getDisplay()
+        private Pansplay display; // If initialized here, that's too late for super constructor, so do it in getCurrentDisplay()
         
         protected FreezeRayProjectile(final Enemy src, final int ox, final int oy) {
             super(src, ox, oy, DURATION_FREEZE);
