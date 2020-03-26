@@ -81,6 +81,7 @@ public abstract class RoomLoader {
     
     private static BotRoom room = null;
     protected final static Set<BotRoom> visitedRooms = new HashSet<BotRoom>();
+    private static boolean revisiting = false;
     
     protected final static void setRoom(final BotRoom room) {
         RoomLoader.room = room;
@@ -282,10 +283,11 @@ public abstract class RoomLoader {
     
     private final static void visitRoom() {
         final Player p = getPlayer();
+        revisiting = !visitedRooms.add(room);
         if (p != null) {
             if (p.startRoom == null) {
                 p.startRoomNeeded = true;
-            } else if (visitedRooms.contains(room)) {
+            } else if (revisiting) {
                 p.startRoomNeeded = false;
             } else if (isAutomaticCheckpoint()) {
                 p.startRoomNeeded = true;
@@ -295,7 +297,10 @@ public abstract class RoomLoader {
                 p.startRoomNeeded = false;
             }
         }
-        visitedRooms.add(room);
+    }
+    
+    protected final static boolean isRevisiting() {
+        return revisiting;
     }
     
     private final static boolean isAutomaticCheckpoint() {
@@ -1200,7 +1205,9 @@ public abstract class RoomLoader {
     protected final static void onChangeFinished() {
         final Panlayer layer = getLayer();
         for (final Panctor actor : actors) {
-            layer.addActor(actor);
+            if (!(actor instanceof Enemy) || ((Enemy) actor).isAllowed()) {
+                layer.addActor(actor);
+            }
         }
         for (final ShootableDoor door : doors) {
             door.closeDoor();

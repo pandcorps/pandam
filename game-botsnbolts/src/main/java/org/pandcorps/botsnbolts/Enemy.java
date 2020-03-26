@@ -71,6 +71,14 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         initTileCoordinates(x, y);
     }
     
+    protected boolean isAllowed() {
+        final Player p = getNearestPlayer();
+        if (RoomLoader.isRevisiting() && !Panctor.isDestroyed(p) && (p.getPosition().getDistance2(getPosition()) < 64)) {
+            return false;
+        }
+        return true;
+    }
+    
     protected final static int getX(final Segment seg) {
         return seg.intValue(0);
     }
@@ -749,6 +757,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             pos.add(OFF_CUBE, OFF_CUBE);
             baseX = pos.getX();
             baseY = pos.getY();
+        }
+        
+        @Override
+        protected final boolean isAllowed() {
+            return true;
         }
         
         @Override
