@@ -1,0 +1,22 @@
+IMP|City
+
+M|xxxxxxxxxxxxxxxxxxxxxxxx
+M|x/--------------------\x
+M|xiDDDDDGDDDDDDDDGDDDDDix
+M|xi     g        g     ix
+M|-,     g        g     ix
+M|       g        g     ix
+M|)/---------------)    ix
+M|xiDDDDDGDDDDDDDDGD    ix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|xi     g        g     ix
+M|xi /------------------,x
+M|xi ixxxxxxxxxxxxxxxxxxxx
+M|xi ixxxxxxxxxxxxxxxxxxxx
+
+DOR|0|8|Small
+
+DSK|11|8
+
+RPT|||||CityDay|||||CityNight
