@@ -15,7 +15,7 @@ M|}i..  ..88    88..  ..i{
 M|}`-------)    (-------,{
 M|==}q{===_=======}Q#q{===
 
-ROM|12|5||true
+ROM|12|5||true||true
 
 EXT|2|4|LaunchCapsule|36|459|LightningBot
 EXT|2|8|LaunchCapsule|36|461|RockslideBot

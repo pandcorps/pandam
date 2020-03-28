@@ -23,3 +23,5 @@ WTR|2|1|2|22|2
 BOS|21|2|FloodBot
 
 RPT|1|2|22|10|Array
+
+STP|WaterRipple
