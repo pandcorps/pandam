@@ -19,13 +19,14 @@ M|}i$$$.   .   .   .    i{
 M|}`------------------\ i{
 M|==}q{===}Q+Q{==}q{=}i i{
 
+ROM||||||true
+
 LDR|21|0|2
 LDR|2|8|6
 
 WTR|15|-1
 
-ENM|6|12|CeilingCannon
-ENM|10|12|CeilingCannon
+ENM|5|12|SprayCannon
 ENM|11|12|SubEnemy|false
 ENM|3|2|SpringEnemy|0||false|20
 ENM|7|2|SpringEnemy|0||false|15
