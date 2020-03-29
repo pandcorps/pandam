@@ -15,6 +15,8 @@ M|------\   /------\  (  ;) E /---\          DDDDD S   e     DDDDD   (# :.
 M|.:.  ;) S (.  :;.)  (# .)   (:;.)  /---\  e        E        B      (.:  
 M|:.;# .)   (;# .:.)  (.;:)   `___,e (;.:)      B        S          e(:;# 
 
+ROM||||||true
+
 ENM|12|3|ShovelEnemy
 ENM|16|6|ShovelEnemy
 ENM|30|3|ShovelEnemy
