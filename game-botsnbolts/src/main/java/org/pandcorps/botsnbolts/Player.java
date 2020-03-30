@@ -195,7 +195,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             @Override public final void onAction(final ActionEvent event) { right(); }});
         register(leftInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { left(); }});
-        register(upInput, new ActionListener() { //TODO Display up/down touch buttons when near ladder, hide otherwise
+        register(upInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { up(); }});
         register(downInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { down(); }});
@@ -206,6 +206,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
+        registerPause(interaction.BACK);
         final Panput[] toggleJumpInput = getInputArray(interaction.KEY_SHIFT_LEFT, Menu.toggleJump);
         final Panput[] toggleAttackInput = getInputArray(interaction.KEY_TAB, Menu.toggleAttack);
         final ActionStartListener toggleJumpListener = new ActionStartListener() {

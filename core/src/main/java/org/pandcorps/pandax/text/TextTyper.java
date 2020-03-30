@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -126,8 +126,17 @@ public class TextTyper extends Pantext implements StepListener {
     }
     
     public final TextTyper registerAdvanceListener() {
-        register(newAdvanceListener());
-        clockAdvanceListenerRegistered = Pangine.getEngine().getClock();
+        return registerAdvanceListener(false);
+    }
+    
+    public final TextTyper registerAdvanceListener(final boolean backNeeded) {
+        final Pangine engine = Pangine.getEngine();
+        final ActionStartListener listener = newAdvanceListener();
+        register(listener);
+        if (backNeeded) {
+            register(engine.getInteraction().BACK, listener);
+        }
+        clockAdvanceListenerRegistered = engine.getClock();
         return this;
     }
     

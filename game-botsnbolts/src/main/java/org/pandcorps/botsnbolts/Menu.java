@@ -359,16 +359,16 @@ public class Menu {
     protected final static void addToggleButtons(final HudShootMode hudShootMode, final HudJumpMode hudJumpMode) {
         toggleJump = addToggleButton("ToggleJump", hudJumpMode);
         toggleAttack = addToggleButton("ToggleAttack", hudShootMode);
-        addPauseButton(hudShootMode);
+        addPauseButton();
     }
     
-    private final static void addPauseButton(final HudShootMode hudShootMode) {
+    private final static void addPauseButton() {
         if (!isScreenGameplayLayoutNeeded()) {
             return;
         }
-        final Panple pos = hudShootMode.getPosition();
-        final int pd = 16;
-        final int px = Pangine.getEngine().getEffectiveWidth() - pd - Math.round(pos.getX()), py = Math.round(pos.getY());
+        final int pd = 16, pd1 = pd + 1;
+        final int px = BotsnBoltsGame.GAME_W - pd1, py = BotsnBoltsGame.GAME_H - pd1;
+        TouchButton.destroy(pause);
         pause = addButton(BotsnBoltsGame.hud, "Pause", px, py, true, true, null, imgPause, imgPause, false, null, false, pd);
     }
     
@@ -561,7 +561,7 @@ public class Menu {
     }
     
     protected final static void destroyPauseMenu() {
-        if (!(Panscreen.get() instanceof LevelSelectScreen)) {
+        if (!(Panscreen.get() instanceof LevelSelectScreen) && !isTouchEnabled()) {
             Panctor.destroy(cursor);
         }
         Panlayer.setVisible(levelSelectLayer, true);
@@ -685,6 +685,14 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     if (isPauseMenuEnabled()) {
                         destroyPauseMenu();
+                    } else {
+                        addQuitMenu(newRoom, pc);
+                    }
+                }});
+            grid.register(engine.getInteraction().BACK, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    if (isPauseMenuEnabled()) {
+                        engine.exit();
                     } else {
                         addQuitMenu(newRoom, pc);
                     }
@@ -1025,7 +1033,8 @@ public class Menu {
         protected final void load() throws Exception {
             final Panroom room = Pangame.getGame().getCurrentRoom();
             BotsnBoltsGame.room = room;
-            Pangine.getEngine().setBgColor(new FinPancolor(96));
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(new FinPancolor(96));
             final Panctor bg = new LevelStartBg(24);
             room.addActor(bg);
             optionsY = 156;
@@ -1047,12 +1056,20 @@ public class Menu {
                     return (prf.endureSpikes = !prf.endureSpikes); }});
             addTopRightButton(room, "LevelSelect", RoomLoader.isFirstLevelFinished() ? imgLevelSelect : imgPlay, bg, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    prf.saveProfile(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
-                    goLevelSelect();
+                    exitOptions();
+                }});
+            bg.register(engine.getInteraction().BACK, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    exitOptions();
                 }});
             Player.registerCapture(bg);
             addCursor(room);
         }
+    }
+    
+    private final static void exitOptions() {
+        BotsnBoltsGame.pc.prf.saveProfile(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
+        goLevelSelect();
     }
     
     private final static void addOption(final Panctor src, final String label, final OptionSetter setter) {

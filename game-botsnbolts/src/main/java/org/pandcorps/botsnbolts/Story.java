@@ -33,6 +33,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
@@ -418,6 +419,7 @@ public class Story {
         }
         
         private final void addCharacter(final int index) {
+            final Pangine engine = Pangine.getEngine();
             final int n = defs.length;
             final int textHeight = textLines * 9;
             final Panctor actor = new Panctor();
@@ -443,7 +445,7 @@ public class Story {
                 if (nextIndex < n) {
                     addCharacter(nextIndex);
                 } else {
-                    Pangine.getEngine().addTimer(actor, 60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
+                    engine.addTimer(actor, 60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                         finish();
                     }});
                 }
@@ -452,6 +454,11 @@ public class Story {
             typer.setGapY(1);
             typer.getPosition().set(x, y - 10, BotsnBoltsGame.DEPTH_HUD_TEXT);
             typer.centerX();
+            typer.register(engine.getInteraction().BACK, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    finish();
+                }
+            });
             BotsnBoltsGame.addActor(typer);
         }
         
@@ -880,7 +887,7 @@ public class Story {
     }
     
     protected final static TextTyper newStoryTyper(final CharSequence msg, final int charactersPerLine, final float y) {
-        final TextTyper typer = newTextTyper(msg, charactersPerLine).registerAdvanceListener();
+        final TextTyper typer = newTextTyper(msg, charactersPerLine).registerAdvanceListener(true);
         typer.getPosition().set(64, y);
         BotsnBoltsGame.addActor(typer);
         return typer;
