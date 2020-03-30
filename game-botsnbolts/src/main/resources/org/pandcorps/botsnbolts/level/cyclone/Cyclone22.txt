@@ -1,13 +1,13 @@
 IMP|Cyclone
 
 M|C)______________________
-M|.)23232323232323232323(.
-M|I)                    (f
-M|d)                    (g
-M|f)                    (.
-M|.)              {====}(M
-M|_,              323232`_
-M| 3                    2V
+M|.)2323232323232323232/--
+M|I)                   (.f
+M|d)                   (g.
+M|f)                   (bb
+M|.)             {====}(bb
+M|_,             232323`__
+M| 3                   32V
 M|                       v
 M|                       v
 M|                       v
@@ -18,11 +18,13 @@ M|l.p.).PmlGd.f.p.sMD(c.i.
 DOR|0|3|Cyan
 DOR|23|3|Boss
 
+IMG|22|8|FinalLogoPlate|above
+
 LFT|5|2
 
 CRR|14|8|-1|0|80
 
-BOX|20|9
-BOX|18|9
+BOX|19|9
+BOX|17|9
 
 RPT|1||||Cyclone
