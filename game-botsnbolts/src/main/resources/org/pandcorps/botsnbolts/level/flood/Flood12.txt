@@ -15,7 +15,7 @@ M|.)     m( l   t)m     (l
 M|.)      ( o   l)      (l
 M|.)m     (  x  l)     m(l
 
-RPT|9|0|6|7|FloodForeground|||2|1
-RPT|12|7|3|7|FloodForeground|||2|1
+RPT|9|0|6|7|FloodForeground|||bg|1
+RPT|12|7|3|7|FloodForeground|||bg|1
 
 WTR|15

@@ -15,7 +15,9 @@ M|...t...)                                 (  x        x l
 M|.t.l..x)                                 (    t  x     l  x        t x  
 M|.l.l.t.)                                 (x   l    x   l    t   x  l    
 
-RPT|42|0|30|3|FloodForeground|||2|1
+RPT|42|0|30|3|FloodForeground|||bg|1
+
+SPP|16^4~28^6|22^5~34^5
 
 WTR|15
 
@@ -23,8 +25,6 @@ DOR|0|3|Cyan
 DOR|71|3|Cyan
 
 ENM|22|12|SubEnemy
-
-SPP|16^4~28^6|22^5~34^5
 
 ENM|46|5|SwimEnemy
 

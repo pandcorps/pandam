@@ -15,6 +15,10 @@ M|...t.)            (....l
 M|.t.l.)            (.t..l
 M|.l.l.)------------>.l..l
 
+ROM||||||true
+
+SPP|15^4|12^7
+
 WTR|15
 
 DOR|0|3|Cyan
@@ -22,8 +26,6 @@ DOR|0|3|Cyan
 LDR|21|9|5
 
 BOX|2|9
-
-SPP|15^4|12^7
 
 ENM|16|1|SwimEnemy
 ENM|20|9|SwimEnemy
