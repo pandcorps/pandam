@@ -15,8 +15,8 @@ M|                   l   )---------------------->    l     l  l  t
 M|     t        t    o     x  l    t  x  l           o     l  o  l        
 M|     l     t  l        x    l    l     l   t  x      x   l     l        
 
-RPT|0|0|72|3|FloodForeground|||2|1
-RPT|47|3|18|6|FloodForeground|||2|1
+RPT|0|0|72|3|FloodForeground|||bg|1
+RPT|47|3|18|6|FloodForeground|||bg|1
 
 WTR|15
 
