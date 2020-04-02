@@ -15,6 +15,8 @@ M|         v   w      EDEDEDE   EDEDEDE   EDEDEDE         ED      ()   w      ED
 M|         .     /)*                                            8      w            8 * i         
 M|         * 8 7 v*v(-).*.(-)./).(-).*().(-\.(-)./)().(\()/).(-\()4 (-).*(-)./).(-)(-)i v         
 
+ROM||||||true
+
 LDR|10|0|2
 
 CNV|20|3|7|true
