@@ -5,15 +5,15 @@ M|ffffs f/------\s f/--------------,BBBB                 B`---------\fs ff
 M|f  f/--,BBBBBB`---,BBBBBBBBBBPXPBB               S      BBBBBBBBBB`-\fff
 M|fs /,BBB      BBBBB          PxP        S                           `\  
 M|ff/,B                   S    PYP                               S     is 
-M|ffiB        S                PxP            (---)    /-\  S          `\f
-M|f/,                          PxP S  (---)   BBBBB    ifi              if
-M|fiB  S   /--\               (---)   BBBBB            if`-\       S    if
-M|fi       iffi     S         BPXPB            S       i  fi            if
-M|fi     /-,ffi        /--\ S  PYP                     is f`-\     /-\  i 
-M|fi     i  ffi        iffi    PxP      S              ifff  i     ifi  is
-M|fi /---,s   i S      i  `----------------------------,f  s `-----,fi  if
-M|fi if  fffs `--------,s fffff  ffff  ffffff  ffffffffffs ffff  ffffiS if
-M|fi ifs ffffffffffffffffffffffs ffffs ffffffs ffffffffffffffffs ffffi  if
+M|ffiB        S                PxP            (---)    /-\  S          iff
+M|f/,                          PxP S  (---)   BBBBB    ifi             if 
+M|fiB  S   /--\               (---)   BBBBB            if`-\       S   ifs
+M|fi       iffi     S         BPXPB            S       i  fi         S iff
+M|fi     /-,ffi        /--\ S  PYP                     is f`-\     /-\ i  
+M|fi     i  ffi        iffi    PxP      S              ifff  i     ifi is 
+M|fi /---,s   i S      i  `----------------------------,f  s `-----,fi iff
+M|fi if  fffs `--------,s fffff  ffff  ffffff  ffffffffffs ffff  ffffi iff
+M|fi ifs ffffffffffffffffffffffs ffffs ffffffs ffffffffffffffffs ffffi iff
 
 LDR|2|0|3
 

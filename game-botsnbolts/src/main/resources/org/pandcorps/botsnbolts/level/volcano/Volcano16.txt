@@ -1,8 +1,8 @@
 IMP|Volcano
 
-M|fffffff/---------\ffi  i
-M|f/-----,BBBBBBBBB`--,  i
-M|fiBBBBBB         BBB*  i
+M|fff/-------------\ffi  i
+M|f/-,BBBBBBBBBBBBB`--,  i
+M|fiBB             BBB*  i
 M|fi                  i  i
 M|fi      S   F       i  i
 M|fi  *       B  F    i  i

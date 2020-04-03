@@ -4,9 +4,9 @@ M|ffffffffffffL++.mmmmmmmm
 M|f/--------------------\f
 M|figgggggggggggggggggggif
 M|fi                    if
-M|fi  /--------------)  if
-M|fi  iggggggggggggggg  if
-M|fi  i                 if
+M|\i  /--------------)  if
+M|ii  iggggggggggggggg  if
+M|vi  i                 if
 M|-,  i  (-------------)`-
 M|gg  i  ggggggggggggggggg
 M|    i                   

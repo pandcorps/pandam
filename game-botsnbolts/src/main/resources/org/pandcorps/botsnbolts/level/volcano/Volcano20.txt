@@ -1,13 +1,13 @@
 IMP|Volcano
 
-M|fff  ffffffff  ffffi  if
-M|fffs ffffffffs ffffi  if
-M|f/-----------------,  if
-M|fiBBBBBBBBBBBBBPXXPB  if
-M|fi             PxYP S if
-M|fi  S          PxxP   if
-M|fi         S   PYxP   if
-M|fi    (--------------)`-
+M|fff  ffffffff  ffffi iff
+M|fffs ffffffffs ffffi iff
+M|f/-----------------, i  
+M|fiBBBBBBBBBBBBBPXXPB is 
+M|fi             PxYP  i(-
+M|fi  S          PxxPS iff
+M|fi         S   PYxP  iff
+M|fi    (-------------)`--
 M|fi    BPXXPBBBBBBBBBBBBP
 M|fiS    PxxP            P
 M|fi     PYxP      S     P
@@ -17,6 +17,8 @@ M|ffffffffffffffffffffffff
 
 BOX|10|7
 BOX|12|7
+
+IMG|22|7|FinalLogo|above
 
 DOR|23|2|Boss
 
