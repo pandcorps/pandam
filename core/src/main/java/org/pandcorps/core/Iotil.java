@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -31,6 +31,7 @@ public final class Iotil {
 	public final static String BR = System.getProperty("line.separator");
 	
 	private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	private final static int BUFFER_SIZE = 1024;
 	
 	private static WriterFactory writerFactory = new FileWriterFactory();
 	
@@ -158,6 +159,19 @@ public final class Iotil {
 	    return Iotil.class.getClassLoader().getResourceAsStream(location);
 	}
 	
+	public final static int size(final InputStream in) {
+	    final byte[] buf = new byte[BUFFER_SIZE];
+	    int totalSize = 0, currentSize;
+	    try {
+    	    while ((currentSize = in.read(buf)) >= 0) {
+    	        totalSize += currentSize;
+    	    }
+	    } catch (final IOException e) {
+	        throw new RuntimeException(e);
+	    }
+	    return totalSize;
+	}
+	
 	public final static boolean exists(final String location) {
 		return resourceChecker.exists(location) || Iotil.class.getClassLoader().getResource(location) != null;
 	}
@@ -175,7 +189,7 @@ public final class Iotil {
 	    try {
 	        in1 = getInputStream(location1);
 	        in2 = getInputStream(location2);
-	        final byte[] buf1 = new byte[1024], buf2 = new byte[1024];
+	        final byte[] buf1 = new byte[BUFFER_SIZE], buf2 = new byte[BUFFER_SIZE];
 	        while (true) {
 	            final int size1 = in1.read(buf1), size2 = in2.read(buf2);
 	            if (size1 != size2) {
@@ -272,6 +286,14 @@ public final class Iotil {
     }
 	
 	public final static String read(final String location) {
+	    return readByteArrayOutputStream(location).toString();
+	}
+	
+	public final static byte[] readBytes(final String location) {
+        return readByteArrayOutputStream(location).toByteArray();
+    }
+	
+	private final static ByteArrayOutputStream readByteArrayOutputStream(final String location) {
 	    final ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    InputStream in = null;
 	    try {
@@ -281,14 +303,14 @@ public final class Iotil {
 	        } catch (final IOException e) {
 	            throw new RuntimeException(e);
 	        }
-	        return out.toString();
+	        return out;
 	    } finally {
 	        close(in);
 	    }
 	}
 	
 	public final static void copy(final InputStream in, final OutputStream out) throws IOException {
-		final int size = 1024;
+		final int size = BUFFER_SIZE;
 		final byte[] buf = new byte[size];
 		while (true) {
 			final int len = in.read(buf);
