@@ -593,6 +593,10 @@ public class Menu {
     }
     
     protected final static void goLevelSelect() {
+        final Pangine engine = Pangine.getEngine();
+        if (engine.isPaused()) {
+            engine.setPaused(false);
+        }
         Panscreen.set(RoomLoader.isFirstLevelFinished() ? new LevelSelectScreen() : new LabScreen1());
     }
     
@@ -629,7 +633,7 @@ public class Menu {
             final int roomW = BotsnBoltsGame.GAME_W, roomH = BotsnBoltsGame.GAME_H;
             final float roomZ = room.getSize().getZ();
             room.destroy();
-            room = Pangine.getEngine().createRoom(Pantil.vmid(), roomW, roomH, roomZ);
+            room = engine.createRoom(Pantil.vmid(), roomW, roomH, roomZ);
             final Panroom newRoom = room;
             game.setCurrentRoom(room);
             BotsnBoltsGame.room = room;
