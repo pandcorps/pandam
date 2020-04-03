@@ -442,7 +442,9 @@ public class Menu {
             btn.setEnabled(false);
         }
         Panlayer.setVisible(levelSelectLayer, false);
-        final int numBtns = 3, btnSize = 32, spaceBetween = 48, nextOffset = btnSize + spaceBetween;
+        final boolean levelSelectReallyNeeded = levelSelectNeeded && RoomLoader.isFirstLevelFinished();
+        final boolean optionsNeeded = !levelSelectNeeded;
+        final int numBtns = (levelSelectReallyNeeded || optionsNeeded) ? 3 : 2, btnSize = 32, spaceBetween = 48, nextOffset = btnSize + spaceBetween;
         int px = (BotsnBoltsGame.GAME_W - (numBtns * btnSize) - ((numBtns - 1) * spaceBetween)) / 2;
         final int py = (BotsnBoltsGame.GAME_H - btnSize) / 2;
         final Panmage active = pc.pi.highlightBox;
@@ -460,7 +462,7 @@ public class Menu {
             player.registerPause(play);
         }
         play.activate(true);
-        if (levelSelectNeeded) {
+        if (levelSelectReallyNeeded) {
             pauseMenuButtons[currIndex++] = levelSelect = addPauseMenuButton(layer, "LevelSelect", px, py, active, imgLevelSelect);
             px += nextOffset;
             registrar.register(levelSelect, new ActionEndListener() {
@@ -469,7 +471,7 @@ public class Menu {
                     RoomLoader.clear(); // Exit from Bolt room to Menu; start Earthquake level; TileMapImage Map wasn't cleared without this, causing graphical bug
                     goLevelSelect();
                 }});
-        } else {
+        } else if (optionsNeeded) {
             pauseMenuButtons[currIndex++] = levelSelect = addPauseMenuButton(layer, "Options", px, py, active, imgOptions);
             px += nextOffset;
             registrar.register(levelSelect, new ActionEndListener() {
