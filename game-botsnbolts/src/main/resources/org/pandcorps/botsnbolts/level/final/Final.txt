@@ -31,6 +31,8 @@ PUT|T|0^6^^3^true||0
 PUT|G|0^7||0
 PUT|g|1^7||0
 
+PUT|C|1^5||1
+
 FNC|$|SpikeFloor
 FNC|h|HiddenBlockTile
 FNC|H|HiddenBarrierTile
