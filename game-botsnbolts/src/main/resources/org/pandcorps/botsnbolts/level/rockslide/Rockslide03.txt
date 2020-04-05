@@ -1,19 +1,19 @@
 IMP|Rockslide
 
-M|>                    t                                                lf
-M|]                  t                                                  <.
-M|>                     t                                                (
-M|]                                                                      l
-M|)                                                                      l
-M|r          t      (-=---)                                              l
-M|r                 [wWwww]                  t                           <
+M|>                    t                                               lff
+M|]                  t                                                 <..
+M|>                     t                                               (-
+M|]                                                                     lf
+M|)                                                                     lP
+M|r          t      (-=---)                                             lf
+M|r                 [wWwww]                  t                          <.
 M|r             (--=----=-)   (=-)                        (-=-)           
 M|r             [wwWwwwWww]   l  r                        [wWw]           
 M|>         (=--==--=--=--)   lp r   (--)               (--=--=-)         
 M|]         [wwwWwwwWwwwWw]   lfPr   lfFr               [wWwwWww]         
-M|)     (-=----==----=----)   lFfr   lPfr   (-=-=)    (=--=---==---=--=--=
-M|]     [wwwwWwwwwwWwwwwWw]   [Ww]   [ww]   lfP  r    l  fPfFsf  fPfPff  f
-M|)     (---=-----=----=--)   (-=)   (==)   lFfp r    lp ffFPFfp fFFfFfp F
+M|)   (=--=----==----=----)   lFfr   lPfr   (-=-=)    (=--=---==---=--=--=
+M|]   [wWwwwwWwwwwwWwwwwWw]   [Ww]   [ww]   lfP  r    l  fPfFsf  fPfPff  f
+M|)   (-=---=-----=----=--)   (-=)   (==)   lFfp r    lp ffFPFfp fFFfFfp F
 
 LDR|3|0|3
 

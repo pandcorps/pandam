@@ -1,12 +1,12 @@
 IMP|Rockslide
 
-M|                                                lFfFffFf  PFffFfr      l
-M|                                                lPff  fFp Ff  fPr      [
-M|)                                               lf  p   fF  p   r3     l
-M|r   t                             t             lfp ffp fPp fFp r023   l
-M|r                t        t      t              <...............>04023 l
-M|r         t                t        t          155555555555555555     3[
-M|r        t         t     t         t          104             4       (-
+M|r                                               lFfFffFf  PFffFffFr    l
+M|>                                               lPff  fFp Ff  fPPfr    [
+M|]                                               lf  p   fF  p   Ffr    l
+M|)   t                             t             lfp ffp fPp fFp fFr3   l
+M|r                t        t      t              <.................>023 l
+M|r         t                t        t          15555555555555555555   3[
+M|>        t         t     t         t          104             4       (-
 M|]                                            100        4             l 
 M|-=\`                                        1004    4            4    lp
 M|fPf-=-\`                                   10400            4         [w

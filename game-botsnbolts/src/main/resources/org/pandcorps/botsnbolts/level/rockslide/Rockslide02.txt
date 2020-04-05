@@ -1,8 +1,8 @@
 IMP|Rockslide
 
-M|>     <.................
-M|]     [wwWwwwwWwwWwwwwwW
-M|>     <.................
+M|>   <...................
+M|]   [wwwwWwwwwWwwWwwwwwW
+M|>   <...................
 M|]                      [
 M|)                      (
 M|r       t              l
@@ -11,9 +11,9 @@ M|r      t   t           l
 M|r         t  t         l
 M|>                      <
 M|]                      [
-M|(--=-=---==--=--)      (
-M|wWwwWwwwwWwwWwww]      [
-M|(-=-==---=-=--=-)      (
+M|(--=-=---==--=---=)    (
+M|wWwwWwwwwWwwWwwwww]    [
+M|(-=-==---=-=--=-=-)    (
 
 LDR|19|0|3
 LDR|3|3|11
