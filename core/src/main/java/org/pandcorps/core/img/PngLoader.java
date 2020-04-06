@@ -127,7 +127,7 @@ public class PngLoader {
                             } else {
                                 throw new UnsupportedOperationException("Found currently unsupported color type " + colorType);
                             }
-                            buffer[bufferIndex++] = f.getDataElement(new int[] { r, g, b, a }, 0);
+                            buffer[bufferIndex++] = f.getDataElement(r, g, b, a);
                         }
                         swapLines();
                     }

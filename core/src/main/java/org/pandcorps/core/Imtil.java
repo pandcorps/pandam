@@ -63,16 +63,11 @@ public final class Imtil {
             throw new UnsupportedOperationException("Currently only support INT_RGB");
         }
         final Img img = newImage(w, h); // type only needed to interpret ByteBuffer, we can choose any type for output
-        final int[] rgba = new int[4];
-        rgba[3] = 255;
         for (int y = 0; y < h; y++) {
             final int wy = w * y;
             for (int x = 0; x < w; x++) {
                 final int i = (wy + x) * 3;
-                for (int j = 0; j < 3; j++) {
-                    rgba[j] = buf.get(i + j);
-                }
-                img.setRGB(x, h - (y + 1), cm.getDataElement(rgba, 0));
+                img.setRGB(x, h - (y + 1), cm.getDataElement(buf.get(i), buf.get(i + 1), buf.get(i + 2), 255));
             }
         }
         return img;
@@ -433,7 +428,6 @@ public final class Imtil {
         final double exponentGreen = getExponent(baseGreen);
         final double exponentBlue = getExponent(baseBlue);
         
-        final int rgba[] = new int[4];
         // img.getColorModel might be indexed, and our recolored version might not work very well with the limited palette.
         // So, we always use the more flexible model.
         // That's also why the output is always a .png regardless of the input.
@@ -446,11 +440,7 @@ public final class Imtil {
             for (int x = 0; x < w; x++) {
                 final int pixel = in.getRGB(x, y);
                 final double avg = (cm.getRed(pixel) + cm.getGreen(pixel) + cm.getBlue(pixel)) / 3.0 / 255.0;
-                rgba[0] = getComponent(avg, exponentRed);
-                rgba[1] = getComponent(avg, exponentGreen);
-                rgba[2] = getComponent(avg, exponentBlue);
-                rgba[3] = cm.getAlpha(pixel);
-                out.setRGB(x, y, cm.getDataElement(rgba, 0));
+                out.setRGB(x, y, cm.getDataElement(getComponent(avg, exponentRed), getComponent(avg, exponentGreen), getComponent(avg, exponentBlue), cm.getAlpha(pixel)));
             }
         }
         in.closeIfTemporary();
@@ -482,16 +472,10 @@ public final class Imtil {
     }
     
     public final static void setPseudoTranslucent(final Img in) {
-    	final int w = in.getWidth(), h = in.getHeight();
-    	final int rgba[] = new int[4];
-    	rgba[3] = Pancolor.MIN_VALUE;
+    	final int w = in.getWidth(), h = in.getHeight(), t = cm.getDataElement(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE);
     	for (int j = 0; j < h; j++) {
     		for (int i = j % 2; i < w; i += 2) {
-    			final int p = in.getRGB(i, j);
-    			rgba[0] = cm.getRed(p);
-    			rgba[1] = cm.getGreen(p);
-    			rgba[2] = cm.getBlue(p);
-    			in.setRGB(i, j, cm.getDataElement(rgba, 0));
+    			in.setRGB(i, j, t);
     		}
     	}
     }
@@ -504,8 +488,7 @@ public final class Imtil {
     		final int x, final int y, final int w, final int h,
     		final short r, final short g, final short b, final short a) {
     	//TODO copy if not already right ColorModel
-    	final int[] rgba = {r, g, b, a};
-    	return drawRectangle(in, x, y, w, h, cm.getDataElement(rgba, 0));
+    	return drawRectangle(in, x, y, w, h, cm.getDataElement(r, g, b, a));
     }
     
     public final static Img drawRectangle(final Img in,
@@ -634,7 +617,7 @@ public final class Imtil {
     }
     
     public final static int getDataElement(final short r, final short g, final short b, final short a) {
-        return cm.getDataElement(new int[] {r, g, b, a}, 0);
+        return cm.getDataElement(r, g, b, a);
     }
     
     public final static FinPancolor toColor(final int pixel) {

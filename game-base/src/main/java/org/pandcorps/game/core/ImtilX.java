@@ -110,7 +110,7 @@ public final class ImtilX {
         final int w = raw.getWidth(), h = raw.getHeight();
         final Img img = Imtil.newImage(w, h);
         final ImgFactory cm = ImgFactory.getFactory();
-        final int b = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MAX_VALUE}, 0);
+        final int b = cm.getDataElement(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MAX_VALUE);
         final int indent = Math.max(1, Math.round(h / 10.0f));
         for (int y = h - 1; y >= 0; y--) {
             for (int x = 0; x < w; x++) {
@@ -146,8 +146,8 @@ public final class ImtilX {
     public final static void indent2(final Img raw, final int indent, final int w) {
         final int h = raw.getHeight();
         final ImgFactory cm = ImgFactory.getFactory();
-        final int b = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MAX_VALUE}, 0);
-        final int c = cm.getDataElement(new int[] {Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE}, 0);
+        final int b = cm.getDataElement(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MAX_VALUE);
+        final int c = cm.getDataElement(Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE, Pancolor.MIN_VALUE);
         final int w1 = w - 1;
         for (int x = 0; x < w; x++) {
             byte indenting = 0;
@@ -172,7 +172,7 @@ public final class ImtilX {
     }
     
     public final static void highlight(final Img raw, final int amt) {
-        final int wht = ImgFactory.getFactory().getDataElement(new int[] {Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE}, 0);
+        final int wht = ImgFactory.getFactory().getDataElement(Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE);
         final int[] cols = new int[amt];
         for (int i = 0; i < amt; i++) {
             cols[i] = wht;

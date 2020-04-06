@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -28,7 +28,7 @@ public abstract class PixelTool {
 	protected final static ImgFactory cm = ImgFactory.getFactory();
 	
     public final static int getRgba(final int r, final int g, final int b, final int a) {
-        return cm.getDataElement(new int[] {r, g, b, a}, 0);
+        return cm.getDataElement(r, g, b, a);
     }
     
     public final static int getRgba(final Pancolor c) {

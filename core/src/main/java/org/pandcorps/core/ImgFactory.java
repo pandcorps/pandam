@@ -42,8 +42,7 @@ public final class ImgFactory {
         return new Img(w, h);
     }
     
-    public final int getDataElement(final int[] rgb, final int i) {
-        final int r = rgb[0], g = rgb[1], b = rgb[2], a = rgb[3];
+    public final int getDataElement(final int r, final int g, final int b, final int a) {
         return (r << 24) | (g << 16) | (b << 8) | a;
     }
     
