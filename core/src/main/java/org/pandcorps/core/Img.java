@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -25,25 +25,67 @@ package org.pandcorps.core;
 import java.io.*;
 import java.nio.*;
 
-public abstract class Img implements Closeable {
+public final class Img implements Closeable {
+    private int w;
+    private int h;
+    private int[] a;
+    
 	private boolean temp = true;
 	//private final Exception openState = new Exception();
 	
-	public abstract Object getRaw();
+    public Img(final int w, final int h, final int[] a) {
+        this.w = w;
+        this.h = h;
+        this.a = a;
+    }
+    
+    public Img(final int w, final int h) {
+        this(w, h, new int[w * h]);
+    }
 	
-	public abstract void swapRaw(final Img img);
-	
-	public abstract int getWidth();
-	
-	public abstract int getHeight();
-	
-	public abstract int getRGB(final int x, final int y);
-	
-	public abstract void setRGB(final int x, final int y, final int rgb);
-	
-	public abstract Img getSubimage(final int x, final int y, final int w, final int h);
-	
-	public abstract void save(final String location) throws Exception;
+    public final Object getRaw() {
+        return a;
+    }
+    
+    public final void swapRaw(final Img o) {
+        final int w = o.w, h = o.h, a[] = o.a;
+        o.w = this.w; o.h = this.h; o.a = this.a;
+        this.w = w; this.h = h; this.a = a;
+    }
+    
+    public final int getWidth() {
+        return w;
+    }
+    
+    public final int getHeight() {
+        return h;
+    }
+    
+    private final int getIndex(final int x, final int y) {
+        return (y * w) + x;
+    }
+    
+    public final int getRGB(final int x, final int y) {
+        return a[getIndex(x, y)];
+    }
+    
+    public final void setRGB(final int x, final int y, final int rgb) {
+        a[getIndex(x, y)] = rgb;
+    }
+    
+    public final Img getSubimage(final int x, final int y, final int w, final int h) {
+        final Img sub = new Img(w, h);
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+                System.arraycopy(a, ((j + y) * this.w) + x, sub.a, j * w, w);
+            }
+        }
+        return sub;
+    }
+    
+    public final void save(final String location) throws Exception {
+        throw new UnsupportedOperationException();
+    }
 	
 	public ByteBuffer toByteBuffer() {
 		final int w = getWidth(), h = getHeight();
@@ -51,15 +93,14 @@ public abstract class Img implements Closeable {
 		final int capacity = w * h * 4;
 		final byte[] raster = new byte[capacity];
 		final ImgFactory model = ImgFactory.getFactory();
+		int i = 0;
 		for (int y = 0; y < h; y++) {
-			final int row = y * h * 4;
 			for (int x = 0; x < w; x++) {
 				final int pixel = getRGB(x, y);
-				int i = row + (x * 4);
 				raster[i++] = (byte) model.getRed(pixel);
 				raster[i++] = (byte) model.getGreen(pixel);
 				raster[i++] = (byte) model.getBlue(pixel);
-				raster[i] = (byte) model.getAlpha(pixel);
+				raster[i++] = (byte) model.getAlpha(pixel);
 			}
 		}
 		
@@ -71,9 +112,13 @@ public abstract class Img implements Closeable {
 	}
 	
 	@Override
-	public abstract void close();
-	
-	public abstract boolean isClosed();
+    public final void close() {
+        a = null;
+    }
+    
+    public final boolean isClosed() {
+        return a == null;
+    }
 	
 	public final void setTemporary(final boolean temp) {
 		this.temp = temp;
