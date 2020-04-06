@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -24,31 +24,42 @@ package org.pandcorps.core;
 
 import java.io.*;
 
-public abstract class ImgFactory {
-	private static ImgFactory f = null;
+import org.pandcorps.core.img.*;
+
+public final class ImgFactory {
+    private final static int MASK = 255;
+	private static ImgFactory f = new ImgFactory();
 	
 	public final static ImgFactory getFactory() {
-		if (f == null) {
-			f = (ImgFactory) Reftil.newInstance("org.pandcorps.core.img.AwtImgFactory");
-		}
 		return f;
 	}
 	
-	public final static void setFactory(final ImgFactory f) {
-		ImgFactory.f = f;
-	}
-	
-	public abstract Img load(final InputStream in) throws Exception;
-	
-	public abstract Img create(final int w, final int h);
-	
-	public abstract int getDataElement(final int[] rgb, final int i);
-	
-	public abstract int getRed(final int rgb);
-	
-	public abstract int getGreen(final int rgb);
-	
-	public abstract int getBlue(final int rgb);
-	
-	public abstract int getAlpha(final int rgb);
+    public final Img load(final InputStream in) throws Exception {
+        return PngLoader.load(in);
+    }
+    
+    public final Img create(final int w, final int h) {
+        return new Img(w, h);
+    }
+    
+    public final int getDataElement(final int[] rgb, final int i) {
+        final int r = rgb[0], g = rgb[1], b = rgb[2], a = rgb[3];
+        return (r << 24) | (g << 16) | (b << 8) | a;
+    }
+    
+    public final int getRed(final int rgb) {
+        return rgb >>> 24;
+    }
+    
+    public final int getGreen(final int rgb) {
+        return (rgb >>> 16) & MASK;
+    }
+    
+    public final int getBlue(final int rgb) {
+        return (rgb >>> 8) & MASK;
+    }
+    
+    public final int getAlpha(final int rgb) {
+        return rgb & MASK;
+    }
 }
