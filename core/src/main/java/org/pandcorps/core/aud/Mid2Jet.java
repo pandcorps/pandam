@@ -81,7 +81,7 @@ public class Mid2Jet {
         try {
             debug("Converting");
             
-            final MidFile mid = new MidFile(Iotil.readBytes(midLoc));
+            final MidFile mid = new MidFile(Iotil.getInputStream(midLoc));
             final ByteArrayOutputStream bout = new ByteArrayOutputStream();
             convertTrack(mid, bout);
             final byte[] a = bout.toByteArray();
@@ -159,13 +159,13 @@ public class Mid2Jet {
         System.out.println(s);
     }
     
-    private final static void assertBytes(final String ex, final byte[] a, final int off) {
+    private final static void assertBytes(final String ex, final InputStream in) throws Exception {
         final int size = ex.length();
         for (int i = 0; i < size; i++) {
             final char exChar = ex.charAt(i);
-            final byte acByte = a[off + i];
+            final int acByte = nextByte(in);
             if (acByte != exChar) {
-                throw new IllegalStateException("Expected " + exChar + " at " + off + " but found " + acByte);
+                throw new IllegalStateException("Expected " + exChar + " but found " + acByte);
             }
         }
     }
@@ -176,10 +176,23 @@ public class Mid2Jet {
         }
     }
     
-    private final static int getInt(final byte[] a, final int off, final int size) {
+    private static int peaked = -1;
+    
+    private static int nextByte(final InputStream in) throws Exception {
+        if (peaked == -1) {
+            return in.read();
+        }
+        try {
+            return peaked;
+        } finally{
+            peaked = -1;
+        }
+    }
+    
+    private final static int getInt(final InputStream in, final int size) throws Exception {
         int total = 0;
         for (int index = 0; index < size; index++) {
-            int b = a[off + index];
+            int b = nextByte(in);
             if (b < 0) {
                 b += 256;
             }
@@ -189,9 +202,15 @@ public class Mid2Jet {
         return total;
     }
     
-    private final static byte[] getBytes(final byte[] a, final int off, final int size) {
+    private final static byte[] getBytes(final InputStream in, final int size) throws Exception {
         final byte[] sub = new byte[size];
-        System.arraycopy(a, off, sub, 0, size);
+        if (peaked == -1) {
+            in.read(sub);
+        } else {
+            sub[0] = (byte) peaked;
+            in.read(sub, 1, size - 1);
+            peaked = -1;
+        }
         return sub;
     }
     
@@ -199,9 +218,9 @@ public class Mid2Jet {
         private final MidHeader header;
         private final MidTrack track;
         
-        private MidFile(final byte[] a) {
-            header = new MidHeader(a);
-            track = new MidTrack(a, 8 + header.size); // 4 for MThd, 4 for size, content
+        private MidFile(final InputStream in) throws Exception {
+            header = new MidHeader(in);
+            track = new MidTrack(in); // 4 for MThd, 4 for size, content
         }
     }
     
@@ -214,15 +233,15 @@ public class Mid2Jet {
         private final int numTracks;
         private final int division;
         
-        private MidHeader(final byte[] a) {
-            assertBytes("MThd", a, 0);
-            size = getInt(a, 4, 4);
+        private MidHeader(final InputStream in) throws Exception {
+            assertBytes("MThd", in);
+            size = getInt(in, 4);
             assertInt(6, size);
-            type = getInt(a, 8, 2);
+            type = getInt(in, 2);
             assertInt(0, type); // Type 0 is a single track file
-            numTracks = getInt(a, 10, 2);
+            numTracks = getInt(in, 2);
             assertInt(1, numTracks); // If type is 0, then the number of tracks must be 1
-            division = getInt(a, 12, 2);
+            division = getInt(in, 2);
         }
     }
     
@@ -230,14 +249,13 @@ public class Mid2Jet {
         private final int size;
         private final List<MidEvent> events;
         
-        private MidTrack(final byte[] a, final int off) {
-            assertBytes("MTrk", a, off);
-            size = getInt(a, off + 4, 4);
-            final int end = off + 8 + size;
-            MidMessage.next = off + 8;
+        private MidTrack(final InputStream in) throws Exception {
+            assertBytes("MTrk", in);
+            size = getInt(in, 4);
+            MidMessage.next = 0;
             events = new ArrayList<MidEvent>();
-            while (MidMessage.next < end) {
-                events.add(new MidEvent(this, a, MidMessage.next));
+            while (MidMessage.next < size) {
+                events.add(new MidEvent(this, in));
             }
         }
     }
@@ -247,26 +265,27 @@ public class Mid2Jet {
         private final int messageType;
         private final MidMessage message;
         
-        private MidEvent(final MidTrack track, final byte[] a, int off) {
-            deltaTime = getInt(a, off, 1);
-            final int messageTypeIndex = off + 1;
-            int mt = getInt(a, messageTypeIndex, 1);
+        private MidEvent(final MidTrack track, final InputStream in) throws Exception {
+            deltaTime = getInt(in, 1);
+            int mt = getInt(in, 1);
             if (mt < MSG_OFF_0) {
+                peaked = mt;
                 mt = track.events.get(track.events.size() - 1).messageType;
-                off--;
+                MidMessage.next++;
+            } else {
+                MidMessage.next += 2;
             }
             messageType = mt;
-            final int messageDataIndex = off + 2;
             if (messageType == MSG_META) {
-                message = new MetaMessage(a, messageDataIndex);
+                message = new MetaMessage(in);
             } else if ((messageType >= MSG_PROGRAM_CHANGE_0) && (messageType <= MSG_PROGRAM_CHANGE_15)) {
-                message = new ShortMessage(a, messageDataIndex, 1);
+                message = new ShortMessage(in, 1);
             } else if ((messageType >= MSG_ON_0) && (messageType <= MSG_ON_15)) {
-                message = new ShortMessage(a, messageDataIndex, 2);
+                message = new ShortMessage(in, 2);
             } else if ((messageType >= MSG_OFF_0) && (messageType <= MSG_OFF_15)) {
-                message = new ShortMessage(a, messageDataIndex, 2);
+                message = new ShortMessage(in, 2);
             } else {
-                throw new IllegalArgumentException("Unexpected message type " + messageType + " at " + messageTypeIndex);
+                throw new IllegalArgumentException("Unexpected message type " + messageType);
             }
         }
     }
@@ -280,20 +299,20 @@ public class Mid2Jet {
         private final int size;
         private final byte[] data;
         
-        private MetaMessage(final byte[] a, final int off) {
-            metaType = getInt(a, off, 1);
-            size = getInt(a, off + 1, 1);
-            data = getBytes(a, off + 2, size);
-            next = off + 2 + size;
+        private MetaMessage(final InputStream in) throws Exception {
+            metaType = getInt(in, 1);
+            size = getInt(in, 1);
+            data = getBytes(in, size);
+            next += (2 + size);
         }
     }
     
     public static class ShortMessage extends MidMessage {
         private final byte data[];
         
-        private ShortMessage(final byte[] a, final int off, final int size) {
-            data = getBytes(a, off, size);
-            next = off + size;
+        private ShortMessage(final InputStream in, final int size) throws Exception {
+            data = getBytes(in, size);
+            next += size;
         }
     }
 }
