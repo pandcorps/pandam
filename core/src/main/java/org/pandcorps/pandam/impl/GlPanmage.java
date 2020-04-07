@@ -100,11 +100,11 @@ public final class GlPanmage extends Panmage {
 	    
 	    private final int scaledHeight;
 	    
-	    protected ByteBuffer scratch;
+	    protected IntBuffer scratch;
 	    
 	    private int tid = NULL_TID; // Multiple GLPanmages can share same Texture
 	    
-	    private Texture(final int usableWidth, final int usableHeight, final int paddedSize, final int scaledWidth, final int scaledHeight, final ByteBuffer scratch) {
+	    private Texture(final int usableWidth, final int usableHeight, final int paddedSize, final int scaledWidth, final int scaledHeight, final IntBuffer scratch) {
 	        this.usableWidth = usableWidth;
 	        this.usableHeight = usableHeight;
 	        this.paddedSize = paddedSize;
@@ -164,7 +164,7 @@ public final class GlPanmage extends Panmage {
 		}
 
 		try {
-			return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), w, h, img.toByteBuffer());
+			return new Texture(_img.getWidth(), _img.getHeight(), padded.getWidth(), w, h, img.toIntBuffer());
 		} finally {
 			_img.closeIfTemporary();
 			padded.closeIfTemporary();

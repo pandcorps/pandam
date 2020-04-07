@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -30,8 +30,6 @@ import org.pandcorps.pandam.*;
 
 // Image Utility
 public final class Imtil {
-	public final static int TYPE = 2; // BufferedImage.TYPE_INT_ARGB = 2; BufferedImage not always available
-	public final static int TYPE_INT_RGB = 1; // BufferedImage.TYPE_INT_RGB = 1
 	public static boolean onlyResources = false;
 	
 	private final static ImgFactory cm = ImgFactory.getFactory();
@@ -58,19 +56,12 @@ public final class Imtil {
         return img;
     }
     
-    public final static Img create(final ByteBuffer buf, final int w, final int h, final int type) {
-        if (type != TYPE_INT_RGB) {
-            throw new UnsupportedOperationException("Currently only support INT_RGB");
-        }
-        final Img img = newImage(w, h); // type only needed to interpret ByteBuffer, we can choose any type for output
+    public final static Img create(final IntBuffer buf, final int w, final int h) {
+        final int[] a = new int[w * h];
         for (int y = 0; y < h; y++) {
-            final int wy = w * y;
-            for (int x = 0; x < w; x++) {
-                final int i = (wy + x) * 3;
-                img.setRGB(x, h - (y + 1), cm.getDataElement(buf.get(i), buf.get(i + 1), buf.get(i + 2), 255));
-            }
+            buf.get(a, (h - (y + 1)) * w, w);
         }
-        return img;
+        return new Img(w, h, a);
     }
     
     public final static void save(final Img img, final String location) {

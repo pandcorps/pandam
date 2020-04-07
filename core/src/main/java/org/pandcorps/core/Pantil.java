@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -148,4 +148,11 @@ public final class Pantil {
 	public final static ByteBuffer allocateDirectByteBuffer(final int capacity) {
         return ByteBuffer.allocateDirect(capacity).order(ByteOrder.nativeOrder());
     }
+	
+	public final static IntBuffer wrapIntBuffer(final int[] a) {
+	    final IntBuffer buf = allocateDirectIntBuffer(a.length);
+	    buf.put(a);
+	    buf.rewind();
+        return buf;
+	}
 }

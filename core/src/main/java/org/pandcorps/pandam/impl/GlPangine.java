@@ -783,9 +783,8 @@ public abstract class GlPangine extends Pangine {
 		if (screenShotDst != null) {
 		    final int sw = (screenShotW < 0) ? w : screenShotW;
 		    final int sh = (screenShotH < 0) ? h : screenShotH;
-		    final ByteBuffer buf = Pantil.allocateDirectByteBuffer(sw * sh * 3);
-		    //buf.rewind();
-		    gl.glReadPixels(screenShotX, screenShotY, sw, sh, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, buf); // Could read each frame and filter, but very slow
+		    final IntBuffer buf = Pantil.allocateDirectIntBuffer(sw * sh);
+		    gl.glReadPixels(screenShotX, screenShotY, sw, sh, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, buf); // Could read each frame and filter, but very slow
 		    final String dst;
 		    if (screenShotInd >= 0) {
 		    	dst = screenShotDst + screenShotInd + ".png";
@@ -794,7 +793,7 @@ public abstract class GlPangine extends Pangine {
 		    	dst = screenShotDst;
 		    	screenShotDst = null;
 		    }
-		    Img img = Imtil.create(buf, sw, sh, Imtil.TYPE_INT_RGB);
+		    Img img = Imtil.create(buf, sw, sh);
 		    final float zoom = getZoom();
 		    if (zoom > 0) {
 		        img = Imtil.shrink(img, Math.round(zoom));

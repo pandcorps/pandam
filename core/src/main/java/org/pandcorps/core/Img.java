@@ -26,6 +26,8 @@ import java.io.*;
 import java.nio.*;
 
 public final class Img implements Closeable {
+    public static ImgSaver saver = null;
+    
     private int w;
     private int h;
     private int[] a;
@@ -84,31 +86,13 @@ public final class Img implements Closeable {
     }
     
     public final void save(final String location) throws Exception {
-        throw new UnsupportedOperationException();
+        if (saver != null) {
+            saver.save(this, location);
+        }
     }
 	
-	public ByteBuffer toByteBuffer() {
-		final int w = getWidth(), h = getHeight();
-		//final ByteBuffer scratch = ByteBuffer.wrap(data.getData());
-		final int capacity = w * h * 4;
-		final byte[] raster = new byte[capacity];
-		final ImgFactory model = ImgFactory.getFactory();
-		int i = 0;
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				final int pixel = getRGB(x, y);
-				raster[i++] = (byte) model.getRed(pixel);
-				raster[i++] = (byte) model.getGreen(pixel);
-				raster[i++] = (byte) model.getBlue(pixel);
-				raster[i++] = (byte) model.getAlpha(pixel);
-			}
-		}
-		
-		//final ByteBuffer scratch = ByteBuffer.wrap(raster);
-		final ByteBuffer scratch = ByteBuffer.allocateDirect(capacity);
-		scratch.put(raster);
-		scratch.rewind();
-		return scratch;
+	public IntBuffer toIntBuffer() {
+	    return Pantil.wrapIntBuffer(a);
 	}
 	
 	@Override
@@ -170,4 +154,8 @@ public final class Img implements Closeable {
             }
         }
     }
+	
+	public static interface ImgSaver {
+	    public void save(final Img img, final String location) throws Exception;
+	}
 }

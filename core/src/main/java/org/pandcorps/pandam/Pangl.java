@@ -144,12 +144,18 @@ public abstract class Pangl {
 	public abstract void glReadPixels(final int x, final int y, final int width, final int height,
 			final int format, final int type, final ByteBuffer pixels);
 	
+	public abstract void glReadPixels(final int x, final int y, final int width, final int height,
+	        final int format, final int type, final IntBuffer pixels);
+	
 	public abstract void glTexCoordPointer(final int size, final int stride, final FloatBuffer pointer);
 	
 	public abstract void glTexCoordPointer(final int size, final int type, final int stride, final int offset);
 	
 	public abstract void glTexImage2D(final int target, final int level, final int internalFormat,
 			final int width, final int height, final int border, final int format, final int type, final ByteBuffer pixels);
+	
+	public abstract void glTexImage2D(final int target, final int level, final int internalFormat,
+	        final int width, final int height, final int border, final int format, final int type, final IntBuffer pixels);
 	
 	public abstract void glTexParameteri(final int target, final int pname, final int param);
 	
