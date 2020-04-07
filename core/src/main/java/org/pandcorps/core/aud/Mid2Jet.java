@@ -81,7 +81,7 @@ public class Mid2Jet {
         try {
             debug("Converting");
             
-            final MidFile mid = new MidFile(Iotil.getInputStream(midLoc));
+            final MidFile mid = new MidFile(new BufferedInputStream(Iotil.getInputStream(midLoc)));
             final ByteArrayOutputStream bout = new ByteArrayOutputStream();
             convertTrack(mid, bout);
             final byte[] a = bout.toByteArray();
