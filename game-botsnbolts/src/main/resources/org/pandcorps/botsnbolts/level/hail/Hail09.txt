@@ -1,12 +1,12 @@
 IMP|Hail
 
 M|...,........,......,....
-M|)'BBBBBBBBBBBBBBBBBBBB`(
-M|)[                    ](
-M|)[   ]< [             ](
-M|)[  ]< < [         d  ](
-M|)[   BB`< [  ]< [     ](
-M|)[      BB    BB      ](
+M|.)'BBBBBBBBBBBBBBBBBB`(.
+M|.)[                  ](,
+M|,)[  ]< [            ](.
+M|.)[ ]< < [         d ](.
+M|,)[  BB`< [  ]< [    ](.
+M|.)[     BB    BB     ](,
 M|    d                   
 M|                   d    
 M|               d        
