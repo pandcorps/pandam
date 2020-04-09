@@ -56,7 +56,6 @@ public class Mid2Jet {
     
     private final static void convert(final File file) throws Exception {
         if (exclusionSet.contains(file.getName())) {
-            System.out.println("Skipping " + file.getAbsolutePath());
             return;
         } else if (file.isDirectory()) {
             convertDirectory(file);
@@ -75,39 +74,43 @@ public class Mid2Jet {
         if (!midLoc.endsWith(".mid")) {
             return;
         }
-        System.out.println("Converting " + midLoc);
         final String jetLoc = midLoc.substring(0, midLoc.length() - 3) + "jet";
+        InputStream in = null;
         OutputStream out = null;
         try {
-            debug("Converting");
-            
-            final MidFile mid = new MidFile(new BufferedInputStream(Iotil.getInputStream(midLoc)));
-            final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            convertTrack(mid, bout);
-            final byte[] a = bout.toByteArray();
-            final int midLength = a.length;
-            final int jetContentLength = midLength + 22;
-            final int jetLength = jetContentLength + 4 + jetHeader.length;
-            
+            in = Iotil.getInputStream(midLoc);
             out = new BufferedOutputStream(new FileOutputStream(jetLoc));
-            out.write("JET ".getBytes());
-            writeInt(out, jetLength, 4);
-            
-            out.write(jetHeader);
-            writeInt(out, jetContentLength, 4);
-            
-            out.write("MThd".getBytes());
-            writeIntBigFirst(out, mid.header.size, 4);
-            writeIntBigFirst(out, mid.header.type, 2);
-            writeIntBigFirst(out, mid.header.numTracks, 2);
-            writeIntBigFirst(out, mid.header.division, 2);
-            out.write("MTrk".getBytes());
-            writeIntBigFirst(out, midLength, 4);
-            out.write(a);
-            out.flush();
+            convert(in, out);
         } finally {
             Iotil.close(out);
+            Iotil.close(in);
         }
+    }
+    
+    public final static void convert(final InputStream in, final OutputStream out) throws Exception {
+        final MidFile mid = new MidFile(Iotil.getBufferedInputStream(in));
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        convertTrack(mid, bout);
+        final byte[] a = bout.toByteArray();
+        final int midLength = a.length;
+        final int jetContentLength = midLength + 22;
+        final int jetLength = jetContentLength + 4 + jetHeader.length;
+        
+        out.write("JET ".getBytes());
+        writeInt(out, jetLength, 4);
+        
+        out.write(jetHeader);
+        writeInt(out, jetContentLength, 4);
+        
+        out.write("MThd".getBytes());
+        writeIntBigFirst(out, mid.header.size, 4);
+        writeIntBigFirst(out, mid.header.type, 2);
+        writeIntBigFirst(out, mid.header.numTracks, 2);
+        writeIntBigFirst(out, mid.header.division, 2);
+        out.write("MTrk".getBytes());
+        writeIntBigFirst(out, midLength, 4);
+        out.write(a);
+        out.flush();
     }
     
     private final static void convertTrack(final MidFile mid, final OutputStream out) throws Exception {
@@ -153,10 +156,6 @@ public class Mid2Jet {
             final int b = (value >>> (i * 8)) % 256;
             out.write(b);
         }
-    }
-    
-    private final static void debug(final String s) {
-        System.out.println(s);
     }
     
     private final static void assertBytes(final String ex, final InputStream in) throws Exception {
