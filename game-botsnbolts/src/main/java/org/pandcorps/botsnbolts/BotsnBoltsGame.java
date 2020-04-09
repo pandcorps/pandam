@@ -50,7 +50,7 @@ import org.pandcorps.pandax.visual.*;
 
 public final class BotsnBoltsGame extends BaseGame {
     protected final static String TITLE = "Bots 'n Bolts";
-    protected final static String VERSION = "0.0.1";
+    protected final static String VERSION = "1.0.0";
     protected final static String YEAR = "2016-2020";
     protected final static String AUTHOR = "Andrew M. Martin";
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;

@@ -55,7 +55,7 @@ public class PngLoader {
     private int x = 0, y = 0;
     
     public final static void main(final String[] args) throws Exception {
-        load(new java.io.FileInputStream(args[0]));
+        load(new FileInputStream(args[0]));
     }
     
     public final static Img load(final InputStream in) throws Exception {

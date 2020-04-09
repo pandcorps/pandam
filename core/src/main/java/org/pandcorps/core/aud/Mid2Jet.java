@@ -44,7 +44,6 @@ public class Mid2Jet {
         if (exclusions != null) {
             exclusionSet = new HashSet<String>(Arrays.asList(exclusions.split(";")));
         }
-        jetHeader = Iotil.readBytes("org/pandcorps/core/JetHeader.bin");
         for (final String midLoc : args) {
             convert(midLoc);
         }
@@ -79,7 +78,7 @@ public class Mid2Jet {
         OutputStream out = null;
         try {
             in = Iotil.getInputStream(midLoc);
-            out = new BufferedOutputStream(new FileOutputStream(jetLoc));
+            out = new FileOutputStream(jetLoc);
             convert(in, out);
         } finally {
             Iotil.close(out);
@@ -87,13 +86,17 @@ public class Mid2Jet {
         }
     }
     
-    public final static void convert(final InputStream in, final OutputStream out) throws Exception {
+    public final static void convert(final InputStream in, final OutputStream _out) throws Exception {
+        final OutputStream out = Iotil.getBufferedOutputStream(_out);
         final MidFile mid = new MidFile(Iotil.getBufferedInputStream(in));
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         convertTrack(mid, bout);
         final byte[] a = bout.toByteArray();
         final int midLength = a.length;
         final int jetContentLength = midLength + 22;
+        if (jetHeader == null) {
+            jetHeader = Iotil.readBytes("org/pandcorps/core/JetHeader.bin");
+        }
         final int jetLength = jetContentLength + 4 + jetHeader.length;
         
         out.write("JET ".getBytes());
