@@ -155,9 +155,32 @@ public class Story {
         }
     }
     
-    protected abstract static class LabScreen extends Panscreen {
+    protected abstract static class StoryScreen extends Panscreen {
+        protected abstract Panscreen getNextScreen();
+        
         @Override
         protected final void load() {
+            loadStory();
+            final Panctor actor = new Panctor();
+            actor.setView(BotsnBoltsGame.black);
+            actor.setVisible(false);
+            Pangame.getGame().getCurrentRoom().addActor(actor);
+            actor.register(Pangine.getEngine().getInteraction().BACK, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    getFinishHandler().run();
+                }});
+        }
+        
+        protected abstract void loadStory();
+        
+        protected Runnable getFinishHandler() {
+            return newScreenRunner(getNextScreen());
+        }
+    }
+    
+    protected abstract static class LabScreen extends StoryScreen {
+        @Override
+        protected final void loadStory() {
             BotsnBoltsGame.BotsnBoltsScreen.loadRoom(RoomLoader.getRoom(0, 550), false);
             Player.registerCapture(BotsnBoltsGame.tm);
             loadLab();
@@ -178,9 +201,9 @@ public class Story {
         }
     }
     
-    protected abstract static class TextScreen extends Panscreen {
+    protected abstract static class TextScreen extends StoryScreen {
         @Override
-        protected final void load() {
+        protected final void loadStory() {
             BotsnBoltsGame.room = Pangame.getGame().getCurrentRoom();
             Pangine.getEngine().setBgColor(Pancolor.BLACK);
             Player.registerCapture(loadText());
@@ -200,7 +223,7 @@ public class Story {
             initActor(drFinal = newFinalMaskTalker(), 128, true);
             stepLab();
             newLabTextTyper("20XX\nDr. Root is the nation's foremost expert in the fields of robotics and artificial intelligence.  Scientists travel from far away to seek his guidance.  His brightest apprentice is Dr. Finnell.  Dr. Root teaches everything that he knows to Dr. Finnell.")
-                .setFinishHandler(newScreenRunner(new TextScreen1()));
+                .setFinishHandler(getFinishHandler());
         }
         
         @Override
@@ -209,12 +232,22 @@ public class Story {
             drRoot.setTalking(rootTalk);
             drFinal.setTalking(!rootTalk);
         }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new TextScreen1();
+        }
     }
     
     protected final static class TextScreen1 extends TextScreen {
         @Override
         protected final TextTyper loadText() {
-            return newLabTextTyper("But one day...").setFinishHandler(newScreenRunner(new LabScreen2()));
+            return newLabTextTyper("But one day...").setFinishHandler(getFinishHandler());
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new LabScreen2();
         }
     }
     
@@ -249,11 +282,16 @@ public class Story {
                                     "\"My name is Final, and I've come here to conquer your world!\"",
                                     "\"How could you?  I trusted you, Final!\"",
                                     "\"That's Dr. Final!  I'm an alien invader, but I still earned my PhD while I was studying your planet!\"" },
-                                    newScreenRunner(new TextScreen2()));
+                                    getFinishHandler());
                             }});
                         }});
                 }});
             }});
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new TextScreen2();
         }
     }
     
@@ -274,7 +312,12 @@ public class Story {
         @Override
         protected final TextTyper loadText() {
             return newLabTextTyper("So Dr. Root began a search for Dr. Final's secret base of operations, developing plans and contingency plans to stop him.")
-                .setFinishHandler(newScreenRunner(new VoidBootScreen()));
+                .setFinishHandler(getFinishHandler());
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new VoidBootScreen();
         }
     }
     
@@ -305,8 +348,6 @@ public class Story {
         protected abstract String getName();
         
         protected abstract String getVersion();
-        
-        protected abstract Runnable getFinishHandler();
     }
     
     protected final static class VoidBootScreen extends BootScreen {
@@ -321,8 +362,8 @@ public class Story {
         }
         
         @Override
-        protected final Runnable getFinishHandler() {
-            return newScreenRunner(new LabScreen3());
+        protected final Panscreen getNextScreen() {
+            return new LabScreen3();
         }
     }
     
@@ -348,7 +389,7 @@ public class Story {
                         addTimer(90, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                             final Player p = new Player(BotsnBoltsGame.pc) { @Override protected final void onLanded() {
                                 destroy();
-                                dematerialize(newLevelRunner(RoomLoader.getFirstLevel()));
+                                dematerialize(getFinishHandler());
                             }};
                             replaceActor(player, p);
                             p.startScript(new StillAi(), null);
@@ -357,6 +398,16 @@ public class Story {
                     }});
                 }});
             }});
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return null;
+        }
+        
+        @Override
+        protected final Runnable getFinishHandler() {
+            return newLevelRunner(RoomLoader.getFirstLevel());
         }
     }
     
@@ -379,12 +430,17 @@ public class Story {
                                 "\"You forced him to retreat to his base offworld.  Our whole world can breath a sigh of relief.  I'm so proud of you, Void!\"",
                                 "\"Thank you, Dr. Root.\"",
                                 "\"No!  Thank you, Void!\""
-                        }, newScreenRunner(new RootFamilyScreen()));
+                        }, getFinishHandler());
                     }});
                 }};
                 initActor(p, 128, true);
                 new Warp(p);
             }});
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new RootFamilyScreen();
         }
     }
     
@@ -743,9 +799,14 @@ public class Story {
                 "Created by:\n" +
                 BotsnBoltsGame.AUTHOR + "\n" +
                 BotsnBoltsGame.COPYRIGHT, 123)
-                .setFinishHandler(newScreenRunner(new ProgressScreen()));
+                .setFinishHandler(getFinishHandler());
             typer.setLinesPerPage(16);
             return typer;
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new ProgressScreen();
         }
     }
     
@@ -767,9 +828,14 @@ public class Story {
                 "-------------\n" +
                 "Percentage:\n" +
                 percentage + "%", 153)
-                .setFinishHandler(newScreenRunner(new LabScreenStinger1()));
+                .setFinishHandler(getFinishHandler());
             typer.setLinesPerPage(16);
             return typer;
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new LabScreenStinger1();
         }
     }
     
@@ -788,10 +854,15 @@ public class Story {
                     addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                         drRoot.setMirror(false);
                         player.setTalking(true).setMirror(true);
-                        newLabTextTyper("\"Dr. Root...  It looks like we're receiving some kind of transmission.\"").setSound(BotsnBoltsGame.fxText).setFinishHandler(newScreenRunner(new ShipScreen()));
+                        newLabTextTyper("\"Dr. Root...  It looks like we're receiving some kind of transmission.\"").setSound(BotsnBoltsGame.fxText).setFinishHandler(getFinishHandler());
                     }});
                 }});
             }});
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new ShipScreen();
         }
     }
     
@@ -815,7 +886,12 @@ public class Story {
                 "Contacting Tree\n" +
                 "* Success\n" +
                 "Activating payload")
-                .setSound(BotsnBoltsGame.fxText).setFinishHandler(newScreenRunner(new NullBootScreen()));
+                .setSound(BotsnBoltsGame.fxText).setFinishHandler(getFinishHandler());
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new NullBootScreen();
         }
     }
     
@@ -831,8 +907,8 @@ public class Story {
         }
         
         @Override
-        protected final Runnable getFinishHandler() {
-            return newScreenRunner(new LabScreenStinger2());
+        protected final Panscreen getNextScreen() {
+            return new LabScreenStinger2();
         }
     }
     
@@ -853,7 +929,12 @@ public class Story {
                 "\"Void...  I need to tell you something...  Something that I should have told you long ago...\"",
                 "\"Dr. Root?\"",
                 "\"Void...  You were not my first child.\"" },
-                newScreenRunner(new ThankYouScreen()), BotsnBoltsGame.fxText);
+                getFinishHandler(), BotsnBoltsGame.fxText);
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new ThankYouScreen();
         }
     }
     
@@ -866,9 +947,14 @@ public class Story {
                 "It means so much to me.\n" +
                 "I hope that you enjoyed it.\n" +
                 " - " + BotsnBoltsGame.AUTHOR, 40, 123)
-                .setFinishHandler(newScreenRunner(new LevelSelectScreen()));
+                .setFinishHandler(getFinishHandler());
             typer.setLinesPerPage(16);
             return typer;
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new LevelSelectScreen();
         }
     }
     
