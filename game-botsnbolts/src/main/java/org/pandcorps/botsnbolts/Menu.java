@@ -341,7 +341,7 @@ public class Menu {
                 left.setImageInactive(rightImages.base);
             }};
         final Pangine engine = Pangine.getEngine();
-        final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
+        final int w = engine.getEffectiveWidth();
         final int o = 1;
         final int d = DIM_BUTTON;
         jump = addButton(hud, "Jump", w - d - o, o, input, act, jump, circleImages, false, activeListener, false, d);
@@ -349,7 +349,7 @@ public class Menu {
         right = addButton(hud, "Right", d + 1 + o, o, input, act, right, rightImages, false, activeListener, false, d);
         left = addButton(hud, "Left", o, o, input, act, left, rightImages, false, activeListener, true, d);
         final int ds = 31, upDownX = o + d - 15;
-        up = addButton(hud, "Up", upDownX, h - d, input, act, up, upImages, false, activeListener, false, ds);
+        up = addButton(hud, "Up", upDownX, o + d + 2 + Math.round(downImages.base.getSize().getY()), input, act, up, upImages, false, activeListener, false, ds);
         down = addButton(hud, "Down", upDownX, o + d + 1, input, act, down, downImages, false, activeListener, false, ds);
         if (act) {
             addCursor(hud);
