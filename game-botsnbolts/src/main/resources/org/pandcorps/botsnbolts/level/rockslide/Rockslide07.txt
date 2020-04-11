@@ -1,21 +1,21 @@
 IMP|Rockslide
 
-M|>   <...................
-M|]   eeeelfPreeeeeeeeeee[
-M|)  D    <..>           (
-M|r       e[w]        D  l
-M|r     D  lfr    c      l
-M|r        <.>           l
-M|>   c    []e           l
-M|=-)      es       s    l
-M|ww]       e   d  []    l
-M|--=-)            ()  d l
-M|wWww]            []    l
-M|-=--=-)    c     (-)   l
-M|wwwWww]          [w]   l
-M|(--=---==-=---=----)   l
+M|.> <....................
+M|w] eeeeelfPreeeeeeeeeee[
+M|=) D    <..>           (
+M|Fr      e[w]        D  l
+M|Fr    D  lfr    c      l
+M|fr       <.>           l
+M|.>  c    []e         d l
+M|=-)      es         s  l
+M|ww]       e   d     [] l
+M|--=-)               () l
+M|wWww]               [] l
+M|-=--=-)    c       (-) l
+M|wwwWww]            [w] l
+M|)(-=---==-=---=---=--) l
 
-LDR|21|0|7
+LDR|22|0|6
 LDR|2|9|5
 
 ENM|7|1|WallCannon

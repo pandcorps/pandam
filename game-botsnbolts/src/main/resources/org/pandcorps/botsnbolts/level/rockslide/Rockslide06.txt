@@ -1,7 +1,7 @@
 IMP|Rockslide
 
-M|r..................>   l
-M|>eeeeeeeeeelffreeeee   l
+M|r<...................> l
+M|>eeeeeeeeeelffreeeeeee l
 M|]          <..>        l
 M|>     d    [w]e    D   l
 M|     D     lfr  d      l
@@ -21,6 +21,6 @@ BOX|9|8
 
 ENM|19|3|SpringEnemy
 
-LDR|21|5|9
+LDR|22|5|9
 
 RPT|1|1|22|13|RockslideRockDark

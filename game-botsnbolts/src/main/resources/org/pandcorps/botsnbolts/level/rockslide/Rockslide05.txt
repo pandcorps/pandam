@@ -1,12 +1,12 @@
 IMP|Rockslide
 
-M|r                                                                   lfPf
-M|r                                                                   <...
-M|r                             t                                       [w
-M|r                                                                     <.
-M|r                              t                        12223           
-M|r                                    t               1sss00402223       
-M|>                                                   1 555    4   3      
+M|Pr                                                                  lfPf
+M|Fr                                                                  <...
+M|fr                            t                                       [w
+M|fr                                                                    <.
+M|Pr                             t                        12223           
+M|fr                                   t               1sss00402223       
+M|.>                                                  1 555    4   3      
 M|                                    t              10   4        0s23   
 M|           '/-=---\`                  t           140            4500(-=
 M|          '/f  ffPf\`     '/-=-=-\`              1000     4  (-) 0040lfP
