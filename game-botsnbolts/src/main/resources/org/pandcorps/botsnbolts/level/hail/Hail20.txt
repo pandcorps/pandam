@@ -1,15 +1,15 @@
 IMP|Hail
 
-M|)'BBBBBBBBBBBBBBBBBB`(..
-M|)[  d        d      ](.,
-M|)[      d            BBB
-M|)[  ]_____________[ d   
-M|)[         d            
-M|)[ d     6   7   8      
-M|)[   5   b   b   b   /*-
-M|)[   b         d     (.,
-M|)[    d              B`(
-M|)[  4   3   2     d   ](
+M|,)'BBBBBBBBBBBBBBBBB`(..
+M|.)[ d        d      ](..
+M|.)[     d            BBB
+M|.)[  ]_____________[ d  
+M|.)[         d           
+M|.)[ d     6   7   8     
+M|,)[  5   b   b   b   /*-
+M|.)[  b         d     (.,
+M|.)[   d              B`(
+M|    4   3   2     d   ](
 M|    b   b   b   1     ](
 M|          d     b  111](
 M|  d                1  ](
@@ -17,6 +17,8 @@ M|---*-----*---------*---(
 
 DOR|0|1|Cyan
 DOR|23|8|Boss
+
+IMG|22|12|FinalLogoPlate|above
 
 BOX|19|1
 BOX|21|1
