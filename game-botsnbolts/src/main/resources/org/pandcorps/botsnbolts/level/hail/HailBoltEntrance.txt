@@ -1,16 +1,16 @@
 IMP|Hail
 
 M|.......,........,.......
-M|.)'BBBBBBBBBBBBBBBBBBB`(
-M|,)[                   ](
-M|.)[     { {      d    ](
-M|  [     i{ {          ](
-M|  [     { BB{         ](
-M|BB      i{  B{        ](
-M|      d { B  B{         
+M|.)'BBBBBBBBBBBBBBBBBB`(.
+M|,)[                  ](,
+M|.)[     { {      d   ](.
+M|  [     i{ {         ](,
+M|  [     { BB{        ](.
+M|BB      i{  B{       ](.
+M|      d { B  B{       B 
 M|        i{ { { {        
 M|        BBBBBi{ {       
-M|  /-*---*--\  BBBBB     
+M|  /-*---*--\ BBBBBB     
 M|  (..,.....)--*---*-----
 M|/-(....,...,.......,....
 M|(...,.,......,...,...,..
