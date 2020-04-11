@@ -439,10 +439,10 @@ public abstract class Panput {
 		
 		public final boolean detach() {
 		    final Pangine engine = Pangine.getEngine();
-		    if (active) {
-		        engine.deactivate(this);
-		    }
 		    final boolean detached = engine.unregisterTouchButton(this);
+		    if (detached && active) {
+                engine.deactivate(this);
+            }
 		    initLayer();
 		    Panctor.detach(actor);
 		    Panctor.detach(actorOverlay);
