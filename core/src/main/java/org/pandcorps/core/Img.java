@@ -86,6 +86,12 @@ public final class Img implements Closeable {
     }
     
     public final void save(final String location) throws Exception {
+        if (saver == null) {
+            final String className = System.getProperty("org.pandcorps.core.Img.ImgSaver.impl");
+            if (className != null) {
+                saver = (ImgSaver) Reftil.newInstance(className);
+            }
+        }
         if (saver != null) {
             saver.save(this, location);
         }

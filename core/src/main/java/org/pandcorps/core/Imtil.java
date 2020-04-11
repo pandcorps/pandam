@@ -267,6 +267,26 @@ public final class Imtil {
     	}
     }
     
+    public final static void xor(final Img in1, final Img in2, final Img out) {
+        final int w = in1.getWidth(), h = in1.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p1 = in1.getRGB(x, y), p2 = in2.getRGB(x, y);
+                final int r = cm.getRed(p1) ^ cm.getRed(p2);
+                final int g = cm.getGreen(p1) ^ cm.getGreen(p2);
+                final int b = cm.getBlue(p1) ^ cm.getBlue(p2);
+                final int a1 = cm.getAlpha(p1), a2 = cm.getAlpha(p2);
+                final int a;
+                if (a1 == a2) {
+                    a = a1;
+                } else {
+                    throw new IllegalStateException("Expected alpha to match but did not at (" + x + ", " + y + ")");
+                }
+                out.setRGB(x, y, cm.getDataElement(r, g, b, a));
+            }
+        }
+    }
+    
     public final static Img addBorders(final Img in, final int left, final int right, final int top, final int btm) {
         return addBorders(in, left, right, top, btm, null);
     }
