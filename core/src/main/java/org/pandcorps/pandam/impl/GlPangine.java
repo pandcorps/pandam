@@ -597,7 +597,8 @@ public abstract class GlPangine extends Pangine {
 		activateTouch(input, true);
 	}
 	
-	private final void deactivate(final Panput input) {
+	@Override
+	public final void deactivate(final Panput input) {
 		deactivate(input, null);
 	}
 	
