@@ -9,10 +9,10 @@ M|r               '/-=-=--
 M|r              '/f  fPff
 M|r             '/  p Fff 
 M|>            '/fp fF  fp
-M|            '/fFf  fp ff
-M|           '/  Ffp ffFff
-M|          '/fp fFff  f  
-M|         '/  ff  ffp fp 
+M|T           '/fFf  fp ff
+M|v          '/  Ffp ffFff
+M|v         '/fp fFff  f  
+M|b        '/  ff  ffp fp 
 M|--=---=---fp ffp fPffPfF
 
 BOS|19|9|RockslideBot

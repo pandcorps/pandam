@@ -1,22 +1,27 @@
 IMP|Rockslide
 
-M|s                      s
-M|        p            F  
-M|  F             s       
-M|            P           
-M|    p                   
-M|             F    p     
-M|         s              
-M|     P                  
-M|........................
-M|eeeeeeeeeeeeeeeeeeeeeeee
-M|               D        
-M|  D   c       d     D   
-M|    d     D             
+M|Bl                  P rB
+M|xl      p            Frx
+M|xlF             s  P  rx
+M|xl  P  F s  P         rX
+M|X<....................>x
+M|x[wwwwwwwwwwwwwwwwwwww]x
+M|x(-=--=---=-==--=-=--=)X
+M|xl   P     s     F    rx
+M|E<....................>E
+M|TeeeeeeeeeeeeeeeeeeeeeeT
+M|v  d              D    v
+M|vc (-)D (-)  (-)  (=)d v
+M|b  <.>  <.>d <.>c <.>  b
 M|--=-=----==---=--=---=--
 
 DOR|0|1|Boss
 DOR|23|1|Boss
+
+BRR|4|3|Cyan
+BRR|9|3|Cyan
+BRR|14|3|Cyan
+BRR|19|3|Cyan
 
 RPT|0|1|24|3|RockslideRockDark
 RPT|0|6|24|8|RockslideRockLight

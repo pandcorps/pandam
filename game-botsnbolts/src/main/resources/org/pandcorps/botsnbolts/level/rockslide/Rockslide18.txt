@@ -3,14 +3,14 @@ IMP|Rockslide
 M|Ffr<................>l  
 M|fPreeeeeeeeeeeeeeeeeelp 
 M|..>       d          <..
-M|)ee             D    ee(
-M|r     D           c    l
-M|r            D  (-=-=-)l
-M|>       c      d<.....>l
-M|  d             (-)eeeel
+M|-)e             D    ee(
+M|Fr    D           c    l
+M|Fr           D  (-=-=-)l
+M|.>      c      d<.....>l
+M| ed             (-)eeeel
 M|           d    lfr    l
 M|     D          <.>    l
-M|                       <
+M|                eee    <
 M|--=---=--)    (-=-----=-
 M|fff  ffPfr    lff  fPf  
 M|FFfp fPfFr    lFFp ffFp 

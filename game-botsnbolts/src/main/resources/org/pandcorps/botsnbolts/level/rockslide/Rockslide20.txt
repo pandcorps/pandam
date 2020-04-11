@@ -1,22 +1,24 @@
 IMP|Rockslide
 
 M|.........>s  s<.........
-M|fr()eeeeeee  eeeeeee()lf
-M|fr<>                <>lf
-M|free          D     eelF
-M|fr  D                 lf
-M|Fr        d        D  lf
-M|fr    c               lP
-M|Pr   d                lf
-M|Fr D                  <.
-M|fr               c    ee
-M|fr          D           
-M|Pr      c           D   
-M|fr                 d    
+M|fr()eeeeeee  eeeeee()lfF
+M|fr<>               <>lff
+M|free          D    eelFf
+M|fr  D                lfP
+M|Fr        d       D  [w]
+M|fr    c              Bff
+M|Pr   d               Eff
+M|Fr D                 [w]
+M|fr               c   eeT
+M|fr          D          v
+M|Pr      c           D  v
+M|fr                 d   b
 M|---=--=-=---==----=-----
 
 BOX|2|1
 BOX|4|1
+
+IMG|22|6|FinalLogo|above
 
 DOR|23|1|Boss
 
