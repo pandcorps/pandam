@@ -1,22 +1,22 @@
 IMP|Rockslide
 
 M|.........> <............
-M|--)eeeeeee eeeeeeeeeeee(
+M|=-)eeeeeee eeeeeeeeeeee(
 M|..>                    <
-M|)ee D      (-) D       (
-M|>          <.>     c   <
-M|--)  c     ee(-)       (
+M|-)e D      (-) D       (
+M|.>         <.>     c   <
+M|-=)  c     ee(-)       (
 M|..>          <.>       <
-M|)ee          eee     d (
-M|r                      l
-M|r      D           D   l
-M|r D          d         l
-M|r               D      l
-M|r  c                   l
-M|r                   D  l
+M|-)e          eee     d (
+M|fr                     l
+M|Fr     D           D   l
+M|frD          d         l
+M|Fr              D      l
+M|Pr c                   l
+M|fr                  D  l
 
-ENM|1|9|WallCannon
-ENM|1|10|WallCannon
+ENM|2|9|WallCannon
+ENM|2|10|WallCannon
 
 LDR|14|0|7
 LDR|12|3|6

@@ -1,13 +1,13 @@
 IMP|Rockslide
 
-M|>            d         l
-M|]   D                  l
-M|)()     c        D     l
-M|r<>                    l
-M|ree                    <
-M|r           c     '/-=--
-M|>          d     '/ff  f
-M|      c         '/ffFp f
+M|.>           d         l
+M|w]   D                 l
+M|-)()    c        D     l
+M|fr<>                   l
+M|Free                   <
+M|Fr          c     '/-=--
+M|.>         d     '/ff  f
+M| e    c         '/ffFp f
 M|  D            '/f  fFfF
 M|         D    '/fFp ffsf
 M|             '/Pfff  ffP
@@ -15,8 +15,8 @@ M|-=--=)      '/ff  fp fFf
 M|fP  fr(-=-=--fFfp fFff  
 M|Ffp FrlffPffPffFffFfffp 
 
-ENM|1|8|WallCannon
-ENM|1|9|WallCannon
+ENM|2|8|WallCannon
+ENM|2|9|WallCannon
 
 DOR|0|3|Cyan
 
