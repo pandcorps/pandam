@@ -603,6 +603,7 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	private final void deactivate(final Panput input, final Panput originalInput) {
+	    setDeactivating(input, true);
 		boolean uncaught = true;
 		for (final ActionEndListener endListener : Coltil.copy(interaction.getEndListeners(input))) {
 			//endListener.onActionEnd(ActionEndEvent.INSTANCE);
@@ -637,6 +638,7 @@ public abstract class GlPangine extends Pangine {
 		setActive(input, false);
 		ended.add(input);
 		activateTouch(input, false);
+		setDeactivating(input, false);
 	}
 	
 	@Override

@@ -37,6 +37,7 @@ public abstract class Panput {
     private final String name;
     /*package*/ boolean active = false;
     /*package*/ boolean inactivated = false;
+    /*package*/ boolean deactivating = false;
     
     protected Panput(final Device device, final String name) {
     	this.device = device;
@@ -440,7 +441,7 @@ public abstract class Panput {
 		public final boolean detach() {
 		    final Pangine engine = Pangine.getEngine();
 		    final boolean detached = engine.unregisterTouchButton(this);
-		    if (detached && active) {
+		    if (detached && active && !deactivating) {
                 engine.deactivate(this);
             }
 		    initLayer();

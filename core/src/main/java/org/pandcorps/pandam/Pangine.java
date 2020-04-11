@@ -409,6 +409,10 @@ public abstract class Pangine {
 	    }
 	}
     
+    protected final void setDeactivating(final Panput input, final boolean deactivating) {
+        input.deactivating = deactivating;
+    }
+    
     public void deactivate(final Panput input) {
     }
 	
