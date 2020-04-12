@@ -3,8 +3,8 @@ IMP|Volcano
 M|ffff  fffffffff  fffffffs fffffff/---,BBBBBBBBBBBBBBBBB`\ffffs fffff  ff
 M|ffffs f/------\s f/--------------,BBBB                 B`---------\fs ff
 M|f  f/--,BBBBBB`---,BBBBBBBBBBPXPBB               S      BBBBBBBBBB`-\fff
-M|fs /,BBB      BBBBB          PxP        S                           `\  
-M|ff/,B                   S    PYP                               S     is 
+M|fs /,BBB      BBBBB          PxP        S                         BB`\  
+M|ff/,B                   S    PYP                               S    Bis 
 M|ffiB        S                PxP            (---)    /-\  S          iff
 M|f/,                          PxP S  (---)   BBBBB    ifi             if 
 M|fiB  S   /--\               (---)   BBBBB            if`-\       S   ifs
