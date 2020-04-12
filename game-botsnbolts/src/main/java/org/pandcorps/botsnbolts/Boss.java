@@ -2217,7 +2217,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected Lightning(final LightningBot src, final int x, final int jMax, final int jBase, final int timer) {
-            super(src, 10, 0, timer);
+            super(BotsnBoltsGame.black, src, 10, 0, timer);
             getPosition().set(x, 0);
             setMirror(false);
             this.src = src;
