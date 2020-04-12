@@ -15,7 +15,7 @@ M|)     B    e    {b} S  (
 M|)       E       {b}    `
 M|) B /-------------------
 
-LDR|14|11|3
+LDR|14|12|2
 
 ENM|9|11|CeilingCannon
 ENM|14|7|CeilingCannon

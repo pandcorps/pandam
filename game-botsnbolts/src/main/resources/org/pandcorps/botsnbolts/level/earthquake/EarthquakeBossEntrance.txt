@@ -7,7 +7,7 @@ M|    S     DDDDDD/----\(.
 M|         e      `____,(;
 M|0/---\        S DDDDDD(.
 M|1(;  )S             B `_
-M|1(.# )/----\    E     D 
+M|1(.# )/----\    E     DD
 M|2`___,`____,uuuuuuuuuuuu
 M|/-------\0/------\bbbbbb
 M|(.  ;.:;)1(;..  ;)bbbbbb

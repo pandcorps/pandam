@@ -2,14 +2,14 @@ IMP|Earthquake
 
 M|)   (.;...:...;:;..;.:.;
 M|) e `___________________
-M|)   DDDDDDDDDDDDDDDDDDD/
-M|)  B       E          e(
-M|,            S  E      (
-M|/--\  E            S   (
-M|(.;)      S    B /-\   (
-M|(:.)/\ B         (.)   (
-M|`__,`,  S    e   `_, B `
-M|-------\         DDD    
+M|)   DDDDDDDDDDDDDDDDDD/-
+M|)  B       E        e (:
+M|,            S  E     (;
+M|/--\  E            S  (:
+M|(.;)      S    B /-\  (.
+M|(:.)/\ B         (.)  (:
+M|`__,`,  S    e   `_, B`_
+M|-------\         DDD  D 
 M|_______,  B    S        
 M|-\/\0=0/-\  E      e    
 M|;)()1c1(.)      B   E   
