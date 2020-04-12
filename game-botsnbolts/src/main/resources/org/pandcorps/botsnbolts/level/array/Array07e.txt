@@ -20,7 +20,7 @@ M|}i     e        e  e       e e                  eeee        ee  b   D i{
 M|}ie   eee  e e    ebbb   e     bbb    e    bbb e ee    bbb      B   e i+
 M|}iee        e e    b b  e e  e b b   e ee  b b  ee     b b      b .e ei{
 M|-,....bbbbbbbbbbbbbbebbbbbbbbbbb bbbbbbbbbbbebbbbbbbbbbbebbbbbbbb D eei{
-M| DDDDD   eee   ee  eee   ee     e   eee   eeee     eee eee  e  ee eeeeiq
+M| DDDDD              e           e                       e         eeeeiq
 M|---------\eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeei{
 
 DOR|0|1|Small
