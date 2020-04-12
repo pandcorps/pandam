@@ -1,19 +1,19 @@
 IMP|Hail
 
-M|.)           1         (
-M|.)           1         (
-M|,)           1         (
-M|.)                     (
-M|,)                     (
+M|.)           1        I(
+M|.)I          1         (
+M|,)           1        I(
+M|.)I                    (
+M|,)                    I(
 M|.)i{             {     (
-M|.)                     (
-M|,)                     (
-M|.)          {          (
-M|.)                     (
-M|.)                     (
+M|.)                    I(
+M|,)I                    (
+M|.)          {         I(
+M|.)I                    (
+M|.)                    I(
 M|,)i{             {    1(
-M|,)                     (
-M|.)                     (
+M|,)                    I(
+M|.)I                    (
 
 ENM|3|3|FreezeRayEnemy
 ENM|3|9|FreezeRayEnemy
