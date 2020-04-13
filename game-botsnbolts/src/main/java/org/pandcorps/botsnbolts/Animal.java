@@ -32,11 +32,11 @@ import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Animal {
-    private final static int ANM_OFF_X = 9, ANM_H = 20;
+    private final static int ANM_OFF_X_TILE = Player.PLAYER_X, ANM_OFF_X_COLLISION = 9, ANM_H = 20;
     private final static Panple ANM_O = BotsnBoltsGame.og;
     private final static Panple BIRD_O = new FinPanple2(ANM_O.getX(), ANM_O.getY() + 6);
-    private final static Panple ANM_MIN = Chr.getMin(ANM_OFF_X);
-    private final static Panple ANM_MAX = Chr.getMax(ANM_OFF_X, ANM_H);
+    private final static Panple ANM_MIN = Chr.getMin(ANM_OFF_X_COLLISION);
+    private final static Panple ANM_MAX = Chr.getMax(ANM_OFF_X_COLLISION, ANM_H);
     
     private final static Map<String, Panmage> cache = new HashMap<String, Panmage>();
     
@@ -72,7 +72,7 @@ public class Animal {
         private int timer = 0;
         
         protected Spring(final Player p) {
-            super(ANM_OFF_X, ANM_H);
+            super(ANM_OFF_X_TILE, ANM_H);
             pi = p.pi;
             this.img = getAnimalImage(pi);
             setView(img);
@@ -80,7 +80,7 @@ public class Animal {
             final Panple ppos = p.getPosition();
             final float x = ppos.getX(), y = ppos.getY();
             final TileMap tm = BotsnBoltsGame.tm;
-            final int i = tm.getContainerColumn(x), iLeft = tm.getContainerColumn(x - ANM_OFF_X), iRight = tm.getContainerColumn(x + ANM_OFF_X);
+            final int i = tm.getContainerColumn(x), iLeft = tm.getContainerColumn(x - ANM_OFF_X_TILE), iRight = tm.getContainerColumn(x + ANM_OFF_X_TILE);
             int j = tm.getContainerRow(y);
             for (; j >= 0; j--) {
                 final Tile tile = tm.getTile(i, j);
