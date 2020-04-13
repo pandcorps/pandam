@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -37,7 +37,6 @@ public class Profile {
     private final static String SEG_BOLT = "BLT";
     private final static String SEG_DISK = "DSK";
     private final static String SEG_PROFILE = "PRF";
-    private final static String TUTORIAL_DOUBLE_JUMP = "Double-jump to use";
     
     /*package*/ final Set<Upgrade> upgrades;
     /*package*/ final Set<String> disks;
@@ -275,9 +274,11 @@ public class Profile {
             final Profile prf = player.prf;
             if (prf.upgrades.add(this)) {
                 BotsnBoltsGame.notify("You got " + getDisplayName(player));
-                final String tutorial = getTutorial();
+                final String[] tutorial = getTutorial();
                 if (tutorial != null) {
-                    BotsnBoltsGame.notify(tutorial);
+                    for (final String msg : tutorial) {
+                        BotsnBoltsGame.notify(msg);
+                    }
                 }
                 prf.saveBolts();
             }
@@ -302,7 +303,7 @@ public class Profile {
         
         public abstract String getDisplayName(final PlayerContext pc);
         
-        public String getTutorial() {
+        public String[] getTutorial() {
             return null;
         }
     }
@@ -352,8 +353,12 @@ public class Profile {
         }
         
         @Override
-        public final String getTutorial() {
-            return TUTORIAL_DOUBLE_JUMP;
+        public final String[] getTutorial() {
+            return new String[] {
+                    "Double-jump while running to swing",
+                    "Double-jump while still to climb upward",
+                    "Hold attack button to climb"
+                    };
         }
     }
     
@@ -373,8 +378,8 @@ public class Profile {
         }
         
         @Override
-        public final String getTutorial() {
-            return TUTORIAL_DOUBLE_JUMP;
+        public final String[] getTutorial() {
+            return new String[] { "Double-jump to use" };
         }
     }
     
@@ -434,9 +439,9 @@ public class Profile {
         }
         
         @Override
-        public final String getTutorial() {
+        public final String[] getTutorial() {
             final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.pc);
-            return ((prf != null) && !prf.autoCharge) ? "Hold fire button to charge" : null;
+            return ((prf != null) && !prf.autoCharge) ? new String[] { "Hold fire button to charge" } : null;
         }
     }
 }
