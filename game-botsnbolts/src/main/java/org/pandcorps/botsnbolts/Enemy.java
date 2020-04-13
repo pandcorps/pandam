@@ -2241,6 +2241,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         private final void move() {
+            final TileMap tm = BotsnBoltsGame.tm;
             int newX, newY;
             do {
                 int off1 = Mathtil.randi(-2, 3);
@@ -2255,8 +2256,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                     newX = x + off2;
                     newY = y + off1;
                 }
-            } while (isSolidTile(newX, newY));
-            BotsnBoltsGame.tm.savePositionXy(getPosition(), newX, newY);
+            } while (isSolidTile(newX, newY) || tm.isBad(newX, newY));
+            tm.savePositionXy(getPosition(), newX, newY);
             x = newX;
             y = newY;
         }
