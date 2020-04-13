@@ -131,22 +131,16 @@ public class TextTyper extends Pantext implements StepListener {
     
     public final TextTyper registerAdvanceListener(final boolean backNeeded) {
         final Pangine engine = Pangine.getEngine();
-        register(newAdvanceListener());
+        final ActionEndListener listener = newAdvanceListener();
+        register(listener);
         if (backNeeded) {
-            register(engine.getInteraction().BACK, newAdvanceEndListener());
+            register(engine.getInteraction().BACK, listener);
         }
         clockAdvanceListenerRegistered = engine.getClock();
         return this;
     }
     
-    private final ActionStartListener newAdvanceListener() {
-        return new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) {
-                onAdvance(event);
-            }};
-    }
-    
-    private final ActionEndListener newAdvanceEndListener() {
+    private final ActionEndListener newAdvanceListener() {
         return new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 onAdvance(event);

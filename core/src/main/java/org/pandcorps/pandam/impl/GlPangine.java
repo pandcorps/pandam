@@ -604,13 +604,17 @@ public abstract class GlPangine extends Pangine {
 	
 	private final void deactivate(final Panput input, final Panput originalInput) {
 	    setDeactivating(input, true);
-		boolean uncaught = true;
+		boolean uncaught = true, possiblyRemoved = false;
+		// List can be modified during this loop, so copy before iterating to prevent Exceptions
 		for (final ActionEndListener endListener : Coltil.copy(interaction.getEndListeners(input))) {
-			//endListener.onActionEnd(ActionEndEvent.INSTANCE);
-		    if (!isActive(getActor(endListener))) {
+		    // One listener could remove another, so make sure it's still in the list
+		    if (possiblyRemoved && !Coltil.contains(interaction.getEndListeners(input), endListener)) {
+		        continue;
+		    } else if (!isActive(getActor(endListener))) {
                 continue;
             } else if (!swiping) {
                 endListener.onActionEnd(ActionEndEvent.getEvent(input, originalInput));
+                possiblyRemoved = true;
             }
 		    uncaught = false;
 		}

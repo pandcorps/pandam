@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -211,6 +211,18 @@ public final class Coltil {
 	public final static boolean contains(final Collection<?> col, final Object o) {
 		return col == null ? false : col.contains(o);
 	}
+	
+	public final static boolean contains(final Iterable<?> col, final Object o) {
+        if (col == null) {
+            return false;
+        }
+        for (final Object elem : col) {
+            if (Pantil.equals(elem, o)) {
+                return true;
+            }
+        }
+        return false;
+    }
 	
 	public final static boolean contains(final Object[] a, final Object o) {
 	    final int size = size(a);

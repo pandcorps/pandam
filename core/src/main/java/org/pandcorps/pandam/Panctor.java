@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -495,7 +495,7 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	
 	public final boolean isActive() {
         final Panlayer layer = getLayer();
-        return layer != null && layer.isActive();
+        return !isDestroyed() && (layer != null) && layer.isActive();
     }
 	
 	public final boolean isInView() {
