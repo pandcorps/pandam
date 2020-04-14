@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -43,7 +43,7 @@ public abstract class HudMeter extends Panctor {
             return;
         }
         final Panple pos = getPosition();
-        final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
+        final float x = pos.getX(), y = pos.getY(), zBlank = pos.getZ(), zValued = zBlank + 2;
         final int actualValue = getValue();
         if (actualValue < displayValue) {
             displayValue--;
@@ -54,20 +54,16 @@ public abstract class HudMeter extends Panctor {
             }
             BotsnBoltsGame.fxHealth.startSound();
         }
-        final int value = displayValue;
-        final int end = MAX_VALUE - 1;
-        for (int i = 0; i < MAX_VALUE; i++) {
-            final HudMeterImages set = (value <= i) ? BotsnBoltsGame.hudMeterBlank : images;
-            final Panmage image;
-            if (i == 0) {
-                image = set.bottom;
-            } else if (i < end) {
-                image = set.middle;
-            } else {
-                image = set.top;
-            }
-            renderer.render(layer, image, x, y + (i * 2), z);
+        final int value = displayValue, end = MAX_VALUE - 1;
+        renderer.render(layer, BotsnBoltsGame.hudMeterBlank.middle, x, y, zBlank, 0, 0, 8, end * 2);
+        if (value > 0) {
+            renderer.render(layer, images.bottom, x, y, zValued);
         }
+        final int valuedMiddleHeight = Math.min(value - 1, MAX_VALUE - 2) * 2;
+        if (valuedMiddleHeight > 0) {
+            renderer.render(layer, images.middle, x, y + 2, zValued, 0, 0, 8, valuedMiddleHeight);
+        }
+        renderer.render(layer, ((value <= end) ? BotsnBoltsGame.hudMeterBlank : images).top, x, y + (end * 2), zValued);
     }
     
     protected abstract int getValue();
