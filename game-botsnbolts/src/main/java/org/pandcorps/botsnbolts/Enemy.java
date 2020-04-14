@@ -3233,6 +3233,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         private final void shatter() {
             Player.shatter(this, BotsnBoltsGame.getIceShatter());
+            BotsnBoltsGame.fxCrumble.startSound();
             destroy();
         }
         
