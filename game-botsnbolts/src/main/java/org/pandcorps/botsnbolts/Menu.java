@@ -1129,6 +1129,10 @@ public class Menu {
             room.addActor(bg);
             room.addActor(newTileMap());
             final int bossY = floorY + 1;
+            final Player p = PlayerContext.getPlayer(BotsnBoltsGame.pc);
+            if (p != null) {
+                p.getPosition().setX(0);
+            }
             final Boss boss = RoomLoader.newBoss(16, bossY, level.bossClassName);
             room.addActor(boss);
             final int textX = 8 * BotsnBoltsGame.DIM;
