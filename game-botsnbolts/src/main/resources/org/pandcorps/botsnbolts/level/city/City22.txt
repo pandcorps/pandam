@@ -1,31 +1,29 @@
 IMP|City
 
-M|xi  `-----------------\x
-M|xi  DDDGDDDDDDDDGDDDDDix
-M|xi     g        g     ix
-M|xi     g        g     ix
-M|xi     g        g     ix
-M|-,     g        g     ix
-M|x/------------) g     `-
-M|xiDDDDDGDDDDDDD g     DD
-M|xi     g        g       
-M|xi     g        g       
-M|xi     g        g       
+M|xi  `----------------\xx
+M|xi  DDDGDDDDDDDDGDDDDixx
+M|xi     g 7      g    ixx
+M|xi     g v 1    g    i(-
+M|xi 2   g v      g    iff
+M|-,     g 9      g    iff
+M|x/------------) g 4  `--
+M|xiDDDDDGDDDDDDD g    DDD
+M|xi   6 g        g   5   
+M|xi     g 3   8  g   v   
+M|xi     g        g   6   
 M|x`----------------------
 M|xxxxxxxxxxxxxxxxxxxxxxxx
 M|xxxxxxxxxxxxxxxxxxxxxxxx
 
 DOR|23|3|Boss
 
-VBX|13|8
+IMG|22|8|FinalLogoPlate|above
 
-VER|0
-BOX|2|3
-VND
+VBX|13|8
+VBX|2|3
 
 VER|1
 M|SSSSS|5|12
-DSK|2|3
 VND
 
 RPT|||||CityDay|||||CityNight

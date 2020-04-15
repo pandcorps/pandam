@@ -1,32 +1,37 @@
 IMP|City
 
-M|x/-----------------,  ix
-M|xiDDDDDGDDDDDDDDGDDD  ix
+M|xxxxxx/---------\xxi  ix
+M|x/----,GDDDDDDDD`--,  ix
+M|xiDDDDDg        GDDD  ix
 M|xi     g        g     ix
-M|xi     g        g     ix
-M|xi  (-----------------,x
-M|xi  DDDGDDDDDDDDGDDDDD/-
-M|xi     g        g     ix
-M|x`-----------------)  ix
-M|-\DDDDDGDDDDDDDDGDDD  ix
-M|xi     g        g     ix
-M|xi     g        g     ix
-M|xi  /-----------------,x
-M|xi  ixxxxxxxxxxxxxxxxxxx
+M|xi  /-\g 2      g     ix
+M|xi  ixig      9 g     ix
+M|xi  ixig  /-\ v g 1 4 ix
+M|xi3 ixig  ixi v g     ix
+M|xi  ixig  ixi v /-\   ix
+M|xi  ixig  ixi v ixi   ix
+M|xi  ixig  ixi 5 ixi   ix
+M|xi  ixig  ixi   ix`---,x
+M|xi  ix`---,x`---,xxxxxxx
 M|xi  ixxxxxxxxxxxxxxxxxxx
 
-ENM|5|10|CyanEnemy
-ENM|5|5|SaucerEnemy|false
+ENM|17|6|CyanEnemy
+ENM|11|8|CyanEnemy
+ENM|8|12|SprayCannon
+ENM|3|5|SaucerEnemy|false
 
 VER|0
-BRR|12|7|Cyan
+BRR|5|10|Cyan
+M|...|13|4
+M|DDD|13|3
+M|...|7|6
+M|GDD|7|5
 VND
 
 VER|1
-ENM|12|12|CeilingCannon
-ENM|11|8|CeilingCannon
-ENM|12|5|CeilingCannon
-BRR|12|7|Gold
+ENM|14|2|SlideEnemy
+ENM|8|2|SlideEnemy
+BRR|5|10|Gold
 VND
 
 RPT|||||CityDay|||||CityNight
