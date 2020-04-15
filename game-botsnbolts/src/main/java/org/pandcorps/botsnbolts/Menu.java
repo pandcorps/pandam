@@ -366,8 +366,9 @@ public class Menu {
         if (!isScreenGameplayLayoutNeeded()) {
             return;
         }
-        final int pd = 16, pd1 = pd + 1;
-        final int px = BotsnBoltsGame.GAME_W - pd1, py = BotsnBoltsGame.GAME_H - pd1;
+        final int pd = 16;
+        // Some devices have rounded corners and won't display an image exactly in the corner, so mirror the toggleAttack button which is lower
+        final int px = BotsnBoltsGame.GAME_W - pd - HudMeter.HUD_ICON_X, py = BotsnBoltsGame.GAME_H - HudMeter.HUD_ICON_TOP_YOFF;
         TouchButton.destroy(pause);
         pause = addButton(BotsnBoltsGame.hud, "Pause", px, py, true, true, null, imgPause, imgPause, false, null, false, pd);
     }
@@ -412,7 +413,8 @@ public class Menu {
     }
     
     private final static TouchButton addTopRightButton(final Panlayer layer, final String name, final Panmage img, final Panctor src, final ActionEndListener listener) {
-        final TouchButton btn = addButton(layer, name, BotsnBoltsGame.GAME_W - 17, BotsnBoltsGame.GAME_H - 17, true, true, null, img, img, false, null, false, 16);
+        // Some devices have rounded corners and won't display an image exactly in the corner, so move inward
+        final TouchButton btn = addButton(layer, name, BotsnBoltsGame.GAME_W - 31, BotsnBoltsGame.GAME_H - 23, true, true, null, img, img, false, null, false, 16);
         src.register(btn, listener);
         return btn;
     }

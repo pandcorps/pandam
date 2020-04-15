@@ -28,6 +28,8 @@ import org.pandcorps.pandam.*;
 
 public abstract class HudMeter extends Panctor {
     protected final static int MAX_VALUE = 28;
+    protected final static int HUD_ICON_X = 3;
+    protected final static int HUD_ICON_TOP_YOFF = 36;
     
     private final HudMeterImages images;
     private int displayValue = getValue();
@@ -92,7 +94,7 @@ public abstract class HudMeter extends Panctor {
         
         protected HudIcon(final PlayerContext pc, final int yOff) {
             this.pc = pc;
-            getPosition().set(3, Pangine.getEngine().getEffectiveHeight() - yOff, BotsnBoltsGame.DEPTH_HUD);
+            getPosition().set(HUD_ICON_X, Pangine.getEngine().getEffectiveHeight() - yOff, BotsnBoltsGame.DEPTH_HUD);
         }
         
         @Override
@@ -125,7 +127,7 @@ public abstract class HudMeter extends Panctor {
     
     protected final static class HudShootMode extends HudIcon {
         protected HudShootMode(final PlayerContext pc) {
-            super(pc, 36);
+            super(pc, HUD_ICON_TOP_YOFF);
         }
         
         @Override
