@@ -1,0 +1,26 @@
+CTX|TilesBolt
+
+PUT|<|0^0||1
+PUT|t|0^0^^3^true||1
+PUT|-|1^0||1
+PUT|I|1^0^^3^true||1
+PUT|>|2^0||1
+PUT|b|2^0^^3^true||1
+PUT|'|0^1||1
+PUT|`|1^1||1
+PUT|/|2^1||1
+PUT|\|1^1^^3^true||1
+
+PUT|*|0^2||0
+PUT|_|1^2||0
+PUT|)|1^2^^3^true||0
+PUT| |2^2||0
+
+PUT|0|2^3||0
+PUT|1|2^3^^3^true||0
+
+PUT|h|1^3||0
+
+PUT|d|3^2||0
+
+PUT|.

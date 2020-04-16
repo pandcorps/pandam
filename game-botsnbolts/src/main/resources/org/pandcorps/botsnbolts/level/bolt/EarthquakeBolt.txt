@@ -1,0 +1,12 @@
+IMP|Bolt
+
+M|'--I--/\--I`
+M|I*_I*_____\I
+M|I'-/)  t1 _.
+M|-/*_  t\`)0d
+M|I*h0 '\-I`)d
+M|I).)'/'-/It.
+M|\---I----I\`
+
+DOR|11|1|Bolt
+BLT|2|1|Bomb

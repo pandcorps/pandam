@@ -1,0 +1,12 @@
+IMP|Bolt
+
+M|<-/\-/--\-I-
+M|.*________\-
+M|d0 t)1   h_'
+M|d tI)  0 .)I
+M|.'I/) 1 '--I
+M|tI\`)0 '->'-
+M|\I--`-'-I-/I
+
+DOR|0|2|Bolt
+BLT|9|3|GrapplingBeam

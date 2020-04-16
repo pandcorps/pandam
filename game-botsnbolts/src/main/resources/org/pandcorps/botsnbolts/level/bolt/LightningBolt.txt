@@ -1,0 +1,14 @@
+IMP|Bolt
+
+M|'\-`<-/--\I/
+M|I*_I*_____\I
+M|b) b) 0   _I
+M|.)0_  '>) 1\
+M|d  1 '-`)h t
+M|d0  '-/I).)I
+M|.<--/bt\-'-I
+
+VAR|inside|Y
+
+DOR|0|0|Bolt
+BLT|9|1|Spring
