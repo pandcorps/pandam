@@ -1884,7 +1884,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 return;
             } else if (player.wallTimer == 0 && xResult == X_WALL) {
                 player.wallTimer = 1;
-                player.wallMirror = player.isMirror();
+                if (player.chv > 0) { // Player could be sliding opposite of direction Player is facing; movement direction is what matters
+                    player.wallMirror = false;
+                } else if (player.chv < 0) {
+                    player.wallMirror = true;
+                } else if (player.hv > 0) {
+                    player.wallMirror = false;
+                } else if (player.hv < 0) {
+                    player.wallMirror = true;
+                } else {
+                    player.wallMirror = player.isMirror();
+                }
             }
         }
     };

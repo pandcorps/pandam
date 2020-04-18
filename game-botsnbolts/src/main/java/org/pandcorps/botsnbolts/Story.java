@@ -781,7 +781,7 @@ public class Story {
     
     protected final static class InnerLoopScreen3 extends InnerLoopScreen {
         protected InnerLoopScreen3() {
-            super(new CharacterDefinition("Dr. Final") { @Override protected final Panmage getImage() { return Final.getCoat(); }});
+            super(new CharacterDefinition("Dr. Final", "Final") { @Override protected final Panmage getImage() { return Final.getCoat(); }});
         }
         
         @Override
