@@ -14,5 +14,20 @@
             <artifactId>core</artifactId>
             <version>1.24.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.pandcorps.pandam</groupId>
+            <artifactId>botsnbolts</artifactId>
+            <version>1.24.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.pandcorps.pandam</groupId>
+            <artifactId>championsofslam</artifactId>
+            <version>1.24.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.pandcorps.pandam</groupId>
+            <artifactId>furguardians</artifactId>
+            <version>1.24.0</version>
+        </dependency>
     </dependencies>
 </project>
