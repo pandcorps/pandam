@@ -113,7 +113,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private byte bossDoorStatus = 0;
     protected int health = HudMeter.MAX_VALUE;
     protected HudMeter healthMeter = null;
-    private GrapplingHook grapplingHook = null;
+    protected GrapplingHook grapplingHook = null;
     protected double grapplingR = 0;
     private double grapplingT = 0;
     private double grapplingV = 0;
@@ -1338,8 +1338,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final Panple getGrapplingPosition() {
-        grapplingPosition.set(getPosition());
-        grapplingPosition.addY(GRAPPLING_OFF_Y);
+        if (grapplingHook != null) { // Could have been destroyed during this step, and grapplingPosition could be used by rescue logic at this point
+            grapplingPosition.set(getPosition());
+            grapplingPosition.addY(GRAPPLING_OFF_Y);
+        }
         return grapplingPosition;
     }
     
@@ -1399,11 +1401,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
         checkGrapplingFinished();
     }
     
-    protected final void endGrapple() {
-        clearRun();
+    private final void endGrapplingState() {
         if (stateHandler == GRAPPLING_HANDLER) {
             stateHandler = NORMAL_HANDLER;
         }
+    }
+    
+    protected final void endGrapple() {
+        clearRun();
+        endGrapplingState();
         if (!destroyGrapplingHook()) {
             return;
         } else if (v <= 0) {
@@ -1581,6 +1587,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     @Override
     protected boolean onFell() {
+        endGrapplingState();
+        destroyGrapplingHook();
         if (changeRoom(0, -1)) {
             v = 0;
             return true;
@@ -1638,6 +1646,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             final float oldX = pos.getX(), oldY = pos.getY();
             final boolean oldMirror = isMirror();
             setEndRescuedPosition();
+            v = 0;
             if (isGrounded()) {
                 endRescued();
             } else {

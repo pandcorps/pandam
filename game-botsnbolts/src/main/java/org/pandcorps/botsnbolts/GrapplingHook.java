@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -82,6 +82,8 @@ public final class GrapplingHook extends Chr {
         final Panlayer layer = getLayer();
         if (layer == null) {
             return;
+        } else if (player.grapplingHook == null) {
+            return; // Must have been destroyed this step; don't render or manipulate grappling position
         }
         final Panmage image = player.pi.link;
         final boolean mirror = player.isMirror();
