@@ -49,6 +49,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     protected ShootableDoorDefinition def = null;
     private int temperature = 0;
     private int ineffectiveCount = 0;
+    private boolean closed = false;
     
     static {
         final Panple min = new FinPanple2(-12, 0);
@@ -117,7 +118,12 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
     }
     
-    protected void closeDoor() {
+    protected final void closeDoor() {
+        closed = true;
+        onCloseDoor();
+    }
+    
+    protected void onCloseDoor() {
         setDoorEnergyTiles(def.door);
         closeTunnel();
     }
@@ -163,6 +169,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     }
     
     protected void openDoor() {
+        closed = false;
         destroy(); // Do before changing tiles; onDestroy will clobber tile changes in this method
         final int n = openTunnel();
         final TileMap tm = BotsnBoltsGame.tm;
@@ -203,10 +210,27 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     
     @Override
     public final void onStep(final StepEvent event) {
-        if (def.prev != null) {
+        if (!closed) {
+            return;
+        } else if (def.prev != null) {
             temperature--;
             if (temperature < def.prev.nextTemperature) {
                 setDefinition(def.prev);
+            }
+        } else if (def.flash1 != null) {
+            final ShootableDoorDefinition flash;
+            final long clock = Chr.getClock() % 30;
+            if (clock < 2) {
+                flash = def.flash1;
+            } else if (clock < 5) {
+                flash = def.flash2;
+            } else if (clock < 7) {
+                flash = def.flash1;
+            } else {
+                flash = def.flash0;
+            }
+            if (flash != def) {
+                setDefinition(flash);
             }
         }
     }
@@ -231,7 +255,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                     final Player player = projectile.src;
                     final Profile prf = Player.getProfile(player);
                     if ((prf != null) && prf.boltUsageHints) {
-                        final Upgrade hintUpgrade = hintShootMode.getRequiredUpgrade();
+                        final Upgrade hintUpgrade = (hintShootMode == null) ? null : hintShootMode.getRequiredUpgrade();
                         if ((hintUpgrade != null) && !prf.isUpgradeAvailable(hintUpgrade)) {
                             BotsnBoltsGame.notify("Find new Bolts and try again later");
                         } else if (hintText != null) {
@@ -313,6 +337,9 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         private final Panmage[] barrierImgs;
         private final ShootMode hintShootMode;
         private final CharSequence hintText;
+        private ShootableDoorDefinition flash0 = null;
+        private ShootableDoorDefinition flash1 = null;
+        private ShootableDoorDefinition flash2 = null;
         
         protected ShootableDoorDefinition(final Panframe[] door, final Panframe[][] opening, final ShootableDoorDefinition next,
                                           final int nextTemperature, final ShootMode requiredShootMode, final Integer requiredPower,
@@ -326,9 +353,15 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             this.barrierImgs = barrierImgs;
             this.hintShootMode = hintShootMode;
             this.hintText = hintText;
-            if (next != null) {
+            if ((next != null) && (next.prev == null)) {
                 next.prev = this;
             }
+        }
+        
+        protected final void setFlash(final ShootableDoorDefinition flash0, final ShootableDoorDefinition flash1, final ShootableDoorDefinition flash2) {
+            this.flash0 = flash0;
+            this.flash1 = flash1;
+            this.flash2 = flash2;
         }
     }
     
@@ -362,7 +395,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         }
         
         @Override
-        protected final void closeDoor() {
+        protected final void onCloseDoor() {
             openIndex = 0;
         }
         
