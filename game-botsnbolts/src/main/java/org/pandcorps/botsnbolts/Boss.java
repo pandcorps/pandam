@@ -4458,7 +4458,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             initStatic();
             deactivateCharacters();
-            BotsnBoltsGame.initHealthMeter(healthMeter = Enemy.newHealthMeter(this), false);
+            BotsnBoltsGame.initEnemyHealthMeter(healthMeter = Enemy.newHealthMeter(this));
         }
         
         protected boolean isHealthMeterNeeded() {

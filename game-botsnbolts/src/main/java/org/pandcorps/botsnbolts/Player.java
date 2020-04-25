@@ -113,6 +113,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private byte bossDoorStatus = 0;
     protected int health = HudMeter.MAX_VALUE;
     protected HudMeter healthMeter = null;
+    protected int stamina = HudMeter.MAX_VALUE;
+    protected HudMeter staminaMeter = null;
     protected GrapplingHook grapplingHook = null;
     protected double grapplingR = 0;
     private double grapplingT = 0;
@@ -599,6 +601,24 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
+    private final boolean useStamina(final int amount) {
+        if (prf.infiniteStamina) {
+            return true;
+        } else if (amount > stamina) {
+            return false;
+        }
+        stamina -= amount;
+        return true;
+    }
+    
+    private final boolean useAttackStamina(final int amount) {
+        if (useStamina(amount)) {
+            return true;
+        }
+        setShootMode(SHOOT_NORMAL);
+        return false;
+    }
+    
     protected final boolean freeze() {
         if (isInvincible()) {
             return false;
@@ -677,6 +697,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     private final void finishDefeat() {
         healthMeter.destroy();
+        Panctor.destroy(staminaMeter);
         if (startRoom == null) {
             RoomLoader.reloadCurrentRoom();
         } else {
@@ -1763,6 +1784,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return healthMeter;
     }
     
+    protected final HudMeter newStaminaMeter() {
+        staminaMeter = new HudMeter(BotsnBoltsGame.hudMeterBoss) {
+            @Override protected final int getValue() {
+                return stamina;
+            }};
+        return staminaMeter;
+    }
+    
     protected abstract static class StateHandler {
         protected abstract void onJump(final Player player);
         
@@ -2374,6 +2403,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final boolean isAvailable(final Player player) {
             return player.isUpgradeAvailable(getRequiredUpgrade());
         }
+        
+        protected abstract int getRequiredStamina();
     }
     
     protected abstract static class ShootMode extends InputMode {
@@ -2405,6 +2436,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final void shoot(final Player player) {
             final long clock = getClock();
             if (clock - player.lastShotFired > delay) {
+                if (!player.useAttackStamina(getRequiredStamina())) {
+                    SHOOT_NORMAL.shoot(player);
+                    return;
+                };
                 player.afterShoot(clock);
                 createProjectile(player);
             }
@@ -2421,6 +2456,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         protected final void shootSpecial(final Player player, final int power) {
+            if (!player.useAttackStamina(power)) {
+                SHOOT_NORMAL.shoot(player);
+                return;
+            }
             player.afterShoot(getClock());
             player.newProjectile(VEL_PROJECTILE, 0, power);
         }
@@ -2572,6 +2611,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final int getRequiredStamina() {
+            return 0;
+        }
+        
+        @Override
         protected final void createProjectile(final Player player) {
             createDefaultProjectile(player);
         }
@@ -2588,6 +2632,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final int getRequiredStamina() {
+            return 1;
+        }
+        
+        @Override
         protected final void createProjectile(final Player player) {
             createDefaultProjectile(player);
         }
@@ -2597,6 +2646,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
+        }
+        
+        @Override
+        protected final int getRequiredStamina() {
+            return 5;
         }
         
         @Override
@@ -2712,7 +2766,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         private final boolean shootChargedIfNeeded(final Player player) {
             final long diff = getClock() - player.startCharge;
-            if (diff > CHARGE_TIME_BIG) {
+            if ((diff > CHARGE_TIME_BIG) && (player.stamina >= Projectile.POWER_MAXIMUM)) {
                 shootSpecial(player, Projectile.POWER_MAXIMUM);
                 return true;
             } else if (diff > CHARGE_TIME_MEDIUM) {
@@ -2720,6 +2774,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 return true;
             }
             return false;
+        }
+        
+        @Override
+        protected final int getRequiredStamina() {
+            return 0;
         }
         
         @Override
@@ -2735,6 +2794,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final int getRequiredStamina() {
+            return 0;
+        }
+        
+        @Override
         protected final void createProjectile(final Player player) {
             player.newBomb();
         }
@@ -2747,7 +2811,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
             super(requiredUpgrade);
         }
         
-        protected abstract void onAirJump(final Player player);
+        protected final void onAirJump(final Player player) {
+            if (player.useStamina(getRequiredStamina())) {
+                airJump(player);
+            }
+        }
+        
+        protected abstract void airJump(final Player player);
         
         //@OverrideMe
         protected void onDeselect(final Player player) {
@@ -2756,20 +2826,35 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final static JumpMode JUMP_NORMAL = new JumpMode(null) {
         @Override
-        protected final void onAirJump(final Player player) {
+        protected final int getRequiredStamina() {
+            return 0;
+        }
+        
+        @Override
+        protected final void airJump(final Player player) {
         }
     };
     
     protected final static JumpMode JUMP_BALL = new JumpMode(Profile.UPGRADE_BALL) {
         @Override
-        protected final void onAirJump(final Player player) {
+        protected final int getRequiredStamina() {
+            return 0;
+        }
+        
+        @Override
+        protected final void airJump(final Player player) {
             player.startBall();
         }
     };
     
     protected final static JumpMode JUMP_GRAPPLING_HOOK = new JumpMode(Profile.UPGRADE_GRAPPLING_BEAM) {
         @Override
-        protected final void onAirJump(final Player player) {
+        protected final int getRequiredStamina() {
+            return 1;
+        }
+        
+        @Override
+        protected final void airJump(final Player player) {
             player.startGrapple();
             //TODO Maybe holding jump until highest point could also trigger grappling
         }
@@ -2782,7 +2867,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final static JumpMode JUMP_SPRING = new JumpMode(Profile.UPGRADE_SPRING) {
         @Override
-        protected final void onAirJump(final Player player) {
+        protected final int getRequiredStamina() {
+            return 1;
+        }
+        
+        @Override
+        protected final void airJump(final Player player) {
             player.startSpring();
         }
     };

@@ -49,6 +49,8 @@ public class Profile {
     /*package*/ boolean boltUsageHints = true;
     /*package*/ boolean endureSpikes = true;
     /*package*/ boolean adaptiveBatteries = true;
+    /*package*/ boolean infiniteStamina = true;
+    /*package*/ boolean infiniteLives = true;
     private final Profile old;
     
     /*package*/ Profile() {
@@ -85,12 +87,15 @@ public class Profile {
         boltUsageHints = src.boltUsageHints;
         endureSpikes = src.endureSpikes;
         adaptiveBatteries = src.adaptiveBatteries;
+        infiniteStamina = src.infiniteStamina;
+        infiniteLives = src.infiniteLives;
     }
     
     private final boolean isSame() {
         return (shootMode == old.shootMode) && (jumpMode == old.jumpMode) && (autoClimb == old.autoClimb) && (autoCharge == old.autoCharge)
                 && (levelSuggestions == old.levelSuggestions) && (frequentCheckpoints == old.frequentCheckpoints)
-                && (boltUsageHints == old.boltUsageHints) && (endureSpikes == old.endureSpikes) && (adaptiveBatteries == old.adaptiveBatteries);
+                && (boltUsageHints == old.boltUsageHints) && (endureSpikes == old.endureSpikes) && (adaptiveBatteries == old.adaptiveBatteries)
+                && (infiniteStamina == old.infiniteStamina) && (infiniteLives == old.infiniteLives);
     }
     
     private final void loadBolts() {
@@ -156,6 +161,8 @@ public class Profile {
         boltUsageHints = seg.getBoolean(6, boltUsageHints);
         endureSpikes = seg.getBoolean(7, endureSpikes);
         adaptiveBatteries = seg.getBoolean(8, adaptiveBatteries);
+        infiniteStamina = seg.getBoolean(9, infiniteStamina);
+        infiniteLives = seg.getBoolean(10, infiniteLives);
     }
     
     /*package*/ final void saveBolts() {
@@ -188,6 +195,8 @@ public class Profile {
         seg.setBoolean(6, boltUsageHints);
         seg.setBoolean(7, endureSpikes);
         seg.setBoolean(8, adaptiveBatteries);
+        seg.setBoolean(9, infiniteStamina);
+        seg.setBoolean(10, infiniteLives);
         Savtil.save(seg, LOC_PROFILE);
         old.load(this);
     }

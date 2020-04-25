@@ -1062,6 +1062,9 @@ public class Menu {
             addOption(bg, "Endure spikes", new OptionSetter() {
                 @Override public final boolean set() {
                     return (prf.endureSpikes = !prf.endureSpikes); }});
+            addOption(bg, "Infinite upgrade usage", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.infiniteStamina = !prf.infiniteStamina); }});
             addTopRightButton(room, "LevelSelect", RoomLoader.isFirstLevelFinished() ? imgLevelSelect : imgPlay, bg, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     exitOptions();

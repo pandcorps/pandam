@@ -1289,6 +1289,7 @@ public final class BotsnBoltsGame extends BaseGame {
             timgPrev = timg;
             timgName = imgName;
             final Pangine engine = Pangine.getEngine();
+            engine.setEntityMapEnabled(false);
             timg = engine.createImage("bg", RES + "bg/" + imgName + ".png");
             if ((imgMap == null) || (tileSize != prevTileSize)) {
                 imgMap = tm.splitImageMap(timg);
@@ -1355,7 +1356,10 @@ public final class BotsnBoltsGame extends BaseGame {
         private final static void newHud(final Panroom room, final Player player) {
             hud = createHud(room);
             hud.setClearDepthEnabled(false);
-            initHealthMeter(player.newHealthMeter(), true);
+            initHudMeter(player.newHealthMeter(), HEALTH_X);
+            if (!player.prf.infiniteStamina) {
+                initHudMeter(player.newStaminaMeter(), HEALTH_X + HEALTH_W);
+            }
             Menu.addToggleButtons(new HudShootMode(player.pc), new HudJumpMode(player.pc));
         }
         
@@ -1365,14 +1369,15 @@ public final class BotsnBoltsGame extends BaseGame {
         }
     }
     
-    protected final static void initHealthMeter(final Panctor healthMeter, final boolean left) {
-        final Pangine engine = Pangine.getEngine();
-        int x = 24;
-        if (!left) {
-            x = engine.getEffectiveWidth() - x - 8;
-        }
-        healthMeter.getPosition().set(x, engine.getEffectiveHeight() - 73, DEPTH_HUD);
+    private final static int HEALTH_X = 24, HEALTH_W = 8;
+    
+    protected final static void initHudMeter(final Panctor healthMeter, final int x) {
+        healthMeter.getPosition().set(x, GAME_H - 73, DEPTH_HUD);
         hud.addActor(healthMeter);
+    }
+    
+    protected final static void initEnemyHealthMeter(final Panctor healthMeter) {
+        initHudMeter(healthMeter, GAME_W - HEALTH_X - HEALTH_W);
     }
     
     protected final static void initPlayerStart() {

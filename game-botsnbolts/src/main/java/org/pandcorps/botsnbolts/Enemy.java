@@ -4279,7 +4279,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     protected final HudMeter addHealthMeter() {
         final HudMeter healthMeter = newHealthMeter();
-        BotsnBoltsGame.initHealthMeter(healthMeter, false);
+        BotsnBoltsGame.initEnemyHealthMeter(healthMeter);
         return healthMeter;
     }
     
