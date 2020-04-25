@@ -91,6 +91,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long startCharge = NULL_CLOCK;
     private long lastCharge = NULL_CLOCK;
     private long lastHurt = NULL_CLOCK;
+    private long lastStamina = NULL_CLOCK;
     private long lastFrozen = NULL_CLOCK;
     private long lastBubble = NULL_CLOCK;
     private long lastJump = NULL_CLOCK;
@@ -608,6 +609,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return false;
         }
         stamina -= amount;
+        lastStamina = getClock();
         return true;
     }
     
@@ -903,6 +905,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return false;
         }
         prevUnderwater = splashIfNeeded(this, prevUnderwater, this);
+        if (stamina < HudMeter.MAX_VALUE) {
+            final long clock = getClock();
+            if ((clock - lastStamina) >= 30) {
+                lastStamina = clock;
+                stamina++;
+            }
+        }
         final boolean ret = onStepState();
         queuedX = 0;
         return ret;
