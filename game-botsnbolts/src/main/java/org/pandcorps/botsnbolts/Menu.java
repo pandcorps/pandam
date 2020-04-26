@@ -817,6 +817,7 @@ public class Menu {
         RoomLoader.levelVersion = level.version;
         RoomLoader.level = level;
         RoomLoader.visitedRooms.clear();
+        BotsnBoltsGame.pc.lives = 5;
     }
     
     protected final static void startLevelIntroScreen(final BotLevel level) {
@@ -1065,6 +1066,9 @@ public class Menu {
             addOption(bg, "Infinite upgrade usage", new OptionSetter() {
                 @Override public final boolean set() {
                     return (prf.infiniteStamina = !prf.infiniteStamina); }});
+            addOption(bg, "Infinite 1-ups", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.infiniteLives = !prf.infiniteLives); }});
             addTopRightButton(room, "LevelSelect", RoomLoader.isFirstLevelFinished() ? imgLevelSelect : imgPlay, bg, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     exitOptions();

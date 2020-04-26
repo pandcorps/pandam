@@ -4418,6 +4418,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static PlayerContext newPlayerContext(final PlayerImages pi) {
         final Profile prf = new Profile(true);
         prf.autoCharge = true;
+        prf.infiniteStamina = true;
         return new PlayerContext(prf, pi);
     }
     

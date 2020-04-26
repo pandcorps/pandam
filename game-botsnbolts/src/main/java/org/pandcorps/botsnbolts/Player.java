@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.pandcorps.botsnbolts.Animal.*;
 import org.pandcorps.botsnbolts.Extra.*;
@@ -32,6 +33,7 @@ import org.pandcorps.botsnbolts.Projectile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.chr.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -40,6 +42,7 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.visual.*;
 
@@ -116,6 +119,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected HudMeter healthMeter = null;
     protected int stamina = HudMeter.MAX_VALUE;
     protected HudMeter staminaMeter = null;
+    protected Pantext lifeCounter = null;
     protected GrapplingHook grapplingHook = null;
     protected double grapplingR = 0;
     private double grapplingT = 0;
@@ -700,6 +704,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final void finishDefeat() {
         healthMeter.destroy();
         Panctor.destroy(staminaMeter);
+        Panctor.destroy(lifeCounter);
+        if (!prf.infiniteLives) {
+            pc.lives--;
+            if (pc.lives <= 0) {
+                Menu.goLevelSelect();
+                return;
+            }
+        }
         if (startRoom == null) {
             RoomLoader.reloadCurrentRoom();
         } else {
@@ -1801,6 +1813,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return staminaMeter;
     }
     
+    protected final Pantext newLifeCounter() {
+        lifeCounter = new Pantext(Pantil.vmid(), BotsnBoltsGame.font, new CallSequence(new Callable<String>() {
+            @Override public final String call() {
+                return "X" + pc.lives;
+            }}));
+        return lifeCounter;
+    }
+    
     protected abstract static class StateHandler {
         protected abstract void onJump(final Player player);
         
@@ -2479,6 +2499,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected ControlScheme ctrl;
         protected final PlayerImages pi;
         protected Player player = null;
+        protected int lives = 5;
         private Player srcPlayer = null;
         
         protected PlayerContext(final Profile prf, final PlayerImages pi) {

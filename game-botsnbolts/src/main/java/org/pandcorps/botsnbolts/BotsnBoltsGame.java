@@ -1357,8 +1357,14 @@ public final class BotsnBoltsGame extends BaseGame {
             hud = createHud(room);
             hud.setClearDepthEnabled(false);
             initHudMeter(player.newHealthMeter(), HEALTH_X);
-            if (!player.prf.infiniteStamina) {
+            final Profile prf = player.prf;
+            if (!prf.infiniteStamina) {
                 initHudMeter(player.newStaminaMeter(), HEALTH_X + HEALTH_W);
+            }
+            if (!prf.infiniteLives) {
+                final Pantext lifeCounter = player.newLifeCounter();
+                lifeCounter.getPosition().set(HEALTH_X - 8, HEALTH_Y - 9, DEPTH_HUD);
+                hud.addActor(lifeCounter);
             }
             Menu.addToggleButtons(new HudShootMode(player.pc), new HudJumpMode(player.pc));
         }
@@ -1369,10 +1375,10 @@ public final class BotsnBoltsGame extends BaseGame {
         }
     }
     
-    private final static int HEALTH_X = 24, HEALTH_W = 8;
+    private final static int HEALTH_X = 24, HEALTH_Y = GAME_H - 73, HEALTH_W = 8;
     
     protected final static void initHudMeter(final Panctor healthMeter, final int x) {
-        healthMeter.getPosition().set(x, GAME_H - 73, DEPTH_HUD);
+        healthMeter.getPosition().set(x, HEALTH_Y, DEPTH_HUD);
         hud.addActor(healthMeter);
     }
     
