@@ -51,6 +51,7 @@ public class Profile {
     /*package*/ boolean adaptiveBatteries = true;
     /*package*/ boolean infiniteStamina = true;
     /*package*/ boolean infiniteLives = true;
+    /*package*/ final static int NUM_DIFFICULTY_SETTINGS = 7;
     private final Profile old;
     
     /*package*/ Profile() {
@@ -199,6 +200,15 @@ public class Profile {
         seg.setBoolean(10, infiniteLives);
         Savtil.save(seg, LOC_PROFILE);
         old.load(this);
+    }
+    
+    /*package*/ final int getDifficulty() {
+        return toDifficulty(levelSuggestions) + toDifficulty(frequentCheckpoints) + toDifficulty(boltUsageHints) + toDifficulty(endureSpikes) +
+                toDifficulty(adaptiveBatteries) + toDifficulty(infiniteStamina) + toDifficulty(infiniteLives);
+    }
+    
+    private final static int toDifficulty(final boolean setting) {
+        return setting ? 0 : 1;
     }
     
     /*package*/ final ShootMode getShootMode(final String name) {

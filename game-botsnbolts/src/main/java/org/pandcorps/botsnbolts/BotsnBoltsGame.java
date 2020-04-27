@@ -50,7 +50,7 @@ import org.pandcorps.pandax.visual.*;
 
 public final class BotsnBoltsGame extends BaseGame {
     protected final static String TITLE = "Bots 'n Bolts";
-    protected final static String VERSION = "1.0.1";
+    protected final static String VERSION = "1.0.2";
     protected final static String YEAR = "2016-2020";
     protected final static String AUTHOR = "Andrew M. Martin";
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
@@ -1200,11 +1200,12 @@ public final class BotsnBoltsGame extends BaseGame {
             final Panple size = title.getSize();
             final int w = engine.getEffectiveWidth(), w2 = w / 2;
             actor.getPosition().set((w - size.getX()) / 2, (engine.getEffectiveHeight() - size.getY()) * 3 / 4);
-            final Panroom room = Pangame.getGame().getCurrentRoom();
+            room = Pangame.getGame().getCurrentRoom();
             room.addActor(actor);
-            addText(room, Menu.isTouchEnabled() ? "Tap to start" : "Press anything", w2, 56);
-            addText(room, COPYRIGHT, w2, 26);
-            addText(room, AUTHOR, w2, 16);
+            addText(room, Menu.isTouchEnabled() ? "Tap to start" : "Press anything", w2, 61);
+            addText(room, COPYRIGHT, w2, 34);
+            addText(room, AUTHOR, w2, 24);
+            Menu.addVersion();
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     final Device device = event.getInput().getDevice();

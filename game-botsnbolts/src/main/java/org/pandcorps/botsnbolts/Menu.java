@@ -1046,6 +1046,7 @@ public class Menu {
             engine.setBgColor(new FinPancolor(96));
             final Panctor bg = new LevelStartBg(24);
             room.addActor(bg);
+            addText(BotsnBoltsGame.GAME_W / 2, 180, "Try disabling these if you like a challenge").centerX();
             optionsY = 156;
             final Profile prf = BotsnBoltsGame.pc.prf;
             addOption(bg, "Suggest next level", new OptionSetter() {
@@ -1069,6 +1070,13 @@ public class Menu {
             addOption(bg, "Infinite 1-ups", new OptionSetter() {
                 @Override public final boolean set() {
                     return (prf.infiniteLives = !prf.infiniteLives); }});
+            final int meterTextX = BotsnBoltsGame.GAME_W - optionsX - 32;
+            addText(meterTextX, 156, "Hard");
+            addText(meterTextX, 60, "Easy");
+            final HudMeter meter = newDifficultyMeter();
+            meter.getPosition().set(meterTextX + 12, 84);
+            BotsnBoltsGame.addActor(meter);
+            addVersion();
             addTopRightButton(room, "LevelSelect", RoomLoader.isFirstLevelFinished() ? imgLevelSelect : imgPlay, bg, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     exitOptions();
@@ -1082,20 +1090,37 @@ public class Menu {
         }
     }
     
+    private final static HudMeter newDifficultyMeter() {
+        return new HudMeter(BotsnBoltsGame.hudMeterBoss) {
+            @Override protected final int getValue() {
+                final float diff = BotsnBoltsGame.pc.prf.getDifficulty();
+                return Math.round(diff * HudMeter.MAX_VALUE / Profile.NUM_DIFFICULTY_SETTINGS);
+            }};
+    }
+    
+    protected final static void addVersion() {
+        addText(16, 8, BotsnBoltsGame.VERSION);
+    }
+    
     private final static void exitOptions() {
         BotsnBoltsGame.pc.prf.saveProfile(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
         goLevelSelect();
     }
     
-    private final static void addOption(final Panctor src, final String label, final OptionSetter setter) {
+    private final static Pantext addText(final int x, final int y, final String label) {
         final Pantext text = new Pantext(Pantil.vmid(), BotsnBoltsGame.font, label);
-        text.getPosition().set(optionsX, optionsY);
+        text.getPosition().set(x, y, BotsnBoltsGame.DEPTH_HUD_TEXT);
         BotsnBoltsGame.addActor(text);
+        return text;
+    }
+    
+    private final static void addOption(final Panctor src, final String label, final OptionSetter setter) {
+        addText(optionsX, optionsY, label);
         setter.set(); // Flip current value just to flip it back to see what it was below
         final boolean on = setter.set();
         final Panmage img = on ? imgOn : imgOff;
         final TouchButton btn;
-        btn = addButton(BotsnBoltsGame.room, label, BotsnBoltsGame.GAME_W - 16 - optionsX, optionsY - 4, true, true, null, img, img, true, null, false, 16);
+        btn = addButton(BotsnBoltsGame.room, label, BotsnBoltsGame.GAME_W - 16 - optionsX - 52, optionsY - 4, true, true, null, img, img, true, null, false, 16);
         src.register(btn, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 final Panmage imgNew = setter.set() ? imgOn : imgOff;
@@ -1103,7 +1128,7 @@ public class Menu {
                 btn.setImageInactive(imgNew);
                 BotsnBoltsGame.fxMenuClick.startSound();
             }});
-        optionsY -= 24;
+        optionsY -= 16;
     }
     
     private static interface OptionSetter {

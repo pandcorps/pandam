@@ -67,7 +67,7 @@ public final class LogoScreen extends FadeScreen {
     
     @Override
     protected final void onLoading() {
-        text.getPosition().set(1, 1);
+        text.getPosition().set(16, 16);
         Chartil.set(name, "LOADING");
         img.destroy();
         c.getLayer().getBlendColor().setA(Mathtil.SHORT_0);

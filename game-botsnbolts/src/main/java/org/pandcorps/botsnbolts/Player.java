@@ -825,7 +825,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final static void newDiver(final Panlayer layer, final boolean srcMirror, final Panmage img, final float x, final float y, final float xv, final float yv,
                                        final boolean mirror, final boolean flip, final boolean needed) {
-        if (!needed) {
+        if (!needed || (layer == null)) {
             return;
         }
         final Diver diver = new Diver(layer, img, x, y, BotsnBoltsGame.DEPTH_BURST, xv * newDiveMultiplier(), yv * newDiveMultiplier(), gTuple);
@@ -1816,7 +1816,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final Pantext newLifeCounter() {
         lifeCounter = new Pantext(Pantil.vmid(), BotsnBoltsGame.font, new CallSequence(new Callable<String>() {
             @Override public final String call() {
-                return "X" + pc.lives;
+                final int livesRemaining = pc.lives - 1; // "lives" is the Player's current number of lives; display lives remaining after the current life
+                return "X" + livesRemaining;
             }}));
         return lifeCounter;
     }
