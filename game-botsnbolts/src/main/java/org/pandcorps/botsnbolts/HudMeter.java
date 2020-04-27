@@ -41,7 +41,7 @@ public abstract class HudMeter extends Panctor {
     @Override
     protected final void renderView(final Panderer renderer) {
         final Panlayer layer = getLayer();
-        if (layer == null) {
+        if ((layer == null) || !isNeeded()) {
             return;
         }
         final Panple pos = getPosition();
@@ -69,6 +69,10 @@ public abstract class HudMeter extends Panctor {
     }
     
     protected abstract int getValue();
+    
+    protected boolean isNeeded() {
+        return true;
+    }
     
     protected void onMaxDisplayReached() {
     }
@@ -138,7 +142,7 @@ public abstract class HudMeter extends Panctor {
         @Override
         protected final boolean isBasicIconNeeded() {
             final Profile prf = pc.prf;
-            return prf.isUpgradeAvailable(Profile.UPGRADE_SPREAD) || prf.isUpgradeAvailable(Profile.UPGRADE_CHARGE) || prf.isUpgradeAvailable(Profile.UPGRADE_RAPID);
+            return prf.isAttackUpgradeAvailable();
         }
         
         @Override
@@ -160,7 +164,7 @@ public abstract class HudMeter extends Panctor {
         @Override
         protected final boolean isBasicIconNeeded() {
             final Profile prf = pc.prf;
-            return prf.isUpgradeAvailable(Profile.UPGRADE_BALL) || prf.isUpgradeAvailable(Profile.UPGRADE_GRAPPLING_BEAM) || prf.isUpgradeAvailable(Profile.UPGRADE_SPRING);
+            return prf.isJumpUpgradeAvailable();
         }
         
         @Override

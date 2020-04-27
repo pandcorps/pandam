@@ -229,6 +229,14 @@ public class Profile {
         return upgrades.contains(upgrade);
     }
     
+    /*package*/ final boolean isAttackUpgradeAvailable() {
+        return isUpgradeAvailable(UPGRADE_SPREAD) || isUpgradeAvailable(UPGRADE_CHARGE) || isUpgradeAvailable(UPGRADE_RAPID);
+    }
+    
+    /*package*/ final boolean isJumpUpgradeAvailable() {
+        return isUpgradeAvailable(UPGRADE_BALL) || isUpgradeAvailable(UPGRADE_GRAPPLING_BEAM) || isUpgradeAvailable(UPGRADE_SPRING);
+    }
+    
     /*package*/ final boolean isAvailable(final String name) {
         return (disks.contains(name) || isUpgradeAvailable(name));
     }

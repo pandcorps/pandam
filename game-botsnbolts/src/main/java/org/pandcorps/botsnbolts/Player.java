@@ -1809,6 +1809,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         staminaMeter = new HudMeter(BotsnBoltsGame.hudMeterBoss) {
             @Override protected final int getValue() {
                 return stamina;
+            }
+            @Override protected final boolean isNeeded() {
+                return prf.isAttackUpgradeAvailable() || prf.isJumpUpgradeAvailable();
             }};
         return staminaMeter;
     }
