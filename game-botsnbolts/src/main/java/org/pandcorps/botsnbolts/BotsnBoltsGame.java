@@ -1218,17 +1218,21 @@ public final class BotsnBoltsGame extends BaseGame {
                     }
                     pc.setControlScheme(ctrl);
                     fxMenuClick.startSound();
-                    if (RoomLoader.isFirstLevelFinished()) {
-                        Menu.goLevelSelect();
-                    } else {
-                        Menu.goOptions();
-                    }
+                    startGame();
                 }});
         }
         
         @Override
         protected final void destroy() {
             title.destroy();
+        }
+    }
+    
+    protected final static void startGame() {
+        if (RoomLoader.isFirstLevelFinished()) {
+            Menu.goLevelSelect();
+        } else {
+            Menu.goOptions();
         }
     }
     

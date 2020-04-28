@@ -708,7 +708,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (!prf.infiniteLives) {
             pc.lives--;
             if (pc.lives <= 0) {
-                Menu.goLevelSelect();
+                BotsnBoltsGame.startGame();
                 return;
             }
         }
