@@ -1,0 +1,33 @@
+IMP|Array
+
+M|}i4i{==}q#Q{===_==}q{===
+M|}i7`------------------\{
+M|}i122CDE22231222222223i{
+M|Qi4  789   64    13  6i{
+M|}i4        64    79  6iq
+M|}i>>>    1222223   ...i{
+M|}iCDD    4     6   DDEiQ
+M|}i4     <<<    6     6i{
+M|}i4     DCD    6     1i{
+M|Qi2223   4    >>>    7i{
+M|}i   6   4    DED    6iq
+M|}i555688845555568888t9i{
+M|}`-----------------)i3i{
+M|==}Q{=_==}q{=}Q{===}i6i{
+
+LDR|21|0|3
+LDR|2|11|3
+
+ENM|18|2|SpringEnemy|0
+ENM|12|2|SpringEnemy|0|10
+ENM|6|2|SpringEnemy|0|12
+ENM|19|10|SaucerEnemy
+ENM|20|9|CyanEnemy|true
+
+CNV|14|4|3|true
+CNV|8|6|3|false
+CNV|2|8|3|true
+
+M|$$$$$$$$$$$$$$$$$$|2|2
+
+RPT|2|3|20|9|Array

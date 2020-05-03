@@ -1,0 +1,28 @@
+IMP|Array
+
+M|==_======_==========}Q{=
+M|====}qQq{==_==}q+q{=====
+M|}q#  #/---------------\{
+M|_=}  +i1222CDDDDDDDDDDi{
+M|=_}  #i4   4          iq
+M|==}  #i4   78888888888iq
+M|=_===}i4     64    4  i{
+M|Q/----,4     64    788i{
+M|Qi  1234     64      6i{
+M|}i  4564     64      6i{
+M|}i  781222388978122389i+
+M|}i  /---------------\3i{
+M|}`--,==}q#q{=======}i6i{
+M|======_=======_===Q#i6i{
+
+IMG|3|8|FinalLogoPlate|above
+IMG|3|10|FinalLogoPlate|above
+
+LDR|21|0|3
+
+EXT|2|3|LaunchCapsule|40|460
+
+ENM|7|3|SpringEnemy|3|||5
+ENM|9|3|SpringEnemy|3|||
+
+RPT|7|3|15|8|Array
