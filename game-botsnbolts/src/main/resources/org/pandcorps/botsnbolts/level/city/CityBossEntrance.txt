@@ -2,15 +2,15 @@ IMP|City
 
 M|x/--------------------\x
 M|xiDDDDDGDDDDDDDDGDDDDDix
-M|xi     g        g     ix
-M|xi  /--------------\  ix
-M|xi  i              i  ix
-M|xi  i              i  ix
-M|-,  i              i  `-
-M|DD  i              i  DD
+M|xi     g 6      g     ix
+M|)i  /--------------\  ix
+M|.i  i              i 8ix
+M|.i  i              i  ix
+M|-, 5i              i  `-
+M|DD  i              i9 DD
 M|    `--------------,    
 M|    DDDGDDDDDDDDGDDD    
-M|       g        g       
+M|       g    7   g       
 M|------------------------
 M|xxxxxxxxxxxxxxxxxxxxxxxx
 M|xxxxxxxxxxxxxxxxxxxxxxxx
@@ -18,7 +18,7 @@ M|xxxxxxxxxxxxxxxxxxxxxxxx
 DOR|0|3|Boss
 DOR|23|3|Boss
 
-RPT|0|0|24|5|CityDay|||||CityNight
-RPT|0|11|24|3|CityDay|||||CityNight
+RPT|0|0|24|6|CityDay|||||CityNight
+RPT|0|10|24|4|CityDay|||||CityNight
 RPT|0|0|4|14|CityDay|||||CityNight
 RPT|20|0|4|14|CityDay|||||CityNight
