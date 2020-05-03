@@ -1,0 +1,26 @@
+IMP|Final
+
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|iTTTTTTTTTTTTTTTTTTTTTTi
+M|idDdDdDdDdDdDdDdDdDdDdDi
+M|,                      `
+M|#                      d
+M|!                       
+M|!                       
+M|@                       
+M|\###t#=#=t##=#t#=##t#=#/
+M|i!@!i!#!=i@!#!i@#!!i!#!i
+M|i!#!i!!!#i#!!!i#!!!i!!!i
+
+ROM||||||false
+
+VAR|levelMusicPlayedDuringBoss|Y
+
+DOR|23|3|BossLeft
+
+EXT|13|3|FinalWagonSpawner
+
+RPT||||8|Final

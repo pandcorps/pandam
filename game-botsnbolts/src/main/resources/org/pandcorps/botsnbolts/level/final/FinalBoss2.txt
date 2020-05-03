@@ -1,0 +1,22 @@
+IMP|Final
+
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|i                      i
+M|-\========/--\========/-
+M|B`--------,BB`--------,B
+M|BBBBBBBBBBBBBBBBBBBBBBBB
+
+ROM||||||false
+
+VAR|levelMusicPlayedDuringBoss|Y
+
+RPT|||||Final
