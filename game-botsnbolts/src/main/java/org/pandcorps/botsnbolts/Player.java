@@ -1813,7 +1813,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             @Override protected final boolean isNeeded() {
                 return prf.isAttackUpgradeAvailable() || prf.isJumpUpgradeAvailable();
             }};
-        return staminaMeter;
+        return staminaMeter.setSoundAlwaysRequired(false);
     }
     
     protected final Pantext newLifeCounter() {

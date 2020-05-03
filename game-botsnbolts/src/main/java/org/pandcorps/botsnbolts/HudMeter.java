@@ -33,9 +33,15 @@ public abstract class HudMeter extends Panctor {
     
     private final HudMeterImages images;
     private int displayValue = getValue();
+    private boolean soundAlwaysRequired = true;
     
     protected HudMeter(final HudMeterImages images) {
         this.images = images;
+    }
+    
+    protected final HudMeter setSoundAlwaysRequired(final boolean soundAlwaysRequired) {
+        this.soundAlwaysRequired = soundAlwaysRequired;
+        return this;
     }
     
     @Override
@@ -54,7 +60,9 @@ public abstract class HudMeter extends Panctor {
             if (displayValue == MAX_VALUE) {
                 onMaxDisplayReached();
             }
-            BotsnBoltsGame.fxHealth.startSound();
+            if (soundAlwaysRequired || (displayValue < actualValue)) { // If incremented displayValue still less than actual, then it was raised by a power-up, not timer, so play it
+                BotsnBoltsGame.fxHealth.startSound();
+            }
         }
         final int value = displayValue, end = MAX_VALUE - 1;
         renderer.render(layer, BotsnBoltsGame.hudMeterBlank.middle, x, y, zBlank, 0, 0, 8, end * 2);
