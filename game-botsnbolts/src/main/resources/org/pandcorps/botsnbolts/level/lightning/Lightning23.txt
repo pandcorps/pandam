@@ -1,0 +1,46 @@
+IMP|Lightning
+
+M|    v().().`)(-)(\                                                                    .`-)9 (\  
+M|9   .            v                                                                  8 EDEDEDEv5 
+M|(\  DEDEDEDEDEDED_                                                                  *E       .*F
+M|.v               e                                                                  vHhHhc   .`)
+M|  HhHhc          e                                                                  .    w   /).
+M|5     w          e                                                                  *    w   vyy
+M|S*    (\    *.                                                                      v    w   *yy
+M|(,9 4 .v6 8 `)7 5                                                                   .    w   `-)
+M|  (\*012301230123*                                                                  *7   w   EDE
+M|8 *v`).()(\.(-).*v                                                                  `)()(-)     
+M|(\vEDEDE  vEDEDE`)                                                                  _EDEDED
+M|)v*     7 .                                                                         e           
+M|  v     .       9      *                          (\                      /)      .  /)  (\  .  
+M|6 (-)./-)5 *.()*()   4 v   /-\   ()   8     ().   *v    ./)   7     (-)   i.    5 *9 ib4 .v6 *8 
+
+ELB|5|12|3
+ELB|6|12|3
+ELB|7|12|3
+ELB|8|12|2
+ELB|9|12|2
+ELB|10|12|2
+ELB|11|12|1
+ELB|12|12|1
+ELB|13|12|1
+ELB|14|12|0
+ELB|15|12|0
+ELB|16|12|0
+
+EXT|25|0|RocketSpawner|1|75
+EXT|36|0|RocketSpawner|1|30
+EXT|48|0|RocketSpawner|1|75
+EXT|60|0|RocketSpawner|1|30
+EXT|72|0|RocketSpawner|1|75
+EXT|84|2|RocketSpawner|3|80
+
+BOX|87|5
+BOX|85|7
+
+IMG|94|7|FinalLogoPlate|above
+
+DOR|95|2|Boss
+
+RPT|0|0|18|14|LightningWall
+RPT|84|0|12|14|LightningWall
