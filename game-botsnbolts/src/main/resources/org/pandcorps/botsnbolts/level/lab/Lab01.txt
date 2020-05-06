@@ -1,0 +1,16 @@
+IMP|Lab
+
+M|VC   a     ()       c  v
+M|VgD  a 1   () aa   d  gv
+M|VgC    2   ()      c  gv
+M|VgH       /pp\ 1   h  gv
+M|VEU GGGGGG(bb)GGGGGGu ev
+M|VES BBBBBB(bb)BBBBBBs ev
+M|Vg        `PP,  aa    gv
+M|VgK   1    ()      k  gv
+M|-=--=--=--=--=--=--=--=-
+M|........................
+M|bbbbbbbbbbbbbbbbbbbbbbbb
+M|bbbbbbbbbbbbbbbbbbbbbbbb
+M|bbbbbbbbbbbbbbbbbbbbbbbb
+M|bbbbbbbbbbbbbbbbbbbbbbbb
