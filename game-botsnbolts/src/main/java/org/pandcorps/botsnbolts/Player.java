@@ -961,7 +961,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             Menu.showUpDown();
         } else if (isTouchingLadder()) {
             Menu.showUpDown();
-            if (prf.autoClimb && !isHurt() && ((v > 0) || ((ladderColumn != getColumn()) && !isGrounded()))) {
+            if (prf.autoClimb && !isHurt() && !isFrozen() && ((v > 0) || ((ladderColumn != getColumn()) && !isGrounded()))) {
                 startLadder();
                 return true;
             }
