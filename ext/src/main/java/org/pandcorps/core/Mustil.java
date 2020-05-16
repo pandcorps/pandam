@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -490,6 +490,10 @@ public class Mustil {
 		addPercussionAtVolume(track, tick, dur, key, getVolumePercussion(key, -1));
 	}
 	
+	public final static void addPercussion(final long tick, final int dur, final int key) throws Exception {
+        addPercussion(track, tick, dur, key);
+    }
+	
 	public final static void addPercussionAtVolume(final Track track, final long tick, final int dur, final int key, final int vol) throws Exception {
 		addNoteRaw(track, tick, dur, CHN_PERCUSSION, key, vol);
 	}
@@ -554,6 +558,7 @@ public class Mustil {
 	}
 	
 	public final static void addPercussionsAll(final int deltaTick, final int... keys) throws Exception {
+	    next = 0;
         addPercussionsUntil(deltaTick, size, keys);
     }
 	

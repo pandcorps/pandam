@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -38,9 +38,11 @@ public class BotsnBoltsMusic extends Mustil {
     private final static int CHCK = PRC_CLOSED_HI_HAT, DRUM = PRC_BASS_DRUM_2;
     private final static int VOL_BG = 56;
     private final static int VOL_FG = 64;
+    private final static int VOL_CHRG = 48;
+    private final static int VOL_FX = 72;
     
-    private static int d1, d2, d4, d8, dc;
-    private static int nn, n0, n1, n2, n3, n4, n5, n6, n7;
+    private static int d1, d2, d3, d4, d6, d7, d8, dc, dg;
+    private static int nN, nn, n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, na;
     
     private static int arg = 0;
     
@@ -59,8 +61,8 @@ public class BotsnBoltsMusic extends Mustil {
     }
     
     private final static void initNotes(final int d1, final int n0) {
-        BotsnBoltsMusic.d1 = d1; d2 = d1 * 2; d4 = d1 * 4; d8 = d1 * 8; dc = d1 * 12;
-        BotsnBoltsMusic.n0 = n0; n1 = n0 + 1; n2 = n0 + 2; n3 = n0 + 3; n4 = n0 + 4; n5 = n0 + 5; n6 = n0 + 6; n7 = n0 + 7; nn = n0 - 1;
+        BotsnBoltsMusic.d1 = d1; d2 = d1 * 2; d3 = d1 * 3; d4 = d1 * 4; d6 = d1 * 6; d7 = d1 * 7; d8 = d1 * 8; dc = d1 * 12; dg = d1 * 16;
+        BotsnBoltsMusic.n0 = n0; n1 = n0 + 1; n2 = n0 + 2; n3 = n0 + 3; n4 = n0 + 4; n5 = n0 + 5; n6 = n0 + 6; n7 = n0 + 7; n8 = n0 + 8; n9 = n0 + 9; na = n0 + 10; nn = n0 - 1; nN = n0 - 2;
     }
     
     protected final static Song newSongVolcano() throws Exception {
@@ -76,7 +78,11 @@ public class BotsnBoltsMusic extends Mustil {
         addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, -1, -1, h, -1, n, n, n, n, -1, -1, h, -1, -1, -1);
         
         final int p = CHCK, p2 = DRUM;
-        addRepeatedPercussions(track, 0, deltaTick, reps * 2, p, -1, p2, -1, p, p, -1, -1);
+        //addRepeatedPercussions(track, 0, deltaTick, reps * 2, p, -1, p2, -1, p, p, -1, -1);
+        //addRepeatedPercussions(track, 0, deltaTick, reps * 2, p2, p2, p2, -1, p, p, -1, -1);
+        addPercussionsAll(deltaTick, p2, p2, -1, -1, p, p, -1, -1, p2, p2, p2, -1, p, p, -1, -1);
+        //addPercussionsAll(deltaTick, p2, p2, -1, -1, p, p, -1, -1, p2, p2, p2, p2, p, p, -1, -1);
+        //addPercussionsAll(deltaTick, p, -1, -1, -1, p, p, -1, -1, p, -1, -1, -1, p, p, -1, -1, p, -1, -1, -1, p, p, -1, -1, p, -1, -1, p2, p, p, -1, -1);
         
         channel = 1;
         vol = VOL_FG;
@@ -113,12 +119,13 @@ public class BotsnBoltsMusic extends Mustil {
         addNotes(track, off + 4 * 256, channel, vol, deltaTick, n1, n3, n2, n4, n3, n5, n4, n6, n1, n3, n2, n4, n3, n5);
         deltaTick = 16;
         addNotes(track, off + 4 * 256 + 14 * 32, channel, vol, deltaTick, n3, n5, n4, n6);
+System.out.println("Volc " + next + " " + tick + " " + track.size() + " " + Mustil.size);
         
         return song;
     }
     
-    protected final static Song newSongLightning() throws Exception {
-        final Song song = newSong("LightningBot");
+    protected final static Song newSongEarthquake() throws Exception {
+        final Song song = newSong("EarthquakeBot");
         final Track track = song.track;
         
         channel = 0;
@@ -252,7 +259,7 @@ System.out.println(next);
     }
     
     protected final static Song newSongRockslide() throws Exception {
-        final Song song = newSong("RockslideBot");
+        final Song song = newSong("RockslideBot", 1024);
         final Track track = song.track;
         
         channel = 0;
@@ -318,53 +325,30 @@ System.out.println(next);
                 addNote(16, nn);
             }
         }
+System.out.println("Rock " + next + " " + tick + " " + track.size() + " " + Mustil.size);
         
         return song;
     }
     
-    protected final static Song newSongEarthquake() throws Exception {
-        final Song song = newSong("EarthquakeBot", 3072);
+    protected final static Song newSongLightning() throws Exception {
+        final Song song = newSong("LightningBot", 3072);
         final Track track = song.track;
         
         channel = 0;
         vol = VOL_BG;
         setInstrument(track, channel, BG);
+        initNotes(4, 28);
         final int m = 21, h = 22;
-        composeUntil(size, 4, m, 4, -1, 4, -1, 4, h, 4, -1, 4, -1, 4, m, 4, -1);
+        composeAll(d1, m, d1, -1, d1, m, d1, -1, d2, h, d2, -1);
         
         final int p = CHCK, p2 = DRUM;
-        addPercussionsUntil(track, 0, 4, size, p, p2, p, -1, p, p, p2, -1);
+        addPercussionsAll(d1, p2, -1, p2, -1, p, -1, p2, -1);
         
         channel = 1;
         vol = VOL_FG;
         next = 0;
         setInstrument(track, channel, FG);
         initNotes(8, 28);
-        final int nN = n0 - 2;
-        /*for (int i = 0; i < 6; i++) {
-            if (i == 0 || i == 2) {
-                addEcho(d2, n0, 6, 2); addEcho(d2, n1, 6, 2); addEcho(d2, n2, 6, 2); addEcho(d2, n3, 6, 2);
-                //addEcho(d2, n2, 6, 2); addEcho(d2, n1, 6, 2); addEcho(d2, n3, 6, 2); addEcho(d2, n2, 6, 2);
-            } else if (i == 1) {
-                //addEcho(d4, n4, 6, 2); addEcho(d4, n3, 6, 2);
-                addEcho(d2, n4, 6, 2); addEcho(d2, n3, 6, 2); addEcho(d2, n2, 6, 2); addEcho(d2, n1, 6, 2);
-            } else if (i == 3) {
-                addEcho(d2, n2, 6, 4); addEcho(d2, n3, 6, 4);
-            } else if (i == 4) {
-                addEcho(d2, n4, 6, 6); compose(d4, n3);
-            } else if (i == 5) {
-                addEcho(d2, n2, 6, 6); compose(d4, n3);
-            }
-            if (i == 3) {
-                addEcho(d2, n4, 6, 8);
-                addEcho(d2, n4, 6, 4); addEcho(d2, n3, 6, 4);
-                addEcho(d2, n2, 6, 8);
-            } else {
-                addEcho(d2, n4, 6, 8);
-                addEcho(d2, n4, 6, 6); addNote(d4, n3);
-                addEcho(d2, n2, 6, 8);
-            }
-        }*/
         addEarthquakeRise(); addEarthquakeLong(n4); addEarthquakeTransition(n4, n3); addEarthquakeLong(n2);
         addEarthquakeFall(); addEarthquakeLong(n0); addEarthquakeTransition(n0, n1); addEarthquakeLong(n0);
         addEarthquakeTransition(n4, n3); addEarthquakeLong(n2); addEarthquakeTransition(n0, nn); addEarthquakeRise();
@@ -401,10 +385,10 @@ System.out.println(next);
         setInstrument(track, channel, BG);
         final int d1 = 4, d2 = d1 * 2, d3 = d1 * 3, d4 = d1 * 4, d6 = d1 * 6;
         final int m = 21, h = 22;
-        composeUntil(size, d1, m, d1, m, d2, h);
+        addNotesAll(d1, m, m, h, -1);
         
         final int p = CHCK, p2 = DRUM;
-        addPercussionsUntil(track, 0, d2, size, p, p2); //TODO Fast group at end
+        addPercussionsAll(d1, p, -1, p2, -1, p, -1, p2, -1, p, -1, p2, -1, p, p, p, -1);
         
         channel = 1;
         vol = VOL_FG;
@@ -460,12 +444,13 @@ System.out.println(next);
         vol = VOL_BG;
         deltaTick = 4;
         setInstrument(track, channel, BG);
-        final int n = 21, h = 28;
-        //addRepeatedNotes(track, 0, channel, vol, deltaTick, reps, n, n, n, -1, n, -1, -1, -1, n, n, n, -1, -1, -1, -1, -1); //TODO might work, untested
+        final int n = 21, h = 28, l = 20;
+        //addNotesAll(deltaTick, n, n, n, -1, n, -1, -1, -1, n, n, n, -1, -1, -1, -1, -1);
+        addNotesAll(deltaTick, n, n, n, -1, l, -1, -1, -1, n, n, n, -1, h, -1, h, -1);
         //n, n, n, -1, n, n, -1, -1, n, n, n, -1, -1, -1, -1, -1
         
         final int p = CHCK, p2 = DRUM;
-        addPercussionsUntil(track, 0, 8, size, p); //TODO
+        addPercussionsAll(deltaTick, p, p, p, -1, p2, -1, p2, -1, p, p, p, -1, p, -1, -1, -1);
         
         channel = 1;
         vol = VOL_FG;
@@ -679,8 +664,8 @@ System.out.println(next);
         }
     }
     
-    protected final static Song newSongArray() throws Exception {
-        final Song song = newSong("Array");
+    protected final static Song newSongAbandonedArray() throws Exception {
+        final Song song = newSong("AbandonedArray");
         final Track track = song.track;
         
         channel = 0;
@@ -847,8 +832,8 @@ System.out.println(next);
         return song;
     }
     
-    protected final static Song newSongTmp3() throws Exception {
-        final Song song = newSong("Tmp3Bot", 2048);
+    protected final static Song newSongArray() throws Exception {
+        final Song song = newSong("Array", 2048);
         final Track track = song.track;
         
         channel = 0;
@@ -1024,8 +1009,8 @@ System.out.println(next);
         return song;
     }
     
-    protected final static Song newSongTmp7() throws Exception {
-        final Song song = newSong("Tmp7Bot");
+    protected final static Song newSongBoss() throws Exception {
+        final Song song = newSong("Boss");
         final Track track = song.track;
         
         channel = 0;
@@ -1033,10 +1018,10 @@ System.out.println(next);
         deltaTick = 4;
         setInstrument(track, channel, BG);
         final int l = 20, n = 21;
-        composeUntil(size, 3, n, 1, -1, 3, l, 1, -1);
+        composeAll(3, n, 1, -1, 3, l, 1, -1);
         
-        final int p = CHCK, p2 = DRUM;
-        addPercussionsUntil(track, 0, 16, size, p2); //TODO
+        final int p = DRUM;
+        addPercussionsAll(8, p, -1, p, -1, p, -1, p, p);
         
         channel = 1;
         vol = VOL_FG;
@@ -1060,10 +1045,17 @@ System.out.println(next);
             }
         }
 
+        //addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
+        //addEcho(16, n2, 6, 8); // End these last 2 parts with 8/4/4/16 pattern used above instead of echo??
+        addNotes(16, n1, n1, n0, n0, n1, n1, n0, n0);
+        for (int i = 0; i < 2; i++) {
+            compose(8, nfa, 4, nfb, 4, nfb, 16, nfa, 16, -1, 8, nfb, 8, nfb);
+        }
         addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
-        addEcho(16, n2, 6, 8); // End these last 2 parts with 8/4/4/16 pattern used above instead of echo??
-        addNotes(16, n1, n1, n0, n0, n1, n1, n0, n1);
-        addEcho(16, n0, 6, 8);
+        //addEcho(16, n0, 6, 8);
+        for (int i = 0; i < 2; i++) {
+            compose(8, nsa, 4, nsb, 4, nsb, 16, nsa, 16, -1, 8, nsb, 8, nsb);
+        }
         
         return song;
     }
@@ -1146,13 +1138,10 @@ addSilent(size, 4);
         final int n = 21, h = 28;
         //addNotesAll(4, n, -1, n, -1, h, -1, n, -1, n, n, n, -1, h, -1, -1, -1); // Used in Tmp10
         
-        next = 0;
         final int p = CHCK, p2 = DRUM;
         //addPercussionsAll(4, p, -1, p, p, p, -1, p2, -1); // Used in Tmp10
         
-        channel = 1;
-        vol = VOL_FG;
-        setInstrument(track, channel, FG);
+        initChannel(1, VOL_FG, FG);
         next = 0;
         final int n0 = 28, n1 = n0 + 1, n2 = n0 + 2, n3 = n0 + 3, n4 = n0 + 4;
         compose(16, n3, 16, -1, 16, n4, 16, -1, 4, n2, 4, n2, 8, n2, 8, n3, 8, n3, 16, n4, 16, -1);
@@ -1174,7 +1163,6 @@ addSilent(size, 4);
         final int n = 21, h = 28;
         addNotesAll(4, n, -1, n, -1, h, -1, n, -1, n, n, n, -1, h, -1, -1, -1);
         
-        next = 0;
         final int p = CHCK, p2 = DRUM;
         addPercussionsAll(4, p, -1, p, p, p, -1, p2, -1);
         
@@ -1192,8 +1180,20 @@ addSilent(size, 4);
         return song;
     }
     
-    protected final static Song newSongBoss() throws Exception {
-        final Song song = newSong("Boss");
+    protected final static Song newSongIntro() throws Exception {
+        final Song song = newSong("Intro", 128);
+        final Track track = song.track;
+        
+        channel = 0;
+        vol = VOL_BG;
+        setInstrument(track, channel, BG2);
+        final int n = 21;
+        next = 0;
+        final int dur = 16, dur3 = dur * 3;
+        composeUntil(size, dur3, n, dur3, n, dur, n, dur, n);
+        
+        addPercussionsUntil(track, 0, 128, size, DRUM);
+        
         return song;
     }
     
@@ -1204,7 +1204,6 @@ addSilent(size, 4);
         final int n = 21;
         composeAll(24, n, 8, -1);
         
-        next = 0;
         final int p = CHCK, p2 = DRUM;
         addPercussionsAll(8, p, p, p2, -1, p, -1, -1, -1);
         
@@ -1240,13 +1239,321 @@ addSilent(size, 4);
         return song;
     }
     
+    protected final static Song newSongFortressStart() throws Exception {
+        final Song song = newSong("FortressStart", 256);
+        
+        initNotes(8, 21);
+        channel = 0;
+        vol = VOL_BG;
+        setInstrument(track, channel, BG2);
+        next = 0;
+        compose(d3, n0, d3, n0, d1, n0, d1, n0,
+            d3, n1, d3, n1, d1, n1, d1, n1,
+            d3, n2, d3, n2, d1, n2, d1, n2,
+            d6, n3);
+        
+        addPercussionsUntil(track, 0, d8, size, DRUM);
+        
+        return song;
+    }
+    
+    protected final static Song newSongVictory() throws Exception {
+        final Song song = newSong("Victory", 128);
+        
+        initNotes(4, 49);
+        initChannel(0, VOL_BG, BG);
+        final int n = n0;
+        //addNotes(d4, n, -1, n - 2, -1, n + 1, -1, -1, -1);
+        //addNotes(d4, n, -1, n - 2, -1); addNotes(d8, n + 1, -1);
+        //addNotes(d8, 28, -1, 29, -1);
+        compose(d8, 21, d4, 22, d4, 23, d8, 24);
+        //compose(dc, n, d4, -1, dc, n + 1, d4, -1);
+        //compose(dg, -1, dc, n + 1, d4, -1);
+        //compose(dg, -1, dc, n + 3, d4, -1);
+        
+        next = 0;
+        addPercussion(d1 * 8, d1, DRUM);
+        addPercussion(dg + (d1 * 4), d1, DRUM);
+        addPercussion(dg + (d1 * 8), d1, DRUM);
+        //addPercussion(dg + (d1 * 10), d1, DRUM);
+        
+        initChannel(1, VOL_FG, FG);
+        //addNotes(d1, n2, n3, n2, n3, n1, n2, n0, n1);
+        //addNotes(d1, n4, n5, n4, n5, n2, n3, n0, n1);
+        //addNotes(d1, n2, n3, n2, n3, n0, n1, n0, n1, n0, -1, -1, -1, n3, n3, n4, -1);
+        //addNotes(d1, n2, n3, n2, n3, n0, n1, nN, nn, nN, -1, -1, -1, n3, n3, n4, -1);
+        //addNotes(d1, n2, n3, n2, n3, n0, n1, n0, -1, n0, -1, -1, -1, n3, n3, n4, -1);
+        //compose(dc, n5, d4, -1);
+        //addNotes(d1, n3, n4, n3, n4, n5, n4, n5, -1, n5, -1, -1, -1, n3, n3, n4, -1);
+        addNotes(d1, n3, n4, n3, n4, n3, -1, n4, -1, n5, -1, -1, -1, n3, n3, n4, -1);
+        compose(dg, n5);
+        
+        return song;
+    }
+    
+    protected final static Song newSongEnding() throws Exception {
+        final Song song = newSong("Ending", 1024);
+        
+        //initNotes(8, 21);
+        initNotes(4, 21);
+        initChannel(0, VOL_BG, BG);
+        //initChannel(0, VOL_BG / 2, BG);
+        //composeAll(d2, n1, d2, -1, d2, n3, d2, -1, d2, n2, d2, -1, d2, n4, d2, -1);
+        //composeAll(d4, n1, d4, n3, d4, n2, d4, n4);
+        //composeAll(d4, n1, d4, -1, d4, n2, d4, -1);
+        //composeAll(d6, n1, d2, -1, d6, n2, d2, -1);
+        //composeAll(d1, n1, d1, n1, d2, n2);
+        composeAll(d1, n1, d1, n1, d1, n2, d1, -1);
+        /*addNotesAll(d1,
+            n1, n1, n2, -1, n1, n1, n2, -1, n1, n1, n2, -1, n1, n1, n2, -1, n1, n1, n2, -1, n1, n1, n2, -1, n1, n1, n2, -1, n1, n1, n2, -1,
+            n3, n3, n4, -1, n3, n3, n4, -1, n3, n3, n4, -1, n3, n3, n4, -1, n3, n3, n4, -1, n3, n3, n4, -1, n3, n3, n4, -1, n3, n3, n4, -1,
+            n2, n2, n3, -1, n2, n2, n3, -1, n2, n2, n3, -1, n2, n2, n3, -1, n2, n2, n3, -1, n2, n2, n3, -1, n2, n2, n3, -1, n2, n2, n3, -1,
+            n4, n4, n5, -1, n4, n4, n5, -1, n4, n4, n5, -1, n4, n4, n5, -1, n4, n4, n5, -1, n4, n4, n5, -1, n4, n4, n5, -1, n4, n4, n5, -1
+        );*/
+        
+        final int p = CHCK, p2 = DRUM;
+        addPercussionsAll(4, p2, -1, p, p, p2, -1, p, p, p2, -1, -1, -1, p, -1, p, -1);
+        
+        initNotes(8, 42);
+        initChannel(1, VOL_FG, FG);
+        compose(
+            //d4, n1, dc, -1, d4, n3, dc, -1, d4, n2, dc, -1, d4, n4, dc, -1, // 512
+            //d8, n1, d8, -1, d8, n3, d8, -1, d8, n2, d8, -1, d8, n4, d8, -1, // 512
+            d8, n1, d7, -1, d1, n2, d8, n3, d8, -1, d8, n2, d6, -1, d1, n3, d1, n3, d8, n4, d8, -1, // 512
+            d1, n1, d1, -1, d1, -1, d1, -1, d1, n3, d1, -1, d1, -1, d1, -1, d1, n2, d1, -1, d1, -1, d1, -1, d1, n4, d1, -1, d1, -1, d1, -1, // 128
+            d1, n1, d1, -1, d1, -1, d1, n3, d1, n3, d1, -1, d1, -1, d1, -1, d1, n2, d1, -1, d1, n4, d1, -1, d1, n4, d1, -1, d1, -1, d1, -1,
+            d1, n1, d1, -1, d1, n3, d1, n3, d1, n3, d1, -1, d1, n2, d1, -1, d1, n2, d1, -1, d1, n4, d1, n4, d1, n4, d1, -1, d1, -1, d1, n1,
+            d1, n1, d1, -1, d1, n3, d1, n3, d1, n3, d1, -1, d1, -1, d1, n2, d1, n2, d1, -1, d1, n4, d1, -1, d1, n4, d1, -1, d1, -1, d1, -1
+        );
+        /*compose(d1, n1, d1, -1, d1, -1, d1, -1, d1, n3, d1, -1, d1, -1, d1, -1, d1, n2, d1, -1, d1, -1, d1, -1, d1, n4, d1, -1, d1, -1, d1, -1,
+            d1, n3, d1, -1, d1, -1, d1, n5, d1, n5, d1, -1, d1, -1, d1, -1, d1, n4, d1, -1, d1, n6, d1, -1, d1, n6, d1, -1, d1, -1, d1, -1,
+            d1, n5, d1, -1, d1, n7, d1, n7, d1, n7, d1, -1, d1, n6, d1, -1, d1, n6, d1, -1, d1, n8, d1, n8, d1, n8, d1, -1, d1, -1, d1, n7,
+            d1, n7, d1, -1, d1, n9, d1, n9, d1, n9, d1, -1, d1, -1, d1, n8, d1, n8, d1, -1, d1, na, d1, -1, d1, na, d1, -1, d1, -1, d1, -1);*/
+        
+        return song;
+    }
+    
+    protected final static Song newFxMenuHover() throws Exception {
+        final Song song = newFx("MenuHover");
+        
+        initNotes(4, 42);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n1, n0);
+        
+        return song;
+    }
+    
+    protected final static Song newFxMenuClick() throws Exception {
+        final Song song = newFx("MenuClick");
+        
+        initNotes(4, 49); // 55
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n5, n4, n5, n6);
+        
+        return song;
+    }
+    
+    protected final static Song newFxWarp() throws Exception {
+        final Song song = newFx("Warp");
+        
+        initNotes(1, 42);
+        initChannel(0, VOL_FX, FG);
+        compose(d1, n4, d1, n5, d1, n6, d2, n7);
+        
+        return song;
+    }
+    
+    protected final static Song newFxAttack() throws Exception {
+        final Song song = newFx("Attack");
+        
+        initNotes(2, 40);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n2, n0);
+        
+        return song;
+    }
+    
+    protected final static Song newFxImpact() throws Exception {
+        final Song song = newFx("Impact");
+        
+        initNotes(1, 38);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n7, n2, n6, n1, n5, n0);
+        
+        return song;
+    }
+    
+    protected final static Song newFxRicochet() throws Exception {
+        final Song song = newFx("Ricochet");
+        
+        initNotes(2, 49);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n4, n5);
+        
+        return song;
+    }
+    
+    protected final static Song newFxJump() throws Exception {
+        final Song song = newFx("Jump");
+        
+        initNotes(1, 40);
+        initChannel(0, VOL_CHRG, FG);
+        addNotes(d1, n0, n1);
+        
+        return song;
+    }
+    
+    protected final static Song newFxCharge() throws Exception {
+        final Song song = newFx("Charge");
+        
+        initNotes(1, 38);
+        initChannel(0, VOL_CHRG, FG);
+        compose(d1, n0, d1, n1, d4, n2);
+        
+        return song;
+    }
+    
+    protected final static Song newFxChargedAttack() throws Exception {
+        final Song song = newFx("ChargedAttack");
+        
+        initNotes(2, 40);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n4, n2, n0);
+        
+        return song;
+    }
+    
+    protected final static Song newFxSuperCharge() throws Exception {
+        final Song song = newFx("SuperCharge");
+        
+        initNotes(1, 40);
+        initChannel(0, VOL_CHRG, FG);
+        compose(d1, n0, d1, n1, d4, n2);
+        
+        return song;
+    }
+    
+    protected final static Song newFxSuperChargedAttack() throws Exception {
+        final Song song = newFx("SuperChargedAttack");
+        
+        initNotes(2, 40);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n6, n4, n2, n0);
+        
+        return song;
+    }
+    
+    protected final static Song newFxHurt() throws Exception {
+        final Song song = newFx("Hurt");
+        
+        initNotes(1, 30);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n7, n2, n6, n1, n5, n0);
+        
+        return song;
+    }
+    
+    protected final static Song newFxDefeat() throws Exception {
+        final Song song = newFx("Defeat");
+        
+        initNotes(1, 30);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n7, n6, n5, n4, n3, n2);
+        
+        return song;
+    }
+    
+    protected final static Song newFxHealth() throws Exception {
+        final Song song = newFx("Health");
+        
+        initNotes(1, 42);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n7);
+        
+        return song;
+    }
+    
+    protected final static Song newFxEnemyAttack() throws Exception {
+        final Song song = newFx("EnemyAttack");
+        
+        initNotes(2, 36);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n2, n0);
+        
+        return song;
+    }
+    
+    protected final static Song newFxCrumble() throws Exception {
+        final Song song = newFx("Crumble");
+        
+        for (int i = 0; i < 8; i++) {
+            addPercussionAtVolume(1, DRUM, VOL_MAX - (i * 10));
+        }
+        
+        return song;
+    }
+    
+    protected final static Song newFxDoor() throws Exception {
+        final Song song = newFx("Door");
+        
+        initNotes(2, 27);
+        initChannel(0, VOL_FX, FG);
+        addNotes(d1, n0, n1, n2, n3);
+        
+        return song;
+    }
+    
+    protected final static Song newFxBossDoor() throws Exception {
+        final Song song = newFx("BossDoor");
+        
+        initNotes(2, 40);
+        addPercussionAtVolume(d1, CHCK, VOL_MAX);
+        
+        return song;
+    }
+    
+    protected final static Song newFxThunder() throws Exception {
+        final Song song = newFx("Thunder");
+        
+        /*initChannel(0, VOL_MAX, PRG_MELODIC_TOM);
+        composeWithVolumes(2, 35, 127, 2, 34, 120, 2, 33, 112, 2, 32, 120, 2, 33, 96, 2, 32, 88, 2, 31, 96, 2, 32, 72, 2, 31, 64, 2, 30, 72, 2, 31, 48, 2, 30, 40, 2, 29, 32);
+        
+        next = 0;
+        for (int i = 0; i < 12; i++) {
+            vol = (i == 0) ? VOL_MAX : (128 - (i * 8));
+            final int p = ((i % 4) == 0) ? CHCK : ((i < 4) ? PRC_HIGH_TOM_1 : ((i < 8) ? PRC_MID_TOM_1 : PRC_LOW_TOM_1));
+            addPercussionAtVolume(2, p, vol);
+        }*/
+        for (int j = 0; j < 4; j++) {
+            int vol = VOL_MAX - (j * 16);
+            for (int i = 0; i < 10; i++) {
+                addPercussionAtVolume(1, DRUM, vol);
+                if ((i % 2) == 0) {
+                    vol -= 16;
+                } else {
+                    vol += 4;
+                }
+            }
+        }
+        
+        return song;
+    }
+    
     private final static Song newSong(final String name) throws Exception {
         return newSong(name, DEF_SIZE);
     }
     
     private final static Song newSong(final String name, final long size) throws Exception {
+        return newSong(name, size, false);
+    }
+    
+    private final static Song newFx(final String name) throws Exception {
+        return newSong(name, 0, true);
+    }
+    
+    private final static Song newSong(final String name, final long size, final boolean fx) throws Exception {
         initSong(size);
-        return new Song(name, COPYRIGHT);
+        return new Song(name, COPYRIGHT, fx);
     }
     
     private final static List<Song> list = new ArrayList<Song>();
@@ -1263,8 +1570,32 @@ addSilent(size, 4);
         add(newSongCity());
         add(newSongArray());
         add(newSongFinal());
+        add(newSongIntro());
         add(newSongLevelSelect());
         add(newSongLevelStart());
+        add(newSongFortressStart());
+        add(newSongVictory());
+        add(newSongBoss());
+        add(newSongEnding());
+        add(newFxMenuHover());
+        add(newFxMenuClick());
+        add(newFxWarp());
+        add(newFxAttack());
+        add(newFxImpact());
+        add(newFxRicochet());
+        add(newFxJump());
+        add(newFxCharge());
+        add(newFxChargedAttack());
+        add(newFxSuperCharge());
+        add(newFxSuperChargedAttack());
+        add(newFxHurt());
+        add(newFxDefeat());
+        add(newFxHealth());
+        add(newFxEnemyAttack());
+        add(newFxCrumble());
+        add(newFxDoor());
+        add(newFxBossDoor());
+        add(newFxThunder());
         return list;
     }
     
@@ -1321,28 +1652,34 @@ addSilent(size, 4);
         stop();
         System.out.println("End");*/
         Song song = null;
+        final Song fx = newFxWarp();
         do {
-            stop();
+            //stop();
             final boolean first = song == null;
-            //saveSongs();
-            song = newSongLevelStart();
+            if (first) {
+                saveSongs();
+            }
+            song = newSongCyclone();
             finishTrack();
             if (first) {
                 final long size = song.track.ticks();
                 final int sectionLength = 128;
-                if ((size % sectionLength) != 0) {
+                if (!song.fx && ((size % sectionLength) != 0)) {
                     throw new IllegalStateException("Song not a multiple of " + sectionLength + ": " + size);
                 } else if (size != Mustil.size) {
                     throw new IllegalStateException("Expected " + song.name + " to be " + Mustil.size + " but was " + size);
                 }
                 System.out.println("Playing " + song.name + " - " + size + " ticks");
                 System.out.println("Press enter to adjust; press x and enter to stop");
+                play(song);
             }
             System.out.println("arg=" + arg);
-            play(song);
+            //play(song);
+            //playFx(fx);
             arg++;
         } while (!Iotil.readln().equals("x"));
         stop();
+        stopFx();
         System.out.println("End");
     }
     
