@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -77,11 +77,11 @@ public class Character extends Guy4 {
     }
     
     private final static String fname(final String pre, final int i) {
-    	return "org/pandcorps/rpg/res/chr/" + pre + "0" + i + ".png";
+    	return "org/pandcorps/rpg/chr/" + pre + "0" + i + ".png";
     }
     
     private final static Panmage[] getSheet(final CharacterDefinition def) {
-        final Img[] body = ImtilX.loadStrip("org/pandcorps/rpg/res/chr/MBody.png");
+        final Img[] body = ImtilX.loadStrip("org/pandcorps/rpg/chr/MBody.png");
         final Img[] face = ImtilX.loadStrip(fname("MFace", def.face.i), 8, false);
         final Img[] eyes = ImtilX.loadStrip(fname("Eyes", def.eyes), 8, false);
         final Img[] hair = ImtilX.loadStrip(fname("MHair", def.hair.i), 16, false);
