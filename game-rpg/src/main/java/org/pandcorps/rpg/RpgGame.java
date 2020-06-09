@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
@@ -45,6 +46,9 @@ public class RpgGame extends BaseGame {
     */
     
 	private static Panroom room = null;
+	protected static Panmage chrImage = null;
+	protected static Panmage eyesImage = null;
+	protected static Panmage hairImage = null;
 	private static Panmage empty = null;
 	private static Font hudFont = null;
 	/*package*/ static Pantext hudInteract = null;
@@ -56,16 +60,23 @@ public class RpgGame extends BaseGame {
 	
 	@Override
 	protected void init(final Panroom room) throws Exception {
-		Pangine.getEngine().setTitle("RPG");
+	    final Pangine engine = Pangine.getEngine();
+		engine.setTitle("RPG");
+		engine.setEntityMapEnabled(false);
+		Imtil.onlyResources = true;
 		RpgGame.room = room;
 		loadConstants();
 		loadArea(new Town(), 5, 5);
 	}
 	
 	private final static void loadConstants() {
-		empty = Pangine.getEngine().createEmptyImage("img.empty", null, null, null);
+	    final Pangine engine = Pangine.getEngine();
+		empty = engine.createEmptyImage("img.empty", null, null, null);
 		hudFont = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
-		containers = createSheet("container", "org/pandcorps/rpg/res/misc/Container01.png", ImtilX.DIM, Container.o);
+		containers = createSheet("container", "org/pandcorps/rpg/misc/Container01.png", ImtilX.DIM, Container.o);
+		chrImage = engine.createImage("img.chr", "org/pandcorps/rpg/chr/Chr.png");
+		eyesImage = engine.createImage("img.eyes", "org/pandcorps/rpg/chr/Eyes.png");
+		hairImage = engine.createImage("img.hair", "org/pandcorps/rpg/chr/Hair.png");
 	}
 	
 	/*package*/ final static void loadArea(final Area area, final int i, final int j) {
@@ -93,6 +104,7 @@ public class RpgGame extends BaseGame {
 	    
 		@Override
         protected final void load() throws Exception {
+		    Pangine.getEngine().enableColorArray();
 			animTiles = null;
 			tm = new TileMap("act.tilemap", room, ImtilX.DIM, ImtilX.DIM);
 			tm.setOccupantDepth(DepthMode.Y);
@@ -105,8 +117,8 @@ public class RpgGame extends BaseGame {
 	}
 	
 	private final static void loadTown() {
-		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/res/misc/DoorQuaint.png");
-		tm.setImageMap(createImage("tile.quaint", "org/pandcorps/rpg/res/bg/TileQuaint.png", 128));
+		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/misc/DoorQuaint.png");
+		tm.setImageMap(createImage("tile.quaint", "org/pandcorps/rpg/bg/TileQuaint.png", 128));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
 		animTiles = new TileMapImage[5][];
 		for (int x = 1; x <= 5; x++) {
@@ -219,8 +231,8 @@ public class RpgGame extends BaseGame {
 	/*package*/ final static class Store extends Area {
 		@Override
 		protected final void init() {
-			final Panmage[] counters = createSheet("counter", "org/pandcorps/rpg/res/misc/Counter01.png");
-			tm.setImageMap(createImage("tile.inside", "org/pandcorps/rpg/res/bg/TileInside.png", 128));
+			final Panmage[] counters = createSheet("counter", "org/pandcorps/rpg/misc/Counter01.png");
+			tm.setImageMap(createImage("tile.inside", "org/pandcorps/rpg/bg/TileInside.png", 128));
 			final TileMapImage[][] imgMap = tm.splitImageMap();
 			tm.fillBackground(imgMap[2][3]);
 			tm.setBackground(0, 0, null, Tile.BEHAVIOR_SOLID);
@@ -260,6 +272,10 @@ public class RpgGame extends BaseGame {
 			final CharacterLayer torso = new CharacterLayer(0, 128, 128, 128, 160, 160, 160, 192, 192, 192, 224, 224, 224);
 			final CharacterDefinition def = new CharacterDefinition(face, 4, hair, legs, feet, torso);
 			player = new Player("act.player", def);
+			final Chr chr = new Chr();
+			//tm.getLayer().addActor(chr);
+			chr.init(tm, 0, 0);
+			player.chr = chr;
 		}
 		player.active = true;
 		player.init(tm, i, j);
