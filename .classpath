@@ -6,9 +6,13 @@
 	<classpathentry kind="src" path="impl-lwjgl/src/main/java"/>
 	<classpathentry kind="src" path="game-base/src/main/java"/>
 	<classpathentry kind="src" path="game-base/src/main/resources"/>
+	<classpathentry kind="src" path="game-botsnbolts/src/main/java"/>
+	<classpathentry kind="src" path="game-botsnbolts/src/main/resources"/>
 	<classpathentry kind="src" path="game-furguardians/src/main/java"/>
 	<classpathentry kind="src" path="game-furguardians/src/main/resources"/>
 	<classpathentry kind="src" path="game-furguardians/src/test/java"/>
+	<classpathentry kind="src" path="game-rpg/src/main/java"/>
+    <classpathentry kind="src" path="game-rpg/src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="PND_LIB/AppleJavaExtensions.jar"/>
 	<classpathentry kind="var" path="PND_LIB/jinput.jar"/>
