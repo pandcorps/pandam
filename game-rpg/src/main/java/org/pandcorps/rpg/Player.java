@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2018, Andrew M. Martin
+Copyright (c) 2009-2020, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -28,6 +28,7 @@ import org.pandcorps.pandax.tile.*;
 
 public class Player extends Character {
     /*package*/ boolean active = true;
+    protected Chr chr = null;
     
 	protected Player(final String id, final CharacterDefinition def) {
 		super(id, def);
@@ -35,6 +36,7 @@ public class Player extends Character {
 
 	@Override
     protected void onStill() {
+	    chr.setDir(getDirection());
 		if (!active) {
 			return;
 		}
