@@ -27,7 +27,7 @@ import java.io.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.io.*;
 
-public abstract class Record implements Savable {
+public abstract class Piped implements Savable {
     public abstract String getValue(final int i);
     
     public abstract void setValue(final int i, final String v);
@@ -208,7 +208,7 @@ public abstract class Record implements Savable {
     	setValue(i, Chartil.toString(value));
     }
     
-    // Caller might use getValue, check for null, then want to parse in same way as Record.byteValue, so this is public
+    // Caller might use getValue, check for null, then want to parse in same way as Piped.byteValue, so this is public
     public final static byte parseByte(final String value) {
         return Byte.parseByte(value);
     }
@@ -265,7 +265,7 @@ public abstract class Record implements Savable {
         return Chartil.isEmpty(value) ? def : parseChar(value);
     }
     
-    public final static void clear(final Record r) {
+    public final static void clear(final Piped r) {
     	if (r != null) {
     		r.clear();
     	}
