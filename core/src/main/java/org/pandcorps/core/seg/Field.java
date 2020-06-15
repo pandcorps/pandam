@@ -27,7 +27,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 
-public class Field extends Record {
+public class Field extends Piped {
     private final static int DELIM_COMPONENT = '^';
     
     private final List<String> components = new ArrayList<String>();

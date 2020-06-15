@@ -27,7 +27,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 
-public class Segment extends Record {
+public class Segment extends Piped {
     private final static char DELIM_FIELD = '|';
     private final static char DELIM_REP = '~';
     
