@@ -647,7 +647,7 @@ public abstract class RoomLoader {
         rct(seg.intValue(0), seg.intValue(1), 1, 1, seg, 2);
     }
     
-    private final static int getTextureDepth(final Record rec, final int i) {
+    private final static int getTextureDepth(final Piped rec, final int i) {
         final String value = rec.getValue(i);
         if ("bg".equals(value)) {
             return BotsnBoltsGame.DEPTH_BG;
@@ -656,7 +656,7 @@ public abstract class RoomLoader {
         } else if ("above".equals(value)) {
             return BotsnBoltsGame.DEPTH_ABOVE;
         }
-        return BotsnBoltsGame.DEPTH_TEXTURE + Record.parseInt(value, 0);
+        return BotsnBoltsGame.DEPTH_TEXTURE + Piped.parseInt(value, 0);
     }
     
     private final static void rpt(final Segment seg) throws Exception {

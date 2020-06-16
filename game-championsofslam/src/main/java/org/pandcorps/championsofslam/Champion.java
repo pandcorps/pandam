@@ -457,7 +457,7 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         protected float g = 1.0f;
         protected float b = 1.0f;
         
-        public final void load(final Record rec) {
+        public final void load(final Piped rec) {
             r = INC_COLOR * rec.intValue(0);
             g = INC_COLOR * rec.intValue(1);
             b = INC_COLOR * rec.intValue(2);
