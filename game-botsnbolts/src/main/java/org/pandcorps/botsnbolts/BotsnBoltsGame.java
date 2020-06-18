@@ -232,7 +232,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Pansound fxBossDoor = null;
     protected static Pansound fxThunder = null;
     
-    protected static PlayerContext pc = null;
+    private static Profile prf0 = null;
+    protected final static List<PlayerContext> pcs = new ArrayList<PlayerContext>(1);
     private static final float defPlayerStartX = 48;
     private static final float defPlayerStartY = 32;
     private static final boolean defPlayerStartMirror = false;
@@ -666,7 +667,7 @@ public final class BotsnBoltsGame extends BaseGame {
         volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true);
         finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false);
         closePlayerImages();
-        pc = new PlayerContext(new Profile(), voidImages);
+        prf0 = new Profile();
     }
     
     private static Img[] playerDefeatOrb = null;
@@ -1216,6 +1217,8 @@ public final class BotsnBoltsGame extends BaseGame {
                     } else {
                         ctrl = ControlScheme.getDefault(device);
                     }
+                    final PlayerContext pc = new PlayerContext(prf0, voidImages);
+                    pcs.add(pc);
                     pc.setControlScheme(ctrl);
                     fxMenuClick.startSound();
                     startGame();
@@ -1345,6 +1348,12 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         
         private final static void newPlayer(final Panroom room) {
+            for (final PlayerContext pc : pcs) {
+                newPlayer(room, pc);
+            }
+        }
+        
+        private final static void newPlayer(final Panroom room, final PlayerContext pc) {
             Menu.addGameplayButtonInputs();
             final Player player = new Player(pc);
             player.getPosition().set(playerStartX, playerStartY, DEPTH_PLAYER);
