@@ -76,7 +76,7 @@ public class ControlScheme {
         if (d instanceof Controller) {
             final Controller c = (Controller) d;
             if (d.getName().startsWith("Controller")) {
-            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_0, null, c.BUTTONS.get(2), c.BUTTONS.get(c.BUTTONS.size() - 3)); //TODO Fix act2
+            	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_0, c.BUTTONS.get(2), c.BUTTONS.get(c.BUTTONS.size() - 6), c.BUTTONS.get(c.BUTTONS.size() - 5));
             } else {
             	set(c.DOWN, c.UP, c.LEFT, c.RIGHT, c.BUTTON_1, c.BUTTON_0, c.BUTTONS.get(c.BUTTONS.size() - 2), c.BUTTONS.get(c.BUTTONS.size() - 1));
             }
@@ -302,5 +302,41 @@ public class ControlScheme {
     public final void mapSubmit(final MappableInput sub) {
     	MappableInput.setMappedInput(sub, this.sub);
     	originalSub = sub;
+    }
+    
+    public final Panput getJump() {
+        if (device instanceof Controller) {
+            final Panput faceDown = ((Controller) device).BUTTON_FACE_DOWN;
+            if (faceDown != null) {
+                return faceDown;
+            }
+        }
+        return get1();
+    }
+    
+    public final Panput getAttack() {
+        if (device instanceof Controller) {
+            final Panput faceLeft = ((Controller) device).BUTTON_FACE_LEFT;
+            if (faceLeft != null) {
+                return faceLeft;
+            }
+        }
+        return get2();
+    }
+    
+    public final Panput getToggleNegative1() {
+        return (device instanceof Controller) ? ((Controller) device).BUTTON_SHOULDER_LEFT1 : null;
+    }
+    
+    public final Panput getTogglePositive1() {
+        return (device instanceof Controller) ? ((Controller) device).BUTTON_SHOULDER_RIGHT1 : null;
+    }
+    
+    public final Panput getToggleNegative2() {
+        return (device instanceof Controller) ? ((Controller) device).BUTTON_SHOULDER_LEFT2 : null;
+    }
+    
+    public final Panput getTogglePositive2() {
+        return (device instanceof Controller) ? ((Controller) device).BUTTON_SHOULDER_RIGHT2 : null;
     }
 }

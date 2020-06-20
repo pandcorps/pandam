@@ -143,13 +143,23 @@ public abstract class Panteraction {
     public final Mouse MOUSE = new Mouse();
 	
 	public final static class Controller extends Device {
-		public final Button LEFT;
+		public final Button LEFT; // Directional pad, usually on left side of controller
 		public final Button RIGHT;
 		public final Button UP;
 		public final Button DOWN;
 		public final List<Button> BUTTONS;
 		public final Button BUTTON_0;
 		public final Button BUTTON_1; // For convenience
+		public final Button BUTTON_FACE_LEFT; // Action buttons, often labeled A/B/etc., usually on right side of controller
+		public final Button BUTTON_FACE_RIGHT;
+		public final Button BUTTON_FACE_UP;
+		public final Button BUTTON_FACE_DOWN;
+		public final Button BUTTON_SHOULDER_LEFT1; // Action buttons, often labeled L/R, usually on top surface of controller
+		public final Button BUTTON_SHOULDER_LEFT2;
+		public final Button BUTTON_SHOULDER_RIGHT1;
+		public final Button BUTTON_SHOULDER_RIGHT2;
+		public final Button BUTTON_MENU_LEFT; // Buttons that might pause game and/or activate menu, usually in middle of controller
+		public final Button BUTTON_MENU_RIGHT;
 		
 		protected Controller(final String name, final Button l, final Button r, final Button u, final Button d, final List<Button> bs) {
 			super(name);
@@ -167,6 +177,48 @@ public abstract class Panteraction {
 			BUTTONS = Collections.unmodifiableList(bs);
 			BUTTON_0 = Coltil.get(BUTTONS, 0);
 			BUTTON_1 = Coltil.get(BUTTONS, 1);
+			final String lower = Chartil.unnull(name).toLowerCase();
+            if (lower.contains("xbox") && BUTTONS.size() >= 12) {
+                BUTTON_FACE_DOWN = BUTTONS.get(0);
+                BUTTON_FACE_RIGHT = BUTTONS.get(1);
+                BUTTON_FACE_LEFT = BUTTONS.get(2);
+                BUTTON_FACE_UP = BUTTONS.get(3);
+                BUTTON_SHOULDER_LEFT1 = BUTTONS.get(4);
+                BUTTON_SHOULDER_RIGHT1 = BUTTONS.get(5);
+                BUTTON_MENU_LEFT = BUTTONS.get(6);
+                BUTTON_MENU_RIGHT = BUTTONS.get(7);
+                BUTTON_SHOULDER_LEFT2 = BUTTONS.get(10);
+                BUTTON_SHOULDER_RIGHT2 = BUTTONS.get(11);
+            } else {
+                BUTTON_FACE_LEFT = null;
+                BUTTON_FACE_RIGHT = null;
+                BUTTON_FACE_UP = null;
+                BUTTON_FACE_DOWN = null;
+                BUTTON_SHOULDER_LEFT1 = null;
+                BUTTON_SHOULDER_LEFT2 = null;
+                BUTTON_SHOULDER_RIGHT1 = null;
+                BUTTON_SHOULDER_RIGHT2 = null;
+                BUTTON_MENU_LEFT = null;
+                BUTTON_MENU_RIGHT = null;
+            }
+		}
+		
+		public final Button getButton(final String name) {
+		    for (final Button button : BUTTONS) {
+		        if (name.equals(button.getName())) {
+		            return button;
+		        }
+		    }
+		    if (name.equals(LEFT.getName()) ) {
+		        return LEFT;
+		    } else if (name.equals(RIGHT.getName()) ) {
+                return RIGHT;
+            } else if (name.equals(UP.getName()) ) {
+                return UP;
+            } else if (name.equals(DOWN.getName()) ) {
+                return DOWN;
+            }
+		    return null;
 		}
 	}
 	

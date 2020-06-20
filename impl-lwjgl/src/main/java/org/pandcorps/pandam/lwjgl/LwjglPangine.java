@@ -37,6 +37,7 @@ import org.pandcorps.pandam.impl.*;
 public final class LwjglPangine extends GlPangine {
 	private static LwjglPangine engine = null;
 	private static boolean mouseTouchEnabled = false;
+	private final static float axisThreshold = 0.75f;
 
 	private LwjglPangine() {
 		super(new LwjglPanteraction());
@@ -127,9 +128,30 @@ public final class LwjglPangine extends GlPangine {
 			for (int j = 0; j < bs; j++) {
 				blist.add(newButton(c.getButtonName(j)));
 			}
+			final int as = c.getAxisCount();
+			for (int j = 0; j < as; j++) {
+			    final String name = c.getAxisName(j);
+			    if (isAxisBad(name) || isAxisX(name) || isAxisY(name)) {
+			        continue;
+			    }
+			    blist.add(newButton(name + "-"));
+			    blist.add(newButton(name + "+"));
+			}
 			addController(c.getName(), newButton("Left"), newButton("Right"), newButton("Up"), newButton("Down"), blist);
 		}
 	}
+    
+    private final boolean isAxisBad(final String name) {
+        return Chartil.isEmpty(name);
+    }
+    
+    private final boolean isAxisX(final String name) {
+        return (name != null) && (name.startsWith("X") || name.equals("rx"));
+    }
+    
+    private final boolean isAxisY(final String name) {
+        return (name != null) && (name.startsWith("Y") || name.equals("ry"));
+    }
 
     @Override
 	protected void stepControl() throws Exception {
@@ -231,12 +253,11 @@ public final class LwjglPangine extends GlPangine {
 				    boolean foundX = false, foundY = false;
 				    for (int i = 0; i < size; i++) {
 				        final String name = src.getAxisName(i);
-                        if (Chartil.isEmpty(name)) {
+                        if (isAxisBad(name)) {
                             continue;
                         }
-                        final char axis = name.charAt(0);
                         final float value = src.getAxisValue(i);
-                        if ((axis == 'X') || name.equals("rx")) {
+                        if (isAxisX(name)) {
                             if (foundX) {
                                 continue;
                             }
@@ -245,7 +266,7 @@ public final class LwjglPangine extends GlPangine {
                             if (foundY) {
                                 continue;
                             }
-                        } else if ((axis == 'Y') || name.equals("ry")) {
+                        } else if (isAxisY(name)) {
                             if (foundY) {
                                 continue;
                             }
@@ -253,6 +274,11 @@ public final class LwjglPangine extends GlPangine {
                             handleUnspecifiedAxis(value, pc.DOWN, pc.UP);
                             if (foundX) {
                                 continue;
+                            }
+                        } else {
+                            final Button n = pc.getButton(name + "+"), p = pc.getButton(name + "-");
+                            if ((p != null) && (n != null)) {
+                                handleUnspecifiedAxis(value, p, n);
                             }
                         }
 				    }
@@ -301,12 +327,12 @@ public final class LwjglPangine extends GlPangine {
     private static boolean activatedUnspecifiedAxis = false;
     
     private final void handleUnspecifiedAxis(final float val, final Button pos, final Button neg) {
-        if (val > 0) {
+        if (val > axisThreshold) {
             // Check for immediate direction change without releasing axis
             activate(ifActive(neg), false);
             activate(ifInactive(pos), true);
             activatedUnspecifiedAxis = true;
-        } else if (val < 0) {
+        } else if (val < -axisThreshold) {
             activate(ifActive(pos), false);
             activate(ifInactive(neg), true);
             activatedUnspecifiedAxis = true;
