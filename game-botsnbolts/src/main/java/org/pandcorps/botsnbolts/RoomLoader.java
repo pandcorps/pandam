@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
+import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
 import org.pandcorps.botsnbolts.Carrier.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Extra.*;
@@ -282,7 +283,14 @@ public abstract class RoomLoader {
     }
     
     private final static void visitRoom() {
-        final Player p = getPlayer();
+        BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+            public final void run(final Player player) {
+                visitRoom(player);
+            }
+        });
+    }
+    
+    private final static void visitRoom(final Player p) {
         revisiting = !visitedRooms.add(room);
         if (p != null) {
             if (p.startRoom == null) {
@@ -314,10 +322,11 @@ public abstract class RoomLoader {
     }
     
     private final static void setStartRoomNeeded(final boolean startRoomNeeded) {
-        final Player p = getPlayer();
-        if (p != null) {
-            p.startRoomNeeded = startRoomNeeded;
-        }
+        BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+            public final void run(final Player p) {
+                p.startRoomNeeded = startRoomNeeded;
+            }
+        });
     }
     
     private final static void ctx(Segment seg, final SegmentStream in) throws Exception {
@@ -341,10 +350,6 @@ public abstract class RoomLoader {
     private final static void imp(final Segment seg, final boolean ctxRequired, final TileMap tm) {
         //TODO Could cache imported files
         processSegmentFile(seg.getValue(0), ctxRequired, tm);
-    }
-    
-    protected final static Player getPlayer() {
-        return PlayerContext.getPlayer(BotsnBoltsGame.pc);
     }
     
     private final static void rom(final Segment seg) {
@@ -1560,11 +1565,11 @@ public abstract class RoomLoader {
         }
         
         protected final boolean isReplayable() {
-            return Chartil.isEmpty(replayPrerequisite) || BotsnBoltsGame.pc.prf.disks.contains(replayPrerequisite);
+            return Chartil.isEmpty(replayPrerequisite) || BotsnBoltsGame.getPrimaryProfile().disks.contains(replayPrerequisite);
         }
         
         protected final boolean isFinished() {
-            return BotsnBoltsGame.pc.prf.disks.contains(bossClassName);
+            return BotsnBoltsGame.getPrimaryProfile().disks.contains(bossClassName);
         }
     }
     

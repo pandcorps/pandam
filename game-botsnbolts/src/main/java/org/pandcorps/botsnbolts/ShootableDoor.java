@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.core.*;
@@ -322,10 +323,6 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         return Coltil.size(RoomLoader.bossDoors) > 1;
     }
     
-    private final static Player getPlayer() {
-        return PlayerContext.getPlayer(BotsnBoltsGame.pc);
-    }
-    
     protected final static class ShootableDoorDefinition {
         private final Panframe[] door;
         private final Panframe[][] opening;
@@ -593,7 +590,12 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 } else if (base > h) {
                     base = h;
                     vel = 0;
-                    getPlayer().onBossDoorOpened(this);
+                    BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+                        @Override
+                        public final void run(final Player player) {
+                            player.onBossDoorOpened(BossDoor.this);
+                        }
+                    });
                 } else {
                     BotsnBoltsGame.fxBossDoor.startSound();
                 }
@@ -661,9 +663,14 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             } else if (RoomChanger.isChanging()) {
                 return false;
             }
-            final Player player = getPlayer();
             final float doorCenterX = getPosition().getX() + 16;
-            return (player == null) || (Math.abs(player.getPosition().getX() - doorCenterX) > 48);
+            for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+                final Player player = PlayerContext.getPlayer(pc);
+                if (!isDestroyed(player) && (Math.abs(player.getPosition().getX() - doorCenterX) <= 48)) {
+                    return false;
+                }
+            }
+            return true;
         }
         
         protected void close() {
@@ -724,7 +731,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 in = 0;
             }
             final float xOut = x + out, xIn = x + in, y32 = y + 32;
-            final Panmage gen = BotsnBoltsGame.getDoorBoltGenerator(), door = BotsnBoltsGame.pc.pi.doorBolt;
+            final Panmage gen = BotsnBoltsGame.getDoorBoltGenerator(), door = BotsnBoltsGame.getPrimaryPlayerContext().pi.doorBolt;
             renderer.render(layer, gen, x, y, BotsnBoltsGame.DEPTH_FG, 0, 0, 32, 32, 0, m, false);
             if (size > 0) {
                 final boolean full = size >= 3;

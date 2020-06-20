@@ -71,9 +71,9 @@ public class Profile {
         old = new Profile(this);
     }
     
-    private Profile(final Profile src) {
-        upgrades = null;
-        disks = null;
+    protected Profile(final Profile src) {
+        upgrades = src.upgrades;
+        disks = src.disks;
         load(src);
         old = null;
     }
@@ -242,7 +242,7 @@ public class Profile {
     }
     
     /*package*/ final static boolean isRequirementMet(final String name) {
-        final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.pc);
+        final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.getPrimaryPlayerContext());
         return (prf != null) && prf.isAvailable(name);
     }
     
@@ -467,7 +467,7 @@ public class Profile {
         
         @Override
         public final String[] getTutorial() {
-            final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.pc);
+            final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.getPrimaryPlayerContext());
             return ((prf != null) && !prf.autoCharge) ? new String[] { "Hold fire button to charge" } : null;
         }
     }

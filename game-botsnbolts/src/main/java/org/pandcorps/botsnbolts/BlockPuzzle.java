@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.Map.*;
 
 import org.pandcorps.botsnbolts.Enemy.*;
-import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
@@ -343,7 +342,10 @@ public abstract class BlockPuzzle {
 
         @Override
         public final void onStep(final StepEvent event) {
-            final Player player = PlayerContext.getPlayer(BotsnBoltsGame.pc);
+            Panctor player = BotsnBoltsGame.tracked;
+            if (player == null) {
+                player = BotsnBoltsGame.getPrimaryPlayer();
+            }
             if (player == null) {
                 return;
             }
@@ -542,7 +544,7 @@ public abstract class BlockPuzzle {
     protected final static int DAMAGE_SPIKE_UNENDURABLE = HudMeter.MAX_VALUE * 4;
     
     protected final static int getDamageSpike() {
-        final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.pc);
+        final Profile prf = BotsnBoltsGame.getPrimaryProfile();
         return ((prf == null) || prf.endureSpikes) ? DAMAGE_SPIKE_ENDURABLE : DAMAGE_SPIKE_UNENDURABLE;
     }
     

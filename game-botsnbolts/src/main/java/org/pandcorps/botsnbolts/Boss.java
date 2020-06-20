@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
 import org.pandcorps.botsnbolts.Chr.*;
 import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.Player.*;
@@ -476,7 +477,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         } else if (state != getStateJumps()) {
             return false;
         }
-        final float x = getPosition().getX(), px = getPlayerX();
+        final float x = getPosition().getX(), px = getNearestPlayerX();
         if (isMirror()) {
             if (x > (px + 4)) {
                 continueJumps();
@@ -580,8 +581,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static boolean isPlayerDangerous() {
-        final Profile prf = getPlayerProfile();
-        return (prf != null) && (prf.shootMode == Player.SHOOT_RAPID);
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            final Profile prf = PlayerContext.getProfile(pc);
+            if ((prf != null) && (prf.shootMode == Player.SHOOT_RAPID)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     protected final static void handleHurtIfDangerous(final SpecBoss boss) {
@@ -719,40 +725,33 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
-    protected final static Player getPlayer() {
-        return PlayerContext.getPlayer(getPlayerContext());
-    }
-    
-    protected final static Profile getPlayerProfile() {
-        final PlayerContext pc = getPlayerContext();
-        return (pc == null) ? null : pc.prf;
-    }
-    
     protected final static void setPlayerActive(final boolean active) {
-        final Player player = getPlayer();
-        if (player != null) {
-            player.active = active;
-            if (!active) {
-                player.prepareForScript();
+        BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+            @Override
+            public final void run(final Player player) {
+                player.active = active;
+                if (!active) {
+                    player.prepareForScript();
+                }
             }
-        }
+        });
     }
     
-    protected final static float getPlayerX() {
-        final Player player = getPlayer();
+    protected final float getNearestPlayerX() {
+        return getPlayerX(getNearestPlayer());
+    }
+    
+    protected final static float getPlayerX(final Player player) {
         return (player == null) ? 192 : player.getPosition().getX();
     }
     
-    protected final static float getPlayerY() {
-        final Player player = getPlayer();
-        return (player == null) ? 112 : player.getPosition().getY();
-    }
-    
     protected final static void clearPlayerExtras() {
-        final Player player = getPlayer();
-        if (player != null) {
-            Panctor.destroy(player.spring);
-        }
+        BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+            @Override
+            public final void run(final Player player) {
+                Panctor.destroy(player.spring);
+            }
+        });
     }
     
     protected final static void addActor(final Panctor actor) {
@@ -768,7 +767,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static Panmage getPlayerPortrait() {
-        return getPlayerContext().pi.portrait;
+        return BotsnBoltsGame.getActivePlayerContext().pi.portrait;
     }
     
     protected final static void dialogue(final Panmage bossPortrait, final int yOff, final Runnable finishHandler, final String... msgs) {
@@ -3469,15 +3468,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
             torpedoWait--;
             if ((torpedoCount > 0) && (torpedoWait <= 0)) {
                 final Panple pos = getPosition();
-                if (Math.abs(getPlayerX() - pos.getX()) < 40) {
-                    torpedoCount--;
-                    torpedoWait = 8;
-                    if (getPlayerY() < pos.getY()) {
-                        startTorpedoDown();
-                    } else if (RoomLoader.getWaterTile() >= WATER_THRESHOLD_MAX) {
-                        startTorpedoUp();
+                final float x = pos.getX(), y = pos.getY();
+                for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+                    final Player player = PlayerContext.getPlayer(pc);
+                    if (isDestroyed(player)) {
+                        continue;
+                    } else if (Math.abs(player.getPosition().getX() - x) < 40) {
+                        torpedoCount--;
+                        torpedoWait = 8;
+                        if (player.getPosition().getY() < y) {
+                            startTorpedoDown();
+                        } else if (RoomLoader.getWaterTile() >= WATER_THRESHOLD_MAX) {
+                            startTorpedoUp();
+                        }
+                        return;
                     }
-                    return;
                 }
             }
             setCurrentSwim();
@@ -4419,7 +4424,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         final Profile prf = new Profile(true);
         prf.autoCharge = true;
         prf.infiniteStamina = true;
-        return new PlayerContext(prf, pi);
+        return new PlayerContext(0, prf, pi);
     }
     
     protected abstract static class AiBoss extends Player implements SpecBoss, RoomAddListener {
@@ -4636,8 +4641,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final boolean isFacingPlayer() {
-            final boolean mirrorNeeded = getPlayerX() < getPosition().getX();
+            final boolean mirrorNeeded = getNearestPlayerX() < getPosition().getX();
             return mirrorNeeded == isMirror();
+        }
+        
+        protected final Player getNearestPlayer() {
+            return Enemy.getNearestPlayer(this);
+        }
+        
+        protected final float getNearestPlayerX() {
+            return getPlayerX(getNearestPlayer());
         }
         
         protected final void attack() {
@@ -4785,7 +4798,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             dematerialize(new Runnable() {
                 @Override public final void run() {
                     if (isAwardNeeded()) {
-                        Boss.award(new VictoryDisk(getPlayer(), AiBoss.this), DROP_X);
+                        Boss.award(new VictoryDisk(BotsnBoltsGame.getActivePlayer(), AiBoss.this), DROP_X);
                     }
                 }});
         }
@@ -4973,8 +4986,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class DefeatedHandler extends AiHandler {
         @Override
         protected final void onStep(final AiBoss boss) {
-            final Player player = getPlayer();
-            if (boss.isGrounded() && ((player == null) || player.isGrounded())) {
+            if (!boss.isGrounded()) {
+                return;
+            }
+            boolean playerReady = true;
+            for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+                final Player player = PlayerContext.getPlayer(pc);
+                if (!isDestroyed(player) && !player.isGrounded()) {
+                    playerReady = false;
+                    break;
+                }
+            }
+            if (playerReady) {
                 boss.afterDefeat();
             }
         }
@@ -4989,7 +5012,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void onStep(final AiBoss boss) {
             boss.moveX();
-            if (!boss.isFacingPlayer() && (Math.abs(boss.getPosition().getX() - getPlayerX()) > 64)) {
+            if (!boss.isFacingPlayer() && (Math.abs(boss.getPosition().getX() - boss.getNearestPlayerX()) > 64)) {
                 boss.startStill();
                 return;
             }
@@ -5439,10 +5462,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final void onRoomAdd(final RoomAddEvent event) {
-            final Player player = getPlayer();
-            if (player != null) {
-                player.setMirror(false);
-            }
+            BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+                @Override
+                public final void run(final Player player) {
+                    player.setMirror(false);
+                }
+            });
+            onRoomAddFinish();
+        }
+        
+        private final void onRoomAddFinish() {
             addActor(saucer);
         }
         
@@ -5897,7 +5926,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final float getDropX() {
-            return getPlayerX();
+            return getNearestPlayerX();
         }
         
         @Override
@@ -6059,7 +6088,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 Player.puff(this, -1, 4);
                 timer = 0;
             }
-            final Player player = getPlayer();
+            final Player player = getNearestPlayer();
             if (player == null) {
                 return;
             }
@@ -6372,7 +6401,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (x > 344) {
                 hv = -1;
             } else {
-                hv = (getPlayerX() < x) ? -1 : 1;
+                hv = (getNearestPlayerX() < x) ? -1 : 1;
             }
         }
         
@@ -6487,7 +6516,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final void onTractorBeamSeeking() {
             final float x = getPosition().getX();
             final int rx = Math.round(x);
-            if (((rx % 16) == 15) && (Math.abs(x - getPlayerX()) < 16)) {
+            if (((rx % 16) == 15) && (Math.abs(x - getNearestPlayerX()) < 16)) {
                 hv = 0;
                 startTractorBeam();
             } else {
@@ -6748,7 +6777,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void shootSelfDestruct() {
-            initCharged(new Projectile(getPlayer(), BotsnBoltsGame.finalImages, Player.SHOOT_CHARGE, this, 0, -VEL_PROJECTILE, Projectile.POWER_MAXIMUM));
+            initCharged(new Projectile(getNearestPlayer(), BotsnBoltsGame.finalImages, Player.SHOOT_CHARGE, this, 0, -VEL_PROJECTILE, Projectile.POWER_MAXIMUM));
         }
         
         private final void initCharged(final Panctor prj) {
@@ -6812,7 +6841,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final float getDropX() {
-            return getPlayerX();
+            return getNearestPlayerX();
         }
         
         @Override
@@ -6894,7 +6923,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final Panctor finalActor = newFinalActor(getWounded(), this);
             finalActor.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT);
             final Pangine engine = Pangine.getEngine();
-            final Player player = getPlayer();
+            final Player player = getNearestPlayer();
             final boolean leftSide = isOnLeftSide();
             final float playerDstX = leftSide ? 256 : 128;
             player.startScript(player.getWalkAi(playerDstX), new Runnable() {
@@ -6920,7 +6949,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                                 @Override public final void onTimer(final TimerEvent event) {
                                     Story.dialogue(getPlayerPortrait(), true, 0, "And I will never stop defending it.").add().setFinishHandler(new Runnable() {
                                         @Override public final void run() {
-                                            Boss.award(new VictoryDisk(getPlayer(), Final.this), getPlayerX());
+                                            Boss.award(new VictoryDisk(player, Final.this), getPlayerX(player));
                                         }});
                                 }});
                         }};

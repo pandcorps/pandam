@@ -39,6 +39,8 @@ import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
+import org.pandcorps.pandam.event.StepEndEvent;
+import org.pandcorps.pandam.event.StepEndListener;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
@@ -240,6 +242,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static float playerStartX = defPlayerStartX;
     protected static float playerStartY = defPlayerStartY;
     protected static boolean playerStartMirror = defPlayerStartMirror;
+    protected static Panctor tracked = null;
     
     protected static Panlayer hud = null;
     protected static int prevTileSize = DIM;
@@ -1209,18 +1212,7 @@ public final class BotsnBoltsGame extends BaseGame {
             Menu.addVersion();
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    final Device device = event.getInput().getDevice();
-                    final ControlScheme ctrl;
-                    if (device instanceof Touchscreen) {
-                        ctrl = ControlScheme.getDefaultKeyboard();
-                        ctrl.setDevice(device);
-                    } else {
-                        ctrl = ControlScheme.getDefault(device);
-                    }
-                    final PlayerContext pc = new PlayerContext(prf0, voidImages);
-                    pcs.add(pc);
-                    pc.setControlScheme(ctrl);
-                    fxMenuClick.startSound();
+                    addPlayerContext(prf0, voidImages, event);
                     startGame();
                 }});
         }
@@ -1229,6 +1221,22 @@ public final class BotsnBoltsGame extends BaseGame {
         protected final void destroy() {
             title.destroy();
         }
+    }
+    
+    protected final static PlayerContext addPlayerContext(final Profile prf, final PlayerImages pi, final ActionEndEvent event) {
+        final Device device = event.getInput().getDevice();
+        final ControlScheme ctrl;
+        if (device instanceof Touchscreen) {
+            ctrl = ControlScheme.getDefaultKeyboard();
+            ctrl.setDevice(device);
+        } else {
+            ctrl = ControlScheme.getDefault(device);
+        }
+        final PlayerContext pc = new PlayerContext(pcs.size(), prf, pi);
+        pcs.add(pc);
+        pc.setControlScheme(ctrl);
+        fxMenuClick.startSound();
+        return pc;
     }
     
     protected final static void startGame() {
@@ -1348,9 +1356,13 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         
         private final static void newPlayer(final Panroom room) {
+            newHud(room);
             for (final PlayerContext pc : pcs) {
                 newPlayer(room, pc);
             }
+            tracked = (pcs.size() == 1) ? PlayerContext.getPlayer(pcs.get(0)) : newPlayerMean();
+            Pangine.getEngine().track(tracked);
+            initPlayerStart();
         }
         
         private final static void newPlayer(final Panroom room, final PlayerContext pc) {
@@ -1358,26 +1370,28 @@ public final class BotsnBoltsGame extends BaseGame {
             final Player player = new Player(pc);
             player.getPosition().set(playerStartX, playerStartY, DEPTH_PLAYER);
             player.setMirror(playerStartMirror);
-            initPlayerStart();
             room.addActor(player);
-            Pangine.getEngine().track(player);
             new Warp(player);
-            newHud(room, player);
+            newHud(player);
             Menu.addGameplayButtonActors();
             player.registerInputs(pc.ctrl);
         }
         
-        private final static void newHud(final Panroom room, final Player player) {
+        private final static void newHud(final Panroom room) {
             hud = createHud(room);
             hud.setClearDepthEnabled(false);
-            initHudMeter(player.newHealthMeter(), HEALTH_X);
+        }
+        
+        private final static void newHud(final Player player) {
+            final int playerX = player.pc.getHudX();
+            initHudMeter(player.newHealthMeter(), playerX + HEALTH_X);
             final Profile prf = player.prf;
             if (!prf.infiniteStamina) {
-                initHudMeter(player.newStaminaMeter(), HEALTH_X + HEALTH_W);
+                initHudMeter(player.newStaminaMeter(), playerX + HEALTH_X + HEALTH_W);
             }
             if (!prf.infiniteLives) {
                 final Pantext lifeCounter = player.newLifeCounter();
-                lifeCounter.getPosition().set(HEALTH_X - 8, HEALTH_Y - 9, DEPTH_HUD);
+                lifeCounter.getPosition().set(playerX + HEALTH_X - 8, HEALTH_Y - 9, DEPTH_HUD);
                 hud.addActor(lifeCounter);
             }
             Menu.addToggleButtons(new HudShootMode(player.pc), new HudJumpMode(player.pc));
@@ -1404,6 +1418,82 @@ public final class BotsnBoltsGame extends BaseGame {
         playerStartX = defPlayerStartX;
         playerStartY = defPlayerStartY;
         playerStartMirror = defPlayerStartMirror;
+    }
+    
+    protected final static PlayerContext getPrimaryPlayerContext() {
+        return Coltil.isValued(pcs) ? pcs.get(0) : null;
+    }
+    
+    protected final static void runPlayerContexts(final PlayerContextRunnable r) {
+        for (final PlayerContext pc : pcs) {
+            r.run(pc);
+        }
+    }
+    
+    protected interface PlayerContextRunnable {
+        public void run(final PlayerContext pc);
+    }
+    
+    protected final static void runPlayers(final PlayerRunnable r) {
+        for (final PlayerContext pc : pcs) {
+            final Player player = PlayerContext.getPlayer(pc);
+            if (!Panctor.isDestroyed(player)) {
+                r.run(player);
+            }
+        }
+    }
+    
+    protected interface PlayerRunnable {
+        public void run(final Player player);
+    }
+    
+    protected final static Profile getPrimaryProfile() {
+        final Profile prf = PlayerContext.getProfile(getPrimaryPlayerContext());
+        return (prf == null) ? prf0 : prf;
+    }
+    
+    protected final static Player getPrimaryPlayer() {
+        return PlayerContext.getPlayer(getPrimaryPlayerContext());
+    }
+    
+    protected final static PlayerContext getActivePlayerContext() {
+        for (final PlayerContext pc : pcs) {
+            if (!Panctor.isDestroyed(PlayerContext.getPlayer(pc))) {
+                return pc;
+            }
+        }
+        return getPrimaryPlayerContext();
+    }
+    
+    protected final static Player getActivePlayer() {
+        return PlayerContext.getPlayer(getActivePlayerContext());
+    }
+    
+    protected final static Panctor newPlayerMean() {
+        final PlayerMean mean = new PlayerMean();
+        addActor(mean);
+        return mean;
+    }
+    
+    protected final static class PlayerMean extends Panctor implements StepEndListener {
+        @Override
+        public void onStepEnd(final StepEndEvent event) {
+            float x = 0, y = 0;
+            int n = 0;
+            for (final PlayerContext pc : pcs) {
+                final Player player = PlayerContext.getPlayer(pc);
+                if (Panctor.isDestroyed(player)) {
+                    continue;
+                }
+                final Panple pos = player.getPosition();
+                x += pos.getX();
+                y += pos.getY();
+                n++;
+            }
+            if (n > 0) {
+                getPosition().set(x / n, y / n);
+            }
+        }
     }
     
     protected final static Panlayer getLayer() {

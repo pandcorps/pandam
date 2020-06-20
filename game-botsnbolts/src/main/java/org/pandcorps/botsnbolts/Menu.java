@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
@@ -34,6 +35,7 @@ import org.pandcorps.core.img.process.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
@@ -622,7 +624,7 @@ public class Menu {
             clearLevelButtons();
             final Pangine engine = Pangine.getEngine();
             BotsnBoltsGame.musicLevelSelect.changeMusic();
-            final PlayerContext pc = BotsnBoltsGame.pc;
+            final PlayerContext pc = BotsnBoltsGame.getPrimaryPlayerContext();
             final Profile prf = pc.prf;
             prf.saveProfile();
             BotsnBoltsGame.initPlayerStart();
@@ -705,6 +707,20 @@ public class Menu {
                         addQuitMenu(newRoom, pc);
                     }
                 }});
+            grid.register(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    final Device device = event.getDevice();
+                    boolean newDevice = true;
+                    for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+                        if (device == pc.ctrl.getDevice()) {
+                            newDevice = false;
+                        }
+                    }
+                    if (newDevice) {
+                        BotsnBoltsGame.addPlayerContext(new Profile(prf), BotsnBoltsGame.volatileImages, event);
+                    }
+                }
+            });
             layer.setConstant(true);
             room.addBeneath(layer);
             addCursor(room);
@@ -817,7 +833,11 @@ public class Menu {
         RoomLoader.levelVersion = level.version;
         RoomLoader.level = level;
         RoomLoader.visitedRooms.clear();
-        BotsnBoltsGame.pc.lives = 5;
+        BotsnBoltsGame.runPlayerContexts(new PlayerContextRunnable() {
+            public final void run(final PlayerContext pc) {
+                pc.lives = 5;
+            }
+        });
     }
     
     protected final static void startLevelIntroScreen(final BotLevel level) {
@@ -885,7 +905,7 @@ public class Menu {
                 }
             }
             currentCell = cells[LEVEL_DEFAULT_ROW][LEVEL_DEFAULT_COLUMN];
-            final ControlScheme ctrl = BotsnBoltsGame.pc.ctrl;
+            final ControlScheme ctrl = BotsnBoltsGame.getPrimaryPlayerContext().ctrl;
             register(ctrl.getUp(), new GridStartListener() {
                 @Override public final void onGridStart() {
                     moveCurrentCell(0, 1);
@@ -955,7 +975,7 @@ public class Menu {
                     if (!cell.isSelectable()) {
                         continue;
                     }
-                    renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, (gridEnabled && (cell == currentCell)) ? BotsnBoltsGame.pc.pi.highlightBox : box);
+                    renderBox(renderer, layer, cell.x, y = cell.y, BotsnBoltsGame.DEPTH_BG, (gridEnabled && (cell == currentCell)) ? BotsnBoltsGame.getPrimaryPlayerContext().pi.highlightBox : box);
                 }
                 renderBg(renderer, layer, y + 8);
             }
@@ -1048,7 +1068,7 @@ public class Menu {
             room.addActor(bg);
             addText(BotsnBoltsGame.GAME_W / 2, 180, "Try disabling these if you like a challenge").centerX();
             optionsY = 156;
-            final Profile prf = BotsnBoltsGame.pc.prf;
+            final Profile prf = BotsnBoltsGame.getPrimaryPlayerContext().prf;
             addOption(bg, "Suggest next level", new OptionSetter() {
                 @Override public final boolean set() {
                     return (prf.levelSuggestions = !prf.levelSuggestions); }});
@@ -1093,7 +1113,7 @@ public class Menu {
     private final static HudMeter newDifficultyMeter() {
         return new HudMeter(BotsnBoltsGame.hudMeterBoss) {
             @Override protected final int getValue() {
-                final float diff = BotsnBoltsGame.pc.prf.getDifficulty();
+                final float diff = BotsnBoltsGame.getPrimaryPlayerContext().prf.getDifficulty();
                 return Math.round(diff * HudMeter.MAX_VALUE / Profile.NUM_DIFFICULTY_SETTINGS);
             }};
     }
@@ -1103,7 +1123,7 @@ public class Menu {
     }
     
     private final static void exitOptions() {
-        BotsnBoltsGame.pc.prf.saveProfile(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
+        BotsnBoltsGame.getPrimaryPlayerContext().prf.saveProfile(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
         goLevelSelect();
     }
     
@@ -1163,10 +1183,11 @@ public class Menu {
             room.addActor(bg);
             room.addActor(newTileMap());
             final int bossY = floorY + 1;
-            final Player p = PlayerContext.getPlayer(BotsnBoltsGame.pc);
-            if (p != null) {
-                p.getPosition().setX(0);
-            }
+            BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+                public final void run(final Player p) {
+                    p.getPosition().setX(0);
+                }
+            });
             final Boss boss = RoomLoader.newBoss(16, bossY, level.bossClassName);
             room.addActor(boss);
             final int textX = 8 * BotsnBoltsGame.DIM;

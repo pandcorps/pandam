@@ -292,15 +292,32 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     protected final Player getNearestPlayer() {
-        return PlayerContext.getPlayer(BotsnBoltsGame.pc);
+        return getNearestPlayer(this);
+    }
+    
+    protected final static Player getNearestPlayer(final Panctor src) {
+        Player nearest = null;
+        float nearestDistance = Float.MAX_VALUE;
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            final Player player = PlayerContext.getPlayer(pc);
+            if (Panctor.isDestroyed(player)) {
+                continue;
+            }
+            final float distance = getDistanceX(src, player);
+            if ((nearest == null) || (distance < nearestDistance)) {
+                nearest = player;
+                nearestDistance = distance;
+            }
+        }
+        return (nearest == null) ? BotsnBoltsGame.getPrimaryPlayer() : nearest;
     }
     
     protected final float getDistanceX(final Panctor other) {
-        return Math.abs(getPosition().getX() - other.getPosition().getX());
+        return getDistanceX(this, other);
     }
     
-    protected final static PlayerContext getPlayerContext() {
-        return BotsnBoltsGame.pc;
+    protected final static float getDistanceX(final Panctor src, final Panctor other) {
+        return Math.abs(src.getPosition().getX() - other.getPosition().getX());
     }
     
     protected final int getDirection(final float p, final float op, final int negThresh, final int posThresh) {
@@ -784,7 +801,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     protected final static class PowerBox extends CubeEnemy {
         protected PowerBox(final Segment seg) {
             super(seg, 1);
-            setView(getPlayerContext().pi.powerBox);
+            setView(BotsnBoltsGame.getActivePlayerContext().pi.powerBox);
         }
         
         @Override
@@ -796,7 +813,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     protected final static class DiskBox extends CubeEnemy {
         protected DiskBox(final Segment seg) {
             super(seg, 1);
-            setView(getPlayerContext().pi.diskBox);
+            setView(BotsnBoltsGame.getActivePlayerContext().pi.diskBox);
         }
         
         @Override
@@ -810,7 +827,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         protected BoltBox(final Segment seg, final Upgrade upgrade) {
             super(seg, 1);
-            final PlayerContext pc = getPlayerContext();
+            final PlayerContext pc = BotsnBoltsGame.getPrimaryPlayerContext();
             if (pc.prf.upgrades.contains(upgrade)) {
                 setView(pc.pi.powerBox);
                 this.upgrade = null;

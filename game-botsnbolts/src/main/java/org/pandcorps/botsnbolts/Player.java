@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import org.pandcorps.botsnbolts.Animal.*;
+import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
 import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Profile.*;
@@ -367,6 +368,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             startMirror = safeMirror;
             startMusic = Pangine.getEngine().getAudio().getMusic();
             startRoomNeeded = false;
+            warpOthers();
         }
     }
     
@@ -548,9 +550,58 @@ public class Player extends Chr implements Warpable, StepEndListener {
         new Dematerialize(this);
     }
     
+    protected final void dematerializeOthers(final Runnable unwarpHandler) {
+        BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+            @Override
+            public final void run(final Player player) {
+                if ((player == Player.this) || isDestroyed(player)) {
+                    return;
+                }
+                player.dematerialize(unwarpHandler);
+            }
+        });
+    }
+    
     @Override
     public final void onUnwarped() {
+        if (unwarpHandler == null) {
+            return;
+        }
         unwarpHandler.run();
+    }
+    
+    protected final void warpOthers() {
+        BotsnBoltsGame.runPlayerContexts(new PlayerContextRunnable() {
+            @Override
+            public final void run(final PlayerContext pc) {
+                if (pc.isLifeCounterEmpty()) {
+                    return;
+                }
+                final Player oldPlayer = PlayerContext.getPlayer(pc);
+                if (oldPlayer == Player.this) {
+                    return;
+                } else if (!isDestroyed(oldPlayer)) {
+                    if (oldPlayer.isVisible()) {
+                        return;
+                    }
+                    oldPlayer.destroy();
+                }
+                final Player newPlayer = new Player(pc);
+                if (oldPlayer != null) {
+                    newPlayer.healthMeter = oldPlayer.healthMeter;
+                    newPlayer.staminaMeter = oldPlayer.staminaMeter;
+                    newPlayer.lifeCounter = oldPlayer.lifeCounter;
+                    if (oldPlayer.health > 0) {
+                        newPlayer.health = oldPlayer.health;
+                        newPlayer.stamina = oldPlayer.stamina;
+                    }
+                }
+                newPlayer.getPosition().set(Player.this.getPosition());
+                BotsnBoltsGame.addActor(newPlayer);
+                new Warp(newPlayer);
+                newPlayer.registerInputs(pc.ctrl);
+            }
+        });
     }
     
     protected final void launch(final int dstX, final int dstY) {
@@ -676,12 +727,34 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return;
         }
         defeatOrbs(this, pi.defeat);
+        destroy();
+        if (isAnyPlayerRemaining()) {
+            onOnePlayerDefeated();
+        } else {
+            onLastPlayerDefeated();
+        }
+    }
+    
+    private final void onOnePlayerDefeated() {
+        decrementLifeCounter();
+        startDefeatTimer(null);
+    }
+    
+    private final void onLastPlayerDefeated() {
         Pangine.getEngine().getAudio().stopMusic();
         startDefeatTimer(new Runnable() {
             @Override public final void run() {
                 finishDefeat();
             }});
-        destroy();
+    }
+    
+    protected final static boolean isAnyPlayerRemaining() {
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            if (!isDestroyed(PlayerContext.getPlayer(pc))) {
+                return true;
+            }
+        }
+        return false;
     }
     
     protected final static void startDefeatTimer(final Runnable finisher) {
@@ -705,13 +778,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
         healthMeter.destroy();
         Panctor.destroy(staminaMeter);
         Panctor.destroy(lifeCounter);
+        decrementLifeCounter();
+        resumeAfterDefeat();
+    }
+    
+    private final void decrementLifeCounter() {
         if (!prf.infiniteLives) {
             pc.lives--;
-            if (pc.lives <= 0) {
+            if (pc.isLifeCounterEmpty() && !isAnyPlayerRemaining()) {
                 BotsnBoltsGame.startGame();
                 return;
             }
         }
+    }
+    
+    private final void resumeAfterDefeat() {
         if (startRoom == null) {
             RoomLoader.reloadCurrentRoom();
         } else {
@@ -1599,6 +1680,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         bossDoor.open();
         bossDoorStatus = 1;
+        dematerializeOthers(null);
         return true;
     }
     
@@ -1722,6 +1804,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (roomCell == null) {
             return false;
         }
+        dematerializeOthers(null);
         lastShotByAnyPlayer = NULL_CLOCK;
         initAvailableRescues();
         endGrapple();
@@ -1735,6 +1818,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final List<Panctor> actorsToKeep = new ArrayList<Panctor>();
         actorsToKeep.add(this);
         actorsToKeep.add(BotsnBoltsGame.tm);
+        if (BotsnBoltsGame.tracked instanceof PlayerMean) {
+            actorsToKeep.add(BotsnBoltsGame.tracked);
+        }
         if (!Panctor.isDestroyed(Boss.aiBoss) && (Boss.aiBoss.getLayer() == getLayer())) {
             Boss.aiBoss.getPosition().setY(getPosition().getY());
             Boss.aiBoss.v = 0;
@@ -2499,6 +2585,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final static class PlayerContext {
+        protected final int index;
         protected final Profile prf;
         protected ControlScheme ctrl;
         protected final PlayerImages pi;
@@ -2506,13 +2593,22 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected int lives = 5;
         private Player srcPlayer = null;
         
-        protected PlayerContext(final Profile prf, final PlayerImages pi) {
+        protected PlayerContext(final int index, final Profile prf, final PlayerImages pi) {
+            this.index = index;
             this.prf = prf;
             this.pi = pi;
         }
         
         protected final void setControlScheme(final ControlScheme ctrl) {
             this.ctrl = ctrl;
+        }
+        
+        protected final int getHudX() {
+            return index * 40;
+        }
+        
+        protected final boolean isLifeCounterEmpty() {
+            return lives <= 0;
         }
         
         protected final static Player getPlayer(final PlayerContext pc) {

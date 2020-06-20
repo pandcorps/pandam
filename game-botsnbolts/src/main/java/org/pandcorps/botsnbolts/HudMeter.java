@@ -106,7 +106,7 @@ public abstract class HudMeter extends Panctor {
         
         protected HudIcon(final PlayerContext pc, final int yOff) {
             this.pc = pc;
-            getPosition().set(HUD_ICON_X, Pangine.getEngine().getEffectiveHeight() - yOff, BotsnBoltsGame.DEPTH_HUD);
+            getPosition().set(pc.getHudX() + HUD_ICON_X, Pangine.getEngine().getEffectiveHeight() - yOff, BotsnBoltsGame.DEPTH_HUD);
         }
         
         @Override

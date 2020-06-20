@@ -372,7 +372,8 @@ public class Story {
         protected final void loadLab() {
             final Talker drRoot = newRootTalker().setTalking(false);
             initActor(drRoot, 160, false);
-            final PlayerImages pi = BotsnBoltsGame.pc == null ? BotsnBoltsGame.voidImages : BotsnBoltsGame.pc.pi;
+            final PlayerContext pc = BotsnBoltsGame.getPrimaryPlayerContext();
+            final PlayerImages pi = pc == null ? BotsnBoltsGame.voidImages : pc.pi;
             final Panmage playerStand = pi.basicSet.stand, playerBlink = pi.basicSet.blink;
             final Panctor player = newActor(playerBlink, 224, true);
             openEyes(player, playerBlink, playerStand, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
@@ -387,7 +388,7 @@ public class Story {
                     lookAround(player, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
                         player.setView(playerStand);
                         addTimer(90, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
-                            final Player p = new Player(BotsnBoltsGame.pc) { @Override protected final void onLanded() {
+                            final Player p = new Player(pc) { @Override protected final void onLanded() {
                                 destroy();
                                 dematerialize(getFinishHandler());
                             }};
@@ -418,7 +419,7 @@ public class Story {
             final Talker drRoot = newRootTalker().setTalking(false);
             initActor(drRoot, 96, true);
             addTimer(60, new TimerListener() { @Override public final void onTimer(final TimerEvent event) {
-                final Player p = new Player(BotsnBoltsGame.pc) { @Override public final void onMaterialized() {
+                final Player p = new Player(BotsnBoltsGame.getPrimaryPlayerContext()) { @Override public final void onMaterialized() {
                     destroy();
                     final Talker player = newPlayerTalker().setTalking(false);
                     replaceActor(this, player);
@@ -814,7 +815,7 @@ public class Story {
         @Override
         protected final TextTyper loadText() {
             enableCharacterBg();
-            final Profile prf = BotsnBoltsGame.pc.prf;
+            final Profile prf = BotsnBoltsGame.getPrimaryProfile();
             final int numUpgrades = prf.upgrades.size(), numDisks = prf.disks.size();
             final float percentage = Math.round((numUpgrades + numDisks) * 1000.0f / 36.0f) / 10.0f;
             final TextTyper typer = newStoryTyper(
@@ -1095,10 +1096,10 @@ public class Story {
     protected final static Talker newPlayerTalker() {
         return new Talker() {
             @Override final protected Panmage getMouthClosed() {
-                return BotsnBoltsGame.pc.pi.basicSet.stand;
+                return BotsnBoltsGame.getPrimaryPlayerContext().pi.basicSet.stand;
             }
             @Override final protected Panmage getMouthOpen() {
-                return BotsnBoltsGame.pc.pi.talk;
+                return BotsnBoltsGame.getPrimaryPlayerContext().pi.talk;
             }};
     }
     

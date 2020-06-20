@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Boss.*;
+import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
 import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
@@ -59,6 +60,16 @@ public abstract class Extra extends Panctor {
     
     protected boolean isVisibleWhileRoomChanging() {
         return false;
+    }
+    
+    protected final static Player getCollidingPlayer(final Panctor src) {
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            final Player player = PlayerContext.getPlayer(pc);
+            if (!Panctor.isDestroyed(player) && Pangine.getEngine().isCollision(player, src)) {
+                return player;
+            }
+        }
+        return null;
     }
     
     protected abstract static class EnemySpawner extends Extra implements StepListener {
@@ -222,8 +233,8 @@ public abstract class Extra extends Panctor {
             if (!active) {
                 return;
             }
-            final Player player = PlayerContext.getPlayer(BotsnBoltsGame.pc);
-            if (!Panctor.isDestroyed(player) && Pangine.getEngine().isCollision(player, this)) {
+            final Player player = getCollidingPlayer(this);
+            if (player != null) {
                 if (occupant == null) {
                     occupant = player;
                     onEntrance();
@@ -350,10 +361,16 @@ public abstract class Extra extends Panctor {
 
         @Override
         public final void onStep(final StepEvent event) {
-            final Player player = PlayerContext.getPlayer(BotsnBoltsGame.pc);
-            if (player == null) {
-                return;
-            } else if (player.getPosition().getX() <= 32) {
+            BotsnBoltsGame.runPlayers(new PlayerRunnable() {
+                @Override
+                public final void run(final Player player) {
+                    onStep(player);
+                }
+            });
+        }
+        
+        private final void onStep(final Player player) {
+            if (player.getPosition().getX() <= 32) {
                 BotsnBoltsGame.addActor(new FinalWagon(seg));
                 player.setMirror(false);
                 Boss.setPlayerActive(false);
