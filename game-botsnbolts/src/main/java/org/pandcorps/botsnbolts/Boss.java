@@ -3473,10 +3473,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     final Player player = PlayerContext.getPlayer(pc);
                     if (isDestroyed(player)) {
                         continue;
-                    } else if (Math.abs(player.getPosition().getX() - x) < 40) {
+                    }
+                    final Panple ppos = player.getPosition();
+                    if (Math.abs(ppos.getX() - x) < 40) {
                         torpedoCount--;
                         torpedoWait = 8;
-                        if (player.getPosition().getY() < y) {
+                        if (ppos.getY() < y) {
                             startTorpedoDown();
                         } else if (RoomLoader.getWaterTile() >= WATER_THRESHOLD_MAX) {
                             startTorpedoUp();
@@ -5468,10 +5470,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     player.setMirror(false);
                 }
             });
-            onRoomAddFinish();
-        }
-        
-        private final void onRoomAddFinish() {
             addActor(saucer);
         }
         
