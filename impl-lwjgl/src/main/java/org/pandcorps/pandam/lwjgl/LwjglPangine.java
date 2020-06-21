@@ -30,6 +30,7 @@ import java.util.*;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.impl.*;
@@ -324,19 +325,19 @@ public final class LwjglPangine extends GlPangine {
 		}
 	}
     
-    private static boolean activatedUnspecifiedAxis = false;
+    private final static Set<Button> activatedUnspecifiedAxis = new IdentityHashSet<Button>();
     
     private final void handleUnspecifiedAxis(final float val, final Button pos, final Button neg) {
         if (val > axisThreshold) {
             // Check for immediate direction change without releasing axis
             activate(ifActive(neg), false);
             activate(ifInactive(pos), true);
-            activatedUnspecifiedAxis = true;
+            activatedUnspecifiedAxis.add(pos);
         } else if (val < -axisThreshold) {
             activate(ifActive(pos), false);
             activate(ifInactive(neg), true);
-            activatedUnspecifiedAxis = true;
-        } else if (activatedUnspecifiedAxis) { // Newer code; don't know if we could get unspecified 0 signals after specified signals; wouldn't want to clear in that case
+            activatedUnspecifiedAxis.add(pos);
+        } else if (activatedUnspecifiedAxis.remove(pos)) {
             activate(ifActive(pos), false);
             activate(ifActive(neg), false);
         }
