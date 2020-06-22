@@ -39,8 +39,7 @@ import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
-import org.pandcorps.pandam.event.StepEndEvent;
-import org.pandcorps.pandam.event.StepEndListener;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
@@ -114,6 +113,8 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte Z_OFF_OVERLAY = 2;
     protected final static byte Z_OFF_TEXT = 4;
     protected final static int DEPTH_CURSOR = 78;
+    
+    protected final static int MAX_CAMERA_SPEED = 10;
     
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);
@@ -1476,9 +1477,13 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     protected final static class PlayerMean extends Panctor implements StepEndListener {
+        {
+            getPosition().setY(112);
+        }
+        
         @Override
         public void onStepEnd(final StepEndEvent event) {
-            float x = 0, y = 0;
+            float x = 0;
             int n = 0;
             for (final PlayerContext pc : pcs) {
                 final Player player = PlayerContext.getPlayer(pc);
@@ -1487,11 +1492,19 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
                 final Panple pos = player.getPosition();
                 x += pos.getX();
-                y += pos.getY();
                 n++;
             }
             if (n > 0) {
-                getPosition().set(x / n, y / n);
+                final Panple pos = getPosition();
+                final float oldX = pos.getX(), desiredX = x / n, diff = desiredX - oldX, newX;
+                if (diff > MAX_CAMERA_SPEED) {
+                    newX = oldX + MAX_CAMERA_SPEED;
+                } else if (diff < -MAX_CAMERA_SPEED) {
+                    newX = oldX - MAX_CAMERA_SPEED;
+                } else {
+                    newX = desiredX;
+                }
+                pos.setX(newX);
             }
         }
     }
