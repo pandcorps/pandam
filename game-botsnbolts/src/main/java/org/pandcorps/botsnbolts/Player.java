@@ -178,13 +178,27 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
-    private final static Panput[] getInputArray(final Panput key, final Panput touchButton) {
-        return (touchButton == null) ? new Panput[] { key } : new Panput[] {key, touchButton};
+    private final static Panput[] getInputArray(final Panput... inputs) {
+        int size = 0;
+        for (final Panput input : inputs) {
+            if (input != null) {
+                size++;
+            }
+        }
+        final Panput[] a = new Panput[size];
+        size = 0;
+        for (final Panput input : inputs) {
+            if (input != null) {
+                a[size] = input;
+                size++;
+            }
+        }
+        return a;
     }
     
     protected final void registerInputs(final ControlScheme ctrl) {
-        final Panput[] jumpInput = getInputArray(ctrl.get1(), Menu.jump);
-        final Panput[] shootInput = getInputArray(ctrl.get2(), Menu.attack);
+        final Panput[] jumpInput = getInputArray(ctrl.getJump(), Menu.jump);
+        final Panput[] shootInput = getInputArray(ctrl.getAttack(), Menu.attack);
         final Panput[] rightInput = getInputArray(ctrl.getRight(), Menu.right);
         final Panput[] leftInput = getInputArray(ctrl.getLeft(), Menu.left);
         final Panput[] upInput = getInputArray(ctrl.getUp(), Menu.up);
@@ -215,20 +229,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
         registerPause(interaction.BACK);
-        final Panput[] toggleJumpInput = getInputArray(interaction.KEY_SHIFT_LEFT, Menu.toggleJump);
-        final Panput[] toggleAttackInput = getInputArray(interaction.KEY_TAB, Menu.toggleAttack);
-        final ActionStartListener toggleJumpListener = new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(1); }};
-        final ActionStartListener toggleShootListener = new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(1); }};
-        register(toggleJumpInput, toggleJumpListener);
-        register(toggleAttackInput, toggleShootListener);
-        register(interaction.KEY_COMMA, new ActionStartListener() {
+        register(getInputArray(interaction.KEY_SHIFT_LEFT, Menu.toggleJump, interaction.KEY_PERIOD, ctrl.getTogglePositive2()), new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(1); }});
+        register(getInputArray(interaction.KEY_TAB, Menu.toggleAttack, interaction.KEY_BRACKET_RIGHT, ctrl.getTogglePositive1()), new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(1); }});
+        register(getInputArray(interaction.KEY_COMMA, ctrl.getToggleNegative2()), new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { toggleJumpMode(-1); }});
-        register(interaction.KEY_BRACKET_LEFT, new ActionStartListener() {
+        register(getInputArray(interaction.KEY_BRACKET_LEFT, ctrl.getToggleNegative1()), new ActionStartListener() {
             @Override public final void onActionStart(final ActionStartEvent event) { toggleShootMode(-1); }});
-        register(interaction.KEY_PERIOD, toggleJumpListener);
-        register(interaction.KEY_BRACKET_RIGHT, toggleShootListener);
         registerCapture(this);
     }
     
@@ -3180,6 +3188,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final static class DefeatOrb extends Pandy implements AllOobListener {
+        private int age = 0;
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            age++;
+            if (age > 180) {
+                destroy();
+            }
+        }
+        
         @Override
         public final void onAllOob(final AllOobEvent event) {
             destroy();
