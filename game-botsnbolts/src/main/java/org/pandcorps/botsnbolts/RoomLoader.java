@@ -283,6 +283,7 @@ public abstract class RoomLoader {
     }
     
     private final static void visitRoom() {
+        revisiting = !visitedRooms.add(room);
         BotsnBoltsGame.runPlayers(new PlayerRunnable() {
             public final void run(final Player player) {
                 visitRoom(player);
@@ -291,7 +292,6 @@ public abstract class RoomLoader {
     }
     
     private final static void visitRoom(final Player p) {
-        revisiting = !visitedRooms.add(room);
         if (p != null) {
             if (p.startRoom == null) {
                 p.startRoomNeeded = true;
