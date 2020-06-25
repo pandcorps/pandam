@@ -50,7 +50,7 @@ import org.pandcorps.furguardians.Player.*;
 
 public class FurGuardiansGame extends BaseGame {
 	protected final static String TITLE = "Fur-Guardians"; // res/values/strings.xml/app_name
-    protected final static String VERSION = "1.27.2"; // AndroidManifest.xml/versionName
+    protected final static String VERSION = "1.27.3"; // AndroidManifest.xml/versionName
     protected final static String YEAR = "2014-2020";
     protected final static String AUTHOR = "Andrew M. Martin";
 	/*
@@ -443,19 +443,15 @@ public class FurGuardiansGame extends BaseGame {
         return true;
     }
 
-	/*
-	// Simulate a tablet, set fullScreen to false above
 	@Override
 	protected final int getGameWidth() {
-		return 1024;
+		return 384;
 	}
 	
 	@Override
 	protected final int getGameHeight() {
-		//return 600;
-		return 575; // This tablet has a menu bar that takes up part of the height
+		return 224;
 	}
-	*/
 	
 	@Override
     protected final void initEarliest() {
