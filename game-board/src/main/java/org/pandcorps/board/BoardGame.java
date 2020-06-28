@@ -22,6 +22,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.board;
 
-public class BoardGame {
+import org.pandcorps.game.*;
+import org.pandcorps.pandam.*;
 
+public class BoardGame extends BaseGame {
+    @Override
+    protected final void init(final Panroom room) throws Exception {
+    }
 }
