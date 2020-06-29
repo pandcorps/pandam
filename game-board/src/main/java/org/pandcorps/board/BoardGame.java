@@ -29,4 +29,7 @@ public class BoardGame extends BaseGame {
     @Override
     protected final void init(final Panroom room) throws Exception {
     }
+    
+    protected abstract static class BoardGameModule {
+    }
 }
