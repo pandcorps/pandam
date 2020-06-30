@@ -795,6 +795,8 @@ public class Level {
             Level.letterBlock(x, y, currLetter);
         }
     	
+    	// Sub-classes can override this to add theme-specific templates to the given list
+    	// Builders can call this to add the theme's builders to its list, but some builders will only use their own templates
     	protected void addTemplates(final List<Template> templates) {
         }
     	
@@ -1839,9 +1841,15 @@ public class Level {
     	}
     }
     
-    private final static class BlockBuilder extends GrassyBuilder {
+    private static class BlockBuilder extends GrassyBuilder {
         @Override
         protected final void loadTemplates() {
+            loadBlockTemplates();
+            loadBlockGoals();
+            setBlockParameters();
+        }
+        
+        protected void loadBlockTemplates() {
             addConstructedTemplates();
             addGroundTemplates();
             addPitTemplates();
@@ -1849,9 +1857,15 @@ public class Level {
             addFloatTemplates();
             addGiantTemplate();
             theme.addTemplates(templates);
+        }
+        
+        protected final void loadBlockGoals() {
             goals.add(new UpBlockGoal());
             goals.add(new ColorRiseGoal());
             theme.addGoals(goals);
+        }
+        
+        protected final void setBlockParameters() {
             groundLeft = 1;
             groundRight = 1;
             groundMidHeight = 1;
@@ -1869,11 +1883,10 @@ public class Level {
         }
     }
     
-    private final static class QuadBuilder extends GrassyBuilder {
+    private final static class QuadBuilder extends BlockBuilder {
         @Override
-        protected final void loadTemplates() {
+        protected final void loadBlockTemplates() {
             templates.add(new QuadTemplate());
-            addNormalGoals();
             breakableAwardProbability = 100;
             minRandomAward = GemBumped.AWARD_2;
         }
