@@ -25,6 +25,8 @@ package org.pandcorps.pandam;
 public abstract class Panscreen {
     private static Panscreen screen = null;
     private static float defaultZoom = -1;
+    private static int defaultWidth = -1;
+    private static int defaultHeight = -1;
     
     public final static Panscreen get() {
     	return screen;
@@ -41,6 +43,8 @@ public abstract class Panscreen {
             engine.clearTouchButtons();
             if (defaultZoom > 0) {
                 engine.zoom(defaultZoom);
+            } else if (defaultWidth > 0) {
+                engine.setEffectiveSize(defaultWidth, defaultHeight);
             }
             screen.load();
             engine.initScreen();
@@ -50,7 +54,10 @@ public abstract class Panscreen {
     }
     
     public final static void saveCurrentZoomAsDefault() {
-        defaultZoom = Pangine.getEngine().getZoom();
+        final Pangine engine = Pangine.getEngine();
+        defaultZoom = engine.getZoom();
+        defaultWidth = engine.getEffectiveWidth();
+        defaultHeight = engine.getEffectiveHeight();
     }
     
     protected abstract void load() throws Exception;
