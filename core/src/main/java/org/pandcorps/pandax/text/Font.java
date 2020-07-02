@@ -46,4 +46,8 @@ public interface Font {
     public int getWidth();
     
     public int getHeight();
+    
+    public int getUsedWidth();
+    
+    public int getUsedHeight();
 }

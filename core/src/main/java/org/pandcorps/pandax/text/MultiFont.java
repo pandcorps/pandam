@@ -83,6 +83,16 @@ public final class MultiFont implements Font {
 	    throw new UnsupportedOperationException();
 	}
 	
+	@Override
+	public final int getUsedWidth() {
+	    throw new UnsupportedOperationException();
+	}
+    
+	@Override
+    public final int getUsedHeight() {
+	    throw new UnsupportedOperationException();
+	}
+	
 	public final static MultiFont toMultiFont(final Font font) {
 	    return (font instanceof MultiFont) ? ((MultiFont) font) : new MultiFont(new FontLayer(font, FinPanple.ORIGIN));
 	}

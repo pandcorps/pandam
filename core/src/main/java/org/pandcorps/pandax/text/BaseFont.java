@@ -26,6 +26,8 @@ import org.pandcorps.pandam.*;
 
 public abstract class BaseFont implements Font {
     private final Panmage image;
+    private int usedWidth = 0;
+    private int usedHeight = 0;
     
     protected BaseFont(final Panmage image) {
         this.image = image;
@@ -60,6 +62,21 @@ public abstract class BaseFont implements Font {
     @Override
     public int getHeight() {
     	return (int) image.getSize().getY() / getRowAmount();
+    }
+    
+    @Override
+    public final int getUsedWidth() {
+        return (usedWidth == 0) ? getWidth() : usedWidth;
+    }
+    
+    @Override
+    public final int getUsedHeight() {
+        return (usedHeight == 0) ? getHeight() : usedHeight;
+    }
+    
+    public void setUsedSize(final int usedWidth, final int usedHeight) {
+        this.usedWidth = usedWidth;
+        this.usedHeight = usedHeight;
     }
     
     protected final static int getRow(final int index, final int rowAmount) {
