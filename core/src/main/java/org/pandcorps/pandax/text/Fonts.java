@@ -42,14 +42,14 @@ public final class Fonts {
         
         private final FontType type;
         private final int size;
-        private final int width;
-        private final int height;
+        private final int usedWidth;
+        private final int usedHeight;
         
-        private FontRequest(final FontType type, final int size, final int width, final int height) {
+        private FontRequest(final FontType type, final int size, final int usedWidth, final int usedHeight) {
             this.type = type;
             this.size = size;
-            this.width = width;
-            this.height = height;
+            this.usedWidth = usedWidth;
+            this.usedHeight = usedHeight;
         }
         
         public FontRequest(final FontType type, final int size) {
@@ -70,7 +70,7 @@ public final class Fonts {
     }
     
     private final static FontRequest newTinyRequest(final FontType type) {
-        return new FontRequest(type, -1, 4, 6);
+        return new FontRequest(type, 8, 4, 6);
     }
     
     private final static FontRequest DEFAULT_REQUEST = new FontRequest();
@@ -170,7 +170,7 @@ public final class Fonts {
             req = DEFAULT_REQUEST;
         }
         final int size = req.size;
-        final String name = (size < 0) ? style : (style + size);
+        final String name = "Tiny".equals(style) ? style : (style + size);
         final FontType type = req.type;
         final String id = "org.pandcorps.pandax.text.Fonts." + name + '.' + type + '.' + filterDesc + '.' + transparent;
         final Pangine engine = Pangine.getEngine();
@@ -185,7 +185,7 @@ public final class Fonts {
             		filter.put(src, dst);
             	}
             }
-            final int w = req.width, h = req.height;
+            final int w = req.size, h = req.size;
             if (type == FontType.Number) {
                 final Img out = Imtil.newImage(w * NumberFont.NUM, h * NumberFont.NUM);
                 Imtil.copy(img, out, 10 * w, 2 * h, 4 * w, h, 0, 0);
@@ -216,12 +216,16 @@ public final class Fonts {
             }
             image = engine.createImage(id, img);
         }
+        final BaseFont font;
         if (type == FontType.Number) {
-            return new NumberFont(image);
+            font = new NumberFont(image);
         } else if (type == FontType.Upper) {
-            return new UpperFont(image);
+            font = new UpperFont(image);
+        } else {
+            font = new ByteFont(image);
         }
-        return new ByteFont(image);
+        font.setUsedSize(req.usedWidth, req.usedHeight);
+        return font;
     }
     
     private final static void drawShadow(final Img img, final Pancolor base, final Pancolor shadow, final int w, final int h) {
