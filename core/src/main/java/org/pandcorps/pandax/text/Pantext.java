@@ -62,8 +62,10 @@ public class Pantext extends Panctor {
 	//private final String text;
 	/*package*/ final List<? extends CharSequence> text;
 	/*package*/ int fontNum;
-	/*package*/ float fontWidth;
-	/*package*/ float fontHeight;
+	private float fontFullWidth;
+	private float fontFullHeight;
+	/*package*/ float fontUsedWidth;
+	/*package*/ float fontUsedHeight;
 	private int gapY = 0;
 	//private final FinPanple size;
 	/*package*/ final SizePanple size = new SizePanple();
@@ -132,8 +134,10 @@ public class Pantext extends Panctor {
 		this.font = font.getImage();
 		fontNum = font.getRowAmount();
 		final Panple fontSize = this.font.getSize();
-		fontWidth = fontSize.getX() / fontNum;
-		fontHeight = fontSize.getY() / fontNum;
+		fontFullWidth = fontSize.getX() / fontNum;
+		fontFullHeight = fontSize.getY() / fontNum;
+		fontUsedWidth = font.getUsedWidth();
+		fontUsedHeight = font.getUsedHeight();
 		//size = new FinPanple2(fontSize * text.length(), fontSize);
 	}
 	
@@ -145,12 +149,12 @@ public class Pantext extends Panctor {
 
         @Override
         public final float getX() {
-            return getNumColumns() * fontWidth;
+            return getNumColumns() * fontUsedWidth;
         }
 
         @Override
         public final float getY() {
-            return getNumRows() * (fontHeight + gapY) - gapY;
+            return getNumRows() * (fontUsedHeight + gapY) - gapY;
         }
 
         @Override
@@ -291,7 +295,7 @@ public class Pantext extends Panctor {
 		}
         
         // Character rendering accounts for first line of page; border is independent; this will undo that
-        final float by = y - firstLine * fontHeight;
+        final float by = y - firstLine * fontUsedHeight;
         
         if (title != null) {
             final int lineSize = title.length();
@@ -401,9 +405,9 @@ public class Pantext extends Panctor {
 	    } else if (index == Font.INDEX_ILLEGAL) {
 	        throw new IllegalArgumentException("Cannot render " + c + " with " + f.getClass().getName());
 	    }
-	    final float xoff = BaseFont.getColumn(index, fontNum) * fontWidth;
-        final float yoff = BaseFont.getRow(index, fontNum) * fontHeight;
-        renderer.render(layer, font, x + (i * fontWidth), y - ((j - firstLine) * (fontHeight + gapY)), z, xoff, yoff, fontWidth, fontHeight);
+	    final float xoff = BaseFont.getColumn(index, fontNum) * fontFullWidth;
+        final float yoff = BaseFont.getRow(index, fontNum) * fontFullHeight;
+        renderer.render(layer, font, x + (i * fontUsedWidth), y - ((j - firstLine) * (fontUsedHeight + gapY)), z, xoff, yoff, fontUsedWidth, fontUsedHeight);
 	}
 	
 	public final List<? extends CharSequence> getText() {
