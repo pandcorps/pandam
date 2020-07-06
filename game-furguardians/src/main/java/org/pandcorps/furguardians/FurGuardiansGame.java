@@ -1308,8 +1308,7 @@ public class FurGuardiansGame extends BaseGame {
         // CFG|Andrew
         Config.defaultProfileName = cfg.getValue(0);
         Config.btnSize = cfg.getInt(1, 0);
-        Config.zoomMag = cfg.getInt(2, -1);
-        zoomMag = Config.zoomMag;
+        //Config.zoomMag = cfg.getInt(2, -1);
         Config.setMusicEnabled(cfg.getBoolean(3, Config.DEF_MUSIC_ENABLED));
         Config.setSoundEnabled(cfg.getBoolean(4, Config.DEF_SOUND_ENABLED));
 	}
