@@ -3666,30 +3666,6 @@ public class Menu {
                 msg = addMaps(100);
 			} else if ("addkmaps".equalsIgnoreCase(cmd)) {
                 msg = addMaps(1000);
-			} else if ("getzoom".equalsIgnoreCase(cmd)) {
-				if (Config.zoomMag <= 0) {
-					msg = "Default (" + FurGuardiansGame.getApproximateFullScreenZoomedDisplaySize() + ")";
-				} else  {
-					msg = "Zoom: " + Config.zoomMag;
-				}
-			} else if ("zoomin".equalsIgnoreCase(cmd)) {
-				if (Config.zoomMag > 0 && Config.zoomMag < FurGuardiansGame.getApproximateFullScreenZoomedDisplaySize()) {
-					msg = setZoom(Config.zoomMag + 1);
-				} else {
-					msg = MSG_LIMIT;
-				}
-			} else if ("zoomout".equalsIgnoreCase(cmd)) {
-				int z = Config.zoomMag;
-				if (z < 0) {
-					z = FurGuardiansGame.getApproximateFullScreenZoomedDisplaySize();
-				}
-				if (z > 1) {
-					msg = setZoom(z - 1);
-				} else {
-					msg = MSG_LIMIT;
-				}
-			} else if ("zoomdef".equalsIgnoreCase(cmd)) {
-				msg = setZoom(-1);
 			} else if ("addclothes".equalsIgnoreCase(cmd)) {
 			    msg = getAddedMsg(addClothes());
 			} else if ("addhats".equalsIgnoreCase(cmd)) {
@@ -3809,12 +3785,6 @@ public class Menu {
 		
 		private final void setMsg(final String msg) {
 			Chartil.set(info, msg);
-		}
-		
-		private final static String setZoom(final int zoomMag) {
-			Config.zoomMag = zoomMag;
-			Config.serialize();
-			return MSG_RESTART;
 		}
 		
 		private final String addRank(final int n) {
