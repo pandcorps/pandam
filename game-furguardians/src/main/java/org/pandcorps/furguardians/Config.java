@@ -32,7 +32,6 @@ public class Config {
     protected final static boolean DEF_SOUND_ENABLED = true;
     protected static String defaultProfileName = null;
     protected static int btnSize = 0;
-    protected static int zoomMag = -1;
     protected static boolean musicEnabled = DEF_MUSIC_ENABLED;
     protected static boolean soundEnabled = DEF_SOUND_ENABLED;
     
@@ -40,7 +39,7 @@ public class Config {
         Iotil.writeFile(FurGuardiansGame.FILE_CFG, FurGuardiansGame.SEG_CFG
         		+ "|" + Chartil.unnull(defaultProfileName)
         		+ "|" + btnSize
-        		+ "|" + zoomMag
+        		+ "|-1" // zoomMag, no longer used
         		+ "|" + musicEnabled
         		+ "|" + soundEnabled);
     }
