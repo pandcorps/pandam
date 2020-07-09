@@ -43,7 +43,7 @@ public abstract class Pangine {
 	protected static Pangine engine = null;
 
 	private final Map<String, Pantity> entities = Coltil.newSafeMap();
-	private boolean entityMapEnabled = true;
+	private boolean entityMapEnabled = false;
 	private final HashMap<Class<? extends Panctor>, Pantype> types =
 		new HashMap<Class<? extends Panctor>, Pantype>();
 	//private final ArrayList<Panmage> images = new ArrayList<Panmage>();
