@@ -25,6 +25,7 @@ package org.pandcorps.game.actor;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.tile.*;
 
@@ -629,4 +630,15 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected abstract boolean isSolidBehavior(final byte b);
     
     protected abstract boolean isFloorBehavior(final byte b);
+    
+    public final static void registerCapture(final Panctor actor) {
+        final Pangine engine = Pangine.getEngine();
+        final Panteraction interaction = engine.getInteraction();
+        actor.register(interaction.KEY_F1, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
+        actor.register(interaction.KEY_F2, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
+        actor.register(interaction.KEY_F3, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
+    }
 }

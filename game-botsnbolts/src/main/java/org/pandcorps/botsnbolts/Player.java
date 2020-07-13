@@ -240,17 +240,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
         registerCapture(this);
     }
     
-    protected final static void registerCapture(final Panctor actor) {
-        final Pangine engine = Pangine.getEngine();
-        final Panteraction interaction = engine.getInteraction();
-        actor.register(interaction.KEY_F1, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
-        actor.register(interaction.KEY_F2, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { engine.startCaptureFrames(); }});
-        actor.register(interaction.KEY_F3, new ActionStartListener() {
-            @Override public final void onActionStart(final ActionStartEvent event) { engine.stopCaptureFrames(); }});
-    }
-    
     protected final void registerPause(final Panput input) {
         healthMeter.register(input, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) { togglePause(); }});
