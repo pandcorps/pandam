@@ -105,7 +105,7 @@ public abstract class MiniGameScreen extends Panscreen {
     protected final void registerMiniInputs(final Panctor actor, final Panscreen nextScreen, final Panmage menuImg, final int menuX, final int menuY) {
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
-        Player.registerCaptureScreen(actor);
+        Player.registerCapture(actor);
         actor.register(interaction.BACK, newMenuListener(nextScreen));
         if (engine.isMouseSupported()) {
             actor.register(interaction.KEY_ESCAPE, newMenuListener(nextScreen));
