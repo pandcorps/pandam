@@ -44,7 +44,60 @@ public final class Chartil {
     }
     
     public final static String toUpperCase(final String s) {
-        return s == null ? null : s.toUpperCase();
+        if (s == null) {
+            return null;
+        }
+        final int size = s.length();
+        for (int i = 0; i < size; i++) {
+            final char c = s.charAt(i);
+            if (isLowerCase(c)) {
+                final StringBuilder b = new StringBuilder(size);
+                b.append(s, 0, i);
+                b.append(toUpperCase(c));
+                for (int j = i + 1; j < size; j++) {
+                    b.append(toUpperCase(s.charAt(j)));
+                }
+                return b.toString();
+            }
+        }
+        return s;
+    }
+    
+    public final static char toUpperCase(final char c) {
+        // Different Locales can cause Character.toUpperCase to return unexpected characters unsupported by font images; this method forces expected characters
+        return isLowerCase(c) ? ((char) (c + 'A' - 'a')) : c;
+    }
+    
+    public final static boolean isUpperCase(final char c) {
+        return (c >= 'A') && (c <= 'Z');
+    }
+    
+    public final static String toLowerCase(final String s) {
+        if (s == null) {
+            return null;
+        }
+        final int size = s.length();
+        for (int i = 0; i < size; i++) {
+            final char c = s.charAt(i);
+            if (isUpperCase(c)) {
+                final StringBuilder b = new StringBuilder(size);
+                b.append(s, 0, i);
+                b.append(toLowerCase(c));
+                for (int j = i + 1; j < size; j++) {
+                    b.append(toLowerCase(s.charAt(j)));
+                }
+                return b.toString();
+            }
+        }
+        return s;
+    }
+    
+    public final static char toLowerCase(final char c) {
+        return isUpperCase(c) ? ((char) (c + 'a' - 'A')) : c;
+    }
+    
+    public final static boolean isLowerCase(final char c) {
+        return (c >= 'a') && (c <= 'z');
     }
     
     public final static String unnull(final String s) {
