@@ -114,6 +114,7 @@ public class PngLoader {
                     inflater = new InflaterInputStream(new SubInputStream(in, chunkLength));
                     for (y = 0; y < height; y++) {
                         filterType = nextByte(inflater);
+                        bitIndex = 0;
                         for (x = 0; x < width; x++) {
                             final int r, g, b, a;
                             if (colorType == COLOR_PALETTE) {
