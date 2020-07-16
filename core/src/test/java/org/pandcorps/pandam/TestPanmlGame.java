@@ -25,6 +25,20 @@ package org.pandcorps.pandam;
 import org.pandcorps.pandam.impl.*;
 
 public final class TestPanmlGame extends PandamTest {
+    private static boolean oldEntityMapEnabled = false;
+    
+    @Override
+    protected final void setUpPandam() {
+        final Pangine engine = Pangine.getEngine();
+        oldEntityMapEnabled = engine.isEntityMapEnabled();
+        engine.setEntityMapEnabled(true);
+    }
+    
+    @Override
+    protected final void tearDown() {
+        Pangine.getEngine().setEntityMapEnabled(oldEntityMapEnabled);
+    }
+    
 	public final void testInit() {
 		final PanmlGame actual = new PanmlGame("org/pandcorps/pandam/test.panml");
 		actual.init();
