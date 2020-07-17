@@ -231,7 +231,7 @@ public abstract class Panteraction {
 		}
 	}
 	
-	public final Touchscreen TOUCHSCREEN = new Touchscreen();
+	public final static Touchscreen TOUCHSCREEN = new Touchscreen();
 	public final Panput BACK = new ImplPanput(TOUCHSCREEN, "Back");
 	public final Panput MENU = new ImplPanput(TOUCHSCREEN, "Menu");
 	public final Panput SEARCH = new ImplPanput(TOUCHSCREEN, "Search");

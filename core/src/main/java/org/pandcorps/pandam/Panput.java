@@ -178,7 +178,7 @@ public abstract class Panput {
 	
 	public final static class Touch extends MappableInput {
 		public Touch(final Panteraction interaction) {
-			super(interaction.TOUCHSCREEN, "Touch");
+			super(Panteraction.TOUCHSCREEN, "Touch");
 		}
 	}
 	
@@ -210,7 +210,7 @@ public abstract class Panput {
 		}
 		
 		public TouchButton(final Panteraction interaction, final String name, final int x, final int y, final int w, final int h, final boolean moveCancel) {
-			super(interaction.TOUCHSCREEN, name);
+			super(Panteraction.TOUCHSCREEN, name);
 			xMin = x;
 			yMin = y;
 			xMax = x + w;
