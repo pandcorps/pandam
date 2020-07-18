@@ -144,7 +144,7 @@ public abstract class Input extends TextItem {
     
     protected final char format(final int ind, final char ch) {
     	if (properName) {
-    		return (ind == 0) ? Character.toUpperCase(ch) : Character.toLowerCase(ch);
+    		return (ind == 0) ? Chartil.toUpperCase(ch) : Chartil.toLowerCase(ch);
     	} else {
     		return ch;
     	}

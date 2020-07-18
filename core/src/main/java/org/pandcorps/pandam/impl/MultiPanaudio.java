@@ -24,6 +24,7 @@ package org.pandcorps.pandam.impl;
 
 import java.util.*;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public class MultiPanaudio extends Panaudio {
@@ -46,7 +47,7 @@ public class MultiPanaudio extends Panaudio {
     }
     
     private final String formatExtension(final String extension) {
-        return extension.toLowerCase();
+        return Chartil.toLowerCase(extension);
     }
     
     @Override

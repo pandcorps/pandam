@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public final class UpperFont extends BaseFont {
@@ -38,7 +39,7 @@ public final class UpperFont extends BaseFont {
     
     @Override
     public final int getIndex(char c) {
-        c = Character.toUpperCase(c);
+        c = Chartil.toUpperCase(c);
         if (c < ' ' || c > '_') {
             return (c == Pantext.CHAR_COPYRIGHT) ? 0 : INDEX_ILLEGAL;
         } else {
