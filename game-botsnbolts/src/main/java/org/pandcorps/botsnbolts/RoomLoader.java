@@ -1514,7 +1514,7 @@ public abstract class RoomLoader {
             String portraitLoc = seg.getValue(6);
             final String fullName = Chartil.unnull(name1) + Chartil.unnull(name2);
             if (Chartil.isEmpty(portraitLoc)) {
-                portraitLoc = "boss/" + name1.toLowerCase() + name2.toLowerCase() + "/" + fullName + "Portrait";
+                portraitLoc = "boss/" + Chartil.toLowerCase(name1) + Chartil.toLowerCase(name2) + "/" + fullName + "Portrait";
             }
             final String portraitPath = BotsnBoltsGame.RES + portraitLoc + ".png";
             final PlayerImages pi = BotsnBoltsGame.playerImages.get(portraitPath);

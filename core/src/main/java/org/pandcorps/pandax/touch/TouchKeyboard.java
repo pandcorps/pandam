@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.touch;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandax.text.*;
@@ -69,7 +70,7 @@ public class TouchKeyboard {
     
     private final TouchButton newTouchKey(final char c, final int x, final int y) {
     	final Panteraction inter = Pangine.getEngine().getInteraction();
-    	final String txt = String.valueOf(Character.toUpperCase(c));
+    	final String txt = String.valueOf(Chartil.toUpperCase(c));
     	final TouchButton btn = new TouchButton(inter, layer, txt, x, y, z, img, imgAct, null, 0, 0, fonts, txt, offX, offY, true);
     	btn.setMappedInput(c == CHAR_BACKSPACE ? inter.KEY_BACKSPACE : inter.getKey(c));
     	Pangine.getEngine().registerTouchButton(btn);
