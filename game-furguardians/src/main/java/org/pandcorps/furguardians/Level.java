@@ -4931,7 +4931,7 @@ public class Level {
         if (chr == ' ') {
             return 1;
         }
-    	final int c = (chr == '!') ? 26 : (java.lang.Character.toUpperCase(chr) - 'A');
+    	final int c = (chr == '!') ? 26 : (Chartil.toUpperCase(chr) - 'A');
     	if (c < 0 || c >= gemFont.length) {
     		return -1;
     	}
