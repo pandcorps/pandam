@@ -690,6 +690,9 @@ public class Map {
 			            return;
 			        }
 			    }
+			    if (device instanceof Touchscreen) {
+                    return; // Touchscreen only works well for one Player, so don't consider Touchscreen input when detecting a second Player 
+                }
 			    input.inactivate();
 			    final SelectScreen screen = new SelectScreen(null, true, null);
                 screen.ctrl = ControlScheme.getDefault(device);
