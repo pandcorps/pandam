@@ -1242,7 +1242,7 @@ public class Menu {
 	
 	protected final static class TitleScreen extends PlayerScreen {
 		private final static int NUM_CHRS = 4;
-		private final static String TITLE = FurGuardiansGame.TITLE.toUpperCase();
+		private final static String TITLE = Chartil.toUpperCase(FurGuardiansGame.TITLE);
 		private static ArrayList<PlayerContext> tcs = new ArrayList<PlayerContext>(NUM_CHRS);
 		private Pantext text = null;
 		private Pantext trademark = null;
