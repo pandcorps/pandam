@@ -271,7 +271,7 @@ public class Player extends Character implements CollisionListener {
 	    	if (avt.bird.kind != null) {
 	    	    list.add(avt.bird.getName());
 	    	}
-	    	return Chartil.nvl(Mathtil.rand(list), "FUR").toUpperCase();
+	    	return Chartil.toUpperCase(Chartil.nvl(Mathtil.rand(list), "FUR"));
 	    }
 	    
 	    public final int getGems() {
