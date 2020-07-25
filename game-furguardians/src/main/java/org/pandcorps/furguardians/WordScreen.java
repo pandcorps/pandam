@@ -479,7 +479,7 @@ public final class WordScreen extends MiniGameScreen {
                     list = new ArrayList<String>();
                     dictionary.put(key, list);
                 }
-                list.add(word.toUpperCase());
+                list.add(Chartil.toUpperCase(word));
             }
         } finally {
             Iotil.close(in);
@@ -499,7 +499,8 @@ public final class WordScreen extends MiniGameScreen {
             final String word = list.get(j);
             boolean ok = true;
             for (int i = 0; i < size; i++) {
-                if (letters[getLetterIndex(word, i)]) {
+                final int letterIndex = getLetterIndex(word, i);
+                if ((letterIndex < 0) || (letterIndex >= 26) || letters[letterIndex]) {
                     ok = false;
                     break;
                 }
@@ -616,7 +617,7 @@ public final class WordScreen extends MiniGameScreen {
     }
     
     protected final static boolean isVowel(final char _c) {
-        final char c = java.lang.Character.toLowerCase(_c);
+        final char c = Chartil.toLowerCase(_c);
         return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'y';
     }
     
