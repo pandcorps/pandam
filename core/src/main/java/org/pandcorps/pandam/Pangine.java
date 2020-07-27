@@ -1202,6 +1202,9 @@ public abstract class Pangine {
 	}
 	
 	public final void startCaptureFrames() {
+	    if (screenShotInd >= 0) {
+	        return;
+	    }
 	    initCapture();
 		screenShotInd = 0;
 		screenShotDst = "Pandam" + System.currentTimeMillis() + ".";
