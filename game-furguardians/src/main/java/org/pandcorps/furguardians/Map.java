@@ -807,6 +807,10 @@ public class Map {
 				modeMove = (short) ((modeMove + 1) % 3);
 			} else if (interaction.KEY_F1.isActive()) {
 				engine.captureScreen();
+			} else if (interaction.KEY_F2.isActive()) {
+                engine.startCaptureFrames();
+			} else if (interaction.KEY_F3.isActive()) {
+                engine.stopCaptureFrames();
 			} else if (interaction.KEY_G.isActive()) {
 			    FurGuardiansGame.goGoals(getPlayerContext());
 			} else if (interaction.KEY_M.isActive()) {
