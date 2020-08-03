@@ -26,15 +26,39 @@ import java.io.*;
 
 import org.pandcorps.core.*;
 
-public final class ImgProcessor {
+public final class ImgTool {
     public final static void main(final String[] args) {
-        final String inDir = args[0];
-        final String outDir = args[1];
-        final PixelFilter filter = null;
-        for (final File file : new File(inDir).listFiles()) {
-            final Img img = Imtil.load(file.getAbsolutePath());
-            Imtil.filterImg(img, filter);
-            Imtil.save(img, outDir + file.getName());
+        final String inLoc = args[0];
+        final String outLoc = args[1];
+        final File inFile = new File(inLoc);
+        if (inFile.isDirectory()) {
+            processDirectory(inFile, outLoc);
+        } else {
+            processFile(inFile, outLoc);
         }
+    }
+    
+    private final static void processDirectory(final File inDir, final String outLoc) {
+        for (final File inFile : inDir.listFiles()) {
+            processFile(inFile, outLoc + inFile.getName());
+        }
+    }
+    
+    private final static void processFile(final File inFile, final String outLoc) {
+        System.out.println("Processing from " + inFile + " into " + outLoc);
+        final ImgFactory f = ImgFactory.getFactory();
+        final Img img = Imtil.load(inFile.getAbsolutePath());
+        final int w = img.getWidth(), h = img.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = img.getRGB(x, y);
+                final int r = f.getRed(p);
+                final int b = f.getBlue(p);
+                if (r > b) {
+                    img.setRGB(x, y, f.getDataElement(b, f.getGreen(p), r, f.getAlpha(p)));
+                }
+            }
+        }
+        Imtil.save(img, outLoc);
     }
 }

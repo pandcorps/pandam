@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core.img.process;
 
-import org.pandcorps.core.Img;
+import org.pandcorps.core.*;
 
 public abstract class ImgProcessor {
     public abstract void process(final Img img);
