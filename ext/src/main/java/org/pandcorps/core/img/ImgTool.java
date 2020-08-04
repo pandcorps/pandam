@@ -27,6 +27,8 @@ import java.io.*;
 import org.pandcorps.core.*;
 
 public final class ImgTool {
+    private final static ImgFactory f = ImgFactory.getFactory();
+    
     public final static void main(final String[] args) {
         final String inLoc = args[0];
         final String outLoc = args[1];
@@ -46,19 +48,20 @@ public final class ImgTool {
     
     private final static void processFile(final File inFile, final String outLoc) {
         System.out.println("Processing from " + inFile + " into " + outLoc);
-        final ImgFactory f = ImgFactory.getFactory();
         final Img img = Imtil.load(inFile.getAbsolutePath());
         final int w = img.getWidth(), h = img.getHeight();
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 final int p = img.getRGB(x, y);
-                final int r = f.getRed(p);
-                final int b = f.getBlue(p);
-                if (r > b) {
-                    img.setRGB(x, y, f.getDataElement(b, f.getGreen(p), r, f.getAlpha(p)));
+                if (isRed(p)) {
+                    img.setRGB(x, y, f.getDataElement(f.getBlue(p), f.getGreen(p), f.getRed(p), f.getAlpha(p)));
                 }
             }
         }
         Imtil.save(img, outLoc);
+    }
+    
+    protected final static boolean isRed(final int p) {
+        return f.getRed(p) > f.getBlue(p);
     }
 }
