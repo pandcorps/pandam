@@ -46,6 +46,8 @@ public class PngLoader {
     private final static int FILTER_PAETH = 4;
     private final static int MOD_256 = 255;
     
+    private int chunkLength = 0;
+    private final int[] chunkType = new int[4];
     private int width = 0, height = 0, bitDepth = 0, colorType = 0, compressionMethod = 0, filterMethod = 0, interlaceMethod = 0;
     private int cpp = 0; // channels per pixel
     private int bpc = 0; // bytes per channel
@@ -54,21 +56,20 @@ public class PngLoader {
     private int filterType = 0;
     private int x = 0, y = 0;
     
-    public final static void main(final String[] args) throws Exception {
+    public final static void main(final String[] args) throws IOException {
         load(new FileInputStream(args[0]));
     }
     
-    public final static Img load(final InputStream in) throws Exception {
+    public final static Img load(final InputStream in) throws IOException {
         return new PngLoader().run(in);
     }
     
-    private final Img run(final InputStream in) throws Exception {
+    private final Img run(final InputStream in) throws IOException {
         for (final int b : HEADER) {
             if (nextByte(in) != b) {
                 throw new IllegalStateException("Expected " + b);
             }
         }
-        final int[] chunkType = new int[4];
         int[] buffer = null;
         int bufferIndex = 0;
         int[] palette = null, transparencies = null;
@@ -78,10 +79,7 @@ public class PngLoader {
         try {
             // Read chunks
             while (loading) {
-                final int chunkLength = readInt(in);
-                for (int i = 0; i < 4; i++) {
-                    chunkType[i] = nextByte(in);
-                }
+                startChunk(in);
                 if (Arrays.equals(chunkType, CHUNK_IHDR)) {
                     width = readInt(in); height = readInt(in);
                     buffer = new int[width * height];
@@ -111,7 +109,8 @@ public class PngLoader {
                 } else if (Arrays.equals(chunkType, CHUNK_TRNS)) {
                     transparencies = readArray(in, chunkLength);
                 } else if (Arrays.equals(chunkType, CHUNK_IDAT)) {
-                    inflater = new InflaterInputStream(new SubInputStream(in, chunkLength));
+                    final IdatInputStream idatInputStream = new IdatInputStream(in, chunkLength);
+                    inflater = new InflaterInputStream(idatInputStream);
                     for (y = 0; y < height; y++) {
                         filterType = nextByte(inflater);
                         bitIndex = 0;
@@ -132,6 +131,7 @@ public class PngLoader {
                         }
                         swapLines();
                     }
+                    idatInputStream.moreChunksExpected = false;
                     if (inflater.read() != -1) {
                         throw new IllegalStateException("Found unexpected extra content for line " + y);
                     }
@@ -143,7 +143,7 @@ public class PngLoader {
                 } else {
                     skip(in, chunkLength);
                 }
-                skip(in, 4); // CRC
+                endChunk(in);
             }
             if (in.read() != -1) {
                 throw new IllegalStateException("Found content after IEND");
@@ -154,7 +154,7 @@ public class PngLoader {
         return new Img(width, height, buffer);
     }
     
-    private final int read(final InputStream in, final int channel) throws Exception {
+    private final int read(final InputStream in, final int channel) throws IOException {
         final int currIndex = (x * bpp) + channel, leftIndex = currIndex - bpp;
         final int raw = nextSample(in), sub;
         final int a = (leftIndex < 0) ? 0 : currLine[leftIndex];
@@ -178,7 +178,7 @@ public class PngLoader {
         return ret;
     }
     
-    private final static int nextByte(final InputStream in) throws Exception {
+    private final static int nextByte(final InputStream in) throws IOException {
         final int b = in.read();
         if (b == -1) {
             throw new IllegalStateException("Unexpected EOF");
@@ -190,7 +190,7 @@ public class PngLoader {
     private int bitIndex = 0;
     private int bitMask = -1;
     
-    private final int nextSample(final InputStream in) throws Exception {
+    private final int nextSample(final InputStream in) throws IOException {
         if (bitDepth == 8) {
             return nextByte(in);
         } else if (bitIndex == 0) {
@@ -230,15 +230,15 @@ public class PngLoader {
         }
     }
     
-    private final static int readInt(final InputStream in) throws Exception {
+    private final static int readInt(final InputStream in) throws IOException {
         return readInt(in, 4);
     }
     
-    private final static int readByte(final InputStream in) throws Exception {
+    private final static int readByte(final InputStream in) throws IOException {
         return readInt(in, 1);
     }
     
-    private final static int readInt(final InputStream in, final int size) throws Exception {
+    private final static int readInt(final InputStream in, final int size) throws IOException {
         int value = 0;
         for (int i = 0; i < size; i++) {
             value = (value * 256) + nextByte(in);
@@ -246,7 +246,7 @@ public class PngLoader {
         return value;
     }
     
-    private final static int[] readArray(final InputStream in, final int size) throws Exception {
+    private final static int[] readArray(final InputStream in, final int size) throws IOException {
         final int[] a = new int[size];
         for (int i = 0; i < size; i ++) {
             a[i] = nextByte(in);
@@ -254,7 +254,7 @@ public class PngLoader {
         return a;
     }
     
-    private final static void skip(final InputStream in, final int size) throws Exception {
+    private final static void skip(final InputStream in, final int size) throws IOException {
         for (int i = 0; i < size; i++) {
             nextByte(in);
         }
@@ -267,5 +267,69 @@ public class PngLoader {
         final int[] temp = prevLine;
         prevLine = currLine;
         currLine = temp;
+    }
+    
+    private final static String getChunkType(final int[] chunkType) {
+        final StringBuilder b = new StringBuilder(chunkType.length);
+        for (final int c : chunkType) {
+            b.append((char) c);
+        }
+        return b.toString();
+    }
+    
+    private final void startChunk(final InputStream in) throws IOException {
+        chunkLength = readInt(in);
+        for (int i = 0; i < 4; i++) {
+            chunkType[i] = nextByte(in);
+        }
+    }
+    
+    private final static void endChunk(final InputStream in) throws IOException {
+        skip(in, 4); // CRC
+    }
+    
+    private final class IdatInputStream extends InputStream {
+        private final InputStream raw;
+        private InputStream chunk;
+        private boolean moreChunksExpected = true;
+        
+        private IdatInputStream(final InputStream raw, final int initialChunkLength) {
+            this.raw = raw;
+            chunk = new SubInputStream(raw, initialChunkLength);
+        }
+        
+        @Override
+        public final int read() throws IOException {
+            final int b = chunk.read();
+            if ((b != -1) || !moreChunksExpected) {
+                return b;
+            }
+            prepareNextChunk();
+            return chunk.read();
+        }
+        
+        @Override
+        public final int read(final byte[] buf) throws IOException {
+            return read(buf, 0, buf.length);
+        }
+        
+        @Override
+        public final int read(final byte[] buf, final int off, final int len) throws IOException {
+            final int bytesRead = chunk.read(buf, off, len);
+            if ((bytesRead != -1) || !moreChunksExpected) {
+                return bytesRead;
+            }
+            prepareNextChunk();
+            return chunk.read(buf, off, len);
+        }
+        
+        private final void prepareNextChunk() throws IOException {
+            endChunk(raw);
+            startChunk(raw);
+            if (!Arrays.equals(chunkType, CHUNK_IDAT)) {
+                throw new IllegalStateException("Expected another IDAT chunk but found " + getChunkType(chunkType));
+            }
+            chunk = new SubInputStream(raw, chunkLength);
+        }
     }
 }
