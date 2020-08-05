@@ -43,7 +43,9 @@ public final class SubInputStream extends FilterInputStream {
     
     @Override
     public final int read(final byte b[], final int off, int len) throws IOException {
-        if (len > remaining) {
+        if (remaining <= 0) {
+            return -1;
+        } else if (len > remaining) {
             len = remaining;
         }
         remaining -= len;
