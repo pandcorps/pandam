@@ -23,13 +23,17 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core.img;
 
 import java.io.*;
+import java.util.*;
 
 import org.pandcorps.core.*;
 
 public final class ImgTool {
     private final static ImgFactory f = ImgFactory.getFactory();
+    private final static String sep = System.getProperty("file.separator");
+    private final static int[] channels = new int[3];
     
     public final static void main(final String[] args) {
+        info("Starting");
         final String inLoc = args[0];
         final String outLoc = args[1];
         final File inFile = new File(inLoc);
@@ -38,24 +42,27 @@ public final class ImgTool {
         } else {
             processFile(inFile, outLoc);
         }
+        info("Finished");
     }
     
     private final static void processDirectory(final File inDir, final String outLoc) {
         for (final File inFile : inDir.listFiles()) {
-            processFile(inFile, outLoc + inFile.getName());
+            processFile(inFile, outLoc + sep + inFile.getName());
         }
     }
     
     private final static void processFile(final File inFile, final String outLoc) {
-        System.out.println("Processing from " + inFile + " into " + outLoc);
+        info("Processing from " + inFile + " into " + outLoc);
         final Img img = Imtil.load(inFile.getAbsolutePath());
         final int w = img.getWidth(), h = img.getHeight();
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 final int p = img.getRGB(x, y);
-                if (isRed(p)) {
-                    img.setRGB(x, y, f.getDataElement(f.getBlue(p), f.getGreen(p), f.getRed(p), f.getAlpha(p)));
-                }
+                channels[0] = f.getRed(p);
+                channels[1] = f.getGreen(p);
+                channels[2] = f.getBlue(p);
+                Arrays.sort(channels);
+                img.setRGB(x, y, f.getDataElement(channels[0], channels[1], channels[2], f.getAlpha(p)));
             }
         }
         Imtil.save(img, outLoc);
@@ -63,5 +70,9 @@ public final class ImgTool {
     
     protected final static boolean isRed(final int p) {
         return f.getRed(p) > f.getBlue(p);
+    }
+    
+    private final static void info(final Object s) {
+        System.out.println(s);
     }
 }
