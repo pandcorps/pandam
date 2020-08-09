@@ -30,6 +30,8 @@ import org.pandcorps.core.*;
 public final class ImgTool {
     private final static ImgFactory f = ImgFactory.getFactory();
     private final static String sep = System.getProperty("file.separator");
+    private final static boolean enhanceGreen = Pantil.isProperty("org.pandcorps.core.img.enhanceGreen", false);
+    private final static boolean enhanceRed = Pantil.isProperty("org.pandcorps.core.img.enhanceRed", false);
     private final static int[] channels = new int[3];
     
     public final static void main(final String[] args) {
@@ -58,11 +60,10 @@ public final class ImgTool {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 final int p = img.getRGB(x, y);
-                channels[0] = f.getRed(p);
-                channels[1] = f.getGreen(p);
-                channels[2] = f.getBlue(p);
-                Arrays.sort(channels);
-                img.setRGB(x, y, f.getDataElement(channels[0], channels[1], channels[2], f.getAlpha(p)));
+                final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p), a = f.getAlpha(p);
+                img.setRGB(x, y, maximizeBlue(r, g, b, a));
+                //img.setRGB(x, y, mean(r, g, b, a));
+                //img.setRGB(x, y, min(r, g, b, a));
             }
         }
         Imtil.save(img, outLoc);
@@ -70,6 +71,29 @@ public final class ImgTool {
     
     protected final static boolean isRed(final int p) {
         return f.getRed(p) > f.getBlue(p);
+    }
+    
+    protected final static int maximizeBlue(int r, int g, int b, int a) {
+        channels[0] = r; channels[1] = g; channels[2] = b;
+        Arrays.sort(channels);
+        r = channels[0]; g = channels[1]; b = channels[2];
+        if (enhanceGreen) {
+            g = (g + b) / 2;
+        }
+        if (enhanceRed) {
+            r = (r + g) / 2;
+        }
+        return f.getDataElement(r, g, b, a);
+    }
+    
+    protected final static int mean(int r, int g, int b, int a) {
+        final int m = (r + g + b) / 3;
+        return f.getDataElement(m, m, m, a);
+    }
+    
+    protected final static int min(int r, int g, int b, int a) {
+        final int m = Math.min(Math.min(r,  g), b);
+        return f.getDataElement(m, m, m, a);
     }
     
     private final static void info(final Object s) {
