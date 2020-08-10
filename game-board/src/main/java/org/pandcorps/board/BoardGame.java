@@ -36,6 +36,10 @@ public class BoardGame extends BaseGame {
         protected abstract void initGame();
     }
     
+    protected final static int convertScreenToGrid(final int screenVal, final int gridLim) {
+        return screenVal / gridLim;
+    }
+    
     protected static class BoardGameGrid<P extends BoardGamePiece> {
         private final int w;
         private final int h;
@@ -147,6 +151,14 @@ public class BoardGame extends BaseGame {
         
         protected final int getY(final int index) {
             return index / w;
+        }
+        
+        protected final int convertScreenToGridX(final int screenX) {
+            return convertScreenToGrid(screenX, w);
+        }
+        
+        protected final int convertScreenToGridY(final int screenY) {
+            return convertScreenToGrid(screenY, h);
         }
     }
     
