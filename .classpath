@@ -3,11 +3,15 @@
 	<classpathentry kind="src" path="core/src/main/java"/>
 	<classpathentry kind="src" path="core/src/main/resources"/>
 	<classpathentry kind="src" path="core/src/test/java"/>
+	<classpathentry kind="src" path="core/src/test/resources"/>
+	<classpathentry kind="src" path="ext/src/main/java"/>
 	<classpathentry kind="src" path="impl-lwjgl/src/main/java"/>
 	<classpathentry kind="src" path="game-base/src/main/java"/>
 	<classpathentry kind="src" path="game-base/src/main/resources"/>
+	<classpathentry kind="src" path="game-board/src/main/java"/>
 	<classpathentry kind="src" path="game-botsnbolts/src/main/java"/>
 	<classpathentry kind="src" path="game-botsnbolts/src/main/resources"/>
+	<classpathentry kind="src" path="game-championsofslam/src/main/java"/>
 	<classpathentry kind="src" path="game-furguardians/src/main/java"/>
 	<classpathentry kind="src" path="game-furguardians/src/main/resources"/>
 	<classpathentry kind="src" path="game-furguardians/src/test/java"/>
