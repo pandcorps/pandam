@@ -43,12 +43,27 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     private static int numShirts = 0;
     private static int numPants = 0;
     private final static int iw = 32, ih = 32;
-    private final static ChampionFrame frmStill = new ChampionFrame(0, 11);
+    private final static ChampionFrameComponent legsStill = new ChampionFrameComponent(0, 16);
+    private final static ChampionFrameComponent legsWalk1 = new ChampionFrameComponent(32, 16);
+    private final static ChampionFrameComponent legsWalk2 = new ChampionFrameComponent(64, 16);
+    private final static ChampionFrameComponent bodyFgStill = new ChampionFrameComponent(96, 16); //TODO legs and body in separate image rows?
+    //TODO Have more configuration and less convention in Champion.png so it can grow organically without knowing ahead of time where everything needs to go?
+    private final static ChampionFrameComponent legsHurt = new ChampionFrameComponent(128, 16);
+    private final static ChampionFrameComponent bodyFgHurt = new ChampionFrameComponent(160, 16);
+    private final static ChampionFrameComponent bodyFgJab = new ChampionFrameComponent(192, 16);
+    private final static ChampionFrameComponent bodyFgUppercut = new ChampionFrameComponent(224, 16);
+    private final static ChampionFrame frmStill = new ChampionFrame(0, 0, null, bodyFgStill, legsStill);
+    private final static ChampionFrame frmWalk1 = new ChampionFrame(0, 0, null, bodyFgStill, legsWalk1);
+    private final static ChampionFrame frmWalk2 = new ChampionFrame(0, 0, null, bodyFgStill, legsWalk2);
+    private final static ChampionFrame frmHurt = new ChampionFrame(0, 0, null, bodyFgHurt, legsHurt);
+    private final static ChampionAttack atkJab = new ChampionAttack(new ChampionFrame(0, 0, null, bodyFgJab, legsWalk1), 4, 1, 4);
+    private final static ChampionAttack atkUppercut = new ChampionAttack(new ChampionFrame(0, 0, null, bodyFgUppercut, legsWalk1), 8, 2, 1);
+    /*private final static ChampionFrame frmStill = new ChampionFrame(0, 11);
     private final static ChampionFrame frmWalk1 = new ChampionFrame(32, 11);
     private final static ChampionFrame frmWalk2 = new ChampionFrame(64, 11);
     private final static ChampionFrame frmHurt = new ChampionFrame(96, 13);
     private final static ChampionAttack atkJab = new ChampionAttack(new ChampionFrame(160, 10), 4, 1, 4);
-    protected final static ChampionAttack atkUppercut = new ChampionAttack(new ChampionFrame(128, 10), 8, 2, 1);
+    protected final static ChampionAttack atkUppercut = new ChampionAttack(new ChampionFrame(128, 10), 8, 2, 1);*/
     private final static ChampionAttack[] atkCombo = { atkJab, atkJab, atkUppercut };
     protected final static float minX = 40, minY = 36;
     protected final static float maxX = 344, maxY = 186;
@@ -295,39 +310,46 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         return numPants;
     }
     
+    private final float getX(final int offset) {
+        return getPosition().getX() - (isMirror() ? (32 - offset) : offset);
+    }
+    
     @Override
     protected final void renderView(final Panderer renderer) {
         final Panlayer layer = getLayer();
         final Panple pos = getChampionPosition();
         final boolean mirror = isMirror();
-        final int ox = frm.ox;
         // Don't need to consider whole range from 0 to GAME_H if parts of screen are inaccessible
         // If characters always move up/down with a minimum velocity v > 1, then can divide y by v
-        final float x = pos.getX() - (mirror ? (32 - ox) : ox), _y = pos.getY(), z = (ChampionsOfSlamGame.GAME_H - _y) * 8, y = _y + pos.getZ();
-        final float ix = frm.ix;
-        final FloatColor bodyColor = def.bodyColor, hairColor = def.hairColor, shirtColor = def.shirtColor, pantsColor = def.pantsColor, bootsColor = def.bootsColor;
+        final float hx = getX(frm.headX), _y = pos.getY(), z = (ChampionsOfSlamGame.GAME_H - _y) * 8, y = _y + pos.getZ(), hy = y - frm.headY;
+        final FloatColor bodyColor = def.bodyColor, hairColor = def.hairColor;
         final int eyesIndex = def.eyesIndex, hairIndex = def.hairIndex;
-        final int iyPants = def.pantsStyle.iy;
-        renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, ix, 96, iw, ih, 0, mirror, false, bootsColor.r, bootsColor.g, bootsColor.b);
-        // Hair, z + 6 (or 8 if allow Paint or Facial Hair at 6)
+        final Clothing shirt = def.shirt;
+        renderFrameComponent(renderer, frm.bodyFg, y, z, shirt);
         if (hairIndex >= 0) {
-            renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, hairIndex * 32, 960, iw, ih, 0, mirror, false, hairColor.r, hairColor.g, hairColor.b);
+            renderer.render(layer, ChampionsOfSlamGame.imgChampion, hx, hy, z, hairIndex * 32, 960, iw, ih, 0, mirror, false, hairColor.r, hairColor.g, hairColor.b);
         }
-        final ShirtStyle shirtStyle = def.shirtStyle;
-        final int iyShirt = shirtStyle.iy;
-        final int shirtIndex = shirtStyle.renderIndex;
-        for (int i = 0; i < 2; i++) {
-            if (i == shirtIndex) {
-                if (iyShirt >= 0) {
-                    renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, ix, iyShirt, iw, ih, 0, mirror, false, shirtColor.r, shirtColor.g, shirtColor.b);
-                }
-            } else {
-                if (iyPants >= 0) {
-                    renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, ix, iyPants, iw, ih, 0, mirror, false, pantsColor.r, pantsColor.g, pantsColor.b);
-                }
+        renderer.render(layer, ChampionsOfSlamGame.imgChampion, hx, hy, z, eyesIndex * 32, 992, iw, ih, 0, mirror, false, 1.0f, 1.0f, 1.0f);
+        //renderer.render(layer, ChampionsOfSlamGame.imgChampion, hx, hy, z, ix, 0, iw, ih, 0, mirror, false, bodyColor.r, bodyColor.g, bodyColor.b); // head
+        renderFrameComponent(renderer, frm.legs, y, z, def.boots, def.pants);
+        renderFrameComponent(renderer, frm.bodyBg, y, z, shirt);
+    }
+    
+    private final void renderFrameComponent(final Panderer renderer, final ChampionFrameComponent cmp, final float y, final float z, final Clothing... clothings) {
+        if (cmp == null) {
+            return;
+        }
+        final Panlayer layer = getLayer();
+        final float x = getX(cmp.x), ix = cmp.ix;
+        final boolean mirror = isMirror();
+        for (final Clothing clothing : clothings) {
+            final int iyClothing = clothing.style.iy;
+            final FloatColor clothingColor = clothing.color;
+            if (iyClothing >= 0) {
+                renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, ix, iyClothing, iw, ih, 0, mirror, false, clothingColor.r, clothingColor.g, clothingColor.b);
             }
         }
-        renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, eyesIndex * 32, 992, iw, ih, 0, mirror, false, 1.0f, 1.0f, 1.0f);
+        final FloatColor bodyColor = def.bodyColor;
         renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, ix, 0, iw, ih, 0, mirror, false, bodyColor.r, bodyColor.g, bodyColor.b);
     }
     
@@ -346,7 +368,8 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     }
     
     public final static void randomize(final ChampionDefinition def) {
-        final FloatColor bodyColor = def.bodyColor, hairColor = def.hairColor, shirtColor = def.shirtColor, pantsColor = def.pantsColor, bootsColor = def.bootsColor;
+        final Clothing shirt = def.shirt, pants = def.pants, boots = def.boots;
+        final FloatColor bodyColor = def.bodyColor, hairColor = def.hairColor, shirtColor = shirt.color, pantsColor = pants.color, bootsColor = boots.color;
         final int bodyColorR = Mathtil.randi(4, 8), bodyColorG = Mathtil.randi(bodyColorR / 2, bodyColorR - 1);
         bodyColor.r = INC_COLOR * bodyColorR;
         bodyColor.g = INC_COLOR * bodyColorG;
@@ -377,8 +400,8 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         greyColor.r = greyColor.g = greyColor.b = grey;
         def.eyesIndex = Mathtil.randi(0, NUM_EYES - 1);
         def.hairIndex = Mathtil.randi(-1, NUM_HAIR - 1);
-        def.shirtStyle = Mathtil.rand(ChampionsOfSlamGame.shirtStyles);
-        def.pantsStyle = ChampionsOfSlamGame.pantsStyles[Mathtil.randi(def.shirtStyle.pantsRequired ? 1 : 0, ChampionsOfSlamGame.pantsStyles.length - 1)];
+        shirt.style = Mathtil.rand(ChampionsOfSlamGame.shirtStyles);
+        pants.style = Mathtil.rand(ChampionsOfSlamGame.pantsStyles);
     }
     
     public final static class ChampionDefinition {
@@ -386,15 +409,9 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         protected int eyesIndex = 0;
         protected int hairIndex = -1;
         protected final FloatColor hairColor = new FloatColor();
-        protected ShirtStyle shirtStyle = ChampionsOfSlamGame.shirtStyles[1];
-        protected final FloatColor shirtColor = new FloatColor();
-        protected PantsStyle pantsStyle = ChampionsOfSlamGame.pantsStyles[1];
-        protected final FloatColor pantsColor = new FloatColor();
-        protected final FloatColor bootsColor = new FloatColor();
-        
-        protected final boolean isInvalid() {
-            return shirtStyle.pantsRequired && (pantsStyle.iy < 0);
-        }
+        protected final Clothing shirt = new Clothing(ChampionsOfSlamGame.shirtStyles[1]);
+        protected final Clothing pants = new Clothing(ChampionsOfSlamGame.pantsStyles[1]);
+        protected final Clothing boots = new Clothing(ChampionsOfSlamGame.bootsStyle);
         
         public final void load(final String s) {
             final Segment seg = Segment.parse(s);
@@ -402,11 +419,11 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
             eyesIndex = seg.intValue(1);
             hairIndex = seg.intValue(2);
             hairColor.load(seg.getField(3));
-            shirtStyle = ChampionsOfSlamGame.shirtStyles[seg.intValue(4)];
-            shirtColor.load(seg.getField(5));
-            pantsStyle = ChampionsOfSlamGame.pantsStyles[seg.intValue(6)];
-            pantsColor.load(seg.getField(7));
-            bootsColor.load(seg.getField(8));
+            shirt.style = ChampionsOfSlamGame.shirtStyles[seg.intValue(4)]; // TODO combine these into Clothing.load; store full boots def, not just color
+            shirt.color.load(seg.getField(5));
+            pants.style = ChampionsOfSlamGame.pantsStyles[seg.intValue(6)];
+            pants.color.load(seg.getField(7));
+            boots.color.load(seg.getField(8));
         }
         
         @Override
@@ -417,38 +434,43 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
             b.append(eyesIndex).append('|');
             b.append(hairIndex).append('|');
             hairColor.append(b).append('|');
-            b.append(shirtStyle.shirtIndex).append('|');
-            shirtColor.append(b).append('|');
-            b.append(pantsStyle.pantsIndex).append('|');
-            pantsColor.append(b).append('|');
-            bootsColor.append(b);
+            b.append(shirt.style.index).append('|'); //TODO Clothing.append, full boots def, not just color
+            shirt.color.append(b).append('|');
+            b.append(pants.style.index).append('|');
+            pants.color.append(b).append('|');
+            boots.color.append(b);
             return b.toString();
         }
     }
     
-    public final static class ShirtStyle {
-        protected final int shirtIndex;
+    public static class ClothingStyle {
+        protected final int index;
         private final int iy;
-        private final int renderIndex;
-        private final boolean pantsRequired;
         
-        public ShirtStyle(final int iy, final int renderIndex, final boolean pantsRequired) {
-            shirtIndex = numShirts;
-            numShirts++;
+        public ClothingStyle(final int index, final int iy) {
+            this.index = index;
             this.iy = iy;
-            this.renderIndex = renderIndex;
-            this.pantsRequired = pantsRequired;
         }
     }
     
-    public final static class PantsStyle {
-        protected final int pantsIndex;
-        private final int iy;
-        
+    public final static class ShirtStyle extends ClothingStyle {
+        public ShirtStyle(final int iy) {
+            super(numShirts++, iy);
+        }
+    }
+
+    public final static class PantsStyle extends ClothingStyle {
         public PantsStyle(final int iy) {
-            pantsIndex = numPants;
-            numPants++;
-            this.iy = iy;
+            super(numPants++, iy);
+        }
+    }
+    
+    public final static class Clothing {
+        private ClothingStyle style;
+        private final FloatColor color = new FloatColor();
+        
+        public Clothing(final ClothingStyle style) {
+            this.style = style;
         }
     }
     
@@ -469,12 +491,28 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     }
     
     public final static class ChampionFrame {
-        private final int ix;
-        private final int ox;
+        private final int headX;
+        private final int headY;
+        private final ChampionFrameComponent bodyBg;
+        private final ChampionFrameComponent bodyFg;
+        private final ChampionFrameComponent legs;
         
-        public ChampionFrame(final int ix, final int ox) {
+        public ChampionFrame(final int headX, final int headY, final ChampionFrameComponent bodyBg, final ChampionFrameComponent bodyFg, final ChampionFrameComponent legs) {
+            this.headX = headX;
+            this.headY = headY;
+            this.bodyBg = bodyBg;
+            this.bodyFg = bodyFg;
+            this.legs = legs;
+        }
+    }
+    
+    public final static class ChampionFrameComponent {
+        private final int ix;
+        private final int x;
+        
+        public ChampionFrameComponent(final int ix, final int x) {
             this.ix = ix;
-            this.ox = ox;
+            this.x = x;
         }
     }
     
