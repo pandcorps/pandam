@@ -62,16 +62,17 @@ public final class ChampionsOfSlamGame extends BaseGame {
     protected static Panmage imgChampion = null;
     protected static Pansound soundJab = null;
     protected static Pansound soundUppercut = null;
-    protected static ShirtStyle[] shirtStyles = {
-            new ShirtStyle(-1, 0, true),
-            new ShirtStyle(32, 1, true),
-            new ShirtStyle(32, 0, false)
+    protected final static ClothingStyle[] shirtStyles = {
+            new ShirtStyle(-1),
+            new ShirtStyle(32),
     };
-    protected static PantsStyle[] pantsStyles = {
-            new PantsStyle(-1),
+    protected final static ClothingStyle[] pantsStyles = {
             new PantsStyle(64),
             new PantsStyle(160),
             new PantsStyle(128)
+    };
+    protected final static ClothingStyle[] bootsStyles = {
+            new ClothingStyle(0, 96)
     };
     protected static Panmage boundingBox = null;
     protected static boolean paused = true;
