@@ -38,40 +38,24 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     protected final static int NUM_EYES = 19;
     protected final static int NUM_HAIR = 9;
     protected final static int DEPTH_TEXT = 1900;
-    protected final static int IY_BODY = 0;
-    protected final static int IY_LEGS = 32;
-    protected final static int IY_MOUTH = 992;
-    protected final static int IY_EYES = 960;
-    protected final static int IY_HAIR = 928;
-    protected final static int IY_HEAD = IY_MOUTH;
     private final static int INITIAL_HEALTH = 40;
     protected final static Set<Champion> champions = new IdentityHashSet<Champion>();
     private static int numShirts = 0;
     private static int numPants = 0;
+    private static int numBoots = 0;
     private final static int iw = 32, ih = 32;
-    private final static ChampionFrameComponent legsStill = new ChampionFrameComponent(0, 16);
-    private final static ChampionFrameComponent legsWalk1 = new ChampionFrameComponent(32, 16);
-    private final static ChampionFrameComponent legsWalk2 = new ChampionFrameComponent(64, 16);
-    private final static ChampionFrameComponent legsHurt = new ChampionFrameComponent(96, 16);
-    private final static ChampionFrameComponent bodyFgStill = new ChampionFrameComponent(0, 16);
-    //TODO Have more configuration and less convention in Champion.png so it can grow organically without knowing ahead of time where everything needs to go?
-    private final static ChampionFrameComponent bodyFgHurt = new ChampionFrameComponent(32, 16);
-    private final static ChampionFrameComponent bodyFgJab = new ChampionFrameComponent(64, 16);
-    private final static ChampionFrameComponent bodyFgUppercut = new ChampionFrameComponent(96, 16);
-    private final static ChampionFrameComponent bodyBgUppercut = new ChampionFrameComponent(128, 16);
-    private final static ChampionFrameComponent head = new ChampionFrameComponent(992, 16);
-    private final static ChampionFrame frmStill = new ChampionFrame(0, 0, null, bodyFgStill, legsStill);
-    private final static ChampionFrame frmWalk1 = new ChampionFrame(0, 0, null, bodyFgStill, legsWalk1);
-    private final static ChampionFrame frmWalk2 = new ChampionFrame(0, 0, null, bodyFgStill, legsWalk2);
-    private final static ChampionFrame frmHurt = new ChampionFrame(0, 0, null, bodyFgHurt, legsHurt);
-    private final static ChampionAttack atkJab = new ChampionAttack(new ChampionFrame(0, 0, null, bodyFgJab, legsWalk1), 4, 1, 4);
-    private final static ChampionAttack atkUppercut = new ChampionAttack(new ChampionFrame(0, 0, bodyBgUppercut, bodyFgUppercut, legsWalk1), 8, 2, 1);
-    /*private final static ChampionFrame frmStill = new ChampionFrame(0, 11);
-    private final static ChampionFrame frmWalk1 = new ChampionFrame(32, 11);
-    private final static ChampionFrame frmWalk2 = new ChampionFrame(64, 11);
-    private final static ChampionFrame frmHurt = new ChampionFrame(96, 13);
-    private final static ChampionAttack atkJab = new ChampionAttack(new ChampionFrame(160, 10), 4, 1, 4);
-    protected final static ChampionAttack atkUppercut = new ChampionAttack(new ChampionFrame(128, 10), 8, 2, 1);*/
+    private final static String FRAME_STILL = "still";
+    private final static String FRAME_WALK1 = "walk1";
+    private final static String FRAME_WALK2 = "walk2";
+    private final static String FRAME_HURT = "hurt";
+    private final static String FRAME_JAB = "jab";
+    private final static String FRAME_UPPERCUT = "uppercut";
+    private final static ChampionFrame frmStill = new ChampionFrame(0, 0, FRAME_STILL, FRAME_STILL);
+    private final static ChampionFrame frmWalk1 = new ChampionFrame(0, 0, FRAME_STILL, FRAME_WALK1);
+    private final static ChampionFrame frmWalk2 = new ChampionFrame(0, 0, FRAME_STILL, FRAME_WALK2);
+    private final static ChampionFrame frmHurt = new ChampionFrame(0, 0, FRAME_HURT, FRAME_STILL);
+    private final static ChampionAttack atkJab = new ChampionAttack(new ChampionFrame(0, 0, FRAME_JAB, FRAME_WALK1), 4, 1, 4);
+    private final static ChampionAttack atkUppercut = new ChampionAttack(new ChampionFrame(0, 0, FRAME_UPPERCUT, FRAME_WALK1), 8, 2, 1);
     private final static ChampionAttack[] atkCombo = { atkJab, atkJab, atkUppercut };
     protected final static float minX = 40, minY = 36;
     protected final static float maxX = 344, maxY = 186;
@@ -324,46 +308,54 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     
     @Override
     protected final void renderView(final Panderer renderer) {
-        final Panlayer layer = getLayer();
         final Panple pos = getChampionPosition();
-        final boolean mirror = isMirror();
         // Don't need to consider whole range from 0 to GAME_H if parts of screen are inaccessible
         // If characters always move up/down with a minimum velocity v > 1, then can divide y by v
-        final float hx = getX(frm.headX), _y = pos.getY(), z = (ChampionsOfSlamGame.GAME_H - _y) * 8, y = _y + pos.getZ(), hy = y - frm.headY;
+        final float _y = pos.getY(), z = (ChampionsOfSlamGame.GAME_H - _y) * 8, y = _y + pos.getZ();
+        final float hx = getX(frm.headX), hy = y - frm.headY;
         final FloatColor hairColor = def.hairColor;
         final int mouthIndex = nvl(frm.mouthIndex, def.mouthIndex), eyesIndex = nvl(frm.eyesIndex, def.eyesIndex), hairIndex = def.hairIndex;
         final Clothing shirt = def.shirt;
-        renderFrameComponent(renderer, frm.bodyFg, y, z, IY_BODY, shirt);
+        renderBodyComponent(renderer, "fg." + frm.bodyFrameName, y, z, shirt);
         if (hairIndex >= 0) {
-            renderer.render(layer, ChampionsOfSlamGame.imgChampion, hx, hy, z, hairIndex * 32, IY_HAIR, iw, ih, 0, mirror, false, hairColor.r, hairColor.g, hairColor.b);
+            renderFrameComponent(renderer, Images.hairComponents.get(hairIndex), hx, hy, z, hairColor);
         }
-        renderer.render(layer, ChampionsOfSlamGame.imgChampion, hx, hy, z, eyesIndex * 32, IY_EYES, iw, ih, 0, mirror, false, 1.0f, 1.0f, 1.0f);
-        renderer.render(layer, ChampionsOfSlamGame.imgChampion, hx, hy, z, mouthIndex * 32, IY_MOUTH, iw, ih, 0, mirror, false, 1.0f, 1.0f, 1.0f);
-        renderFrameComponent(renderer, head, IY_HEAD, y, z);
-        renderFrameComponent(renderer, frm.legs, y, z, IY_LEGS, def.boots, def.pants);
-        renderFrameComponent(renderer, frm.bodyBg, y, z, IY_BODY, shirt);
+        renderFaceComponent(renderer, Images.eyesComponents, eyesIndex, hx, hy, z);
+        renderFaceComponent(renderer, Images.mouthComponents, mouthIndex, hx, hy, z);
+        renderBodyComponent(renderer, "head", y, z);
+        renderBodyComponent(renderer, "legs." + frm.legsFrameName, y, z, def.boots, def.pants);
+        renderBodyComponent(renderer, "bg." + frm.bodyFrameName, y, z, shirt);
     }
     
     private final static int nvl(final int n1, final int n2) {
         return (n1 < 0) ? n2 : n1;
     }
     
-    private final void renderFrameComponent(final Panderer renderer, final ChampionFrameComponent cmp, final float y, final float z, final float iy, final Clothing... clothings) {
+    private final void renderBodyComponent(final Panderer renderer, final String frameName, final float y, final float z, final Clothing... clothings) {
+        renderFrameComponent(renderer, Images.bodyComponents.get(frameName), frameName, y, z, clothings);
+    }
+    
+    private final void renderFaceComponent(final Panderer renderer, final List<ChampionFrameComponent> cmps, final int i, final float x, final float y, final float z) {
+        renderFrameComponent(renderer, cmps.get(i), x, y, z, COLOR_WHITE);
+    }
+    
+    private final void renderFrameComponent(final Panderer renderer, final ChampionFrameComponent cmp, final String frameName,
+            final float y, final float z, final Clothing... clothings) {
         if (cmp == null) {
             return;
         }
-        final Panlayer layer = getLayer();
-        final float x = getX(cmp.x), ix = cmp.ix;
-        final boolean mirror = isMirror();
+        final float x = getX(cmp.x);
         for (final Clothing clothing : clothings) {
-            final int iyClothing = clothing.style.iy;
-            final FloatColor clothingColor = clothing.color;
-            if (iyClothing >= 0) {
-                renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, ix, iyClothing, iw, ih, 0, mirror, false, clothingColor.r, clothingColor.g, clothingColor.b);
+            final ChampionFrameComponent cmpClothing = clothing.style.frames.get(frameName);
+            if (cmpClothing != null) {
+                renderFrameComponent(renderer, cmpClothing, x, y, z, clothing.color);
             }
         }
-        final FloatColor bodyColor = def.bodyColor;
-        renderer.render(layer, ChampionsOfSlamGame.imgChampion, x, y, z, ix, iy, iw, ih, 0, mirror, false, bodyColor.r, bodyColor.g, bodyColor.b);
+        renderFrameComponent(renderer, cmp, x, y, z, def.bodyColor);
+    }
+    
+    private final void renderFrameComponent(final Panderer renderer, final ChampionFrameComponent cmp, final float x, final float y, final float z, final FloatColor color) {
+        renderer.render(getLayer(), ChampionsOfSlamGame.imgChampion, x, y, z, cmp.ix, cmp.iy, iw, ih, 0, isMirror(), false, color.r, color.g, color.b);
     }
     
     private final static float randomColorComponent() {
@@ -457,23 +449,28 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     
     public static class ClothingStyle {
         protected final int index;
-        private final int iy;
+        protected final Map<String, ChampionFrameComponent> frames = new HashMap<String, ChampionFrameComponent>();
         
-        public ClothingStyle(final int index, final int iy) {
+        public ClothingStyle(final int index) {
             this.index = index;
-            this.iy = iy;
         }
     }
     
     public final static class ShirtStyle extends ClothingStyle {
-        public ShirtStyle(final int iy) {
-            super(numShirts++, iy);
+        public ShirtStyle() {
+            super(numShirts++);
         }
     }
 
     public final static class PantsStyle extends ClothingStyle {
-        public PantsStyle(final int iy) {
-            super(numPants++, iy);
+        public PantsStyle() {
+            super(numPants++);
+        }
+    }
+    
+    public final static class BootsStyle extends ClothingStyle {
+        public BootsStyle() {
+            super(numBoots++);
         }
     }
     
@@ -512,37 +509,39 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         }
     }
     
+    public final static FloatColor COLOR_WHITE = new FloatColor();
+    
     public final static class ChampionFrame {
         private final int headX;
         private final int headY;
         private final int eyesIndex;
         private final int mouthIndex;
-        private final ChampionFrameComponent bodyBg;
-        private final ChampionFrameComponent bodyFg;
-        private final ChampionFrameComponent legs;
+        private final String bodyFrameName;
+        private final String legsFrameName;
         
-        public ChampionFrame(final int headX, final int headY, final ChampionFrameComponent bodyBg, final ChampionFrameComponent bodyFg, final ChampionFrameComponent legs) {
-            this(headX, headY, -1, -1, bodyBg, bodyFg, legs);
+        public ChampionFrame(final int headX, final int headY, final String bodyFrameName, final String legsFrameName) {
+            this(headX, headY, -1, -1, bodyFrameName, legsFrameName);
         }
         
         public ChampionFrame(final int headX, final int headY, final int eyesIndex, final int mouthIndex,
-                final ChampionFrameComponent bodyBg, final ChampionFrameComponent bodyFg, final ChampionFrameComponent legs) {
+                final String bodyFrameName, final String legsFrameName) {
             this.headX = headX;
             this.headY = headY;
             this.eyesIndex = eyesIndex;
             this.mouthIndex = mouthIndex;
-            this.bodyBg = bodyBg;
-            this.bodyFg = bodyFg;
-            this.legs = legs;
+            this.bodyFrameName = bodyFrameName;
+            this.legsFrameName = legsFrameName;
         }
     }
     
     public final static class ChampionFrameComponent {
         private final int ix;
+        private final int iy;
         private final int x;
         
-        public ChampionFrameComponent(final int ix, final int x) {
+        public ChampionFrameComponent(final int ix, final int iy, final int x) {
             this.ix = ix;
+            this.iy = iy;
             this.x = x;
         }
     }
