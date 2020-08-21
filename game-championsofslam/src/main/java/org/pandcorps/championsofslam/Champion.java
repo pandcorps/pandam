@@ -40,9 +40,6 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     protected final static int DEPTH_TEXT = 1900;
     private final static int INITIAL_HEALTH = 40;
     protected final static Set<Champion> champions = new IdentityHashSet<Champion>();
-    private static int numShirts = 0;
-    private static int numPants = 0;
-    private static int numBoots = 0;
     private final static int iw = 32, ih = 32;
     private final static String FRAME_STILL = "still";
     private final static String FRAME_WALK1 = "walk1";
@@ -294,14 +291,6 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         return getPosition();
     }
     
-    protected final static int getNumShirts() {
-        return numShirts;
-    }
-    
-    protected final static int getNumPants() {
-        return numPants;
-    }
-    
     private final float getX(final int offset) {
         return getPosition().getX() - (isMirror() ? (32 - offset) : offset);
     }
@@ -405,8 +394,8 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         greyColor.r = greyColor.g = greyColor.b = grey;
         def.eyesIndex = Mathtil.randi(0, NUM_EYES - 1);
         def.hairIndex = Mathtil.randi(-1, NUM_HAIR - 1);
-        shirt.style = Mathtil.rand(ChampionsOfSlamGame.shirtStyles);
-        pants.style = Mathtil.rand(ChampionsOfSlamGame.pantsStyles);
+        //shirt.style = Mathtil.rand(ChampionsOfSlamGame.shirtStyles);
+        //pants.style = Mathtil.rand(ChampionsOfSlamGame.pantsStyles);
     }
     
     public final static class ChampionDefinition {
@@ -415,9 +404,9 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         protected int eyesIndex = 0;
         protected int hairIndex = -1;
         protected final FloatColor hairColor = new FloatColor();
-        protected final Clothing shirt = new Clothing(ChampionsOfSlamGame.shirtStyles[1]);
-        protected final Clothing pants = new Clothing(ChampionsOfSlamGame.pantsStyles[1]);
-        protected final Clothing boots = new Clothing(ChampionsOfSlamGame.bootsStyles[0]);
+        protected final Clothing shirt = new Clothing(Images.shirtStyles.get("gloves"));
+        protected final Clothing pants = new Clothing(Images.pantsStyles.get("shorts"));
+        protected final Clothing boots = new Clothing(Images.bootsStyles.get("boots"));
         
         public final void load(final String s) {
             final Segment seg = Segment.parse(s);
@@ -425,9 +414,9 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
             eyesIndex = seg.intValue(1);
             hairIndex = seg.intValue(2);
             hairColor.load(seg.getField(3));
-            shirt.load(seg, ChampionsOfSlamGame.shirtStyles, 4);
-            pants.load(seg, ChampionsOfSlamGame.pantsStyles, 6);
-            boots.load(seg, ChampionsOfSlamGame.bootsStyles, 8);
+            shirt.load(seg, Images.shirtStyles, 4);
+            pants.load(seg, Images.pantsStyles, 6);
+            boots.load(seg, Images.bootsStyles, 8);
             mouthIndex = seg.intValue(10);
         }
         
@@ -448,29 +437,11 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     }
     
     public static class ClothingStyle {
-        protected final int index;
+        protected final String styleName;
         protected final Map<String, ChampionFrameComponent> frames = new HashMap<String, ChampionFrameComponent>();
         
-        public ClothingStyle(final int index) {
-            this.index = index;
-        }
-    }
-    
-    public final static class ShirtStyle extends ClothingStyle {
-        public ShirtStyle() {
-            super(numShirts++);
-        }
-    }
-
-    public final static class PantsStyle extends ClothingStyle {
-        public PantsStyle() {
-            super(numPants++);
-        }
-    }
-    
-    public final static class BootsStyle extends ClothingStyle {
-        public BootsStyle() {
-            super(numBoots++);
+        public ClothingStyle(final String styleName) {
+            this.styleName = styleName;
         }
     }
     
@@ -482,13 +453,13 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
             this.style = style;
         }
         
-        private final void load(final Segment seg, final ClothingStyle[] styles, final int fieldIndex) {
-            style = styles[seg.intValue(fieldIndex)];
+        private final void load(final Segment seg, final Map<String, ClothingStyle> styles, final int fieldIndex) {
+            style = styles.get(seg.getValue(fieldIndex));
             color.load(seg.getField(fieldIndex + 1));
         }
         
         private final void append(final StringBuilder b) {
-            b.append(style.index).append('|');
+            b.append(style.styleName).append('|');
             color.append(b).append('|');
         }
     }
