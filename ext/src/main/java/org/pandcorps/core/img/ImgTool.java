@@ -32,10 +32,14 @@ public final class ImgTool {
     private final static String sep = System.getProperty("file.separator");
     private final static boolean enhanceGreen = Pantil.isProperty("org.pandcorps.core.img.enhanceGreen", false);
     private final static boolean enhanceRed = Pantil.isProperty("org.pandcorps.core.img.enhanceRed", false);
+    private final static String mapSrc = Pantil.getProperty("org.pandcorps.core.img.mapSrc");
+    private final static String mapDst = Pantil.getProperty("org.pandcorps.core.img.mapDst");
     private final static int[] channels = new int[3];
+    private static PixelFilter filter = null;
     
     public final static void main(final String[] args) {
         info("Starting");
+        initFilter();
         final String inLoc = args[0];
         final String outLoc = args[1];
         final File inFile = new File(inLoc);
@@ -47,6 +51,13 @@ public final class ImgTool {
         info("Finished");
     }
     
+    private final static void initFilter() {
+        if (mapSrc != null) {
+            final Img src = Imtil.load(mapSrc), dst = Imtil.load(mapDst);
+            filter = getFilter(src, dst);
+        }
+    }
+    
     private final static void processDirectory(final File inDir, final String outLoc) {
         for (final File inFile : inDir.listFiles()) {
             processFile(inFile, outLoc + sep + inFile.getName());
@@ -56,6 +67,16 @@ public final class ImgTool {
     private final static void processFile(final File inFile, final String outLoc) {
         info("Processing from " + inFile + " into " + outLoc);
         final Img img = Imtil.load(inFile.getAbsolutePath());
+        if (filter != null) {
+            Imtil.filterImg(img, filter);
+        } else {
+            processFile(img, outLoc);
+        }
+        Imtil.save(img, outLoc);
+        img.close();
+    }
+    
+    private final static void processFile(final Img img, final String outLoc) {
         final int w = img.getWidth(), h = img.getHeight();
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
@@ -66,7 +87,6 @@ public final class ImgTool {
                 //img.setRGB(x, y, min(r, g, b, a));
             }
         }
-        Imtil.save(img, outLoc);
     }
     
     protected final static boolean isRed(final int p) {
@@ -94,6 +114,20 @@ public final class ImgTool {
     protected final static int min(int r, int g, int b, int a) {
         final int m = Math.min(Math.min(r,  g), b);
         return f.getDataElement(m, m, m, a);
+    }
+    
+    protected final static ReplacePixelFilter getFilter(final Img src, final Img dst) {
+        final int w = src.getWidth(), h = src.getHeight();
+        final ReplacePixelFilter filter = new ReplacePixelFilter();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int sp = src.getRGB(x, y), dp = dst.getRGB(x, y);
+                if (sp != dp) {
+                    filter.put(sp, dp);
+                }
+            }
+        }
+        return filter;
     }
     
     private final static void info(final Object s) {
