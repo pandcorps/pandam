@@ -437,23 +437,30 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     }
     
     public static class ClothingStyle {
+        protected final int styleIndex;
         protected final String styleName;
         protected final Map<String, ChampionFrameComponent> frames = new HashMap<String, ChampionFrameComponent>();
         
-        public ClothingStyle(final String styleName) {
+        public ClothingStyle(final int styleIndex, final String styleName) {
+            this.styleIndex = styleIndex;
             this.styleName = styleName;
+        }
+        
+        @Override
+        public final String toString() {
+            return styleIndex + " - " + styleName;
         }
     }
     
     public final static class Clothing {
-        private ClothingStyle style;
-        private final FloatColor color = new FloatColor();
+        protected ClothingStyle style;
+        protected final FloatColor color = new FloatColor();
         
         public Clothing(final ClothingStyle style) {
             this.style = style;
         }
         
-        private final void load(final Segment seg, final Map<String, ClothingStyle> styles, final int fieldIndex) {
+        private final void load(final Segment seg, final Map<Object, ClothingStyle> styles, final int fieldIndex) {
             style = styles.get(seg.getValue(fieldIndex));
             color.load(seg.getField(fieldIndex + 1));
         }
