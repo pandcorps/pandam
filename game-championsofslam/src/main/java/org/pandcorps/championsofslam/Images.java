@@ -26,6 +26,7 @@ import java.util.*;
 
 import org.pandcorps.championsofslam.Champion.*;
 import org.pandcorps.core.seg.*;
+import org.pandcorps.pandam.Panception;
 
 public class Images {
     protected final static int CELLS_PER_ROW = 32;
@@ -34,12 +35,23 @@ public class Images {
     //TODO Loader will need a Map; would a List be better after it's done?
     // If they're kept in this Map, will we need indices at all? Maybe don't need ClothingStyle sub-classes anymore
     protected final static Map<String, ChampionFrameComponent> bodyComponents = new HashMap<String, ChampionFrameComponent>();
-    protected final static Map<String, ClothingStyle> shirtStyles = new HashMap<String, ClothingStyle>();
-    protected final static Map<String, ClothingStyle> pantsStyles = new HashMap<String, ClothingStyle>();
-    protected final static Map<String, ClothingStyle> bootsStyles = new HashMap<String, ClothingStyle>();
+    protected final static Map<Object, ClothingStyle> shirtStyles = new HashMap<Object, ClothingStyle>();
+    protected final static Map<Object, ClothingStyle> pantsStyles = new HashMap<Object, ClothingStyle>();
+    protected final static Map<Object, ClothingStyle> bootsStyles = new HashMap<Object, ClothingStyle>();
     protected final static List<ChampionFrameComponent> hairComponents = new ArrayList<ChampionFrameComponent>();
     protected final static List<ChampionFrameComponent> eyesComponents = new ArrayList<ChampionFrameComponent>();
     protected final static List<ChampionFrameComponent> mouthComponents = new ArrayList<ChampionFrameComponent>();
+    
+    protected final static void load() {
+        final SegmentStream in = SegmentStream.openLocation(ChampionsOfSlamGame.RES + "Images.txt");
+        try {
+            load(in);
+        } catch (final Exception e) {
+            throw Panception.get(e);
+        } finally {
+            in.close();
+        }
+    }
     
     protected final static void load(final SegmentStream in) throws Exception {
         int x = 0, iy = 0;
@@ -70,16 +82,27 @@ public class Images {
                 iy += CELL_DIM;
             }
         }
+        Champion.NUM_HAIR = hairComponents.size();
+        Champion.NUM_EYES = eyesComponents.size();
     }
     
     private final static void updateClothingStyle(
-            final Segment seg, final Map<String, ClothingStyle> styles, final ChampionFrameComponent component) throws Exception {
+            final Segment seg, final Map<Object, ClothingStyle> styles, final ChampionFrameComponent component) throws Exception {
         final String styleName = seg.getValue(2), frameName = seg.getValue(1);
         ClothingStyle style = styles.get(styleName);
         if (style == null) {
-            style = new ClothingStyle(styleName);
-            styles.put(styleName, style);
+            final int styleIndex = styles.size() / 2;
+            style = new ClothingStyle(styleIndex, styleName);
+            put(styles, styleName, style);
+            put(styles, Integer.valueOf(styleIndex), style);
         }
         style.frames.put(frameName, component);
+    }
+    
+    private final static void put(final Map<Object, ClothingStyle> styles, final Object key, final ClothingStyle style) {
+        final ClothingStyle old = styles.put(key, style);
+        if (old != null) {
+            throw new IllegalStateException("Found " + old + " and " + style + " for key " + key);
+        }
     }
 }
