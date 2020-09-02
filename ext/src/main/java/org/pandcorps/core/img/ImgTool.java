@@ -34,6 +34,12 @@ public final class ImgTool {
     private final static boolean enhanceRed = Pantil.isProperty("org.pandcorps.core.img.enhanceRed", false);
     private final static String mapSrc = Pantil.getProperty("org.pandcorps.core.img.mapSrc");
     private final static String mapDst = Pantil.getProperty("org.pandcorps.core.img.mapDst");
+    private final static int grayOffsetRed = Pantil.getProperty("org.pandcorps.core.img.grayOffsetRed", 0);
+    private final static int grayOffsetGreen = Pantil.getProperty("org.pandcorps.core.img.grayOffsetGreen", 0);
+    private final static int grayOffsetBlue = Pantil.getProperty("org.pandcorps.core.img.grayOffsetBlue", 0);
+    private final static float grayMultiplierRed = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierRed", 1.0f);
+    private final static float grayMultiplierGreen = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierGreen", 1.0f);
+    private final static float grayMultiplierBlue = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierBlue", 1.0f);
     private final static int[] channels = new int[3];
     private static PixelFilter filter = null;
     
@@ -93,7 +99,14 @@ public final class ImgTool {
         return f.getRed(p) > f.getBlue(p);
     }
     
+    protected final static boolean isGray(final int r, final int g, final int b) {
+        return (r == b) && (g == b);
+    }
+    
     protected final static int maximizeBlue(int r, int g, int b, int a) {
+        if (isGray(r, g, b)) {
+            return handleGray(b, a);
+        }
         channels[0] = r; channels[1] = g; channels[2] = b;
         Arrays.sort(channels);
         r = channels[0]; g = channels[1]; b = channels[2];
@@ -104,6 +117,17 @@ public final class ImgTool {
             r = (r + g) / 2;
         }
         return f.getDataElement(r, g, b, a);
+    }
+    
+    protected final static int handleGray(final int v, final int a) {
+        return f.getDataElement(
+                handle(v, grayMultiplierRed, grayOffsetRed),
+                handle(v, grayMultiplierGreen, grayOffsetGreen),
+                handle(v, grayMultiplierBlue, grayOffsetBlue), a);
+    }
+    
+    protected final static int handle(final int v, final float multiplier, final int offset) {
+        return Math.max(0, Math.min(Pancolor.MAX_VALUE, Math.round(v * multiplier) + offset));
     }
     
     protected final static int mean(int r, int g, int b, int a) {
