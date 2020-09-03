@@ -35,8 +35,8 @@ import org.pandcorps.pandax.text.*;
 public abstract class Champion extends Panctor implements StepListener, Collidable {
     protected final static int VEL = 2;
     protected final static float INC_COLOR = 0.125f;
-    protected final static int NUM_EYES = 19;
-    protected final static int NUM_HAIR = 9;
+    protected static int NUM_EYES = -1;
+    protected static int NUM_HAIR = -1;
     protected final static int DEPTH_TEXT = 1900;
     private final static int INITIAL_HEALTH = 40;
     protected final static Set<Champion> champions = new IdentityHashSet<Champion>();
@@ -51,8 +51,8 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     private final static ChampionFrame frmWalk1 = new ChampionFrame(0, 0, FRAME_STILL, FRAME_WALK1);
     private final static ChampionFrame frmWalk2 = new ChampionFrame(0, 0, FRAME_STILL, FRAME_WALK2);
     private final static ChampionFrame frmHurt = new ChampionFrame(0, 0, FRAME_HURT, FRAME_STILL);
-    private final static ChampionAttack atkJab = new ChampionAttack(new ChampionFrame(0, 0, FRAME_JAB, FRAME_WALK1), 4, 1, 4);
-    private final static ChampionAttack atkUppercut = new ChampionAttack(new ChampionFrame(0, 0, FRAME_UPPERCUT, FRAME_WALK1), 8, 2, 1);
+    private final static ChampionAttack atkJab = new ChampionAttack(new ChampionFrame(-2, 0, FRAME_JAB, FRAME_WALK1), 4, 1, 4);
+    protected final static ChampionAttack atkUppercut = new ChampionAttack(new ChampionFrame(-2, 0, FRAME_UPPERCUT, FRAME_WALK1), 8, 2, 1);
     private final static ChampionAttack[] atkCombo = { atkJab, atkJab, atkUppercut };
     protected final static float minX = 40, minY = 36;
     protected final static float maxX = 344, maxY = 186;
@@ -291,7 +291,8 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         return getPosition();
     }
     
-    private final float getX(final int offset) {
+    private final float getX(final int _offset) {
+        final int offset = _offset + frm.headX;
         return getPosition().getX() - (isMirror() ? (32 - offset) : offset);
     }
     
@@ -301,7 +302,7 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         // Don't need to consider whole range from 0 to GAME_H if parts of screen are inaccessible
         // If characters always move up/down with a minimum velocity v > 1, then can divide y by v
         final float _y = pos.getY(), z = (ChampionsOfSlamGame.GAME_H - _y) * 8, y = _y + pos.getZ();
-        final float hx = getX(frm.headX), hy = y - frm.headY;
+        final float hx = getX(Images.headX), hy = y - frm.headY;
         final FloatColor hairColor = def.hairColor;
         final int mouthIndex = nvl(frm.mouthIndex, def.mouthIndex), eyesIndex = nvl(frm.eyesIndex, def.eyesIndex), hairIndex = def.hairIndex;
         final Clothing shirt = def.shirt;
@@ -490,7 +491,7 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     public final static FloatColor COLOR_WHITE = new FloatColor();
     
     public final static class ChampionFrame {
-        private final int headX;
+        private final int headX; //TODO Currently using for all components; rename? Add a separate baseX?
         private final int headY;
         private final int eyesIndex;
         private final int mouthIndex;
@@ -515,7 +516,7 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     public final static class ChampionFrameComponent {
         private final int ix;
         private final int iy;
-        private final int x;
+        protected final int x;
         
         public ChampionFrameComponent(final int ix, final int iy, final int x) {
             this.ix = ix;
