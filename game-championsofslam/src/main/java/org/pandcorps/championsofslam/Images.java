@@ -32,6 +32,7 @@ public class Images {
     protected final static int CELLS_PER_ROW = 32;
     //protected final static int NUM_ROWS = 32;
     protected final static int CELL_DIM = 32;
+    protected static int headX;
     //TODO Loader will need a Map; would a List be better after it's done?
     // If they're kept in this Map, will we need indices at all? Maybe don't need ClothingStyle sub-classes anymore
     protected final static Map<String, ChampionFrameComponent> bodyComponents = new HashMap<String, ChampionFrameComponent>();
@@ -62,7 +63,11 @@ public class Images {
             final ChampionFrameComponent component = new ChampionFrameComponent(ix, iy, offX);
             final String name = seg.getName();
             if ("BDY".equals(name)) { // Body
-                bodyComponents.put(seg.getValue(1), component);
+                final String frameName = seg.getValue(1);
+                if ("head".equals(frameName)) {
+                    headX = component.x;
+                }
+                bodyComponents.put(frameName, component);
             } else if ("SHR".equals(name)) { // Shirt
                 updateClothingStyle(seg, shirtStyles, component);
             } else if ("PNT".equals(name)) { // Pants
