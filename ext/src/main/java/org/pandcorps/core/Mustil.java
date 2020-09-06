@@ -27,6 +27,8 @@ import java.util.*;
 
 import javax.sound.midi.*;
 
+import org.pandcorps.core.col.*;
+
 // Music Utility
 public class Mustil {
 	/*
@@ -747,23 +749,34 @@ public class Mustil {
 				System.out.println("Resolution: " + seq.getResolution());
 				final Track[] tracks = seq.getTracks();
 				final int tracksSize = Math.min(3, tracks.length);
+				final CountMap<String> messageTypes = new CountMap<String>();
+				final Set<Integer> instruments = new HashSet<Integer>();
 				for (int j = 0; j < tracksSize; j++) {
 					System.out.println("  Track " + j);
 					final Track track = tracks[j];
-					final int size = Math.min(20, track.size());
-					//final int size = track.size();
+					//final int size = Math.min(20, track.size());
+					final int size = track.size();
 					for (int i = 0; i < size; i++) {
 						final MidiMessage message = track.get(i).getMessage();
+						messageTypes.inc(message.getClass().getName());
 						if (message instanceof MetaMessage) {
 							final MetaMessage mm = (MetaMessage) message;
 							System.out.println("Meta " + mm.getType() + "; " + new String(mm.getData()));
 						//} else if (message instanceof SysexMessage) {
 						//	((SysexMessage) message).
+						} else if (message instanceof ShortMessage) {
+						    final ShortMessage shortMessage = (ShortMessage) message;
+						    if (shortMessage.getCommand() == ShortMessage.PROGRAM_CHANGE) {
+						        instruments.add(Integer.valueOf(shortMessage.getData1()));
+						    }
 						} else {
 							System.out.println(message.getClass());
 						}
 					}
 				}
+				System.out.println(messageTypes);
+				System.out.println("Instruments");
+				System.out.println(instruments);
 			}
 		} catch (final Throwable e) {
 			e.printStackTrace();
