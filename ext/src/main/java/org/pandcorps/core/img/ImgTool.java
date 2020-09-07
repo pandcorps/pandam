@@ -30,6 +30,7 @@ import org.pandcorps.core.*;
 public final class ImgTool {
     private final static ImgFactory f = ImgFactory.getFactory();
     private final static String sep = System.getProperty("file.separator");
+    private final static boolean enhanceBlue = Pantil.isProperty("org.pandcorps.core.img.enhanceBlue", false);
     private final static boolean enhanceGreen = Pantil.isProperty("org.pandcorps.core.img.enhanceGreen", false);
     private final static boolean enhanceRed = Pantil.isProperty("org.pandcorps.core.img.enhanceRed", false);
     private final static String mapSrc = Pantil.getProperty("org.pandcorps.core.img.mapSrc");
@@ -88,7 +89,10 @@ public final class ImgTool {
             for (int x = 0; x < w; x++) {
                 final int p = img.getRGB(x, y);
                 final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p), a = f.getAlpha(p);
-                img.setRGB(x, y, maximizeBlue(r, g, b, a));
+                //img.setRGB(x, y, maximizeBlue(r, g, b, a));
+                img.setRGB(x, y, greenify(r, g, b, a));
+                //img.setRGB(x, y, toCyan(r, g, b, a));
+                //img.setRGB(x, y, toCyanGray(r, g, b, a));
                 //img.setRGB(x, y, mean(r, g, b, a));
                 //img.setRGB(x, y, min(r, g, b, a));
             }
@@ -107,9 +111,11 @@ public final class ImgTool {
         if (isGray(r, g, b)) {
             return handleGray(b, a);
         }
-        channels[0] = r; channels[1] = g; channels[2] = b;
-        Arrays.sort(channels);
+        sortChannels(r, g, b);
         r = channels[0]; g = channels[1]; b = channels[2];
+        if (enhanceBlue) {
+            b = multiplyChannel(b, 1.5f);
+        }
         if (enhanceGreen) {
             g = (g + b) / 2;
         }
@@ -117,6 +123,47 @@ public final class ImgTool {
             r = (r + g) / 2;
         }
         return f.getDataElement(r, g, b, a);
+    }
+    
+    protected final static void sortChannels(final int r, final int g, final int b) {
+        channels[0] = r; channels[1] = g; channels[2] = b;
+        Arrays.sort(channels);
+    }
+    
+    protected final static int toCyan(final int r, final int g, final int b, final int a) {
+        sortChannels(r, g, b);
+        final int x = channels[2];
+        return f.getDataElement(channels[0], x, x, a);
+    }
+    
+    protected final static int toCyanGray(final int r, final int g, final int b, final int a) {
+        sortChannels(r, g, b);
+        //final int n = channels[0], x = channels[2];
+        //return f.getDataElement(n + (x - n) / 3, x, x, a);
+        //int x = channels[2];
+        //final int n = multiplyChannel(x, (1.0f / 6.0f));
+        //x = multiplyChannel(x, (5.0f / 6.0f));
+        //return f.getDataElement(n + (x - n) * 2 / 3, x, x, a);
+        final int n = channels[0], x = channels[2], d = x - n, d2 = Math.round(d / 4.0f);
+        final int n2 = n + d2, x2 = x - d2;
+        return f.getDataElement(n2, x2, x2, a);
+    }
+    
+    protected final static int toCyanGray2(final int r, final int g, final int b, final int a) {
+        sortChannels(r, g, b);
+        //final int n = channels[0], x = channels[2];
+        //return f.getDataElement(n + (x - n) * 2 / 3, x, x, a);
+        //int x = channels[2];
+        //final int n = multiplyChannel(x, (2.0f / 6.0f));
+        //x = multiplyChannel(x, (4.0f / 6.0f));
+        //return f.getDataElement(n + (x - n) * 2 / 3, x, x, a);
+        final int n = channels[0], x = channels[2], d = x - n, d2 = Math.round(d * 2.0f / 5.0f);
+        final int n2 = n + d2, x2 = x - d2;
+        return f.getDataElement(n2, x2, x2, a);
+    }
+    
+    protected final static int greenify(final int r, final int g, final int b, final int a) {
+        return f.getDataElement((r + g) / 2, g, (b + g) / 2, a);
     }
     
     protected final static int handleGray(final int v, final int a) {
@@ -128,6 +175,10 @@ public final class ImgTool {
     
     protected final static int handle(final int v, final float multiplier, final int offset) {
         return Math.max(0, Math.min(Pancolor.MAX_VALUE, Math.round(v * multiplier) + offset));
+    }
+    
+    protected final static int multiplyChannel(final int c, final float m) {
+        return Math.min(Pancolor.MAX_VALUE, Math.round(c * m));
     }
     
     protected final static int mean(int r, int g, int b, int a) {
