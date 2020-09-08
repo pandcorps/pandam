@@ -24,15 +24,83 @@ package org.pandcorps.board;
 
 import java.util.*;
 
+import org.pandcorps.core.*;
 import org.pandcorps.game.*;
 import org.pandcorps.pandam.*;
 
 public class BoardGame extends BaseGame {
+    protected final static String TITLE = "Board Games";
+    protected final static String VERSION = "0.0.1";
+    protected final static String YEAR = "2020";
+    protected final static String AUTHOR = "Andrew M. Martin";
+    
+    protected final static String RES = "org/pandcorps/board/";
+    
+    protected final static int DIM = 16;
+    protected final static int TITLE_COLUMNS = 24;
+    protected final static int TITLE_ROWS = 14;
+    protected final static int TITLE_W = TITLE_COLUMNS * DIM; // 384
+    protected final static int TITLE_H = TITLE_ROWS * DIM; // 224;
+    
+    protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
+    protected static Panmage square = null;
+    protected static Panmage circle = null;
+    
+    protected static BoardGameModule module = null;
+    
+    @Override
+    protected final boolean isFullScreen() {
+        return true;
+    }
+    
+    @Override
+    protected final int getGameWidth() {
+        return TITLE_W; // Used on title screen; individual games can set their own resolution
+    }
+    
+    @Override
+    protected final int getGameHeight() {
+        return TITLE_H;
+    }
+    
     @Override
     protected final void init(final Panroom room) throws Exception {
+        final Pangine engine = Pangine.getEngine();
+        engine.setTitle(TITLE);
+        engine.setEntityMapEnabled(false);
+        Imtil.onlyResources = true;
+        if (loaders != null) {
+            loaders.add(new Runnable() {
+                @Override public final void run() {
+                    loadResources();
+                }});
+        }
+        module = new CheckersModule();
+        Panscreen.set(new LogoScreen(BoardGameScreen.class, loaders));
+    }
+    
+    private final static void loadResources() {
+        final Pangine engine = Pangine.getEngine();
+        square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
+        circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
+    }
+    
+    protected final static class BoardGameScreen extends Panscreen {
+        @Override
+        protected final void load() {
+            final Pangine engine = Pangine.getEngine();
+            engine.enableColorArray();
+            engine.zoomToMinimum(module.numVerticalCells * DIM);
+        }
     }
     
     protected abstract static class BoardGameModule {
+        protected final int numVerticalCells;
+        
+        protected BoardGameModule(final int numVerticalCells) {
+            this.numVerticalCells = numVerticalCells;
+        }
+        
         protected abstract void initGame();
     }
     
