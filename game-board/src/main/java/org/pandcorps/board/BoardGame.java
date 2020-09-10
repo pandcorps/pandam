@@ -25,6 +25,7 @@ package org.pandcorps.board;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.pandam.*;
 
@@ -41,11 +42,13 @@ public class BoardGame extends BaseGame {
     protected final static int TITLE_ROWS = 14;
     protected final static int TITLE_W = TITLE_COLUMNS * DIM; // 384
     protected final static int TITLE_H = TITLE_ROWS * DIM; // 224;
+    protected final static int DEPTH_CELL = 0;
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage square = null;
     protected static Panmage circle = null;
     
+    protected final static BoardGamePlayer[] players = new BoardGamePlayer[2];
     protected static BoardGameModule module = null;
     
     @Override
@@ -102,13 +105,15 @@ public class BoardGame extends BaseGame {
         }
         
         protected abstract void initGame();
+        
+        protected abstract BoardGameCell getCell(final int x, final int y);
     }
     
     protected final static int convertScreenToGrid(final int screenVal, final int gridLim) {
         return screenVal / gridLim;
     }
     
-    protected static class BoardGameGrid<P extends BoardGamePiece> {
+    protected static class BoardGameGrid<P extends BoardGamePiece> extends Panctor {
         private final int w;
         private final int h;
         private final int numCells;
@@ -228,6 +233,26 @@ public class BoardGame extends BaseGame {
         protected final int convertScreenToGridY(final int screenY) {
             return convertScreenToGrid(screenY, h);
         }
+        
+        protected final void renderView(final Panderer renderer) {
+            for (int y = 0; y < h; y++) {
+                final int yd = y * DIM;
+                for (int x = 0; x < w; x++) {
+                    final int xd = x * DIM;
+                    final BoardGameCell cell = module.getCell(x, y);
+                    final Pancolor color = cell.getColor();
+                    render(renderer, cell.getImage(), xd, yd, DEPTH_CELL, color);
+                    final P piece = get(x, y);
+                    if (piece != null) {
+                        render(renderer, piece.getImage(), xd, yd, DEPTH_CELL, players[piece.player].color);
+                    }
+                }
+            }
+        }
+        
+        protected final void render(final Panderer renderer, final Panmage image, final int x, final int y, final int z, final Pancolor color) {
+            renderer.render(getLayer(), image, x, y, z, 0, 0, DIM, DIM, 0, false, false, color.getRf(), color.getGf(), color.getBf());
+        }
     }
     
     // Just use Grid.getIndex instead
@@ -253,6 +278,22 @@ public class BoardGame extends BaseGame {
         }
     }*/
     
+    protected static interface BoardGameCell {
+        public Panmage getImage();
+        
+        public Pancolor getColor();
+    }
+    
+    protected final static BoardGameCell square0 = new BoardGameCell() {
+        @Override public final Panmage getImage() { return BoardGame.square; }
+        @Override public final Pancolor getColor() { return BoardGame.players[0].color; }};
+    protected final static BoardGameCell square1 = new BoardGameCell() {
+        @Override public final Panmage getImage() { return BoardGame.square; }
+        @Override public final Pancolor getColor() { return BoardGame.players[1].color; }};
+    protected final static BoardGameCell getPlayerSquare(final int x, final int y) {
+        return (x % 2) == (y % 2) ? square0 : square1;
+    }
+    
     protected static class BoardGamePiece {
         protected int player;
         protected int x;
@@ -261,10 +302,18 @@ public class BoardGame extends BaseGame {
         protected BoardGamePiece(final int player) {
             this.player = player;
         }
+        
+        protected Panmage getImage() {
+            return null;
+        }
     }
     
     private final static class BoardGamePieceList<P extends BoardGamePiece> {
         private final List<P> internalList = new ArrayList<P>();
         private final List<P> externalList = Collections.unmodifiableList(internalList);
+    }
+    
+    protected final static class BoardGamePlayer {
+        protected Pancolor color;
     }
 }
