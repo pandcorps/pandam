@@ -30,6 +30,10 @@ public class CheckersModule extends BoardGameModule {
     private final static int BOARD_DIM = 8;
     private final BoardGameGrid<CheckersPiece> grid = new BoardGameGrid<CheckersPiece>(BOARD_DIM);
     
+    protected CheckersModule() {
+        super(BOARD_DIM);
+    }
+    
     @Override
     protected final void initGame() {
         grid.clear();
@@ -46,6 +50,11 @@ public class CheckersModule extends BoardGameModule {
                 grid.set(x, y, new CheckersPiece(1));
             }
         }
+    }
+    
+    @Override
+    protected final BoardGameCell getCell(final int x, final int y) {
+        return BoardGame.getPlayerSquare(x, y);
     }
     
     // Used to highlight pieces that the player can select (an empty List would mean that the game is over)
@@ -173,6 +182,7 @@ public class CheckersModule extends BoardGameModule {
             // Capture
             grid.set(destination, this);
             // Double jumps
+            // Check for winner
             return true;
         }
     }
