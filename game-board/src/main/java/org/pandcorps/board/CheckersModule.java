@@ -25,10 +25,13 @@ package org.pandcorps.board;
 import java.util.*;
 
 import org.pandcorps.board.BoardGame.*;
+import org.pandcorps.core.img.Pancolor;
+import org.pandcorps.pandam.Panmage;
 
 public class CheckersModule extends BoardGameModule {
     private final static int BOARD_DIM = 8;
     private final BoardGameGrid<CheckersPiece> grid = new BoardGameGrid<CheckersPiece>(BOARD_DIM);
+    private static CheckersPiece pieceToMove = null;
     
     protected CheckersModule() {
         super(BOARD_DIM);
@@ -50,6 +53,13 @@ public class CheckersModule extends BoardGameModule {
                 grid.set(x, y, new CheckersPiece(1));
             }
         }
+        highlightMovablePieces();
+        pieceToMove = null;
+    }
+    
+    @Override
+    protected final BoardGameGrid<CheckersPiece> getGrid() {
+        return grid;
     }
     
     @Override
@@ -57,13 +67,53 @@ public class CheckersModule extends BoardGameModule {
         return BoardGame.getPlayerSquare(x, y);
     }
     
+    @Override
+    protected final Pancolor getDefaultColor(final int playerIndex) {
+        return (playerIndex == 0) ? BoardGame.BLACK : Pancolor.RED;
+    }
+    
+    @Override
+    protected final void processTouch(final int cellIndex) {
+        if (pieceToMove == null) {
+            pickPieceToMove(cellIndex);
+        } else {
+            pickDestination(cellIndex);
+        }
+    }
+    
+    protected final void pickPieceToMove(final int cellIndex) {
+        if (!BoardGame.isHighlight(cellIndex)) {
+            return;
+        }
+        pieceToMove = grid.get(cellIndex);
+        highlightAllowedDestinations();
+    }
+    
+    protected final void pickDestination(final int cellIndex) {
+        if (pieceToMove.moveToDestination(cellIndex)) {
+            BoardGame.toggleCurrentPlayer();
+        }
+        pieceToMove = null;
+        highlightMovablePieces();
+    }
+    
+    protected final void highlightMovablePieces() {
+        BoardGame.highlightSquares.clear();
+        BoardGame.highlightSquares.addAll(getMovablePieces(BoardGame.currentPlayerIndex));
+    }
+    
+    protected final void highlightAllowedDestinations() {
+        BoardGame.highlightSquares.clear();
+        BoardGame.highlightSquares.addAll(pieceToMove.getAllowedDestinations());
+    }
+    
     // Used to highlight pieces that the player can select (an empty List would mean that the game is over)
-    protected List<CheckersPiece> getMovablePieces(final int player) {
+    protected List<Integer> getMovablePieces(final int player) {
         final List<CheckersPiece> all = grid.getPieces(player);
-        final List<CheckersPiece> movable = new ArrayList<CheckersPiece>();
+        final List<Integer> movable = new ArrayList<Integer>();
         for (final CheckersPiece piece : all) {
             if (piece.isAbleToCapture()) {
-                movable.add(piece);
+                movable.add(piece.getIndexWrapped());
             }
         }
         if (!movable.isEmpty()) {
@@ -71,7 +121,7 @@ public class CheckersModule extends BoardGameModule {
         }
         for (final CheckersPiece piece : all) {
             if (piece.isAbleToMove()) {
-                movable.add(piece);
+                movable.add(piece.getIndexWrapped());
             }
         }
         return movable;
@@ -174,16 +224,25 @@ public class CheckersModule extends BoardGameModule {
         protected boolean moveToDestination(final int destination) {
             if (!grid.isOpen(destination)) {
                 return false;
-            } else if (!getMovablePieces(player).contains(this)) {
+            } else if (!getMovablePieces(player).contains(getIndexWrapped())) {
                 return false;
             } else if (!getAllowedDestinations().contains(Integer.valueOf(destination))) {
                 return false;
             }
-            // Capture
+            final int dx = grid.getX(destination), dy = grid.getY(destination);
+            if (Math.abs(dx - x) > 1) { // If moving more than 1 square, must be capturing an opponent piece
+                final int cx = (x + dx) / 2, cy = (y + dy) / 2;
+                grid.remove(cx, cy);
+            }
             grid.set(destination, this);
             // Double jumps
             // Check for winner
             return true;
+        }
+        
+        @Override
+        protected final Panmage getImage() {
+            return crowned ? BoardGame.circles : BoardGame.circle;
         }
     }
 }
