@@ -177,9 +177,21 @@ public abstract class Panput {
 	}
 	
 	public final static class Touch extends MappableInput {
+	    /*package*/ int x = 0;
+	    /*package*/ int y = 0;
+	    
 		public Touch(final Panteraction interaction) {
 			super(Panteraction.TOUCHSCREEN, "Touch");
 		}
+		
+		// Only makes sense without multi-touch; unpredictable behavior with multi-touch
+		public final int getX() {
+		    return x;
+		}
+		
+		public final int getY() {
+            return y;
+        }
 	}
 	
 	public static class TouchButton extends MappableInput {
