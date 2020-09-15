@@ -22,10 +22,12 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.board;
 
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
@@ -52,6 +54,12 @@ public class BoardGame extends BaseGame {
     
     protected final static Pancolor BLACK = new FinPancolor(64);
     
+    protected final static String SEG_STATE = "BGS";
+    
+    protected final static String LOC_AUTOSAVE = "autosave.txt";
+    
+    protected final static int MAX_HISTORY_SIZE = 5;
+    
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage imgCursor = null;
     protected static Panmage square = null;
@@ -59,9 +67,8 @@ public class BoardGame extends BaseGame {
     protected static Panmage circles = null;
     
     protected final static BoardGamePlayer[] players = { new BoardGamePlayer(0), new BoardGamePlayer(1) };
-    protected static BoardGameModule module = null;
+    protected static BoardGameModule<? extends BoardGamePiece> module = null;
     protected static Panroom room = null;
-    protected static BoardGameGrid<?> grid = null;
     protected static Cursor cursor = null;
     protected static Pancolor highlightColor = null;
     protected final static Set<Integer> highlightSquares = new HashSet<Integer>();
@@ -155,9 +162,60 @@ public class BoardGame extends BaseGame {
             final Pangine engine = Pangine.getEngine();
             engine.enableColorArray();
             engine.zoomToMinimum(module.numVerticalCells * DIM);
-            grid = module.getGrid();
+            module.prepare();
+            addCursor();
+            highlightColor = pickHighlightColor();
+            module.clear();
+            module.initGame();
+            module.onLoad();
+            addState();
+        }
+    }
+    
+    protected final static boolean isHighlight(final int cellIndex) {
+        return highlightSquares.contains(Integer.valueOf(cellIndex));
+    }
+    
+    protected final static void setHighlightSquares(final Set<Integer> highlightSquares) {
+        BoardGame.highlightSquares.clear();
+        BoardGame.highlightSquares.addAll(highlightSquares);
+    }
+    
+    protected final static void toggleCurrentPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        addState();
+    }
+    
+    protected final static void addState() {
+        module.getGrid().addState();
+    }
+    
+    protected final static void save() {
+        save(LOC_AUTOSAVE);
+    }
+    
+    protected final static void save(final String loc) {
+        final Writer w = Iotil.getWriter(loc);
+        try {
+            module.save(w);
+        } catch (final IOException e) {
+            throw new Panception(e);
+        } finally {
+            Iotil.close(w);
+        }
+    }
+    
+    protected abstract static class BoardGameModule<P extends BoardGamePiece> {
+        protected final int numVerticalCells;
+        
+        protected BoardGameModule(final int numVerticalCells) {
+            this.numVerticalCells = numVerticalCells;
+        }
+        
+        protected final void prepare() {
+            final BoardGameGrid<P> grid = getGrid();
             room.addActor(grid);
-            final Touch touch = engine.getInteraction().TOUCH;
+            final Touch touch = Pangine.getEngine().getInteraction().TOUCH;
             grid.register(touch, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
                     touchStartIndex = grid.getIndex(touch);
@@ -171,39 +229,84 @@ public class BoardGame extends BaseGame {
                         touchStartIndex = -1;
                     }
                 }});
-            addCursor();
-            highlightColor = pickHighlightColor();
-            module.initGame();
-        }
-    }
-    
-    protected final static boolean isHighlight(final int cellIndex) {
-        return highlightSquares.contains(Integer.valueOf(cellIndex));
-    }
-    
-    protected final static void toggleCurrentPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-    }
-    
-    protected abstract static class BoardGameModule {
-        protected final int numVerticalCells;
-        
-        protected BoardGameModule(final int numVerticalCells) {
-            this.numVerticalCells = numVerticalCells;
         }
         
         protected abstract void initGame();
         
-        protected abstract BoardGameGrid<?> getGrid();
+        protected abstract BoardGameGrid<P> getGrid();
         
         protected abstract BoardGameCell getCell(final int x, final int y);
         
         protected abstract Pancolor getDefaultColor(final int playerIndex);
         
         protected abstract void processTouch(final int cellIndex);
+        
+        protected abstract void onLoad();
+        
+        protected abstract char serialize(final P piece);
+        
+        protected abstract P parse(final char value, final int player);
+        
+        public final void save(final Writer w) throws IOException {
+            final BoardGameGrid<P> grid = getGrid();
+            final Segment seg = new Segment();
+            //TODO currentPlayerIndex, currentStateIndex? players? module? others? EOF to detect partial/corrupted files? call this from somewhere
+            for (final BoardGameState<P> state: grid.states) {
+                seg.clear();
+                seg.setName(SEG_STATE);
+                seg.setValue(0, Integer.toString(currentPlayerIndex));
+                for (final P piece : state.grid) {
+                    final Field field = new Field();
+                    field.setInt(0, piece.player);
+                    field.setInt(1, piece.x);
+                    field.setInt(2, piece.y);
+                    field.setChar(3, serialize(piece));
+                    seg.addField(1, field);
+                }
+                seg.saveln(w);
+            }
+        }
+        
+        public final void load(final String loc) throws IOException {
+            final SegmentStream in = SegmentStream.openLocation(loc);
+            try {
+                load(in);
+            } finally {
+                in.close();
+            }
+            Iotil.delete(loc);
+        }
+        
+        public final void load(final SegmentStream in) throws IOException {
+            clear();
+            Segment seg;
+            while ((seg = in.readIf(SEG_STATE)) != null) {
+                final BoardGameGrid<P> grid = getGrid();
+                final List<BoardGameState<P>> states = grid.states;
+                states.clear();
+                final int currentPlayerIndex = seg.intValue(0);
+                final List<Field> fields = seg.getRepetitions(1);
+                final List<P> pieces = new ArrayList<P>(fields.size());
+                for (final Field field : fields) {
+                    final int player = field.intValue(0);
+                    final int x = field.intValue(1);
+                    final int y = field.intValue(2);
+                    final char pieceType = field.charValue(3);
+                    final P piece = parse(pieceType, player);
+                    piece.x = x; piece.y = y;
+                    pieces.add(piece);
+                }
+                states.add(new BoardGameState<P>(pieces, currentPlayerIndex));
+            }
+            onLoad();
+        }
+        
+        public final void clear() {
+            getGrid().clear();
+        }
     }
     
-    protected final static int convertScreenToGrid(final int screenVal, final int gridLim) {
+    protected final static int convertScreenToGrid(final int screenVal) {
         return screenVal / DIM;
     }
     
@@ -213,6 +316,8 @@ public class BoardGame extends BaseGame {
         private final int numCells;
         private final List<P> grid;
         private final Map<Integer, BoardGamePieceList<P>> lists = new HashMap<Integer, BoardGamePieceList<P>>();
+        private final List<BoardGameState<P>> states = new ArrayList<BoardGameState<P>>();
+        private int currentStateIndex = 0;
         
         protected BoardGameGrid(final int dim) {
             this(dim, dim);
@@ -232,6 +337,8 @@ public class BoardGame extends BaseGame {
             for (int i = 0; i < numCells; i++) {
                 grid.set(i, null);
             }
+            states.clear();
+            currentStateIndex = 0;
         }
         
         protected final int getWidth() {
@@ -339,7 +446,7 @@ public class BoardGame extends BaseGame {
         }
         
         protected final int getIndex(final Touch touch) {
-            return getIndexOptional(convertScreenToGridX(touch.getX()), convertScreenToGridY(touch.getY()));
+            return getIndexOptional(convertScreenToGrid(touch.getX()), convertScreenToGrid(touch.getY()));
         }
         
         protected final Integer getIndexWrapped(final int x, final int y) {
@@ -354,12 +461,50 @@ public class BoardGame extends BaseGame {
             return index / w;
         }
         
-        protected final int convertScreenToGridX(final int screenX) {
-            return convertScreenToGrid(screenX, w);
+        protected final void addState() {
+            // if undoing and playing a new move, clear what was lost from the undo
+            for (int i = states.size() - 1; i > currentStateIndex; i--) {
+                states.remove(i);
+            }
+            while (states.size() >= MAX_HISTORY_SIZE) {
+                states.remove(0);
+            }
+            currentStateIndex = states.size(); // Before adding new state
+            states.add(new BoardGameState<P>(this));
+            save();
         }
         
-        protected final int convertScreenToGridY(final int screenY) {
-            return convertScreenToGrid(screenY, h);
+        protected final void setState(final int newStateIndex) {
+            final BoardGameState<P> state = states.get(newStateIndex);
+            BoardGame.currentPlayerIndex = state.currentPlayerIndex;
+            grid.clear();
+            grid.addAll(state.grid);
+            currentStateIndex = newStateIndex;
+            module.onLoad();
+        }
+        
+        protected final void load(final SegmentStream in) {
+            
+        }
+        
+        protected final boolean isUndoAllowed() {
+            return currentStateIndex > 0;
+        }
+        
+        protected final void undo() {
+            if (isUndoAllowed()) {
+                setState(currentStateIndex - 1);
+            }
+        }
+        
+        protected final boolean isRedoAllowed() {
+            return currentStateIndex < (states.size() - 1);
+        }
+        
+        protected final void redo() {
+            if (isRedoAllowed()) {
+                setState(currentStateIndex + 1);
+            }
         }
         
         protected final void renderView(final Panderer renderer) {
@@ -422,7 +567,7 @@ public class BoardGame extends BaseGame {
         @Override public final Panmage getImage() { return square; }
         @Override public final Pancolor getColor() { return highlightColor; }};
     protected final static BoardGameCell getPlayerSquare(final int x, final int y) {
-        final int index = grid.getIndexOptional(x, y);
+        final int index = module.getGrid().getIndexOptional(x, y);
         if ((index >= 0) && highlightSquares.contains(Integer.valueOf(index))) {
             return squareH;
         }
@@ -439,7 +584,7 @@ public class BoardGame extends BaseGame {
         }
         
         protected final Integer getIndexWrapped() {
-            return grid.getIndexWrapped(x, y);
+            return module.getGrid().getIndexWrapped(x, y);
         }
         
         protected abstract Panmage getImage();
@@ -482,6 +627,20 @@ public class BoardGame extends BaseGame {
         
         private final static Pancolor getColor0() {
             return players[0].getColor();
+        }
+    }
+    
+    protected final static class BoardGameState<P extends BoardGamePiece> {
+        private final int currentPlayerIndex;
+        private final List<P> grid;
+        
+        protected BoardGameState(final BoardGameGrid<P> grid) {
+            this(new ArrayList<P>(grid.grid), BoardGame.currentPlayerIndex);
+        }
+        
+        protected BoardGameState(final List<P> grid, final int currentPlayerIndex) {
+            this.currentPlayerIndex = currentPlayerIndex;
+            this.grid = grid;
         }
     }
     
