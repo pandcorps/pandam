@@ -184,6 +184,10 @@ public abstract class Piped implements Savable {
     	setValue(i, String.valueOf(value));
     }
     
+    public final void setChar(final int i, final char value) {
+        setValue(i, String.valueOf(value));
+    }
+    
     public final void setByte(final int i, final Byte value) {
     	setValue(i, Chartil.toString(value));
     }
