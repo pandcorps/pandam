@@ -52,11 +52,13 @@ public class BoardGame extends BaseGame {
     protected final static int DEPTH_PIECE = 2;
     protected final static int DEPTH_CURSOR = 4;
     
-    protected final static Pancolor BLACK = new FinPancolor(64);
+    protected final static Pancolor BLACK = new FinPancolor(96);
     
+    protected final static String SEG_CONTEXT = "CTX";
     protected final static String SEG_STATE = "BGS";
+    protected final static String SEG_END_OF_FILE = "EOF";
     
-    protected final static String LOC_AUTOSAVE = "autosave.txt";
+    protected final static String LOC_SUFFIX_AUTOSAVE = "_autosave.txt";
     
     protected final static int MAX_HISTORY_SIZE = 5;
     
@@ -165,10 +167,22 @@ public class BoardGame extends BaseGame {
             module.prepare();
             addCursor();
             highlightColor = pickHighlightColor();
-            module.clear();
-            module.initGame();
-            module.onLoad();
-            addState();
+            final String locAutosave = getLocationAutosave();
+            boolean newGame = true;
+            if (Iotil.exists(locAutosave)) {
+                try {
+                    module.load(locAutosave);
+                    newGame = false;
+                } catch (final Exception e) {
+                    // Just start a new game if the auto-save file is corrupted
+                }
+            }
+            if (newGame) {
+                module.clear();
+                module.initGame();
+                module.onLoad();
+                addState();
+            }
         }
     }
     
@@ -190,8 +204,12 @@ public class BoardGame extends BaseGame {
         module.getGrid().addState();
     }
     
-    protected final static void save() {
-        save(LOC_AUTOSAVE);
+    protected final static String getLocationAutosave() {
+        return module.getName() + LOC_SUFFIX_AUTOSAVE;
+    }
+    
+    protected final static void autosave() {
+        save(getLocationAutosave());
     }
     
     protected final static void save(final String loc) {
@@ -214,8 +232,11 @@ public class BoardGame extends BaseGame {
         
         protected final void prepare() {
             final BoardGameGrid<P> grid = getGrid();
+            grid.module = this;
             room.addActor(grid);
-            final Touch touch = Pangine.getEngine().getInteraction().TOUCH;
+            final Pangine engine = Pangine.getEngine();
+            final Panteraction interaction = engine.getInteraction();
+            final Touch touch = interaction.TOUCH;
             grid.register(touch, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
                     touchStartIndex = grid.getIndex(touch);
@@ -229,6 +250,23 @@ public class BoardGame extends BaseGame {
                         touchStartIndex = -1;
                     }
                 }});
+            final ActionEndListener undoListener = new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    grid.undo();
+                }};
+            grid.register(interaction.KEY_U, undoListener);
+            grid.register(interaction.KEY_Z, undoListener);
+            final ActionEndListener redoListener = new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    grid.redo();
+                }};
+            grid.register(interaction.KEY_R, redoListener);
+            grid.register(interaction.KEY_Y, redoListener);
+        }
+        
+        protected final String getName() {
+            final String className = getClass().getSimpleName();
+            return className.substring(0, className.length() - 6); // Remove "Module" from class name
         }
         
         protected abstract void initGame();
@@ -245,17 +283,42 @@ public class BoardGame extends BaseGame {
         
         protected abstract char serialize(final P piece);
         
-        protected abstract P parse(final char value, final int player);
+        protected abstract P parse(final char pieceType, final int player);
+        
+        private P parse(final char pieceType, final int player, final int x, final int y) {
+            final P piece = parse(pieceType, player);
+            piece.x = x; piece.y = y;
+            return piece;
+        }
+        
+        protected final P copy(final P piece) {
+            return (piece == null) ? null : parse(serialize(piece), piece.player, piece.x, piece.y);
+        }
+        
+        protected final List<P> copy(final List<P> pieces) {
+            final List<P> copied = new ArrayList<P>(pieces.size());
+            for (final P piece : pieces) {
+                copied.add(copy(piece));
+            }
+            return copied;
+        }
         
         public final void save(final Writer w) throws IOException {
             final BoardGameGrid<P> grid = getGrid();
             final Segment seg = new Segment();
-            //TODO currentPlayerIndex, currentStateIndex? players? module? others? EOF to detect partial/corrupted files? call this from somewhere
+            seg.setName(SEG_CONTEXT);
+            seg.setInt(0, currentPlayerIndex);
+            seg.setInt(1, grid.currentStateIndex);
+            seg.saveln(w);
+            //TODO players? others?
             for (final BoardGameState<P> state: grid.states) {
                 seg.clear();
                 seg.setName(SEG_STATE);
                 seg.setValue(0, Integer.toString(currentPlayerIndex));
                 for (final P piece : state.grid) {
+                    if (piece == null) {
+                        continue;
+                    }
                     final Field field = new Field();
                     field.setInt(0, piece.player);
                     field.setInt(1, piece.x);
@@ -265,6 +328,9 @@ public class BoardGame extends BaseGame {
                 }
                 seg.saveln(w);
             }
+            seg.clear();
+            seg.setName(SEG_END_OF_FILE);
+            seg.saveln(w);
         }
         
         public final void load(final String loc) throws IOException {
@@ -280,10 +346,12 @@ public class BoardGame extends BaseGame {
         public final void load(final SegmentStream in) throws IOException {
             clear();
             Segment seg;
+            seg = in.readRequire(SEG_CONTEXT);
+            currentPlayerIndex = seg.intValue(0);
+            final int currentStateIndex = seg.intValue(1);
+            final BoardGameGrid<P> grid = getGrid();
+            final List<BoardGameState<P>> states = grid.states;
             while ((seg = in.readIf(SEG_STATE)) != null) {
-                final BoardGameGrid<P> grid = getGrid();
-                final List<BoardGameState<P>> states = grid.states;
-                states.clear();
                 final int currentPlayerIndex = seg.intValue(0);
                 final List<Field> fields = seg.getRepetitions(1);
                 final List<P> pieces = new ArrayList<P>(fields.size());
@@ -292,16 +360,17 @@ public class BoardGame extends BaseGame {
                     final int x = field.intValue(1);
                     final int y = field.intValue(2);
                     final char pieceType = field.charValue(3);
-                    final P piece = parse(pieceType, player);
-                    piece.x = x; piece.y = y;
-                    pieces.add(piece);
+                    final P piece = parse(pieceType, player, x, y);
+                    Coltil.set(pieces, grid.getIndexRequired(x, y), piece);
                 }
                 states.add(new BoardGameState<P>(pieces, currentPlayerIndex));
             }
-            onLoad();
+            in.readRequire(SEG_END_OF_FILE);
+            getGrid().setState(currentStateIndex);
         }
         
         public final void clear() {
+            currentPlayerIndex = 0;
             getGrid().clear();
         }
     }
@@ -318,6 +387,7 @@ public class BoardGame extends BaseGame {
         private final Map<Integer, BoardGamePieceList<P>> lists = new HashMap<Integer, BoardGamePieceList<P>>();
         private final List<BoardGameState<P>> states = new ArrayList<BoardGameState<P>>();
         private int currentStateIndex = 0;
+        private BoardGameModule<P> module = null;
         
         protected BoardGameGrid(final int dim) {
             this(dim, dim);
@@ -328,15 +398,10 @@ public class BoardGame extends BaseGame {
             this.h = h;
             numCells = w * h;
             grid = new ArrayList<P>(numCells);
-            for (int i = 0; i < numCells; i++) {
-                grid.add(null);
-            }
         }
         
         protected final void clear() {
-            for (int i = 0; i < numCells; i++) {
-                grid.set(i, null);
-            }
+            grid.clear();
             states.clear();
             currentStateIndex = 0;
         }
@@ -378,7 +443,7 @@ public class BoardGame extends BaseGame {
         
         protected final void set(final int x, final int y, final P piece) {
             // Null out previous location here? Separate move method to do that?
-            grid.set(getIndexRequired(x, y), piece);
+            Coltil.set(grid, getIndexRequired(x, y), piece);
             if (piece != null) {
                 unset(piece);
                 piece.x = x;
@@ -387,7 +452,7 @@ public class BoardGame extends BaseGame {
         }
         
         protected final void set(final int index, final P piece) {
-            grid.set(index, piece);
+            Coltil.set(grid, index, piece);
             if (piece != null) {
                 unset(piece);
                 piece.x = getX(index);
@@ -398,12 +463,12 @@ public class BoardGame extends BaseGame {
         private final void unset(final P piece) {
             final int index = getIndexOptional(piece.x, piece.y);
             if (isValid(index)) {
-                grid.set(index, null);
+                Coltil.set(grid, index, null);
             }
         }
         
         protected final void remove(final int x, final int y) {
-            grid.set(getIndexRequired(x, y), null);
+            Coltil.set(grid, getIndexRequired(x, y), null);
         }
         
         /*protected final void set(final BoardGameCell cell, final P piece) {
@@ -470,8 +535,12 @@ public class BoardGame extends BaseGame {
                 states.remove(0);
             }
             currentStateIndex = states.size(); // Before adding new state
-            states.add(new BoardGameState<P>(this));
-            save();
+            states.add(newState());
+            autosave();
+        }
+        
+        protected BoardGameState<P> newState() {
+            return new BoardGameState<P>(module.copy(grid), BoardGame.currentPlayerIndex);
         }
         
         protected final void setState(final int newStateIndex) {
@@ -633,10 +702,6 @@ public class BoardGame extends BaseGame {
     protected final static class BoardGameState<P extends BoardGamePiece> {
         private final int currentPlayerIndex;
         private final List<P> grid;
-        
-        protected BoardGameState(final BoardGameGrid<P> grid) {
-            this(new ArrayList<P>(grid.grid), BoardGame.currentPlayerIndex);
-        }
         
         protected BoardGameState(final List<P> grid, final int currentPlayerIndex) {
             this.currentPlayerIndex = currentPlayerIndex;
