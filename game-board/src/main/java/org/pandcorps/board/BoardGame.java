@@ -138,17 +138,19 @@ public class BoardGame extends BaseGame {
     private final static Pancolor pickHighlightColor() {
         final Pancolor color0 = players[0].getColor();
         final Pancolor color1 = players[1].getColor();
-        final boolean dark0 = isDark(color0);
-        final boolean dark1 = isDark(color1);
-        if (dark0 && dark1) {
+        if (isAnyDark(color0) && isAnyDark(color1)) {
             return Pancolor.WHITE;
-        } else if (!(dark0 || dark1)) {
+        } else if (!(isAllDark(color0) || isAllDark(color1))) {
             return BLACK;
         }
         return new FinPancolor((color0.getR() + color1.getR()) / 2, (color0.getG() + color1.getG()) / 2, (color0.getB() + color1.getB()) / 2);
     }
     
-    private final static boolean isDark(final Pancolor color) {
+    private final static boolean isAnyDark(final Pancolor color) {
+        return isDark(color.getR()) || isDark(color.getG()) || isDark(color.getB());
+    }
+    
+    private final static boolean isAllDark(final Pancolor color) {
         return isDark(color.getR()) && isDark(color.getG()) && isDark(color.getB());
     }
     
