@@ -330,14 +330,13 @@ public class BoardGame extends BaseGame {
             final BoardGameGrid<P> grid = getGrid();
             final Segment seg = new Segment();
             seg.setName(SEG_CONTEXT);
-            seg.setInt(0, currentPlayerIndex);
-            seg.setInt(1, grid.currentStateIndex);
+            seg.setInt(0, grid.currentStateIndex); // Don't need currentPlayerIndex; stored for each state below
             seg.saveln(w);
             //TODO players? others?
             for (final BoardGameState<P> state: grid.states) {
                 seg.clear();
                 seg.setName(SEG_STATE);
-                seg.setValue(0, Integer.toString(currentPlayerIndex));
+                seg.setValue(0, Integer.toString(state.currentPlayerIndex));
                 for (final P piece : state.grid) {
                     if (piece == null) {
                         continue;
@@ -363,15 +362,13 @@ public class BoardGame extends BaseGame {
             } finally {
                 in.close();
             }
-            Iotil.delete(loc);
         }
         
         public final void load(final SegmentStream in) throws IOException {
             clear();
             Segment seg;
             seg = in.readRequire(SEG_CONTEXT);
-            currentPlayerIndex = seg.intValue(0);
-            final int currentStateIndex = seg.intValue(1);
+            final int currentStateIndex = seg.intValue(0);
             final BoardGameGrid<P> grid = getGrid();
             final List<BoardGameState<P>> states = grid.states;
             while ((seg = in.readIf(SEG_STATE)) != null) {
