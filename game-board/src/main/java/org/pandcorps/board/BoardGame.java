@@ -62,8 +62,14 @@ public class BoardGame extends BaseGame {
     
     protected final static int MAX_HISTORY_SIZE = 5;
     
+    protected final static int NULL_INDEX = -1;
+    
+    protected final static int INDEX_UNDO = Integer.MAX_VALUE;
+    protected final static int INDEX_REDO = INDEX_UNDO - 1;
+    
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage imgCursor = null;
+    protected static Panmage imgUndo = null;
     protected static Panmage square = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
@@ -113,6 +119,7 @@ public class BoardGame extends BaseGame {
         if (isCursorNeeded()) {
             imgCursor = engine.createImage(PRE_IMG + "cursor", RES + "Cursor.png");
         }
+        imgUndo = engine.createImage(PRE_IMG + "undo", RES + "Undo.png");
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
@@ -158,7 +165,7 @@ public class BoardGame extends BaseGame {
         return channel < 128;
     }
     
-    private static int touchStartIndex = -1;
+    private static int touchStartIndex = NULL_INDEX;
     
     protected final static class BoardGameScreen extends Panscreen {
         @Override
@@ -225,6 +232,18 @@ public class BoardGame extends BaseGame {
         }
     }
     
+    protected final static boolean processTouchMenu(final int index) {
+        switch (index) {
+            case INDEX_UNDO:
+                module.getGrid().undo();
+                return true;
+            case INDEX_REDO:
+                module.getGrid().redo();
+                return true;
+        }
+        return false;
+    }
+    
     protected abstract static class BoardGameModule<P extends BoardGamePiece> {
         protected final int numVerticalCells;
         
@@ -246,11 +265,13 @@ public class BoardGame extends BaseGame {
             grid.register(touch, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     final int touchEndIndex = grid.getIndex(touch);
-                    if ((touchEndIndex == touchStartIndex) && grid.isValid(touchEndIndex)) {
-                        module.processTouch(touchEndIndex);
-                    } else {
-                        touchStartIndex = -1;
+                    if (touchEndIndex == touchStartIndex) {
+                        final boolean handled = processTouchMenu(touchEndIndex);
+                        if (!handled && grid.isValid(touchEndIndex)) {
+                            processTouch(touchEndIndex);
+                        }
                     }
+                    touchStartIndex = NULL_INDEX;
                 }});
             final ActionEndListener undoListener = new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
@@ -386,6 +407,8 @@ public class BoardGame extends BaseGame {
         private final int h;
         private final int numCells;
         private final List<P> grid;
+        private final int xUndo, yUndo;
+        private final int xRedo, yRedo;
         private final Map<Integer, BoardGamePieceList<P>> lists = new HashMap<Integer, BoardGamePieceList<P>>();
         private final List<BoardGameState<P>> states = new ArrayList<BoardGameState<P>>();
         private int currentStateIndex = 0;
@@ -400,6 +423,10 @@ public class BoardGame extends BaseGame {
             this.h = h;
             numCells = w * h;
             grid = new ArrayList<P>(numCells);
+            final int mx1 = (w + 1), my1 = 1;
+            final int mx2 = (w + 3);
+            xUndo = mx1; yUndo = my1;
+            xRedo = mx2; yRedo = my1;
         }
         
         protected final void clear() {
@@ -507,13 +534,22 @@ public class BoardGame extends BaseGame {
         
         protected final int getIndexOptional(final int x, final int y) {
             if (!isValid(x, y)) {
-                return -1;
+                return NULL_INDEX;
             }
             return (y * w) + x;
         }
         
         protected final int getIndex(final Touch touch) {
-            return getIndexOptional(convertScreenToGrid(touch.getX()), convertScreenToGrid(touch.getY()));
+            final int x = convertScreenToGrid(touch.getX()), y = convertScreenToGrid(touch.getY());
+            final int index = getIndexOptional(x, y);
+            if (isValid(index)) {
+                return index;
+            } else if ((x == xUndo) && (y == yUndo)) {
+                return INDEX_UNDO;
+            } else if ((x == xRedo) && (y == yRedo)) {
+                return INDEX_REDO;
+            }
+            return NULL_INDEX;
         }
         
         protected final Integer getIndexWrapped(final int x, final int y) {
@@ -592,10 +628,23 @@ public class BoardGame extends BaseGame {
                     }
                 }
             }
+            renderMenu(renderer, imgUndo, xUndo, yUndo, false, isUndoAllowed());
+            renderMenu(renderer, imgUndo, xRedo, yRedo, true, isRedoAllowed());
         }
         
         protected final void render(final Panderer renderer, final Panmage image, final int x, final int y, final int z, final Pancolor color) {
-            renderer.render(getLayer(), image, x, y, z, 0, 0, DIM, DIM, 0, false, false, color.getRf(), color.getGf(), color.getBf());
+            render(renderer, image, x, y, z, false, color);
+        }
+        
+        protected final void render(final Panderer renderer, final Panmage image, final int x, final int y, final int z, final boolean mirror, final Pancolor color) {
+            renderer.render(getLayer(), image, x, y, z, 0, 0, DIM, DIM, 0, mirror, false, color.getRf(), color.getGf(), color.getBf());
+        }
+        
+        protected final void renderMenu(final Panderer renderer, final Panmage image, final int x, final int y, final boolean mirror, final boolean active) {
+            final int xd = x * DIM, yd = y * DIM;
+            final Pancolor color = active ? Pancolor.WHITE : Pancolor.GREY;
+            render(renderer, square, xd, yd, DEPTH_CELL, color);
+            render(renderer, image, xd, yd, DEPTH_PIECE, mirror, color);
         }
     }
     
