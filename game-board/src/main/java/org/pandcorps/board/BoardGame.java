@@ -66,10 +66,12 @@ public class BoardGame extends BaseGame {
     
     protected final static int INDEX_UNDO = Integer.MAX_VALUE;
     protected final static int INDEX_REDO = INDEX_UNDO - 1;
+    protected final static int INDEX_NEW = INDEX_UNDO - 2;
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage imgCursor = null;
     protected static Panmage imgUndo = null;
+    protected static Panmage imgPlus = null;
     protected static Panmage square = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
@@ -120,6 +122,7 @@ public class BoardGame extends BaseGame {
             imgCursor = engine.createImage(PRE_IMG + "cursor", RES + "Cursor.png");
         }
         imgUndo = engine.createImage(PRE_IMG + "undo", RES + "Undo.png");
+        imgPlus = engine.createImage(PRE_IMG + "plus", RES + "Plus.png");
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
@@ -187,10 +190,7 @@ public class BoardGame extends BaseGame {
                 }
             }
             if (newGame) {
-                module.clear();
-                module.initGame();
-                module.onLoad();
-                addState();
+                module.startNewGame();
             }
         }
     }
@@ -239,6 +239,9 @@ public class BoardGame extends BaseGame {
                 return true;
             case INDEX_REDO:
                 module.getGrid().redo();
+                return true;
+            case INDEX_NEW:
+                module.startNewGame();
                 return true;
         }
         return false;
@@ -389,6 +392,13 @@ public class BoardGame extends BaseGame {
             getGrid().setState(currentStateIndex);
         }
         
+        public final void startNewGame() {
+            clear();
+            initGame();
+            onLoad();
+            addState();
+        }
+        
         public final void clear() {
             currentPlayerIndex = 0;
             getGrid().clear();
@@ -406,6 +416,7 @@ public class BoardGame extends BaseGame {
         private final List<P> grid;
         private final int xUndo, yUndo;
         private final int xRedo, yRedo;
+        private final int xNew, yNew;
         private final Map<Integer, BoardGamePieceList<P>> lists = new HashMap<Integer, BoardGamePieceList<P>>();
         private final List<BoardGameState<P>> states = new ArrayList<BoardGameState<P>>();
         private int currentStateIndex = 0;
@@ -421,9 +432,10 @@ public class BoardGame extends BaseGame {
             numCells = w * h;
             grid = new ArrayList<P>(numCells);
             final int mx1 = (w + 1), my1 = 1;
-            final int mx2 = (w + 3);
+            final int mx2 = (w + 3), my2 = 3;
             xUndo = mx1; yUndo = my1;
             xRedo = mx2; yRedo = my1;
+            xNew = mx1; yNew = my2;
         }
         
         protected final void clear() {
@@ -545,6 +557,8 @@ public class BoardGame extends BaseGame {
                 return INDEX_UNDO;
             } else if ((x == xRedo) && (y == yRedo)) {
                 return INDEX_REDO;
+            } else if ((x == xNew) && (y == yNew)) {
+                return INDEX_NEW;
             }
             return NULL_INDEX;
         }
@@ -585,6 +599,7 @@ public class BoardGame extends BaseGame {
             grid.addAll(state.grid);
             currentStateIndex = newStateIndex;
             module.onLoad();
+            autosave();
         }
         
         protected final void load(final SegmentStream in) {
@@ -627,6 +642,7 @@ public class BoardGame extends BaseGame {
             }
             renderMenu(renderer, imgUndo, xUndo, yUndo, false, isUndoAllowed());
             renderMenu(renderer, imgUndo, xRedo, yRedo, true, isRedoAllowed());
+            renderMenu(renderer, imgPlus, xNew, yNew, false, true);
         }
         
         protected final void render(final Panderer renderer, final Panmage image, final int x, final int y, final int z, final Pancolor color) {
