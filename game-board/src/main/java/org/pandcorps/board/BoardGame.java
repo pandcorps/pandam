@@ -33,6 +33,8 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Fonts.*;
 
 public class BoardGame extends BaseGame {
     protected final static String TITLE = "Board Games";
@@ -68,6 +70,9 @@ public class BoardGame extends BaseGame {
     protected final static int INDEX_REDO = INDEX_UNDO - 1;
     protected final static int INDEX_NEW = INDEX_UNDO - 2;
     
+    protected final static int RESULT_WIN = 0;
+    protected final static int RESULT_TIE = 1;
+    
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage imgCursor = null;
     protected static Panmage imgUndo = null;
@@ -75,10 +80,13 @@ public class BoardGame extends BaseGame {
     protected static Panmage square = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
+    protected static Font font = null;
     
     protected final static BoardGamePlayer[] players = { new BoardGamePlayer(0), new BoardGamePlayer(1) };
+    protected final static int numPlayers = players.length;
     protected static BoardGameModule<? extends BoardGamePiece> module = null;
     protected static Panroom room = null;
+    protected final static StringBuilder label = new StringBuilder();
     protected static Cursor cursor = null;
     protected static Pancolor highlightColor = null;
     protected final static Set<Integer> highlightSquares = new HashSet<Integer>();
@@ -126,6 +134,14 @@ public class BoardGame extends BaseGame {
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
+        font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), Pancolor.WHITE, Pancolor.WHITE, Pancolor.WHITE, null, Pancolor.BLACK);
+        loadProfiles();
+    }
+    
+    private final static void loadProfiles() {
+        for (int i = 0; i < numPlayers; i++) {
+            players[i].profile.init(i);
+        }
     }
     
     protected final static boolean isCursorNeeded() {
@@ -178,6 +194,9 @@ public class BoardGame extends BaseGame {
             engine.zoomToMinimum(module.numVerticalCells * DIM);
             module.prepare();
             addCursor();
+            final Pantext text = new Pantext(Pantil.vmid(), font, label);
+            text.getPosition().set((module.getGrid().w + 1) * DIM, engine.getEffectiveHeight() - 16);
+            room.addActor(text);
             highlightColor = pickHighlightColor();
             final String locAutosave = getLocationAutosave();
             boolean newGame = true;
@@ -205,8 +224,12 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static void toggleCurrentPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        currentPlayerIndex = getNextPlayerIndex();
         addState();
+    }
+    
+    protected final static int getNextPlayerIndex() {
+        return (currentPlayerIndex + 1) % players.length;
     }
     
     protected final static void addState() {
@@ -271,7 +294,14 @@ public class BoardGame extends BaseGame {
                     if (touchEndIndex == touchStartIndex) {
                         final boolean handled = processTouchMenu(touchEndIndex);
                         if (!handled && grid.isValid(touchEndIndex)) {
-                            processTouch(touchEndIndex);
+                            final BoardGameResult result = processTouch(touchEndIndex);
+                            if (result != null) {
+                                if (result.resultStatus == RESULT_TIE) {
+                                    label.append("Tie Game");
+                                } else {
+                                    label.append(players[result.playerIndex].profile.name + " Wins");
+                                }
+                            }
                         }
                     }
                     touchStartIndex = NULL_INDEX;
@@ -303,7 +333,7 @@ public class BoardGame extends BaseGame {
         
         protected abstract Pancolor getDefaultColor(final int playerIndex);
         
-        protected abstract void processTouch(final int cellIndex);
+        protected abstract BoardGameResult processTouch(final int cellIndex);
         
         protected abstract void onLoad();
         
@@ -339,7 +369,7 @@ public class BoardGame extends BaseGame {
             for (final BoardGameState<P> state: grid.states) {
                 seg.clear();
                 seg.setName(SEG_STATE);
-                seg.setValue(0, Integer.toString(state.currentPlayerIndex));
+                seg.setValue(0, Integer.toString(state.playerIndex));
                 for (final P piece : state.grid) {
                     if (piece == null) {
                         continue;
@@ -393,6 +423,7 @@ public class BoardGame extends BaseGame {
         }
         
         public final void startNewGame() {
+            Chartil.clear(label);
             clear();
             initGame();
             onLoad();
@@ -413,7 +444,7 @@ public class BoardGame extends BaseGame {
         private final int w;
         private final int h;
         private final int numCells;
-        private final List<P> grid;
+        protected final List<P> grid;
         private final int xUndo, yUndo;
         private final int xRedo, yRedo;
         private final int xNew, yNew;
@@ -594,7 +625,7 @@ public class BoardGame extends BaseGame {
         
         protected final void setState(final int newStateIndex) {
             final BoardGameState<P> state = states.get(newStateIndex);
-            BoardGame.currentPlayerIndex = state.currentPlayerIndex;
+            BoardGame.currentPlayerIndex = state.playerIndex;
             grid.clear();
             grid.addAll(state.grid);
             currentStateIndex = newStateIndex;
@@ -730,20 +761,19 @@ public class BoardGame extends BaseGame {
     
     protected final static class BoardGamePlayer {
         protected final int index;
-        private Pancolor color1 = null; // Null means to use the default for each game
-        private Pancolor color2 = null; // If player 2's preferred color matches player 1, then use color 2 instead
+        protected final BoardGameProfile profile = new BoardGameProfile();
         
         private BoardGamePlayer(final int index) {
             this.index = index;
         }
         
         protected final Pancolor getColor() {
-            final Pancolor firstChoice = getColor(color1);
+            final Pancolor firstChoice = getColor(profile.color1);
             if (index == 0) {
                 return firstChoice;
             }
             final Pancolor color0 = getColor0();
-            return firstChoice.equals(color0) ? getColor(color2) : firstChoice;
+            return firstChoice.equals(color0) ? getColor(profile.color2) : firstChoice;
         }
         
         private final Pancolor getColor(final Pancolor color) {
@@ -763,13 +793,33 @@ public class BoardGame extends BaseGame {
         }
     }
     
+    protected final static class BoardGameProfile {
+        private String name = null;
+        private Pancolor color1 = null; // Null means to use the default for each game
+        private Pancolor color2 = null; // If player 2's preferred color matches player 1, then use color 2 instead
+        
+        protected final void init(final int index) {
+            name = "Player " + (index + 1);
+        }
+    }
+    
     protected final static class BoardGameState<P extends BoardGamePiece> {
-        private final int currentPlayerIndex;
+        private final int playerIndex;
         private final List<P> grid;
         
-        protected BoardGameState(final List<P> grid, final int currentPlayerIndex) {
-            this.currentPlayerIndex = currentPlayerIndex;
+        protected BoardGameState(final List<P> grid, final int playerIndex) {
+            this.playerIndex = playerIndex;
             this.grid = grid;
+        }
+    }
+    
+    protected final static class BoardGameResult {
+        private final int resultStatus;
+        private final int playerIndex;
+        
+        protected BoardGameResult(final int resultStatus, final int playerIndex) {
+            this.resultStatus = resultStatus;
+            this.playerIndex = playerIndex;
         }
     }
     
