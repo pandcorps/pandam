@@ -58,6 +58,7 @@ public class BoardGame extends BaseGame {
     
     protected final static String SEG_CONTEXT = "CTX";
     protected final static String SEG_STATE = "BGS";
+    protected final static String SEG_PROFILE = "PRF";
     protected final static String SEG_END_OF_FILE = "EOF";
     
     protected final static String LOC_SUFFIX_AUTOSAVE = "_autosave.txt";
@@ -135,12 +136,17 @@ public class BoardGame extends BaseGame {
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
         font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), Pancolor.WHITE, Pancolor.WHITE, Pancolor.WHITE, null, Pancolor.BLACK);
-        loadProfiles();
     }
     
     private final static void loadProfiles() {
         for (int i = 0; i < numPlayers; i++) {
-            players[i].profile.init(i);
+            final BoardGameProfile profile = players[i].profile;
+            try {
+                profile.load(i);
+            } catch (final IOException e) {
+                profile.init(i);
+                profile.save();
+            }
         }
     }
     
@@ -209,6 +215,7 @@ public class BoardGame extends BaseGame {
                 }
             }
             if (newGame) {
+                loadProfiles();
                 module.startNewGame();
             }
         }
@@ -253,6 +260,43 @@ public class BoardGame extends BaseGame {
         } finally {
             Iotil.close(w);
         }
+    }
+    
+    protected final static SegmentStream openSegmentStream(final String loc) throws IOException {
+        validateSegmentStream(loc);
+        return SegmentStream.openLocation(loc);
+    }
+    
+    protected final static void validateSegmentStream(final String loc) throws IOException {
+        final SegmentStream in = SegmentStream.openLocation(loc);
+        try {
+            while (in.readUnless(SEG_END_OF_FILE) != null);
+            validateEndOfFile(in);
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
+    protected final static Field toField(final Pancolor color) {
+        final Field f = new Field();
+        f.setShort(0, color.getR());
+        f.setShort(1, color.getG());
+        f.setShort(2, color.getB());
+        return f;
+    }
+    
+    protected final static Pancolor toColor(final Field f) {
+        return new Pancolor(f.shortValue(0), f.shortValue(1), f.shortValue(2));
+    }
+    
+    protected final static void writeEndOfFile(final Writer w, final Segment seg) throws IOException {
+        seg.clear();
+        seg.setName(SEG_END_OF_FILE);
+        seg.saveln(w);
+    }
+    
+    protected final static void validateEndOfFile(final SegmentStream in) throws IOException {
+        in.readRequire(SEG_END_OF_FILE);
     }
     
     protected final static boolean processTouchMenu(final int index) {
@@ -364,8 +408,10 @@ public class BoardGame extends BaseGame {
             final Segment seg = new Segment();
             seg.setName(SEG_CONTEXT);
             seg.setInt(0, grid.currentStateIndex); // Don't need currentPlayerIndex; stored for each state below
+            for (final BoardGamePlayer player : players) {
+                seg.addInt(1, player.profile.profileIndex);
+            }
             seg.saveln(w);
-            //TODO players? others?
             for (final BoardGameState<P> state: grid.states) {
                 seg.clear();
                 seg.setName(SEG_STATE);
@@ -383,13 +429,11 @@ public class BoardGame extends BaseGame {
                 }
                 seg.saveln(w);
             }
-            seg.clear();
-            seg.setName(SEG_END_OF_FILE);
-            seg.saveln(w);
+            writeEndOfFile(w, seg);
         }
         
         public final void load(final String loc) throws IOException {
-            final SegmentStream in = SegmentStream.openLocation(loc);
+            final SegmentStream in = openSegmentStream(loc);
             try {
                 load(in);
             } finally {
@@ -402,6 +446,12 @@ public class BoardGame extends BaseGame {
             Segment seg;
             seg = in.readRequire(SEG_CONTEXT);
             final int currentStateIndex = seg.intValue(0);
+            final List<Field> playerFields = seg.getRepetitions(1);
+            final int numPlayerFields = playerFields.size();
+            for (int playerIndex = 0; playerIndex < numPlayerFields; playerIndex++) {
+                final int profileIndex = playerFields.get(playerIndex).intValue();
+                loadProfile(playerIndex, profileIndex);
+            }
             final BoardGameGrid<P> grid = getGrid();
             final List<BoardGameState<P>> states = grid.states;
             while ((seg = in.readIf(SEG_STATE)) != null) {
@@ -418,8 +468,30 @@ public class BoardGame extends BaseGame {
                 }
                 states.add(new BoardGameState<P>(pieces, currentPlayerIndex));
             }
-            in.readRequire(SEG_END_OF_FILE);
+            validateEndOfFile(in);
             getGrid().setState(currentStateIndex);
+        }
+        
+        protected final void loadProfile(final int playerIndex, final int profileIndex) throws IOException {
+            final BoardGamePlayer player = players[playerIndex];
+            if (player.profile.profileIndex != profileIndex) {
+                boolean loadNeeded = true;
+                for (int otherPlayerIndex = 0; otherPlayerIndex < numPlayers; otherPlayerIndex++) {
+                    if (otherPlayerIndex == playerIndex) {
+                        continue;
+                    }
+                    final BoardGamePlayer otherPlayer = players[otherPlayerIndex];
+                    if (otherPlayer.profile.profileIndex == profileIndex) {
+                        final BoardGameProfile otherProfile = otherPlayer.profile;
+                        otherPlayer.profile = player.profile;
+                        player.profile = otherProfile;
+                        loadNeeded = false;
+                    }
+                }
+                if (loadNeeded) {
+                    player.profile.load(profileIndex);
+                }
+            }
         }
         
         public final void startNewGame() {
@@ -761,7 +833,7 @@ public class BoardGame extends BaseGame {
     
     protected final static class BoardGamePlayer {
         protected final int index;
-        protected final BoardGameProfile profile = new BoardGameProfile();
+        protected BoardGameProfile profile = new BoardGameProfile();
         
         private BoardGamePlayer(final int index) {
             this.index = index;
@@ -794,12 +866,50 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static class BoardGameProfile {
+        private int profileIndex = -1;
         private String name = null;
         private Pancolor color1 = null; // Null means to use the default for each game
         private Pancolor color2 = null; // If player 2's preferred color matches player 1, then use color 2 instead
         
         protected final void init(final int index) {
+            profileIndex = index;
             name = "Player " + (index + 1);
+            color1 = null;
+            color2 = null;
+        }
+        
+        protected final void save() {
+            final Segment seg = new Segment(SEG_PROFILE);
+            seg.setValue(0, name);
+            seg.setField(1, toField(color1));
+            seg.setField(2, toField(color2));
+            final Writer w = Iotil.getWriter(getProfileFileName(profileIndex));
+            try {
+                seg.saveln(w);
+                writeEndOfFile(w, seg);
+            } catch (final IOException e) {
+                throw new Panception(e);
+            } finally {
+                Iotil.close(w);
+            }
+        }
+        
+        protected final void load(final int profileIndex) throws IOException {
+            this.profileIndex = profileIndex;
+            final SegmentStream in = openSegmentStream(getProfileFileName(profileIndex));
+            try {
+                final Segment seg = in.readRequire(SEG_PROFILE);
+                name = seg.getValue(0);
+                color1 = toColor(seg.getField(1));
+                color2 = toColor(seg.getField(2));
+                validateEndOfFile(in);
+            } finally {
+                in.close();
+            }
+        }
+        
+        protected final static String getProfileFileName(final int profileIndex) {
+            return "profile_" + profileIndex + ".txt";
         }
     }
     
