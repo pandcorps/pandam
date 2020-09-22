@@ -25,12 +25,12 @@ package org.pandcorps.board;
 import java.util.*;
 
 import org.pandcorps.board.BoardGame.*;
-import org.pandcorps.core.img.Pancolor;
-import org.pandcorps.pandam.Panmage;
+import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 
-public class CheckersModule extends BoardGameModule {
+public class CheckersModule extends BoardGameModule<CheckersPiece> {
     private final static int BOARD_DIM = 8;
-    private final BoardGameGrid<CheckersPiece> grid = new BoardGameGrid<CheckersPiece>(BOARD_DIM);
+    protected final static BoardGameGrid<CheckersPiece> grid = new BoardGameGrid<CheckersPiece>(BOARD_DIM);
     private static CheckersPiece pieceToMove = null;
     
     protected CheckersModule() {
@@ -39,7 +39,6 @@ public class CheckersModule extends BoardGameModule {
     
     @Override
     protected final void initGame() {
-        grid.clear();
         // (0, 0) is bottom left
         for (int y = 0; y < 3; y++) {
             final int xStart = (y == 1) ? 1 : 0;
@@ -53,6 +52,9 @@ public class CheckersModule extends BoardGameModule {
                 grid.set(x, y, new CheckersPiece(1));
             }
         }
+    }
+    
+    private final void initTurn() {
         highlightMovablePieces();
         pieceToMove = null;
     }
@@ -73,11 +75,13 @@ public class CheckersModule extends BoardGameModule {
     }
     
     @Override
-    protected final void processTouch(final int cellIndex) {
+    protected final BoardGameResult processTouch(final int cellIndex) {
         if (pieceToMove == null) {
             pickPieceToMove(cellIndex);
+            return null;
         } else {
             pickDestination(cellIndex);
+            return BoardGame.highlightSquares.isEmpty() ? getFinalResult() : null;
         }
     }
     
@@ -90,27 +94,48 @@ public class CheckersModule extends BoardGameModule {
     }
     
     protected final void pickDestination(final int cellIndex) {
-        if (pieceToMove.moveToDestination(cellIndex)) {
+        final MoveResult result = pieceToMove.moveToDestination(cellIndex);
+        if (result.success) {
+            if (Coltil.isValued(result.extraCaptureDestinations)) {
+                BoardGame.setHighlightSquares(result.extraCaptureDestinations);
+                return;
+            }
             BoardGame.toggleCurrentPlayer();
         }
-        pieceToMove = null;
-        highlightMovablePieces();
+        initTurn();
     }
     
-    protected final void highlightMovablePieces() {
-        BoardGame.highlightSquares.clear();
-        BoardGame.highlightSquares.addAll(getMovablePieces(BoardGame.currentPlayerIndex));
+    @Override
+    protected final void onLoad() {
+        initTurn();
     }
     
-    protected final void highlightAllowedDestinations() {
-        BoardGame.highlightSquares.clear();
-        BoardGame.highlightSquares.addAll(pieceToMove.getAllowedDestinations());
+    @Override
+    protected final char serialize(final CheckersPiece piece) {
+        return piece.crowned ? 'C' : 'U';
+    }
+    
+    @Override
+    protected final CheckersPiece parse(final char value, final int player) {
+        final CheckersPiece piece = new CheckersPiece(player);
+        if (value == 'C') {
+            piece.crowned = true;
+        }
+        return piece;
+    }
+    
+    protected final static void highlightMovablePieces() {
+        getMovablePieces(BoardGame.currentPlayerIndex, BoardGame.highlightSquares);
+    }
+    
+    protected final static void highlightAllowedDestinations() {
+        pieceToMove.getAllowedDestinations(BoardGame.highlightSquares);
     }
     
     // Used to highlight pieces that the player can select (an empty List would mean that the game is over)
-    protected List<Integer> getMovablePieces(final int player) {
+    protected final static Set<Integer> getMovablePieces(final int player, final Set<Integer> movable) {
+        movable.clear();
         final List<CheckersPiece> all = grid.getPieces(player);
-        final List<Integer> movable = new ArrayList<Integer>();
         for (final CheckersPiece piece : all) {
             if (piece.isAbleToCapture()) {
                 movable.add(piece.getIndexWrapped());
@@ -127,122 +152,35 @@ public class CheckersModule extends BoardGameModule {
         return movable;
     }
     
-    private final class CheckersPiece extends BoardGamePiece {
-        private final int[] DIRECTIONS_0 = { 1 };
-        private final int[] DIRECTIONS_1 = { -1 };
-        private final int[] DIRECTIONS_CROWNED = { 1, -1 };
-        private boolean crowned = false;
-        
-        private CheckersPiece(final int player) {
-            super(player);
-        }
-        
-        /*private final int getOriginalDirection() {
-            return (player == 0) ? 1 : -1;
-        }*/
-        
-        private final int[] getAllowedDirections() {
-            if (crowned) {
-                return DIRECTIONS_CROWNED;
+    protected final static BoardGameResult getFinalResult() {
+        final Set<Integer> players = new HashSet<Integer>(2);
+        for (final CheckersPiece piece : grid.grid) {
+            if (piece == null) {
+                continue;
             }
-            return (player == 0) ? DIRECTIONS_0 : DIRECTIONS_1;
-        }
-        
-        private final boolean isAbleToCapture() {
-            for (final int dir : getAllowedDirections()) {
-                if (isAbleToCapture(dir)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        private final boolean isAbleToCapture(final int dir) {
-            return isAbleToCapture(1, dir) || isAbleToCapture(-1, dir);
-        }
-        
-        private final boolean isAbleToCapture(final int xDir, final int yDir) {
-            final BoardGamePiece neighbor = grid.get(x + xDir, y + yDir);
-            if ((neighbor == null) || (neighbor.player == player)) {
-                return false;
-            }
-            return grid.isOpen(x + (xDir * 2), y + (yDir * 2));
-        }
-        
-        private final boolean isAbleToMove() {
-            /*final int dir = getOriginalDirection();
-            if (isAbleToMove(dir)) {
-                return true;
-            } else if (crowned && isAbleToMove(dir * -1)) {
-                return true;
-            }
-            return false;*/
-            for (final int dir : getAllowedDirections()) {
-                if (isAbleToMove(dir)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        private final boolean isAbleToMove(final int dir) {
-            final int yd = y + dir;
-            return grid.isOpen(x + 1, yd) || grid.isOpen(x - 1, yd);
-        }
-        
-        // Used to highlight allowed destinations for a piece that a player has selected to move
-        protected final List<Integer> getAllowedDestinations() {
-            final List<Integer> destinations = new ArrayList<Integer>();
-            final int[] dirs = getAllowedDirections();
-            for (final int dir : dirs) {
-                addDestinationIfAbleToCapture(destinations, 1, dir);
-                addDestinationIfAbleToCapture(destinations, -1, dir);
-            }
-            if (!destinations.isEmpty()) {
-                return destinations;
-            }
-            for (final int dir : dirs) {
-                addDestinationIfAbleToMove(destinations, 1, dir);
-                addDestinationIfAbleToMove(destinations, -1, dir);
-            }
-            return destinations;
-        }
-        
-        private final void addDestinationIfAbleToCapture(final List<Integer> destinations, final int xDir, final int yDir) {
-            if (isAbleToCapture(xDir, yDir)) {
-                destinations.add(grid.getIndexWrapped(x + (xDir * 2), y + (yDir * 2)));
+            players.add(Integer.valueOf(piece.player));
+            if (players.size() == 2) {
+                /*
+                A player forfeits if there are no possible moves.
+                Player has already been toggled at this point.
+                So current player forfeits in this scenario, and the other player is the winner.
+                */
+                return new BoardGameResult(BoardGame.RESULT_WIN, BoardGame.getNextPlayerIndex());
             }
         }
+        return new BoardGameResult(BoardGame.RESULT_WIN, players.iterator().next().intValue());
+    }
+    
+    protected final static class MoveResult {
+        private final boolean success;
+        private final Set<Integer> extraCaptureDestinations;
         
-        private final void addDestinationIfAbleToMove(final List<Integer> destinations, final int xDir, final int yDir) {
-            final int xd = x + xDir, yd = y + yDir;
-            if (grid.isOpen(xd, yd)) {
-                destinations.add(grid.getIndexWrapped(xd, yd));
-            }
-        }
-        
-        protected boolean moveToDestination(final int destination) {
-            if (!grid.isOpen(destination)) {
-                return false;
-            } else if (!getMovablePieces(player).contains(getIndexWrapped())) {
-                return false;
-            } else if (!getAllowedDestinations().contains(Integer.valueOf(destination))) {
-                return false;
-            }
-            final int dx = grid.getX(destination), dy = grid.getY(destination);
-            if (Math.abs(dx - x) > 1) { // If moving more than 1 square, must be capturing an opponent piece
-                final int cx = (x + dx) / 2, cy = (y + dy) / 2;
-                grid.remove(cx, cy);
-            }
-            grid.set(destination, this);
-            // Double jumps
-            // Check for winner
-            return true;
-        }
-        
-        @Override
-        protected final Panmage getImage() {
-            return crowned ? BoardGame.circles : BoardGame.circle;
+        protected MoveResult(final boolean success, final Set<Integer> extraCaptureDestinations) {
+            this.success = success;
+            this.extraCaptureDestinations = extraCaptureDestinations;
         }
     }
+    
+    protected final static MoveResult MOVE_SUCCESS = new MoveResult(true, null);
+    protected final static MoveResult MOVE_ILLEGAL = new MoveResult(false, null);
 }
