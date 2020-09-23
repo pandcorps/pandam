@@ -71,6 +71,7 @@ public class BoardGame extends BaseGame {
     protected final static int INDEX_REDO = INDEX_UNDO - 1;
     protected final static int INDEX_NEW = INDEX_UNDO - 2;
     
+    protected final static int RESULT_NULL = -1;
     protected final static int RESULT_WIN = 0;
     protected final static int RESULT_TIE = 1;
     
@@ -88,10 +89,12 @@ public class BoardGame extends BaseGame {
     protected static BoardGameModule<? extends BoardGamePiece> module = null;
     protected static Panroom room = null;
     protected final static StringBuilder label = new StringBuilder();
+    protected final static StringBuilder label2 = new StringBuilder();
     protected static Cursor cursor = null;
     protected static Pancolor highlightColor = null;
     protected final static Set<Integer> highlightSquares = new HashSet<Integer>();
     protected static int currentPlayerIndex = 0;
+    protected static BoardGameResult result = null;
     
     @Override
     protected final boolean isFullScreen() {
@@ -143,7 +146,7 @@ public class BoardGame extends BaseGame {
             final BoardGameProfile profile = players[i].profile;
             try {
                 profile.load(i);
-            } catch (final IOException e) {
+            } catch (final Exception e) {
                 profile.init(i);
                 profile.save();
             }
@@ -196,13 +199,14 @@ public class BoardGame extends BaseGame {
         @Override
         protected final void load() {
             final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(Pancolor.GREY);
             engine.enableColorArray();
             engine.zoomToMinimum(module.numVerticalCells * DIM);
             module.prepare();
             addCursor();
-            final Pantext text = new Pantext(Pantil.vmid(), font, label);
-            text.getPosition().set((module.getGrid().w + 1) * DIM, engine.getEffectiveHeight() - 16);
-            room.addActor(text);
+            final int h = engine.getEffectiveHeight();
+            addText(label, h - 16);
+            addText(label2, h - 26);
             highlightColor = pickHighlightColor();
             final String locAutosave = getLocationAutosave();
             boolean newGame = true;
@@ -217,6 +221,29 @@ public class BoardGame extends BaseGame {
             if (newGame) {
                 loadProfiles();
                 module.startNewGame();
+            }
+        }
+        
+        protected final void addText(final StringBuilder label, final int y) {
+            final Pantext text = new Pantext(Pantil.vmid(), font, label);
+            text.getPosition().set(((module.getGrid().w) * DIM) + 8, y);
+            room.addActor(text);
+        }
+        
+        @Override
+        protected final void step() {
+            Chartil.clear(label);
+            Chartil.clear(label2);
+            if (result == null) {
+                label.append(players[currentPlayerIndex].profile.name);
+                label2.append("Turn");
+            } else {
+                if (result.resultStatus == RESULT_TIE) {
+                    label.append("Tie Game");
+                } else {
+                    label.append(players[result.playerIndex].profile.name);
+                    label2.append("Wins");
+                }
             }
         }
     }
@@ -278,6 +305,9 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static Field toField(final Pancolor color) {
+        if (color == null) {
+            return null;
+        }
         final Field f = new Field();
         f.setShort(0, color.getR());
         f.setShort(1, color.getG());
@@ -286,7 +316,7 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static Pancolor toColor(final Field f) {
-        return new Pancolor(f.shortValue(0), f.shortValue(1), f.shortValue(2));
+        return (f == null) ? null : new Pancolor(f.shortValue(0), f.shortValue(1), f.shortValue(2));
     }
     
     protected final static void writeEndOfFile(final Writer w, final Segment seg) throws IOException {
@@ -338,14 +368,7 @@ public class BoardGame extends BaseGame {
                     if (touchEndIndex == touchStartIndex) {
                         final boolean handled = processTouchMenu(touchEndIndex);
                         if (!handled && grid.isValid(touchEndIndex)) {
-                            final BoardGameResult result = processTouch(touchEndIndex);
-                            if (result != null) {
-                                if (result.resultStatus == RESULT_TIE) {
-                                    label.append("Tie Game");
-                                } else {
-                                    label.append(players[result.playerIndex].profile.name + " Wins");
-                                }
-                            }
+                            result = processTouch(touchEndIndex);
                         }
                     }
                     touchStartIndex = NULL_INDEX;
@@ -407,7 +430,7 @@ public class BoardGame extends BaseGame {
             final BoardGameGrid<P> grid = getGrid();
             final Segment seg = new Segment();
             seg.setName(SEG_CONTEXT);
-            seg.setInt(0, grid.currentStateIndex); // Don't need currentPlayerIndex; stored for each state below
+            seg.setInt(0, grid.currentStateIndex); // Don't need currentPlayerIndex/result; stored for each state below
             for (final BoardGamePlayer player : players) {
                 seg.addInt(1, player.profile.profileIndex);
             }
@@ -426,6 +449,11 @@ public class BoardGame extends BaseGame {
                     field.setInt(2, piece.y);
                     field.setChar(3, serialize(piece));
                     seg.addField(1, field);
+                }
+                final BoardGameResult result = state.result;
+                if (result != null) {
+                    seg.setInt(2, result.resultStatus);
+                    seg.setInt(3, result.playerIndex);
                 }
                 seg.saveln(w);
             }
@@ -455,7 +483,7 @@ public class BoardGame extends BaseGame {
             final BoardGameGrid<P> grid = getGrid();
             final List<BoardGameState<P>> states = grid.states;
             while ((seg = in.readIf(SEG_STATE)) != null) {
-                final int currentPlayerIndex = seg.intValue(0);
+                final int playerIndex = seg.intValue(0);
                 final List<Field> fields = seg.getRepetitions(1);
                 final List<P> pieces = new ArrayList<P>(fields.size());
                 for (final Field field : fields) {
@@ -466,7 +494,14 @@ public class BoardGame extends BaseGame {
                     final P piece = parse(pieceType, player, x, y);
                     Coltil.set(pieces, grid.getIndexRequired(x, y), piece);
                 }
-                states.add(new BoardGameState<P>(pieces, currentPlayerIndex));
+                final int resultStatus = seg.getInt(2, RESULT_NULL);
+                final BoardGameResult result;
+                if (resultStatus == RESULT_NULL) {
+                    result = null;
+                } else {
+                    result = new BoardGameResult(resultStatus, seg.intValue(3));
+                }
+                states.add(new BoardGameState<P>(pieces, playerIndex, result));
             }
             validateEndOfFile(in);
             getGrid().setState(currentStateIndex);
@@ -486,6 +521,7 @@ public class BoardGame extends BaseGame {
                         otherPlayer.profile = player.profile;
                         player.profile = otherProfile;
                         loadNeeded = false;
+                        break;
                     }
                 }
                 if (loadNeeded) {
@@ -495,7 +531,6 @@ public class BoardGame extends BaseGame {
         }
         
         public final void startNewGame() {
-            Chartil.clear(label);
             clear();
             initGame();
             onLoad();
@@ -504,6 +539,7 @@ public class BoardGame extends BaseGame {
         
         public final void clear() {
             currentPlayerIndex = 0;
+            result = null;
             getGrid().clear();
         }
     }
@@ -692,7 +728,7 @@ public class BoardGame extends BaseGame {
         }
         
         protected BoardGameState<P> newState() {
-            return new BoardGameState<P>(module.copy(grid), BoardGame.currentPlayerIndex);
+            return new BoardGameState<P>(module.copy(grid), BoardGame.currentPlayerIndex, BoardGame.result);
         }
         
         protected final void setState(final int newStateIndex) {
@@ -701,6 +737,7 @@ public class BoardGame extends BaseGame {
             grid.clear();
             grid.addAll(state.grid);
             currentStateIndex = newStateIndex;
+            result = state.result;
             module.onLoad();
             autosave();
         }
@@ -758,7 +795,7 @@ public class BoardGame extends BaseGame {
         
         protected final void renderMenu(final Panderer renderer, final Panmage image, final int x, final int y, final boolean mirror, final boolean active) {
             final int xd = x * DIM, yd = y * DIM;
-            final Pancolor color = active ? Pancolor.WHITE : Pancolor.GREY;
+            final Pancolor color = active ? Pancolor.WHITE : Pancolor.DARK_GREY;
             render(renderer, square, xd, yd, DEPTH_CELL, color);
             render(renderer, image, xd, yd, DEPTH_PIECE, mirror, color);
         }
@@ -916,10 +953,12 @@ public class BoardGame extends BaseGame {
     protected final static class BoardGameState<P extends BoardGamePiece> {
         private final int playerIndex;
         private final List<P> grid;
+        private final BoardGameResult result;
         
-        protected BoardGameState(final List<P> grid, final int playerIndex) {
+        protected BoardGameState(final List<P> grid, final int playerIndex, final BoardGameResult result) {
             this.playerIndex = playerIndex;
             this.grid = grid;
+            this.result = result;
         }
     }
     
