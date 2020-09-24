@@ -84,8 +84,6 @@ public class BoardGame extends BaseGame {
     protected static Panmage circles = null;
     protected static Font font = null;
     
-    protected final static BoardGamePlayer[] players = { new BoardGamePlayer(0), new BoardGamePlayer(1) };
-    protected final static int numPlayers = players.length;
     protected static BoardGameModule<? extends BoardGamePiece> module = null;
     protected static Panroom room = null;
     protected final static StringBuilder label = new StringBuilder();
@@ -93,8 +91,6 @@ public class BoardGame extends BaseGame {
     protected static Cursor cursor = null;
     protected static Pancolor highlightColor = null;
     protected final static Set<Integer> highlightSquares = new HashSet<Integer>();
-    protected static int currentPlayerIndex = 0;
-    protected static BoardGameResult result = null;
     
     @Override
     protected final boolean isFullScreen() {
@@ -142,6 +138,8 @@ public class BoardGame extends BaseGame {
     }
     
     private final static void loadProfiles() {
+        final int numPlayers = module.numPlayers;
+        final BoardGamePlayer[] players = module.players;
         for (int i = 0; i < numPlayers; i++) {
             final BoardGameProfile profile = players[i].profile;
             try {
@@ -171,6 +169,7 @@ public class BoardGame extends BaseGame {
     }
     
     private final static Pancolor pickHighlightColor() {
+        final BoardGamePlayer[] players = module.players;
         final Pancolor color0 = players[0].getColor();
         final Pancolor color1 = players[1].getColor();
         if (isAnyDark(color0) && isAnyDark(color1)) {
@@ -208,6 +207,14 @@ public class BoardGame extends BaseGame {
             addText(label, h - 16);
             addText(label2, h - 26);
             highlightColor = pickHighlightColor();
+            if (Coltil.isValued(module.getGrid().grid)) {
+                module.resumeGame();
+            } else {
+                loadGame();
+            }
+        }
+        
+        protected final void loadGame() {
             final String locAutosave = getLocationAutosave();
             boolean newGame = true;
             if (Iotil.exists(locAutosave)) {
@@ -234,8 +241,10 @@ public class BoardGame extends BaseGame {
         protected final void step() {
             Chartil.clear(label);
             Chartil.clear(label2);
+            final BoardGamePlayer[] players = module.players;
+            final BoardGameResult result = module.result;
             if (result == null) {
-                label.append(players[currentPlayerIndex].profile.name);
+                label.append(players[module.currentPlayerIndex].profile.name);
                 label2.append("Turn");
             } else {
                 if (result.resultStatus == RESULT_TIE) {
@@ -258,12 +267,12 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static void toggleCurrentPlayer() {
-        currentPlayerIndex = getNextPlayerIndex();
+        module.currentPlayerIndex = getNextPlayerIndex();
         addState();
     }
     
     protected final static int getNextPlayerIndex() {
-        return (currentPlayerIndex + 1) % players.length;
+        return (module.currentPlayerIndex + 1) % module.players.length;
     }
     
     protected final static void addState() {
@@ -346,6 +355,10 @@ public class BoardGame extends BaseGame {
     
     protected abstract static class BoardGameModule<P extends BoardGamePiece> {
         protected final int numVerticalCells;
+        protected final BoardGamePlayer[] players = { new BoardGamePlayer(0), new BoardGamePlayer(1) };
+        protected final int numPlayers = players.length;
+        protected int currentPlayerIndex = 0;
+        protected BoardGameResult result = null;
         
         protected BoardGameModule(final int numVerticalCells) {
             this.numVerticalCells = numVerticalCells;
@@ -535,6 +548,10 @@ public class BoardGame extends BaseGame {
             initGame();
             onLoad();
             addState();
+        }
+        
+        public final void resumeGame() {
+            onLoad();
         }
         
         public final void clear() {
@@ -728,16 +745,16 @@ public class BoardGame extends BaseGame {
         }
         
         protected BoardGameState<P> newState() {
-            return new BoardGameState<P>(module.copy(grid), BoardGame.currentPlayerIndex, BoardGame.result);
+            return new BoardGameState<P>(module.copy(grid), module.currentPlayerIndex, module.result);
         }
         
         protected final void setState(final int newStateIndex) {
             final BoardGameState<P> state = states.get(newStateIndex);
-            BoardGame.currentPlayerIndex = state.playerIndex;
+            module.currentPlayerIndex = state.playerIndex;
             grid.clear();
             grid.addAll(state.grid);
             currentStateIndex = newStateIndex;
-            result = state.result;
+            module.result = state.result;
             module.onLoad();
             autosave();
         }
@@ -767,6 +784,7 @@ public class BoardGame extends BaseGame {
         }
         
         protected final void renderView(final Panderer renderer) {
+            final BoardGamePlayer[] players = module.players;
             for (int y = 0; y < h; y++) {
                 final int yd = y * DIM;
                 for (int x = 0; x < w; x++) {
@@ -832,10 +850,10 @@ public class BoardGame extends BaseGame {
     
     protected final static BoardGameCell square0 = new BoardGameCell() {
         @Override public final Panmage getImage() { return square; }
-        @Override public final Pancolor getColor() { return players[0].getColor(); }};
+        @Override public final Pancolor getColor() { return module.players[0].getColor(); }};
     protected final static BoardGameCell square1 = new BoardGameCell() {
         @Override public final Panmage getImage() { return square; }
-        @Override public final Pancolor getColor() { return players[1].getColor(); }};
+        @Override public final Pancolor getColor() { return module.players[1].getColor(); }};
     protected final static BoardGameCell squareH = new BoardGameCell() {
         @Override public final Panmage getImage() { return square; }
         @Override public final Pancolor getColor() { return highlightColor; }};
@@ -898,7 +916,7 @@ public class BoardGame extends BaseGame {
         }
         
         private final static Pancolor getColor0() {
-            return players[0].getColor();
+            return module.players[0].getColor();
         }
     }
     
