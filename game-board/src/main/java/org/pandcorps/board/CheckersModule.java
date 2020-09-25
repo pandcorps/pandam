@@ -124,8 +124,8 @@ public class CheckersModule extends BoardGameModule<CheckersPiece> {
         return piece;
     }
     
-    protected final static void highlightMovablePieces() {
-        getMovablePieces(BoardGame.currentPlayerIndex, BoardGame.highlightSquares);
+    protected final void highlightMovablePieces() {
+        getMovablePieces(currentPlayerIndex, BoardGame.highlightSquares);
     }
     
     protected final static void highlightAllowedDestinations() {
