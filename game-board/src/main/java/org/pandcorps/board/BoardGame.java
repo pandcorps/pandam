@@ -67,6 +67,8 @@ public class BoardGame extends BaseGame {
     
     protected final static int NULL_INDEX = -1;
     
+    protected final static int NUM_PLAYERS = 2;
+    
     protected final static int INDEX_UNDO = Integer.MAX_VALUE;
     protected final static int INDEX_REDO = INDEX_UNDO - 1;
     protected final static int INDEX_NEW = INDEX_UNDO - 2;
@@ -84,6 +86,7 @@ public class BoardGame extends BaseGame {
     protected static Panmage circles = null;
     protected static Font font = null;
     
+    protected final static List<BoardGameProfile> profiles = new ArrayList<BoardGameProfile>();
     protected static BoardGameModule<? extends BoardGamePiece> module = null;
     protected static Panroom room = null;
     protected final static StringBuilder label = new StringBuilder();
@@ -135,18 +138,71 @@ public class BoardGame extends BaseGame {
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
         font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), Pancolor.WHITE, Pancolor.WHITE, Pancolor.WHITE, null, Pancolor.BLACK);
+        loadProfiles();
     }
     
     private final static void loadProfiles() {
+        for (int profileIndex = 0; true; profileIndex++) {
+            if (Iotil.exists(BoardGameProfile.getProfileFileName(profileIndex))) {
+                final BoardGameProfile profile = new BoardGameProfile();
+                try {
+                    profile.load(profileIndex);
+                } catch (final Exception e) {
+                    profile.deleted = true;
+                    profile.save();
+                }
+                profiles.add(profile);
+            } else {
+                break;
+            }
+        }
+        reactivateMinimumProfiles();
+        createInitialProfiles();
+    }
+    
+    private final static void reactivateMinimumProfiles() {
+        int activeSize = getActiveProfilesSize();
+        if (activeSize >= NUM_PLAYERS) {
+            return;
+        }
+        final int numProfiles = profiles.size();
+        for (int i = 0; i < numProfiles; i++) {
+            final BoardGameProfile profile = profiles.get(i);
+            if (profile.deleted) {
+                profile.init(i);
+                activeSize++;
+                if (activeSize >= NUM_PLAYERS) {
+                    return;
+                }
+            }
+        }
+    }
+    
+    private final static void createInitialProfiles() {
+        for (int profileIndex = profiles.size(); profileIndex < NUM_PLAYERS; profileIndex++) {
+            final BoardGameProfile profile = new BoardGameProfile();
+            profile.init(profileIndex);
+            profile.save();
+        }
+    }
+    
+    private final static int getActiveProfilesSize() {
+        int size = 0;
+        for (final BoardGameProfile profile : profiles) {
+            if (!profile.deleted) {
+                size++;
+            }
+        }
+        return size;
+    }
+    
+    private final static void initPlayerProfiles() {
         final int numPlayers = module.numPlayers;
         final BoardGamePlayer[] players = module.players;
         for (int i = 0; i < numPlayers; i++) {
-            final BoardGameProfile profile = players[i].profile;
-            try {
-                profile.load(i);
-            } catch (final Exception e) {
-                profile.init(i);
-                profile.save();
+            final BoardGamePlayer player = players[i];
+            if (player.profile == null) {
+                player.profile = profiles.get(i);
             }
         }
     }
@@ -206,12 +262,12 @@ public class BoardGame extends BaseGame {
             final int h = engine.getEffectiveHeight();
             addText(label, h - 16);
             addText(label2, h - 26);
-            highlightColor = pickHighlightColor();
             if (Coltil.isValued(module.getGrid().grid)) {
                 module.resumeGame();
             } else {
                 loadGame();
             }
+            highlightColor = pickHighlightColor(); // Must be done after loading game (which picks player profiles)
         }
         
         protected final void loadGame() {
@@ -226,7 +282,7 @@ public class BoardGame extends BaseGame {
                 }
             }
             if (newGame) {
-                loadProfiles();
+                initPlayerProfiles();
                 module.startNewGame();
             }
         }
@@ -355,13 +411,16 @@ public class BoardGame extends BaseGame {
     
     protected abstract static class BoardGameModule<P extends BoardGamePiece> {
         protected final int numVerticalCells;
-        protected final BoardGamePlayer[] players = { new BoardGamePlayer(0), new BoardGamePlayer(1) };
+        protected final BoardGamePlayer[] players = new BoardGamePlayer[NUM_PLAYERS];
         protected final int numPlayers = players.length;
         protected int currentPlayerIndex = 0;
         protected BoardGameResult result = null;
         
         protected BoardGameModule(final int numVerticalCells) {
             this.numVerticalCells = numVerticalCells;
+            for (int i = 0; i < numPlayers; i++) {
+                players[i] = new BoardGamePlayer(i);
+            }
         }
         
         protected final void prepare() {
@@ -522,14 +581,14 @@ public class BoardGame extends BaseGame {
         
         protected final void loadProfile(final int playerIndex, final int profileIndex) throws IOException {
             final BoardGamePlayer player = players[playerIndex];
-            if (player.profile.profileIndex != profileIndex) {
+            if (player.getProfileIndex() != profileIndex) {
                 boolean loadNeeded = true;
                 for (int otherPlayerIndex = 0; otherPlayerIndex < numPlayers; otherPlayerIndex++) {
                     if (otherPlayerIndex == playerIndex) {
                         continue;
                     }
                     final BoardGamePlayer otherPlayer = players[otherPlayerIndex];
-                    if (otherPlayer.profile.profileIndex == profileIndex) {
+                    if (otherPlayer.getProfileIndex() == profileIndex) {
                         final BoardGameProfile otherProfile = otherPlayer.profile;
                         otherPlayer.profile = player.profile;
                         player.profile = otherProfile;
@@ -538,7 +597,11 @@ public class BoardGame extends BaseGame {
                     }
                 }
                 if (loadNeeded) {
-                    player.profile.load(profileIndex);
+                    final BoardGameProfile profile = profiles.get(profileIndex);
+                    if (profile.deleted) {
+                        throw new IOException("Deleted Profile");
+                    }
+                    player.profile = profile;
                 }
             }
         }
@@ -654,6 +717,15 @@ public class BoardGame extends BaseGame {
             }
         }
         
+        protected final void set(final List<P> pieces) {
+            grid.clear();
+            for (final P piece : pieces) {
+                if (piece != null) {
+                    Coltil.set(grid, getIndexRequired(piece.x, piece.y), piece);
+                }
+            }
+        }
+        
         private final void unset(final P piece) {
             final int index = getIndexOptional(piece.x, piece.y);
             if (isValid(index)) {
@@ -751,8 +823,7 @@ public class BoardGame extends BaseGame {
         protected final void setState(final int newStateIndex) {
             final BoardGameState<P> state = states.get(newStateIndex);
             module.currentPlayerIndex = state.playerIndex;
-            grid.clear();
-            grid.addAll(state.grid);
+            set(state.grid);
             currentStateIndex = newStateIndex;
             module.result = state.result;
             module.onLoad();
@@ -888,7 +959,7 @@ public class BoardGame extends BaseGame {
     
     protected final static class BoardGamePlayer {
         protected final int index;
-        protected BoardGameProfile profile = new BoardGameProfile();
+        protected BoardGameProfile profile = null;
         
         private BoardGamePlayer(final int index) {
             this.index = index;
@@ -918,6 +989,10 @@ public class BoardGame extends BaseGame {
         private final static Pancolor getColor0() {
             return module.players[0].getColor();
         }
+        
+        private final int getProfileIndex() {
+            return (profile == null) ? -1 : profile.profileIndex;
+        }
     }
     
     protected final static class BoardGameProfile {
@@ -925,12 +1000,14 @@ public class BoardGame extends BaseGame {
         private String name = null;
         private Pancolor color1 = null; // Null means to use the default for each game
         private Pancolor color2 = null; // If player 2's preferred color matches player 1, then use color 2 instead
+        private boolean deleted = false;
         
         protected final void init(final int index) {
             profileIndex = index;
             name = "Player " + (index + 1);
             color1 = null;
             color2 = null;
+            deleted = false;
         }
         
         protected final void save() {
