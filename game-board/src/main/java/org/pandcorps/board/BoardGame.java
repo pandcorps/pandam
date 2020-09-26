@@ -72,6 +72,7 @@ public class BoardGame extends BaseGame {
     protected final static int INDEX_UNDO = Integer.MAX_VALUE;
     protected final static int INDEX_REDO = INDEX_UNDO - 1;
     protected final static int INDEX_NEW = INDEX_UNDO - 2;
+    protected final static int INDEX_MENU = INDEX_UNDO - 3;
     
     protected final static int RESULT_NULL = -1;
     protected final static int RESULT_WIN = 0;
@@ -81,6 +82,7 @@ public class BoardGame extends BaseGame {
     protected static Panmage imgCursor = null;
     protected static Panmage imgUndo = null;
     protected static Panmage imgPlus = null;
+    protected static Panmage imgMenu = null;
     protected static Panmage square = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
@@ -134,6 +136,7 @@ public class BoardGame extends BaseGame {
         }
         imgUndo = engine.createImage(PRE_IMG + "undo", RES + "Undo.png");
         imgPlus = engine.createImage(PRE_IMG + "plus", RES + "Plus.png");
+        imgMenu = engine.createImage(PRE_IMG + "menu", RES + "Menu.png");
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
@@ -182,7 +185,6 @@ public class BoardGame extends BaseGame {
         for (int profileIndex = profiles.size(); profileIndex < NUM_PLAYERS; profileIndex++) {
             final BoardGameProfile profile = new BoardGameProfile();
             profile.init(profileIndex);
-            profile.save();
         }
     }
     
@@ -196,13 +198,26 @@ public class BoardGame extends BaseGame {
         return size;
     }
     
+    private final static BoardGameProfile getActiveProfile(final int index) {
+        int i = 0;
+        for (final BoardGameProfile profile : profiles) {
+            if (!profile.deleted) {
+                if (i == index) {
+                    return profile;
+                }
+                i++;
+            }
+        }
+        throw new IllegalStateException("Could not find active profile " + index);
+    }
+    
     private final static void initPlayerProfiles() {
         final int numPlayers = module.numPlayers;
         final BoardGamePlayer[] players = module.players;
         for (int i = 0; i < numPlayers; i++) {
             final BoardGamePlayer player = players[i];
             if (player.profile == null) {
-                player.profile = profiles.get(i);
+                player.profile = getActiveProfile(i);
             }
         }
     }
@@ -404,6 +419,9 @@ public class BoardGame extends BaseGame {
                 return true;
             case INDEX_NEW:
                 module.startNewGame();
+                return true;
+            case INDEX_MENU:
+                
                 return true;
         }
         return false;
@@ -636,6 +654,7 @@ public class BoardGame extends BaseGame {
         private final int xUndo, yUndo;
         private final int xRedo, yRedo;
         private final int xNew, yNew;
+        private final int xMenu, yMenu;
         private final Map<Integer, BoardGamePieceList<P>> lists = new HashMap<Integer, BoardGamePieceList<P>>();
         private final List<BoardGameState<P>> states = new ArrayList<BoardGameState<P>>();
         private int currentStateIndex = 0;
@@ -655,6 +674,7 @@ public class BoardGame extends BaseGame {
             xUndo = mx1; yUndo = my1;
             xRedo = mx2; yRedo = my1;
             xNew = mx1; yNew = my2;
+            xMenu = mx2; yMenu = my2;
         }
         
         protected final void clear() {
@@ -787,6 +807,8 @@ public class BoardGame extends BaseGame {
                 return INDEX_REDO;
             } else if ((x == xNew) && (y == yNew)) {
                 return INDEX_NEW;
+            } else if ((x == xMenu) && (y == yMenu)) {
+                return INDEX_MENU;
             }
             return NULL_INDEX;
         }
@@ -872,6 +894,7 @@ public class BoardGame extends BaseGame {
             renderMenu(renderer, imgUndo, xUndo, yUndo, false, isUndoAllowed());
             renderMenu(renderer, imgUndo, xRedo, yRedo, true, isRedoAllowed());
             renderMenu(renderer, imgPlus, xNew, yNew, false, true);
+            renderMenu(renderer, imgMenu, xMenu, yMenu, false, true);
         }
         
         protected final void render(final Panderer renderer, final Panmage image, final int x, final int y, final int z, final Pancolor color) {
@@ -1008,6 +1031,7 @@ public class BoardGame extends BaseGame {
             color1 = null;
             color2 = null;
             deleted = false;
+            save();
         }
         
         protected final void save() {
