@@ -55,6 +55,7 @@ public class BoardGame extends BaseGame {
     protected final static int DEPTH_CURSOR = 4;
     
     protected final static Pancolor BLACK = new FinPancolor(96);
+    protected final static Pancolor ORANGE = new FinPancolor(Pancolor.MAX_VALUE, 128, 0);
     
     protected final static String SEG_CONTEXT = "CTX";
     protected final static String SEG_STATE = "BGS";
@@ -83,6 +84,8 @@ public class BoardGame extends BaseGame {
     protected static Panmage imgUndo = null;
     protected static Panmage imgPlus = null;
     protected static Panmage imgMenu = null;
+    protected static Panmage imgEdit = null;
+    protected static Panmage imgDone = null;
     protected static Panmage square = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
@@ -137,6 +140,8 @@ public class BoardGame extends BaseGame {
         imgUndo = engine.createImage(PRE_IMG + "undo", RES + "Undo.png");
         imgPlus = engine.createImage(PRE_IMG + "plus", RES + "Plus.png");
         imgMenu = engine.createImage(PRE_IMG + "menu", RES + "Menu.png");
+        imgEdit = engine.createImage(PRE_IMG + "edit", RES + "Pencil.png");
+        imgDone = engine.createImage(PRE_IMG + "done", RES + "Check.png");
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
@@ -265,16 +270,24 @@ public class BoardGame extends BaseGame {
     
     private static int touchStartIndex = NULL_INDEX;
     
+    protected final static void goGame() {
+        Panscreen.set(new BoardGameScreen());
+    }
+    
+    protected final static void initScreen(final int size) {
+        final Pangine engine = Pangine.getEngine();
+        engine.setBgColor(Pancolor.GREY);
+        engine.enableColorArray();
+        engine.zoomToMinimum(size);
+        addCursor();
+    }
+    
     protected final static class BoardGameScreen extends Panscreen {
         @Override
         protected final void load() {
-            final Pangine engine = Pangine.getEngine();
-            engine.setBgColor(Pancolor.GREY);
-            engine.enableColorArray();
-            engine.zoomToMinimum(module.numVerticalCells * DIM);
+            initScreen(module.numVerticalCells * DIM);
             module.prepare();
-            addCursor();
-            final int h = engine.getEffectiveHeight();
+            final int h = Pangine.getEngine().getEffectiveHeight();
             addText(label, h - 16);
             addText(label2, h - 26);
             if (Coltil.isValued(module.getGrid().grid)) {
@@ -421,7 +434,8 @@ public class BoardGame extends BaseGame {
                 module.startNewGame();
                 return true;
             case INDEX_MENU:
-                
+                module.getGrid().detach();
+                Menu.goMenu();
                 return true;
         }
         return false;
@@ -632,6 +646,7 @@ public class BoardGame extends BaseGame {
         }
         
         public final void resumeGame() {
+            room.addActor(getGrid());
             onLoad();
         }
         
@@ -1019,11 +1034,11 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static class BoardGameProfile {
-        private int profileIndex = -1;
-        private String name = null;
-        private Pancolor color1 = null; // Null means to use the default for each game
-        private Pancolor color2 = null; // If player 2's preferred color matches player 1, then use color 2 instead
-        private boolean deleted = false;
+        protected int profileIndex = -1;
+        protected String name = null;
+        protected Pancolor color1 = null; // Null means to use the default for each game
+        protected Pancolor color2 = null; // If player 2's preferred color matches player 1, then use color 2 instead
+        protected boolean deleted = false;
         
         protected final void init(final int index) {
             profileIndex = index;
