@@ -54,11 +54,23 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     BoardGame.goGame();
                 }});
+            addButton("Exit", getButtonRight(), getButtonTop(), BoardGame.imgExit, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    Pangine.getEngine().exit();
+                }});
         }
     }
     
     protected final static void addDone(final ActionEndListener listener) {
-        addButton("Done", Pangine.getEngine().getEffectiveWidth() - 20, 4, BoardGame.imgDone, listener);
+        addButton("Done", getButtonRight(), 4, BoardGame.imgDone, listener);
+    }
+    
+    protected final static int getButtonRight() {
+        return Pangine.getEngine().getEffectiveWidth() - 20;
+    }
+    
+    protected final static int getButtonTop() {
+        return Pangine.getEngine().getEffectiveHeight() - 20;
     }
     
     protected final static void addProfile(final BoardGameProfile profile) {
