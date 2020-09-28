@@ -86,6 +86,7 @@ public class BoardGame extends BaseGame {
     protected static Panmage imgMenu = null;
     protected static Panmage imgEdit = null;
     protected static Panmage imgDone = null;
+    protected static Panmage imgExit = null;
     protected static Panmage square = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
@@ -142,6 +143,7 @@ public class BoardGame extends BaseGame {
         imgMenu = engine.createImage(PRE_IMG + "menu", RES + "Menu.png");
         imgEdit = engine.createImage(PRE_IMG + "edit", RES + "Pencil.png");
         imgDone = engine.createImage(PRE_IMG + "done", RES + "Check.png");
+        imgExit = engine.createImage(PRE_IMG + "exit", RES + "Exit.png");
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
