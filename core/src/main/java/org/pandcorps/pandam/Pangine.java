@@ -472,6 +472,12 @@ public abstract class Pangine {
 	    return false;
 	}
 	
+	protected void setTouch(final int x, final int y) {
+	    final Touch touch = getInteraction().TOUCH;
+	    touch.x = x;
+	    touch.y = y;
+	}
+	
 	public void setRangeZ(final int minZ, final int maxZ) {
 	}
 	
