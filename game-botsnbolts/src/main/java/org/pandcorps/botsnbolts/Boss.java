@@ -3049,10 +3049,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final void startSpin() {
             BotsnBoltsGame.fxDefeat.startSound();
+            // If facing wrong direction, Cyclone Bot flies through the wall, never comes back, and player is stuck
+            pickMirror();
             startState(STATE_SPIN, WAIT_SPIN, getSpinStart1());
         }
         
+        private final void pickMirror() {
+            setMirror(getX() > (BotsnBoltsGame.GAME_W / 2));
+        }
+        
         private final void startJump() {
+            pickMirror();
             final Panmage jump = getJump();
             final int hv = 5 * getMirrorMultiplier();
             startJump(STATE_JUMP, jump, 10, hv);
@@ -3064,8 +3071,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final int x = getX();
             if (Math.abs(x - xLeft) < 5) {
                 getPosition().setX(xLeft);
+                setMirror(false);
             } else if (Math.abs(xRight - x) < 5) {
                 getPosition().setX(xRight);
+                setMirror(true);
             }
         }
 
