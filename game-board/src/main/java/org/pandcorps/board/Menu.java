@@ -29,7 +29,10 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Input.*;
+import org.pandcorps.pandax.touch.*;
 
 public class Menu {
     private static final int buttonLeft = 4;
@@ -46,6 +49,7 @@ public class Menu {
         @Override
         protected void load() throws Exception {
             BoardGame.initScreen(96);
+            profile = null;
             profileY = 0;
             for (int i = BoardGame.module.numPlayers - 1; i >= 0; i--) {
                 addProfile(BoardGame.module.players[i].profile);
@@ -89,10 +93,39 @@ public class Menu {
     
     protected final static TouchButton addButton(final String name, final int x, final int y, final Panmage img, final ActionEndListener listener) {
         final Panroom room = Pangame.getGame().getCurrentRoom();
-        final TouchButton button = new TouchButton(null, room, name, x, y, BoardGame.DEPTH_CELL, BoardGame.square, BoardGame.square, img, 0, 0, null, null, 0, 0, true);
+        final TouchButton button = new TouchButton(null, room, name, x, y, BoardGame.DEPTH_CELL, BoardGame.square, getSquareActive(), img, 0, 0, null, null, 0, 0, true);
         Pangine.getEngine().registerTouchButton(button);
         button.getActor().register(button, listener);
         return button;
+    }
+    
+    protected final static Panmage getSquareActive() {
+        final BoardGameProfile profile = getProfile();
+        final Panmage active1 = getSquareActive(profile.color1);
+        if (active1 != null) {
+            return active1;
+        }
+        final Panmage active2 = getSquareActive(profile.color2);
+        if (active2 != null) {
+            return active2;
+        }
+        return getSquare(Pancolor.CYAN);
+    }
+    
+    protected final static Panmage getSquareActive(final Pancolor color) {
+        return isAllowedActiveColor(color) ? getSquare(color) : null;
+    }
+    
+    protected final static Panmage getSquare(final Pancolor color) {
+        return new RecolorPanmage(Pantil.vmid(), BoardGame.square, color);
+    }
+    
+    protected final static boolean isAllowedActiveColor(final Pancolor color) {
+        return (color != null) && !color.equals(Pancolor.WHITE) && !color.equals(BoardGame.BLACK);
+    }
+    
+    protected final static BoardGameProfile getProfile() {
+        return (profile == null) ? BoardGame.module.players[0].profile : profile;
     }
     
     protected final static Pantext addText(final int x, final int y, final String value) {
@@ -111,11 +144,14 @@ public class Menu {
         protected void load() throws Exception {
             BoardGame.initScreen(96);
             final int h = Pangine.getEngine().getEffectiveHeight();
-            addText(textLeft, h - 16, profile.name);
-            addColor(h - 48, "Primary", new Variable<Pancolor>() {
+            addPair(h - 32, profile.name, BoardGame.imgEdit, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    Panscreen.set(new NameScreen());
+                }});
+            addColor(h - 64, "Primary", new Variable<Pancolor>() {
                 @Override public final Pancolor get() { return profile.color1; }
                 @Override public final void set(final Pancolor t) { profile.color1 = t; }});
-            addColor(h - 80, "Alternate", new Variable<Pancolor>() {
+            addColor(h - 96, "Alternate", new Variable<Pancolor>() {
                 @Override public final Pancolor get() { return profile.color2; }
                 @Override public final void set(final Pancolor t) { profile.color2 = t; }});
             addDone(new ActionEndListener() {
@@ -162,8 +198,37 @@ public class Menu {
         addButton(Chartil.toString(option), x - 8, y - 8, getImage(option, null), new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 color.set(option);
-                profile.save();
-                goProfile();
+                finishProfileChange();
             }});
+    }
+    
+    protected final static void finishProfileChange() {
+        profile.save();
+        goProfile();
+    }
+    
+    protected final static class NameScreen extends Panscreen {
+        @Override
+        protected void load() throws Exception {
+            BoardGame.initScreen(96);
+            new TouchKeyboard(BoardGame.square, getSquareActive(), BoardGame.font);
+            final Panform form = new Panform(ControlScheme.getDefaultKeyboard());
+            final Input input = new KeyInput(BoardGame.font, new InputSubmitListener() {
+                @Override public final void onSubmit(final InputSubmitEvent event) {
+                    profile.name = event.toString();
+                    finishProfileChange();
+                }});
+            addDone(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    profile.name = input.getText();
+                    finishProfileChange();
+                }});
+            input.setMax(8);
+            final Pantext lbl = input.getLabel();
+            lbl.getPosition().set(Pangine.getEngine().getEffectiveWidth() / 2 - 32, 4);
+            input.append(profile.name);
+            form.addItem(input);
+            form.init();
+        }
     }
 }
