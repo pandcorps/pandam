@@ -710,15 +710,15 @@ public class Menu {
             grid.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     final Device device = event.getDevice();
-                    boolean newDevice = true;
+                    if ((device instanceof Mouse) || (device instanceof Touchscreen)) {
+                        return;
+                    }
                     for (final PlayerContext pc : BotsnBoltsGame.pcs) {
                         if (device == pc.ctrl.getDevice()) {
-                            newDevice = false;
+                            return;
                         }
                     }
-                    if (newDevice) {
-                        BotsnBoltsGame.addPlayerContext(new Profile(prf), BotsnBoltsGame.volatileImages, event);
-                    }
+                    BotsnBoltsGame.addPlayerContext(new Profile(prf), BotsnBoltsGame.volatileImages, event);
                 }
             });
             layer.setConstant(true);
