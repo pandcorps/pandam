@@ -38,8 +38,16 @@ public class Menu {
     private static final int buttonLeft = 4;
     private static final int textLeft = 24;
     private static int profileY = 0;
+    private static BoardGamePlayer player;
     private static BoardGameProfile profile;
     private static Variable<Pancolor> color;
+    
+    protected final static class ModuleScreen extends Panscreen {
+        @Override
+        protected final void load() throws Exception {
+            
+        }
+    }
     
     protected final static void goMenu() {
         Panscreen.set(new MenuScreen());
@@ -47,18 +55,19 @@ public class Menu {
     
     protected final static class MenuScreen extends Panscreen {
         @Override
-        protected void load() throws Exception {
+        protected final void load() throws Exception {
             BoardGame.initScreen(96);
+            player = null;
             profile = null;
             profileY = 0;
             for (int i = BoardGame.module.numPlayers - 1; i >= 0; i--) {
-                addProfile(BoardGame.module.players[i].profile);
+                addProfile(BoardGame.module.players[i]);
             }
             addDone(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     BoardGame.goGame();
                 }});
-            addButton("Exit", getButtonRight(), getButtonTop(), BoardGame.imgExit, new ActionEndListener() {
+            addTopRight("Exit", BoardGame.imgExit, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     Pangine.getEngine().exit();
                 }});
@@ -69,6 +78,10 @@ public class Menu {
         addButton("Done", getButtonRight(), 4, BoardGame.imgDone, listener);
     }
     
+    protected final static void addTopRight(final String name, final Panmage img, final ActionEndListener listener) {
+        addButton(name, getButtonRight(), getButtonTop(), img, listener);
+    }
+    
     protected final static int getButtonRight() {
         return Pangine.getEngine().getEffectiveWidth() - 20;
     }
@@ -77,9 +90,11 @@ public class Menu {
         return Pangine.getEngine().getEffectiveHeight() - 20;
     }
     
-    protected final static void addProfile(final BoardGameProfile profile) {
+    protected final static void addProfile(final BoardGamePlayer player) {
+        final BoardGameProfile profile = player.profile;
         addPair(profileY, profile.name, BoardGame.imgEdit, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
+                Menu.player = player;
                 Menu.profile = profile;
                 goProfile();
             }});
@@ -139,9 +154,14 @@ public class Menu {
         Panscreen.set(new ProfileScreen());
     }
     
+    protected final static void goProfile(final BoardGameProfile profile) {
+        player.profile = Menu.profile = profile;
+        goProfile();
+    }
+    
     protected final static class ProfileScreen extends Panscreen {
         @Override
-        protected void load() throws Exception {
+        protected final void load() throws Exception {
             BoardGame.initScreen(96);
             final int h = Pangine.getEngine().getEffectiveHeight();
             addPair(h - 32, profile.name, BoardGame.imgEdit, new ActionEndListener() {
@@ -158,7 +178,22 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goMenu();
                 }});
+            if (BoardGame.getActiveProfilesSize() <= 2) {
+                addNewProfileButton();
+            } else {
+                addTopRight("Load", BoardGame.imgOpen, new ActionEndListener() {
+                    @Override public final void onActionEnd(final ActionEndEvent event) {
+                        Panscreen.set(new ProfileSelectScreen());
+                    }});
+            }
         }
+    }
+    
+    protected final static void addNewProfileButton() {
+        addTopRight("New", BoardGame.imgPlus, new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                newProfile();
+            }});
     }
     
     protected final static void addColor(final int y, final String name, final Variable<Pancolor> color) {
@@ -175,7 +210,7 @@ public class Menu {
     
     protected final static class ColorScreen extends Panscreen {
         @Override
-        protected void load() throws Exception {
+        protected final void load() throws Exception {
             BoardGame.initScreen(96);
             final Pangine engine = Pangine.getEngine();
             final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
@@ -209,7 +244,7 @@ public class Menu {
     
     protected final static class NameScreen extends Panscreen {
         @Override
-        protected void load() throws Exception {
+        protected final void load() throws Exception {
             BoardGame.initScreen(96);
             new TouchKeyboard(BoardGame.square, getSquareActive(), BoardGame.font);
             final Panform form = new Panform(ControlScheme.getDefaultKeyboard());
@@ -230,5 +265,36 @@ public class Menu {
             form.addItem(input);
             form.init();
         }
+    }
+    
+    protected final static class ProfileSelectScreen extends Panscreen {
+        private static int firstIndex = 0;
+        @Override
+        protected final void load() throws Exception {
+            BoardGame.initScreen(128);
+            final int size = BoardGame.getActiveProfilesSize();
+            final int h = Pangine.getEngine().getEffectiveHeight();
+            for (int i = 0; i < 4; i++) {
+                final int currentIndex = firstIndex + i;
+                if (currentIndex >= size) {
+                    break;
+                }
+                final BoardGameProfile currentProfile = BoardGame.getActiveProfile(currentIndex);
+                addPair(h - (24 * (i + 1)), currentProfile.name, BoardGame.imgOpen, new ActionEndListener() {
+                    @Override public final void onActionEnd(final ActionEndEvent event) {
+                        goProfile(currentProfile);
+                    }});
+            }
+            //TODO PageUp/Down if needed
+            addDone(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goProfile();
+                }});
+            addNewProfileButton();
+        }
+    }
+    
+    protected final static void newProfile() {
+        goProfile(BoardGame.newProfile());
     }
 }
