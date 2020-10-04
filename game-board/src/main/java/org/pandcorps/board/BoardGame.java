@@ -32,6 +32,7 @@ import org.pandcorps.game.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
@@ -82,6 +83,7 @@ public class BoardGame extends BaseGame {
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage imgCursor = null;
     protected static Panmage imgUndo = null;
+    protected static Panmage imgRedo = null;
     protected static Panmage imgPlus = null;
     protected static Panmage imgMenu = null;
     protected static Panmage imgEdit = null;
@@ -141,6 +143,7 @@ public class BoardGame extends BaseGame {
             imgCursor = engine.createImage(PRE_IMG + "cursor", RES + "Cursor.png");
         }
         imgUndo = engine.createImage(PRE_IMG + "undo", RES + "Undo.png");
+        imgRedo = new AdjustedPanmage(PRE_IMG + "redo", imgUndo, 0, true, false);
         imgPlus = engine.createImage(PRE_IMG + "plus", RES + "Plus.png");
         imgMenu = engine.createImage(PRE_IMG + "menu", RES + "Menu.png");
         imgEdit = engine.createImage(PRE_IMG + "edit", RES + "Pencil.png");

@@ -114,6 +114,14 @@ public class Menu {
         return button;
     }
     
+    protected final static TouchButton addButton(final String name, final int x, final int y, final Panmage img,
+            final boolean enabled, final Panmage imgDisabled, final ActionEndListener listener) {
+        final TouchButton btn = addButton(name, x, y, img, listener);
+        btn.setImageDisabled(imgDisabled);
+        btn.setEnabled(enabled);
+        return btn;
+    }
+    
     protected final static Panmage getSquareActive() {
         final BoardGameProfile profile = getProfile();
         final Panmage active1 = getSquareActive(profile.color1);
@@ -132,7 +140,7 @@ public class Menu {
     }
     
     protected final static Panmage getSquare(final Pancolor color) {
-        return new RecolorPanmage(Pantil.vmid(), BoardGame.square, color);
+        return new AdjustedPanmage(Pantil.vmid(), BoardGame.square, color);
     }
     
     protected final static boolean isAllowedActiveColor(final Pancolor color) {
@@ -183,7 +191,7 @@ public class Menu {
             } else {
                 addTopRight("Load", BoardGame.imgOpen, new ActionEndListener() {
                     @Override public final void onActionEnd(final ActionEndEvent event) {
-                        Panscreen.set(new ProfileSelectScreen());
+                        goProfileSelect(0);
                     }});
             }
         }
@@ -205,7 +213,7 @@ public class Menu {
     }
     
     protected final static Panmage getImage(final Pancolor color, final Panmage def) {
-        return (color == null) ? def : new RecolorPanmage(Pantil.vmid(), BoardGame.circle, color);
+        return (color == null) ? def : new AdjustedPanmage(Pantil.vmid(), BoardGame.circle, color);
     }
     
     protected final static class ColorScreen extends Panscreen {
@@ -267,14 +275,20 @@ public class Menu {
         }
     }
     
+    private final static void goProfileSelect(final int firstIndex) {
+        ProfileSelectScreen.firstIndex = firstIndex;
+        Panscreen.set(new ProfileSelectScreen());
+    }
+    
     protected final static class ProfileSelectScreen extends Panscreen {
+        private final static int profilesPerPage = 4;
         private static int firstIndex = 0;
         @Override
         protected final void load() throws Exception {
             BoardGame.initScreen(128);
             final int size = BoardGame.getActiveProfilesSize();
             final int h = Pangine.getEngine().getEffectiveHeight();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < profilesPerPage; i++) {
                 final int currentIndex = firstIndex + i;
                 if (currentIndex >= size) {
                     break;
@@ -285,7 +299,14 @@ public class Menu {
                         goProfile(currentProfile);
                     }});
             }
-            //TODO PageUp/Down if needed
+            addButton("Back", 4, 4, BoardGame.imgUndo, firstIndex > 0, BoardGame.squareBlack, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goProfileSelect(firstIndex - profilesPerPage);
+                }});
+            addButton("Forward", 36, 4, BoardGame.imgRedo, (firstIndex + profilesPerPage) < size, BoardGame.squareBlack, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goProfileSelect(firstIndex + profilesPerPage);
+                }});
             addDone(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goProfile();
