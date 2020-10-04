@@ -85,9 +85,11 @@ public class BoardGame extends BaseGame {
     protected static Panmage imgPlus = null;
     protected static Panmage imgMenu = null;
     protected static Panmage imgEdit = null;
+    protected static Panmage imgOpen = null;
     protected static Panmage imgDone = null;
     protected static Panmage imgExit = null;
     protected static Panmage square = null;
+    protected static Panmage squareBlack = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
     protected static Font font = null;
@@ -142,9 +144,11 @@ public class BoardGame extends BaseGame {
         imgPlus = engine.createImage(PRE_IMG + "plus", RES + "Plus.png");
         imgMenu = engine.createImage(PRE_IMG + "menu", RES + "Menu.png");
         imgEdit = engine.createImage(PRE_IMG + "edit", RES + "Pencil.png");
+        imgOpen = engine.createImage(PRE_IMG + "open", RES + "Open.png");
         imgDone = engine.createImage(PRE_IMG + "done", RES + "Check.png");
         imgExit = engine.createImage(PRE_IMG + "exit", RES + "Exit.png");
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
+        squareBlack = Menu.getSquare(BLACK);
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
         font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), Pancolor.WHITE, Pancolor.WHITE, Pancolor.WHITE, null, Pancolor.BLACK);
@@ -192,10 +196,11 @@ public class BoardGame extends BaseGame {
         for (int profileIndex = profiles.size(); profileIndex < NUM_PLAYERS; profileIndex++) {
             final BoardGameProfile profile = new BoardGameProfile();
             profile.init(profileIndex);
+            profiles.add(profile);
         }
     }
     
-    private final static int getActiveProfilesSize() {
+    protected final static int getActiveProfilesSize() {
         int size = 0;
         for (final BoardGameProfile profile : profiles) {
             if (!profile.deleted) {
@@ -205,7 +210,7 @@ public class BoardGame extends BaseGame {
         return size;
     }
     
-    private final static BoardGameProfile getActiveProfile(final int index) {
+    protected final static BoardGameProfile getActiveProfile(final int index) {
         int i = 0;
         for (final BoardGameProfile profile : profiles) {
             if (!profile.deleted) {
@@ -216,6 +221,20 @@ public class BoardGame extends BaseGame {
             }
         }
         throw new IllegalStateException("Could not find active profile " + index);
+    }
+    
+    protected final static BoardGameProfile newProfile() {
+        for (final BoardGameProfile profile : profiles) {
+            if (profile.deleted) {
+                profile.init(profile.profileIndex);
+                return profile;
+            }
+        }
+        final int newIndex = profiles.size();
+        final BoardGameProfile profile = new BoardGameProfile();
+        profile.init(newIndex);
+        profiles.add(profile);
+        return profile;
     }
     
     private final static void initPlayerProfiles() {
