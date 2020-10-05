@@ -35,8 +35,10 @@ import org.pandcorps.pandax.text.Input.*;
 import org.pandcorps.pandax.touch.*;
 
 public class Menu {
-    private static final int buttonLeft = 4;
-    private static final int textLeft = 24;
+    private final static int buttonLeft = 4;
+    private final static int textLeft = 24;
+    private final static int pairOffsetButton = 4;
+    private final static int nameMaxCharacters = 8;
     private static int profileY = 0;
     private static BoardGamePlayer player;
     private static BoardGameProfile profile;
@@ -103,7 +105,7 @@ public class Menu {
     
     protected final static void addPair(final int y, final String name, final Panmage img, final ActionEndListener listener) {
         addText(textLeft, y + 8, name);
-        addButton("Edit." + name, buttonLeft, y + 4, img, listener);
+        addButton("Edit." + name, buttonLeft, y + pairOffsetButton, img, listener);
     }
     
     protected final static TouchButton addButton(final String name, final int x, final int y, final Panmage img, final ActionEndListener listener) {
@@ -266,7 +268,7 @@ public class Menu {
                     profile.name = input.getText();
                     finishProfileChange();
                 }});
-            input.setMax(8);
+            input.setMax(nameMaxCharacters);
             final Pantext lbl = input.getLabel();
             lbl.getPosition().set(Pangine.getEngine().getEffectiveWidth() / 2 - 32, 4);
             input.append(profile.name);
@@ -288,22 +290,30 @@ public class Menu {
             BoardGame.initScreen(128);
             final int size = BoardGame.getActiveProfilesSize();
             final int h = Pangine.getEngine().getEffectiveHeight();
+            final int xDelete = buttonLeft + 24 + (8 * nameMaxCharacters);
             for (int i = 0; i < profilesPerPage; i++) {
                 final int currentIndex = firstIndex + i;
                 if (currentIndex >= size) {
                     break;
                 }
                 final BoardGameProfile currentProfile = BoardGame.getActiveProfile(currentIndex);
-                addPair(h - (24 * (i + 1)), currentProfile.name, BoardGame.imgOpen, new ActionEndListener() {
+                final int y = h - (24 * (i + 1));
+                final String name = currentProfile.name;
+                addPair(y, name, BoardGame.imgOpen, new ActionEndListener() {
                     @Override public final void onActionEnd(final ActionEndEvent event) {
+                        //TODO What if switch to other player? swap them? don't allow?, maybe nice to have way to swap
                         goProfile(currentProfile);
                     }});
+                addButton(name + ".delete", xDelete, y + pairOffsetButton, BoardGame.imgDelete, new ActionEndListener() {
+                    @Override public final void onActionEnd(final ActionEndEvent event) {
+                        //TODO prompt/delete
+                    }});
             }
-            addButton("Back", 4, 4, BoardGame.imgUndo, firstIndex > 0, BoardGame.squareBlack, new ActionEndListener() {
+            addButton("Back", buttonLeft, buttonLeft, BoardGame.imgUndo, firstIndex > 0, BoardGame.squareBlack, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goProfileSelect(firstIndex - profilesPerPage);
                 }});
-            addButton("Forward", 36, 4, BoardGame.imgRedo, (firstIndex + profilesPerPage) < size, BoardGame.squareBlack, new ActionEndListener() {
+            addButton("Forward", xDelete, buttonLeft, BoardGame.imgRedo, (firstIndex + profilesPerPage) < size, BoardGame.squareBlack, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goProfileSelect(firstIndex + profilesPerPage);
                 }});
