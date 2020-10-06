@@ -71,7 +71,16 @@ public class Menu {
                 }});
             addTopRight("Exit", BoardGame.imgExit, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    Pangine.getEngine().exit();
+                    goPrompt(
+                            "Exit?",
+                            new ActionEndListener() {
+                                @Override public final void onActionEnd(final ActionEndEvent event) {
+                                    Pangine.getEngine().exit();
+                                }},
+                            new ActionEndListener() {
+                                @Override public final void onActionEnd(final ActionEndEvent event) {
+                                    goMenu();
+                                }});
                 }});
         }
     }
@@ -285,6 +294,7 @@ public class Menu {
     protected final static class ProfileSelectScreen extends Panscreen {
         private final static int profilesPerPage = 4;
         private static int firstIndex = 0;
+        
         @Override
         protected final void load() throws Exception {
             BoardGame.initScreen(128);
@@ -306,7 +316,17 @@ public class Menu {
                     }});
                 addButton(name + ".delete", xDelete, y + pairOffsetButton, BoardGame.imgDelete, new ActionEndListener() {
                     @Override public final void onActionEnd(final ActionEndEvent event) {
-                        //TODO prompt/delete
+                        goPrompt(
+                                "Delete " + currentProfile.name + "?",
+                                new ActionEndListener() {
+                                    @Override public final void onActionEnd(final ActionEndEvent event) {
+                                        currentProfile.delete();
+                                        goProfileSelect(0);
+                                    }},
+                                new ActionEndListener() {
+                                    @Override public final void onActionEnd(final ActionEndEvent event) {
+                                        goProfileSelect(firstIndex);
+                                    }});
                     }});
             }
             addButton("Back", buttonLeft, buttonLeft, BoardGame.imgUndo, firstIndex > 0, BoardGame.squareBlack, new ActionEndListener() {
@@ -327,5 +347,32 @@ public class Menu {
     
     protected final static void newProfile() {
         goProfile(BoardGame.newProfile());
+    }
+    
+    protected final static void goPrompt(final String label, final ActionEndListener yesListener, final ActionEndListener noListener) {
+        Panscreen.set(new PromptScreen(label, yesListener, noListener));
+    }
+    
+    protected final static class PromptScreen extends Panscreen {
+        private final String label;
+        private final ActionEndListener yesListener;
+        private final ActionEndListener noListener;
+        
+        protected PromptScreen(final String label, final ActionEndListener yesListener, final ActionEndListener noListener) {
+            this.label = label;
+            this.yesListener = yesListener;
+            this.noListener = noListener;
+        }
+        
+        @Override
+        protected final void load() throws Exception {
+            BoardGame.initScreen(128);
+            final Pangine engine = Pangine.getEngine();
+            final int w2 = (engine.getEffectiveWidth() / 2), x = w2 - 8;
+            final int y = (engine.getEffectiveHeight() / 2) - 16;
+            addText(w2, y + 24, label).centerX();
+            addButton("Yes", x - 16, y, BoardGame.imgDone, yesListener);
+            addButton("No", x + 16, y, BoardGame.imgDelete, noListener);
+        }
     }
 }

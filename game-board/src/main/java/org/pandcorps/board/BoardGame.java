@@ -167,8 +167,7 @@ public class BoardGame extends BaseGame {
                 try {
                     profile.load(profileIndex);
                 } catch (final Exception e) {
-                    profile.deleted = true;
-                    profile.save();
+                    profile.delete();
                 }
                 profiles.add(profile);
             } else {
@@ -1080,7 +1079,8 @@ public class BoardGame extends BaseGame {
             seg.setValue(0, name);
             seg.setField(1, toField(color1));
             seg.setField(2, toField(color2));
-            final Writer w = Iotil.getWriter(getProfileFileName(profileIndex));
+            seg.setBoolean(3, deleted);
+            final Writer w = Iotil.getWriter(getFileName());
             try {
                 seg.saveln(w);
                 writeEndOfFile(w, seg);
@@ -1093,16 +1093,26 @@ public class BoardGame extends BaseGame {
         
         protected final void load(final int profileIndex) throws IOException {
             this.profileIndex = profileIndex;
-            final SegmentStream in = openSegmentStream(getProfileFileName(profileIndex));
+            final SegmentStream in = openSegmentStream(getFileName());
             try {
                 final Segment seg = in.readRequire(SEG_PROFILE);
                 name = seg.getValue(0);
                 color1 = toColor(seg.getField(1));
                 color2 = toColor(seg.getField(2));
+                deleted = seg.toBoolean(3);
                 validateEndOfFile(in);
             } finally {
                 in.close();
             }
+        }
+        
+        protected final void delete() {
+            deleted = true;
+            save();
+        }
+        
+        protected final String getFileName() {
+            return getProfileFileName(profileIndex);
         }
         
         protected final static String getProfileFileName(final int profileIndex) {
