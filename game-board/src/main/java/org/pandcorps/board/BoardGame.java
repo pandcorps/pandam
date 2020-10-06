@@ -456,7 +456,18 @@ public class BoardGame extends BaseGame {
                 module.getGrid().redo();
                 return true;
             case INDEX_NEW:
-                module.startNewGame();
+                module.getGrid().detach();
+                Menu.goPrompt(
+                        "New game?",
+                        new ActionEndListener() {
+                            @Override public final void onActionEnd(final ActionEndEvent event) {
+                                module.startNewGame();
+                                goGame();
+                            }},
+                        new ActionEndListener() {
+                            @Override public final void onActionEnd(final ActionEndEvent event) {
+                                goGame();
+                            }});
                 return true;
             case INDEX_MENU:
                 module.getGrid().detach();
@@ -1055,6 +1066,16 @@ public class BoardGame extends BaseGame {
         
         private final int getProfileIndex() {
             return (profile == null) ? -1 : profile.profileIndex;
+        }
+        
+        @Override
+        public final boolean equals(final Object o) {
+            return (o instanceof BoardGamePlayer) && index == ((BoardGamePlayer) o).index;
+        }
+        
+        @Override
+        public final int hashCode() {
+            return index;
         }
     }
     

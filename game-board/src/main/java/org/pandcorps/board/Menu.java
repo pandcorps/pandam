@@ -311,7 +311,20 @@ public class Menu {
                 final String name = currentProfile.name;
                 addPair(y, name, BoardGame.imgOpen, new ActionEndListener() {
                     @Override public final void onActionEnd(final ActionEndEvent event) {
-                        //TODO What if switch to other player? swap them? don't allow?, maybe nice to have way to swap
+                        for (final BoardGamePlayer otherPlayer : BoardGame.module.players) {
+                            if (otherPlayer.equals(player)) {
+                                continue;
+                            } else if (otherPlayer.profile.profileIndex == currentIndex) {
+                                /*
+                                If the new profile picked for this player matches the other player's current profile,
+                                then swap the profiles.
+                                Set the other player's profile to this player's profile.
+                                Then this player's profile will be set to the select profile below as always.
+                                */
+                                otherPlayer.profile = profile;
+                                break;
+                            }
+                        }
                         goProfile(currentProfile);
                     }});
                 addButton(name + ".delete", xDelete, y + pairOffsetButton, BoardGame.imgDelete, new ActionEndListener() {
