@@ -36,6 +36,7 @@ import org.pandcorps.pandax.touch.*;
 
 public class Menu {
     private final static int buttonLeft = 4;
+    private final static int buttonBottom = 4;
     private final static int textLeft = 24;
     private final static int pairOffsetButton = 4;
     private final static int nameMaxCharacters = 8;
@@ -44,9 +45,9 @@ public class Menu {
     private static BoardGameProfile profile;
     private static Variable<Pancolor> color;
     
-    protected final static class ModuleScreen extends Panscreen {
+    protected final static class ModuleScreen extends BaseScreen {
         @Override
-        protected final void load() throws Exception {
+        protected final void afterBaseLoad() {
             
         }
     }
@@ -55,10 +56,9 @@ public class Menu {
         Panscreen.set(new MenuScreen());
     }
     
-    protected final static class MenuScreen extends Panscreen {
+    protected final static class MenuScreen extends BaseScreen {
         @Override
-        protected final void load() throws Exception {
-            BoardGame.initScreen(96);
+        protected final void afterBaseLoad() {
             player = null;
             profile = null;
             profileY = 0;
@@ -178,19 +178,18 @@ public class Menu {
         goProfile();
     }
     
-    protected final static class ProfileScreen extends Panscreen {
+    protected final static class ProfileScreen extends BaseScreen {
         @Override
-        protected final void load() throws Exception {
-            BoardGame.initScreen(96);
-            final int h = Pangine.getEngine().getEffectiveHeight();
-            addPair(h - 32, profile.name, BoardGame.imgEdit, new ActionEndListener() {
+        protected final void afterBaseLoad() {
+            addPair(getButtonTop() - pairOffsetButton, profile.name, BoardGame.imgEdit, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     Panscreen.set(new NameScreen());
                 }});
-            addColor(h - 64, "Primary", new Variable<Pancolor>() {
+            final int bottom = buttonBottom - pairOffsetButton;
+            addColor(bottom + 32, "Primary", new Variable<Pancolor>() {
                 @Override public final Pancolor get() { return profile.color1; }
                 @Override public final void set(final Pancolor t) { profile.color1 = t; }});
-            addColor(h - 96, "Alternate", new Variable<Pancolor>() {
+            addColor(bottom, "Alternate", new Variable<Pancolor>() {
                 @Override public final Pancolor get() { return profile.color2; }
                 @Override public final void set(final Pancolor t) { profile.color2 = t; }});
             addDone(new ActionEndListener() {
@@ -227,14 +226,13 @@ public class Menu {
         return (color == null) ? def : new AdjustedPanmage(Pantil.vmid(), BoardGame.circle, color);
     }
     
-    protected final static class ColorScreen extends Panscreen {
+    protected final static class ColorScreen extends BaseScreen {
         @Override
-        protected final void load() throws Exception {
-            BoardGame.initScreen(96);
+        protected final void afterBaseLoad() {
             final Pangine engine = Pangine.getEngine();
             final int w = engine.getEffectiveWidth(), h = engine.getEffectiveHeight();
             final int x1 = w / 6, x2 = w * 2 / 6, x3 = w * 3 / 6, x4 = w * 4 / 6, x5 = w * 5 / 6;
-            final int y2 = h / 3 - 8, y1 = h * 2 / 3;
+            final int y2 = h / 3, y1 = h * 2 / 3;
             addColorOption(x1, y1, Pancolor.WHITE);
             addColorOption(x1, y2, BoardGame.BLACK);
             addColorOption(x2, y1, Pancolor.RED);
@@ -261,10 +259,9 @@ public class Menu {
         goProfile();
     }
     
-    protected final static class NameScreen extends Panscreen {
+    protected final static class NameScreen extends BaseScreen {
         @Override
-        protected final void load() throws Exception {
-            BoardGame.initScreen(96);
+        protected final void afterBaseLoad() {
             new TouchKeyboard(BoardGame.square, getSquareActive(), BoardGame.font);
             final Panform form = new Panform(ControlScheme.getDefaultKeyboard());
             final Input input = new KeyInput(BoardGame.font, new InputSubmitListener() {
@@ -291,13 +288,12 @@ public class Menu {
         Panscreen.set(new ProfileSelectScreen());
     }
     
-    protected final static class ProfileSelectScreen extends Panscreen {
+    protected final static class ProfileSelectScreen extends BaseScreen {
         private final static int profilesPerPage = 4;
         private static int firstIndex = 0;
         
         @Override
-        protected final void load() throws Exception {
-            BoardGame.initScreen(128);
+        protected final void afterBaseLoad() {
             final int size = BoardGame.getActiveProfilesSize();
             final int h = Pangine.getEngine().getEffectiveHeight();
             final int xDelete = buttonLeft + 24 + (8 * nameMaxCharacters);
@@ -342,11 +338,11 @@ public class Menu {
                                     }});
                     }});
             }
-            addButton("Back", buttonLeft, buttonLeft, BoardGame.imgUndo, firstIndex > 0, BoardGame.squareBlack, new ActionEndListener() {
+            addButton("Back", buttonLeft, buttonBottom, BoardGame.imgUndo, firstIndex > 0, BoardGame.squareBlack, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goProfileSelect(firstIndex - profilesPerPage);
                 }});
-            addButton("Forward", xDelete, buttonLeft, BoardGame.imgRedo, (firstIndex + profilesPerPage) < size, BoardGame.squareBlack, new ActionEndListener() {
+            addButton("Forward", xDelete, buttonBottom, BoardGame.imgRedo, (firstIndex + profilesPerPage) < size, BoardGame.squareBlack, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goProfileSelect(firstIndex + profilesPerPage);
                 }});
@@ -366,7 +362,7 @@ public class Menu {
         Panscreen.set(new PromptScreen(label, yesListener, noListener));
     }
     
-    protected final static class PromptScreen extends Panscreen {
+    protected final static class PromptScreen extends BaseScreen {
         private final String label;
         private final ActionEndListener yesListener;
         private final ActionEndListener noListener;
@@ -378,8 +374,7 @@ public class Menu {
         }
         
         @Override
-        protected final void load() throws Exception {
-            BoardGame.initScreen(128);
+        protected final void afterBaseLoad() {
             final Pangine engine = Pangine.getEngine();
             final int w2 = (engine.getEffectiveWidth() / 2), x = w2 - 8;
             final int y = (engine.getEffectiveHeight() / 2) - 16;
