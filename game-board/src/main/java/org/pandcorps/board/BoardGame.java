@@ -46,10 +46,10 @@ public class BoardGame extends BaseGame {
     protected final static String RES = "org/pandcorps/board/";
     
     protected final static int DIM = 16;
-    protected final static int TITLE_COLUMNS = 24;
-    protected final static int TITLE_ROWS = 14;
-    protected final static int TITLE_W = TITLE_COLUMNS * DIM; // 384
-    protected final static int TITLE_H = TITLE_ROWS * DIM; // 224;
+    protected final static int TITLE_COLUMNS = 14;
+    protected final static int TITLE_ROWS = 8;
+    protected final static int TITLE_W = TITLE_COLUMNS * DIM; // 224
+    protected final static int TITLE_H = TITLE_ROWS * DIM; // 128;
     
     protected final static int DEPTH_CELL = 0;
     protected final static int DEPTH_PIECE = 2;
@@ -88,6 +88,7 @@ public class BoardGame extends BaseGame {
     protected static Panmage imgMenu = null;
     protected static Panmage imgEdit = null;
     protected static Panmage imgOpen = null;
+    protected static Panmage imgSave = null;
     protected static Panmage imgDelete = null;
     protected static Panmage imgDone = null;
     protected static Panmage imgExit = null;
@@ -108,7 +109,7 @@ public class BoardGame extends BaseGame {
     
     @Override
     protected final boolean isFullScreen() {
-        return false;
+        return true;
     }
     
     @Override
@@ -141,7 +142,7 @@ public class BoardGame extends BaseGame {
     private final static void loadResources() {
         final Pangine engine = Pangine.getEngine();
         if (isCursorNeeded()) {
-            imgCursor = engine.createImage(PRE_IMG + "cursor", RES + "Cursor.png");
+            imgCursor = engine.createImage(PRE_IMG + "cursor", new FinPanple2(0, 15), null, null, RES + "Cursor.png");
         }
         imgUndo = engine.createImage(PRE_IMG + "undo", RES + "Undo.png");
         imgRedo = new AdjustedPanmage(PRE_IMG + "redo", imgUndo, 0, true, false);
@@ -149,6 +150,7 @@ public class BoardGame extends BaseGame {
         imgMenu = engine.createImage(PRE_IMG + "menu", RES + "Menu.png");
         imgEdit = engine.createImage(PRE_IMG + "edit", RES + "Pencil.png");
         imgOpen = engine.createImage(PRE_IMG + "open", RES + "Open.png");
+        imgSave = engine.createImage(PRE_IMG + "save", RES + "Save.png");
         imgDelete = engine.createImage(PRE_IMG + "delete", RES + "Delete.png");
         imgDone = engine.createImage(PRE_IMG + "done", RES + "Check.png");
         imgExit = engine.createImage(PRE_IMG + "exit", RES + "Exit.png");
@@ -299,18 +301,23 @@ public class BoardGame extends BaseGame {
         Panscreen.set(new BoardGameScreen());
     }
     
-    protected final static void initScreen(final int size) {
-        final Pangine engine = Pangine.getEngine();
-        engine.setBgColor(Pancolor.GREY);
-        engine.enableColorArray();
-        engine.zoomToMinimum(size);
-        addCursor();
-    }
-    
-    protected final static class BoardGameScreen extends Panscreen {
+    protected static class BaseScreen extends Panscreen {
         @Override
         protected final void load() {
-            initScreen(module.numVerticalCells * DIM);
+            final Pangine engine = Pangine.getEngine();
+            engine.setBgColor(Pancolor.GREY);
+            engine.enableColorArray();
+            addCursor();
+            afterBaseLoad();
+        }
+        
+        protected void afterBaseLoad() {
+        }
+    }
+    
+    protected final static class BoardGameScreen extends BaseScreen {
+        @Override
+        protected final void afterBaseLoad() {
             module.prepare();
             final int h = Pangine.getEngine().getEffectiveHeight();
             addText(label, h - 16);
