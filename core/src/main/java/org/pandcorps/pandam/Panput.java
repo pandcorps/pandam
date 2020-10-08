@@ -241,9 +241,9 @@ public abstract class Panput {
 		
 		public TouchButton(final Panteraction interaction, final Panlayer layer, final String name, final int x, final int y, final float z,
                            final Panmage img, final Panmage imgActive, final Panmage imgOverlay, final int xOverlay, final int yOverlay,
-                           final MultiFont fonts, final CharSequence txt, final int xText, final int yText, final boolean moveCancel) {
+                           final Font font, final CharSequence txt, final int xText, final int yText, final boolean moveCancel) {
 		    this(interaction, name, x, y, (int) img.getSize().getX(), (int) img.getSize().getY(), moveCancel);
-		    initActor(layer, z, img, imgActive, imgOverlay, xOverlay, yOverlay, fonts, txt, xText, yText);
+		    initActor(layer, z, img, imgActive, imgOverlay, xOverlay, yOverlay, font, txt, xText, yText);
 		}
 		
 		public final void setPosition(final int x, final int y) {
@@ -287,10 +287,10 @@ public abstract class Panput {
 		
 		public final void initActor(final Panlayer layer, final float z, final Panmage img, final Panmage imgActive,
 		                            final Panmage imgOverlay, final int xOverlay, final int yOverlay,
-		                            final MultiFont fonts, final CharSequence txt, final int xText, final int yText) {
+		                            final Font font, final CharSequence txt, final int xText, final int yText) {
 		    setActor(addActor(layer, xMin, yMin, z, img), imgActive);
 		    setOverlay(imgOverlay, xOverlay, yOverlay);
-		    setText(fonts, txt, xText, yText);
+		    setText(font, txt, xText, yText);
 		    if (this.layer == null) {
 		        this.layer = layer;
 		    }
@@ -308,10 +308,10 @@ public abstract class Panput {
             Z_TEXT = zText;
         }
 		
-		public final void setText(final MultiFont fonts, final CharSequence txt, final int xText, final int yText) {
+		public final void setText(final Font font, final CharSequence txt, final int xText, final int yText) {
 			Panctor.destroy(text);
 		    if (txt != null) {
-		        text = new Pantext(Pantil.vmid(), fonts, txt);
+		        text = new Pantext(Pantil.vmid(), font, txt);
 		        text.getPosition().set(xMin + xText, yMin + yText, actor.getPosition().getZ() + Z_TEXT);
 		        layer.addActor(text);
 		    }
