@@ -316,6 +316,7 @@ public abstract class GlPangine extends Pangine {
 			final TouchEvent event = touchEvents.get(i);
     		final Integer key = Integer.valueOf(event.getId());
     		final int x = event.getX(), y = event.getY();
+    		setTouch(x, y);
     		Panput input = interaction.TOUCH;
     		float bestDist = Float.MAX_VALUE;
     		boolean cancel = false;
