@@ -63,7 +63,8 @@ public class BoardGame extends BaseGame {
     protected final static String SEG_PROFILE = "PRF";
     protected final static String SEG_END_OF_FILE = "EOF";
     
-    protected final static String LOC_SUFFIX_AUTOSAVE = "_autosave.txt";
+    protected final static String EXT_SAVE = ".txt";
+    protected final static String LOC_SUFFIX_AUTOSAVE = "_autosave" + EXT_SAVE;
     
     protected final static int MAX_HISTORY_SIZE = 5;
     
@@ -616,16 +617,26 @@ public class BoardGame extends BaseGame {
             }
         }
         
-        public final void load(final SegmentStream in) throws IOException {
-            clear();
-            Segment seg;
-            seg = in.readRequire(SEG_CONTEXT);
+        public final BoardGameContext parseGameContext(final SegmentStream in) throws IOException {
+            final Segment seg = in.readRequire(SEG_CONTEXT);
             final int currentStateIndex = seg.intValue(0);
             final List<Field> playerFields = seg.getRepetitions(1);
             final int numPlayerFields = playerFields.size();
+            final int[] profileIndices = new int[numPlayerFields];
             for (int playerIndex = 0; playerIndex < numPlayerFields; playerIndex++) {
-                final int profileIndex = playerFields.get(playerIndex).intValue();
-                loadProfile(playerIndex, profileIndex);
+                profileIndices[playerIndex] = playerFields.get(playerIndex).intValue();
+            }
+            return new BoardGameContext(currentStateIndex, profileIndices);
+        }
+        
+        public final void load(final SegmentStream in) throws IOException {
+            clear();
+            Segment seg;
+            final BoardGameContext context = parseGameContext(in);
+            final int[] profileIndices = context.profileIndices;
+            final int numPlayers = profileIndices.length;
+            for (int playerIndex = 0; playerIndex < numPlayers; playerIndex++) {
+                loadProfile(playerIndex, profileIndices[playerIndex]);
             }
             final BoardGameGrid<P> grid = getGrid();
             final List<BoardGameState<P>> states = grid.states;
@@ -651,7 +662,7 @@ public class BoardGame extends BaseGame {
                 states.add(new BoardGameState<P>(pieces, playerIndex, result));
             }
             validateEndOfFile(in);
-            getGrid().setState(currentStateIndex);
+            getGrid().setState(context.currentStateIndex);
         }
         
         protected final void loadProfile(final int playerIndex, final int profileIndex) throws IOException {
@@ -1167,6 +1178,16 @@ public class BoardGame extends BaseGame {
         protected BoardGameResult(final int resultStatus, final int playerIndex) {
             this.resultStatus = resultStatus;
             this.playerIndex = playerIndex;
+        }
+    }
+    
+    protected final static class BoardGameContext {
+        final int currentStateIndex;
+        final int[] profileIndices;
+        
+        protected BoardGameContext(final int currentStateIndex, final int[] profileIndices) {
+            this.currentStateIndex = currentStateIndex;
+            this.profileIndices = profileIndices;
         }
     }
     

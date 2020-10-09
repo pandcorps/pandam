@@ -25,6 +25,7 @@ package org.pandcorps.board;
 import org.pandcorps.board.BoardGame.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
@@ -40,6 +41,7 @@ public class Menu {
     private final static int textLeft = 24;
     private final static int pairOffsetButton = 4;
     private final static int nameMaxCharacters = 8;
+    private final static int maxSavedGamesPerModule = 5;
     private static int profileY = 0;
     private static BoardGamePlayer player;
     private static BoardGameProfile profile;
@@ -65,6 +67,15 @@ public class Menu {
             for (int i = BoardGame.module.numPlayers - 1; i >= 0; i--) {
                 addProfile(BoardGame.module.players[i]);
             }
+            final int top = getButtonTop();
+            addPair(top - pairOffsetButton, "Save Game", BoardGame.imgSave, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goSaveGameScreen();
+                }});
+            addPair(top - pairOffsetButton - 24, "Load Game", BoardGame.imgOpen, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goLoadGameScreen();
+                }});
             addDone(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     BoardGame.goGame();
@@ -87,6 +98,13 @@ public class Menu {
     
     protected final static void addDone(final ActionEndListener listener) {
         addButton("Done", getButtonRight(), 4, BoardGame.imgDone, listener);
+    }
+    
+    protected final static void addDoneGoMenu() {
+        addDone(new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                goMenu();
+            }});
     }
     
     protected final static void addTopRight(final String name, final Panmage img, final ActionEndListener listener) {
@@ -112,9 +130,13 @@ public class Menu {
         profileY += 24;
     }
     
-    protected final static void addPair(final int y, final String name, final Panmage img, final ActionEndListener listener) {
+    protected final static TouchButton addPair(final int y, final String name, final Panmage img, final ActionEndListener listener) {
         addText(textLeft, y + 8, name);
-        addButton("Edit." + name, buttonLeft, y + pairOffsetButton, img, listener);
+        return addButton("Edit." + name, buttonLeft, y + pairOffsetButton, img, listener);
+    }
+    
+    protected final static void addPair(final int y, final String name, final Panmage img, final boolean enabled, final ActionEndListener listener) {
+        setEnabled(addPair(y, name, img, listener), enabled);
     }
     
     protected final static TouchButton addButton(final String name, final int x, final int y, final Panmage img, final ActionEndListener listener) {
@@ -126,9 +148,12 @@ public class Menu {
     }
     
     protected final static TouchButton addButton(final String name, final int x, final int y, final Panmage img,
-            final boolean enabled, final Panmage imgDisabled, final ActionEndListener listener) {
-        final TouchButton btn = addButton(name, x, y, img, listener);
-        btn.setImageDisabled(imgDisabled);
+            final boolean enabled, final ActionEndListener listener) {
+        return setEnabled(addButton(name, x, y, img, listener), enabled);
+    }
+    
+    protected final static TouchButton setEnabled(final TouchButton btn, final boolean enabled) {
+        btn.setImageDisabled(BoardGame.squareBlack);
         btn.setEnabled(enabled);
         return btn;
     }
@@ -192,10 +217,7 @@ public class Menu {
             addColor(bottom, "Alternate", new Variable<Pancolor>() {
                 @Override public final Pancolor get() { return profile.color2; }
                 @Override public final void set(final Pancolor t) { profile.color2 = t; }});
-            addDone(new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) {
-                    goMenu();
-                }});
+            addDoneGoMenu();
             if (BoardGame.getActiveProfilesSize() <= 2) {
                 addNewProfileButton();
             } else {
@@ -338,11 +360,11 @@ public class Menu {
                                     }});
                     }});
             }
-            addButton("Back", buttonLeft, buttonBottom, BoardGame.imgUndo, firstIndex > 0, BoardGame.squareBlack, new ActionEndListener() {
+            addButton("Back", buttonLeft, buttonBottom, BoardGame.imgUndo, firstIndex > 0, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goProfileSelect(firstIndex - profilesPerPage);
                 }});
-            addButton("Forward", xDelete, buttonBottom, BoardGame.imgRedo, (firstIndex + profilesPerPage) < size, BoardGame.squareBlack, new ActionEndListener() {
+            addButton("Forward", xDelete, buttonBottom, BoardGame.imgRedo, (firstIndex + profilesPerPage) < size, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goProfileSelect(firstIndex + profilesPerPage);
                 }});
@@ -382,5 +404,89 @@ public class Menu {
             addButton("Yes", x - 16, y, BoardGame.imgDone, yesListener);
             addButton("No", x + 16, y, BoardGame.imgDelete, noListener);
         }
+    }
+    
+    protected final static void goSaveGameScreen() {
+        Panscreen.set(new SaveScreen(BoardGame.imgSave, true, new SaveGameHandler() {
+            @Override public final void handle(final String fileName) {
+                BoardGame.save(fileName);
+                goSaveGameScreen();
+            }}));
+    }
+    
+    protected final static void goLoadGameScreen() {
+        Panscreen.set(new SaveScreen(BoardGame.imgOpen, false, new SaveGameHandler() {
+            @Override public final void handle(final String fileName) {
+                load(fileName);
+            }}));
+    }
+    
+    protected final static void load(final String fileName) {
+        try {
+            BoardGame.module.load(fileName);
+            BoardGame.goGame();
+        } catch (final Exception e) {
+            Iotil.delete(fileName);
+            goLoadGameScreen();
+        }
+    }
+    
+    protected final static class SaveScreen extends BaseScreen {
+        private final Panmage img;
+        private final boolean handleEmptyAllowed;
+        private final SaveGameHandler handler;
+        
+        protected SaveScreen(final Panmage img, final boolean handleEmptyAllowed, final SaveGameHandler handler) {
+            this.img = img;
+            this.handler = handler;
+            this.handleEmptyAllowed = handleEmptyAllowed;
+        }
+        
+        @Override
+        protected final void afterBaseLoad() {
+            final BoardGameModule<?> module = BoardGame.module;
+            final String moduleName = module.getName();
+            final int top = getButtonTop() - pairOffsetButton;
+            for (int i = 0; i < maxSavedGamesPerModule; i++) {
+                final String fileName = moduleName + i + BoardGame.EXT_SAVE;
+                final String parsed = parseGameContext(fileName);
+                final String label = Chartil.nvl(parsed, "Empty");
+                addPair(top - (26 * i), label, img, handleEmptyAllowed || (parsed != null), new ActionEndListener() {
+                    @Override public final void onActionEnd(final ActionEndEvent event) {
+                        handler.handle(fileName);
+                    }});
+            }
+            addDoneGoMenu();
+        }
+        
+        protected final static String parseGameContext(final String loc) {
+            if (!Iotil.exists(loc)) {
+                return null;
+            }
+            SegmentStream in = null;
+            try {
+                in = BoardGame.openSegmentStream(loc);
+                final BoardGameContext context = BoardGame.module.parseGameContext(in);
+                final StringBuilder b = new StringBuilder();
+                for (final int profileIndex : context.profileIndices) {
+                    final BoardGameProfile profile = BoardGame.profiles.get(profileIndex);
+                    if (profile.deleted) {
+                        return null;
+                    } else if (b.length() > 0) {
+                        b.append('/');
+                    }
+                    b.append(profile.name);
+                }
+                return b.toString();
+            } catch (final Exception e) {
+                return null;
+            } finally {
+                in.close();
+            }
+        }
+    }
+    
+    protected static interface SaveGameHandler {
+        public void handle(final String fileName);
     }
 }
