@@ -1113,6 +1113,12 @@ public class BoardGame extends BaseGame {
             save();
         }
         
+        protected final void changeName(final String name) {
+            if (Chartil.isValued(name)) {
+                this.name = name;
+            }
+        }
+        
         protected final void save() {
             final Segment seg = new Segment(SEG_PROFILE);
             seg.setValue(0, name);
