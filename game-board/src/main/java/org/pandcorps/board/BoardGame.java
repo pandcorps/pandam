@@ -478,11 +478,15 @@ public class BoardGame extends BaseGame {
                             }});
                 return true;
             case INDEX_MENU:
-                module.getGrid().detach();
-                Menu.goMenu();
+                goMenu();
                 return true;
         }
         return false;
+    }
+    
+    protected final static void goMenu() {
+        module.getGrid().detach();
+        Menu.goMenu();
     }
     
     protected abstract static class BoardGameModule<P extends BoardGamePiece> {
@@ -533,6 +537,10 @@ public class BoardGame extends BaseGame {
                 }};
             grid.register(interaction.KEY_R, redoListener);
             grid.register(interaction.KEY_Y, redoListener);
+            Menu.addBackListener(grid, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goMenu();
+                }});
         }
         
         protected final String getName() {
