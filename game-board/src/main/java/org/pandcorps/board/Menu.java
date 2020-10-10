@@ -288,13 +288,11 @@ public class Menu {
             final Panform form = new Panform(ControlScheme.getDefaultKeyboard());
             final Input input = new KeyInput(BoardGame.font, new InputSubmitListener() {
                 @Override public final void onSubmit(final InputSubmitEvent event) {
-                    profile.name = event.toString();
-                    finishProfileChange();
+                    changeName(event.toString());
                 }});
             addDone(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    profile.name = input.getText();
-                    finishProfileChange();
+                    changeName(input.getText());
                 }});
             input.setMax(nameMaxCharacters);
             final Pantext lbl = input.getLabel();
@@ -302,6 +300,11 @@ public class Menu {
             input.append(profile.name);
             form.addItem(input);
             form.init();
+        }
+        
+        protected final void changeName(final String name) {
+            profile.changeName(name);
+            finishProfileChange();
         }
     }
     
