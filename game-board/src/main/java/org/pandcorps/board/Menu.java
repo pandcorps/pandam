@@ -113,7 +113,7 @@ public class Menu {
     }
     
     protected final static void addDone(final boolean backButton, final ActionEndListener listener) {
-        final TouchButton btn = addButton("Done", getButtonRight(), 4, BoardGame.imgDone, listener);
+        final TouchButton btn = addButton("Done", getButtonRight(), buttonBottom, BoardGame.imgDone, listener);
         if (backButton) {
             addBackListener(btn, listener);
         }
@@ -284,6 +284,10 @@ public class Menu {
             addColorOption(x4, y2, Pancolor.BLUE);
             addColorOption(x5, y1, Pancolor.MAGENTA);
             addColorOption(x5, y2, null);
+            addDone(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goProfile();
+                }});
         }
     }
     
