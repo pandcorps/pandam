@@ -58,6 +58,16 @@ public class Menu {
         Panscreen.set(new MenuScreen());
     }
     
+    protected final static void addBackListener(final TouchButton btn, final ActionEndListener listener) {
+        addBackListener(btn.getActor(), listener);
+    }
+    
+    protected final static void addBackListener(final Panctor actor, final ActionEndListener listener) {
+        final Panteraction interaction = Pangine.getEngine().getInteraction();
+        actor.register(interaction.BACK, listener);
+        actor.register(interaction.KEY_ESCAPE, listener);
+    }
+    
     protected final static class MenuScreen extends BaseScreen {
         @Override
         protected final void afterBaseLoad() {
@@ -76,14 +86,14 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goLoadGameScreen();
                 }});
-            addDone(new ActionEndListener() {
+            addDone(false, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     BoardGame.goGame();
                 }});
-            addTopRight("Exit", BoardGame.imgExit, new ActionEndListener() {
+            final ActionEndListener exitListener = new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goPrompt(
-                            "Exit?",
+                            "Exit?", true,
                             new ActionEndListener() {
                                 @Override public final void onActionEnd(final ActionEndEvent event) {
                                     Pangine.getEngine().exit();
@@ -92,12 +102,21 @@ public class Menu {
                                 @Override public final void onActionEnd(final ActionEndEvent event) {
                                     goMenu();
                                 }});
-                }});
+                }};
+            final TouchButton btnExit = addTopRight("Exit", BoardGame.imgExit, exitListener);
+            addBackListener(btnExit, exitListener);
         }
     }
     
     protected final static void addDone(final ActionEndListener listener) {
-        addButton("Done", getButtonRight(), 4, BoardGame.imgDone, listener);
+        addDone(true, listener);
+    }
+    
+    protected final static void addDone(final boolean backButton, final ActionEndListener listener) {
+        final TouchButton btn = addButton("Done", getButtonRight(), 4, BoardGame.imgDone, listener);
+        if (backButton) {
+            addBackListener(btn, listener);
+        }
     }
     
     protected final static void addDoneGoMenu() {
@@ -107,8 +126,8 @@ public class Menu {
             }});
     }
     
-    protected final static void addTopRight(final String name, final Panmage img, final ActionEndListener listener) {
-        addButton(name, getButtonRight(), getButtonTop(), img, listener);
+    protected final static TouchButton addTopRight(final String name, final Panmage img, final ActionEndListener listener) {
+        return addButton(name, getButtonRight(), getButtonTop(), img, listener);
     }
     
     protected final static int getButtonRight() {
@@ -384,16 +403,22 @@ public class Menu {
     }
     
     protected final static void goPrompt(final String label, final ActionEndListener yesListener, final ActionEndListener noListener) {
-        Panscreen.set(new PromptScreen(label, yesListener, noListener));
+        goPrompt(label, false, yesListener, noListener);
+    }
+    
+    protected final static void goPrompt(final String label, final boolean backTreatedAsYes, final ActionEndListener yesListener, final ActionEndListener noListener) {
+        Panscreen.set(new PromptScreen(label, backTreatedAsYes, yesListener, noListener));
     }
     
     protected final static class PromptScreen extends BaseScreen {
         private final String label;
+        private final boolean backTreatedAsYes;
         private final ActionEndListener yesListener;
         private final ActionEndListener noListener;
         
-        protected PromptScreen(final String label, final ActionEndListener yesListener, final ActionEndListener noListener) {
+        protected PromptScreen(final String label, final boolean backTreatedAsYes, final ActionEndListener yesListener, final ActionEndListener noListener) {
             this.label = label;
+            this.backTreatedAsYes = backTreatedAsYes;
             this.yesListener = yesListener;
             this.noListener = noListener;
         }
@@ -404,8 +429,9 @@ public class Menu {
             final int w2 = (engine.getEffectiveWidth() / 2), x = w2 - 8;
             final int y = (engine.getEffectiveHeight() / 2) - 16;
             addText(w2, y + 24, label).centerX();
-            addButton("Yes", x - 16, y, BoardGame.imgDone, yesListener);
+            final TouchButton btnYes = addButton("Yes", x - 16, y, BoardGame.imgDone, yesListener);
             addButton("No", x + 16, y, BoardGame.imgDelete, noListener);
+            addBackListener(btnYes, backTreatedAsYes ? yesListener : noListener);
         }
     }
     
