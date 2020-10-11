@@ -25,6 +25,7 @@ package org.pandcorps.board;
 import java.io.*;
 import java.util.*;
 
+import org.pandcorps.board.Menu.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
@@ -81,6 +82,9 @@ public class BoardGame extends BaseGame {
     protected final static int RESULT_WIN = 0;
     protected final static int RESULT_TIE = 1;
     
+    protected final static CheckersModule CHECKERS = new CheckersModule();
+    protected final static OthelloModule OTHELLO = new OthelloModule();
+    
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage imgCursor = null;
     protected static Panmage imgUndo = null;
@@ -136,8 +140,7 @@ public class BoardGame extends BaseGame {
                 }});
         }
         BoardGame.room = room;
-        module = new CheckersModule();
-        Panscreen.set(new LogoScreen(BoardGameScreen.class, loaders));
+        Panscreen.set(new LogoScreen(ModuleScreen.class, loaders));
     }
     
     private final static void loadResources() {
@@ -272,7 +275,7 @@ public class BoardGame extends BaseGame {
         cursor.getPosition().setZ(DEPTH_CURSOR);
     }
     
-    private final static Pancolor pickHighlightColor() {
+    protected final static Pancolor pickNonPlayerColor() {
         final BoardGamePlayer[] players = module.players;
         final Pancolor color0 = players[0].getColor();
         final Pancolor color1 = players[1].getColor();
@@ -328,7 +331,7 @@ public class BoardGame extends BaseGame {
             } else {
                 loadGame();
             }
-            highlightColor = pickHighlightColor(); // Must be done after loading game (which picks player profiles)
+            module.pickColors(); // Must be done after loading game (which picks player profiles)
         }
         
         protected final void loadGame() {
@@ -384,7 +387,15 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static void toggleCurrentPlayer() {
+        toggleCurrentPlayerPeak();
+        toggleCurrentPlayerCommit();
+    }
+    
+    protected final static void toggleCurrentPlayerPeak() {
         module.currentPlayerIndex = getNextPlayerIndex();
+    }
+    
+    protected final static void toggleCurrentPlayerCommit() {
         addState();
     }
     
@@ -541,6 +552,10 @@ public class BoardGame extends BaseGame {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goMenu();
                 }});
+        }
+        
+        protected void pickColors() {
+            highlightColor = pickNonPlayerColor();
         }
         
         protected final String getName() {
@@ -792,7 +807,7 @@ public class BoardGame extends BaseGame {
         }
         
         protected final P get(final int index) {
-            return isValid(index) ? grid.get(index) : null;
+            return isValid(index) ? Coltil.get(grid, index) : null;
         }
         
         protected final void set(final int x, final int y, final P piece) {
@@ -818,7 +833,7 @@ public class BoardGame extends BaseGame {
             grid.clear();
             for (final P piece : pieces) {
                 if (piece != null) {
-                    Coltil.set(grid, getIndexRequired(piece.x, piece.y), piece);
+                    Coltil.set(grid, getIndexRequired(piece.x, piece.y), module.copy(piece));
                 }
             }
         }
@@ -916,7 +931,9 @@ public class BoardGame extends BaseGame {
         }
         
         protected BoardGameState<P> newState() {
-            return new BoardGameState<P>(module.copy(grid), module.currentPlayerIndex, module.result);
+            final List<P> copied = module.copy(grid);
+            set(copied);
+            return new BoardGameState<P>(copied, module.currentPlayerIndex, module.result);
         }
         
         protected final void setState(final int newStateIndex) {
@@ -1025,12 +1042,18 @@ public class BoardGame extends BaseGame {
     protected final static BoardGameCell square1 = new BoardGameCell() {
         @Override public final Panmage getImage() { return square; }
         @Override public final Pancolor getColor() { return module.players[1].getColor(); }};
+    protected final static BoardGameCell squareC = new BoardGameCell() {
+        @Override public final Panmage getImage() { return square; }
+        @Override public final Pancolor getColor() { return module.players[module.currentPlayerIndex].getColor(); }};
     protected final static BoardGameCell squareH = new BoardGameCell() {
         @Override public final Panmage getImage() { return square; }
         @Override public final Pancolor getColor() { return highlightColor; }};
-    protected final static BoardGameCell getPlayerSquare(final int x, final int y) {
+    protected final static boolean isHighlightSquare(final int x, final int y) {
         final int index = module.getGrid().getIndexOptional(x, y);
-        if ((index >= 0) && highlightSquares.contains(Integer.valueOf(index))) {
+        return (index >= 0) && highlightSquares.contains(Integer.valueOf(index));
+    }
+    protected final static BoardGameCell getPlayerSquare(final int x, final int y) {
+        if (isHighlightSquare(x, y)) {
             return squareH;
         }
         return (x % 2) == (y % 2) ? square0 : square1;
@@ -1192,6 +1215,10 @@ public class BoardGame extends BaseGame {
         protected BoardGameResult(final int resultStatus, final int playerIndex) {
             this.resultStatus = resultStatus;
             this.playerIndex = playerIndex;
+        }
+        
+        protected final static BoardGameResult newTie() {
+            return new BoardGameResult(RESULT_TIE, -1);
         }
     }
     
