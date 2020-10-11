@@ -80,7 +80,24 @@ public class OthelloModule extends BoardGameModule<OthelloPiece> {
     
     @Override
     protected final BoardGameResult processTouch(final int cellIndex) {
-        throw new UnsupportedOperationException();
+        if (!BoardGame.isHighlight(cellIndex)) {
+            return null;
+        }
+        grid.set(cellIndex, new OthelloPiece(currentPlayerIndex));
+        flipOutflankedPieces(grid.getX(cellIndex), grid.getY(cellIndex));
+        try {
+            for (int i = 0; i < numPlayers; i++) {
+                // If a player's turn is skipped, just peak so that no state is added for the skipped turn
+                BoardGame.toggleCurrentPlayerPeak();
+                highlightPossibleCells();
+                if (!BoardGame.highlightSquares.isEmpty()) {
+                    return null;
+                }
+            }
+            return getFinalResult();
+        } finally {
+            BoardGame.toggleCurrentPlayerCommit();
+        }
     }
     
     @Override
@@ -99,6 +116,7 @@ public class OthelloModule extends BoardGameModule<OthelloPiece> {
     }
     
     private final void highlightPossibleCells() {
+        BoardGame.highlightSquares.clear();
         getPossibleCells(currentPlayerIndex, BoardGame.highlightSquares);
     }
     
@@ -153,5 +171,58 @@ public class OthelloModule extends BoardGameModule<OthelloPiece> {
                 return true;
             }
         }
+    }
+    
+    private final void flipOutflankedPieces(final int x, final int y) {
+        for (int yd = -1; yd <= 1; yd++) {
+            for (int xd = -1; xd <= 1; xd++) {
+                if ((xd == 0) && (yd == 0)) {
+                    continue;
+                }
+                flipOutflankedPieces(x, y, xd, yd);
+            }
+        }
+    }
+    
+    private final void flipOutflankedPieces(final int x, final int y, final int xd, final int yd) {
+        if (!isOpponentAndOutflankable(x, y, xd, yd)) {
+            return;
+        }
+        int xo = x;
+        int yo = y;
+        while (true) {
+            xo += xd;
+            yo += yd;
+            final OthelloPiece piece = grid.get(xo, yo);
+            if (piece.player == currentPlayerIndex) {
+                return;
+            }
+            piece.player = currentPlayerIndex;
+        }
+    }
+    
+    protected final BoardGameResult getFinalResult() {
+        final int[] counts = new int[numPlayers];
+        final int w = grid.getWidth(), h = grid.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final OthelloPiece piece = grid.get(x, y);
+                if (piece == null) {
+                    continue;
+                }
+                counts[piece.player]++;
+            }
+        }
+        int maxPlayer = -1, maxCount = -1;
+        for (int playerIndex = 0; playerIndex < numPlayers; playerIndex++) {
+            final int count = counts[playerIndex];
+            if (count == maxCount) {
+                return BoardGameResult.newTie();
+            } else if (count > maxCount) {
+                maxPlayer = playerIndex;
+                maxCount = count;
+            }
+        }
+        return new BoardGameResult(BoardGame.RESULT_WIN, maxPlayer);
     }
 }
