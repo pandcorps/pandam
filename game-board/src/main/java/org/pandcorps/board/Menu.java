@@ -50,8 +50,39 @@ public class Menu {
     protected final static class ModuleScreen extends BaseScreen {
         @Override
         protected final void afterBaseLoad() {
-            
+            final int d = BoardGame.DIM;
+            final int left = buttonLeft, right = getButtonRight() - d;
+            final int bottom = buttonBottom, top = getButtonTop() - d;
+            final Panmage hi = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, Pancolor.CYAN);
+            final Panmage black = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, BoardGame.BLACK);
+            final Panmage red = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, Pancolor.RED);
+            final Panmage green = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, Pancolor.GREEN);
+            final Panmage circleWhite = BoardGame.circle;
+            final Panmage circleBlack = new AdjustedPanmage(Pantil.vmid(), BoardGame.circle, BoardGame.BLACK);
+            final Panmage circleRed = new AdjustedPanmage(Pantil.vmid(), BoardGame.circle, Pancolor.RED);
+            addModule(left, top, black, circleBlack, red, null, red, null, black, circleRed, hi, BoardGame.CHECKERS);
+            addModule(right, bottom, green, circleBlack, green, circleWhite, green, circleWhite, green, circleBlack, hi, BoardGame.OTHELLO);
         }
+    }
+    
+    protected final static void addModule(final int x, final int y,
+            final Panmage bg0, final Panmage fg0, final Panmage bg1, final Panmage fg1, final Panmage bg2, final Panmage fg2, final Panmage bg3, final Panmage fg3,
+            final Panmage hi, final BoardGameModule<?> module) {
+        final String name = module.getName();
+        final int d = BoardGame.DIM, xd = x + d, yd = y + d;
+        final ActionEndListener listener = newModuleListener(module);
+        addButton(name + "0", x, y, bg0, hi, fg0, listener);
+        addButton(name + "1", xd, y, bg1, hi, fg1, listener);
+        addButton(name + "2", x, yd, bg2, hi, fg2, listener);
+        addButton(name + "3", xd, yd, bg3, hi, fg3, listener);
+    }
+    
+    protected final static ActionEndListener newModuleListener(final BoardGameModule<?> module) {
+        return new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                BoardGame.module = module;
+                BoardGame.goGame();
+            }};
     }
     
     protected final static void goMenu() {
@@ -85,6 +116,10 @@ public class Menu {
             addPair(top - pairOffsetButton - 24, "Load Game", BoardGame.imgOpen, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goLoadGameScreen();
+                }});
+            addPair(top - pairOffsetButton - 48, "Change Game", BoardGame.imgMenu, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    Panscreen.set(new ModuleScreen());
                 }});
             addDone(false, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
@@ -159,8 +194,13 @@ public class Menu {
     }
     
     protected final static TouchButton addButton(final String name, final int x, final int y, final Panmage img, final ActionEndListener listener) {
+        return addButton(name, x, y, BoardGame.square, getSquareActive(), img, listener);
+    }
+    
+    protected final static TouchButton addButton(final String name, final int x, final int y,
+            final Panmage baseInactive, final Panmage baseActive,final Panmage img, final ActionEndListener listener) {
         final Panroom room = Pangame.getGame().getCurrentRoom();
-        final TouchButton button = new TouchButton(null, room, name, x, y, BoardGame.DEPTH_CELL, BoardGame.square, getSquareActive(), img, 0, 0, null, null, 0, 0, true);
+        final TouchButton button = new TouchButton(null, room, name, x, y, BoardGame.DEPTH_CELL, baseInactive, baseActive, img, 0, 0, null, null, 0, 0, true);
         Pangine.getEngine().registerTouchButton(button);
         button.getActor().register(button, listener);
         return button;
