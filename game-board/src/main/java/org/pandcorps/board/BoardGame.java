@@ -352,8 +352,12 @@ public class BoardGame extends BaseGame {
         }
         
         protected final void addText(final StringBuilder label, final int y) {
+            addText(label, (module.getGrid().w * DIM) + 8, y);
+        }
+        
+        protected final static void addText(final StringBuilder label, final int x, final int y) {
             final Pantext text = new Pantext(Pantil.vmid(), font, label);
-            text.getPosition().set(((module.getGrid().w) * DIM) + 8, y);
+            text.getPosition().set(x, y);
             room.addActor(text);
         }
         
@@ -374,6 +378,7 @@ public class BoardGame extends BaseGame {
                     label2.append("Wins");
                 }
             }
+            module.step();
         }
     }
     
@@ -387,16 +392,8 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static void toggleCurrentPlayer() {
-        toggleCurrentPlayerPeak();
-        toggleCurrentPlayerCommit();
-    }
-    
-    protected final static void toggleCurrentPlayerPeak() {
         module.currentPlayerIndex = getNextPlayerIndex();
-    }
-    
-    protected final static void toggleCurrentPlayerCommit() {
-        addState();
+        module.turnTaken = true;
     }
     
     protected final static int getNextPlayerIndex() {
@@ -505,6 +502,7 @@ public class BoardGame extends BaseGame {
         protected final BoardGamePlayer[] players = new BoardGamePlayer[NUM_PLAYERS];
         protected final int numPlayers = players.length;
         protected int currentPlayerIndex = 0;
+        protected boolean turnTaken = false;
         protected BoardGameResult result = null;
         
         protected BoardGameModule(final int numVerticalCells) {
@@ -532,6 +530,10 @@ public class BoardGame extends BaseGame {
                         final boolean handled = processTouchMenu(touchEndIndex);
                         if (!handled && grid.isValid(touchEndIndex)) {
                             result = processTouch(touchEndIndex);
+                            if (module.turnTaken) {
+                                addState();
+                                module.turnTaken = false;
+                            }
                         }
                     }
                     touchStartIndex = NULL_INDEX;
@@ -552,6 +554,7 @@ public class BoardGame extends BaseGame {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goMenu();
                 }});
+            prepareGame();
         }
         
         protected void pickColors() {
@@ -561,6 +564,14 @@ public class BoardGame extends BaseGame {
         protected final String getName() {
             final String className = getClass().getSimpleName();
             return className.substring(0, className.length() - 6); // Remove "Module" from class name
+        }
+        
+        //@OverrideMe
+        protected void prepareGame() {
+        }
+        
+        //@OverrideMe
+        protected void step() {
         }
         
         protected abstract void initGame();
@@ -732,6 +743,10 @@ public class BoardGame extends BaseGame {
             result = null;
             getGrid().clear();
         }
+        
+        //@OverrideMe
+        protected void renderView(final Panderer renderer) {
+        }
     }
     
     protected final static int convertScreenToGrid(final int screenVal) {
@@ -858,7 +873,7 @@ public class BoardGame extends BaseGame {
         }
         
         protected final boolean isOpen(final int index) {
-            return grid.get(index) == null;
+            return Coltil.get(grid, index) == null;
         }
         
         /*protected final boolean isOpen(final BoardGameCell cell) {
@@ -989,6 +1004,7 @@ public class BoardGame extends BaseGame {
             renderMenu(renderer, imgUndo, xRedo, yRedo, true, isRedoAllowed());
             renderMenu(renderer, imgPlus, xNew, yNew, false, true);
             renderMenu(renderer, imgMenu, xMenu, yMenu, false, true);
+            module.renderView(renderer);
         }
         
         protected final void render(final Panderer renderer, final Panmage image, final int x, final int y, final int z, final Pancolor color) {
