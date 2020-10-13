@@ -744,6 +744,15 @@ public class BoardGame extends BaseGame {
             getGrid().clear();
         }
         
+        protected final boolean isEachPlayerDefaultColor() {
+            for (final BoardGamePlayer player : players) {
+                if (player.profile.color1 != null) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
         //@OverrideMe
         protected void renderView(final Panderer renderer) {
         }
