@@ -25,16 +25,31 @@ package org.pandcorps.board;
 import java.util.*;
 
 import org.pandcorps.board.BoardGame.*;
+import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.pandam.*;
 
 public class OthelloModule extends BoardGameModule<OthelloPiece> {
     private final static int BOARD_DIM = 8;
+    private final static int SCORE_X = 136;
+    private final static int SCORE_Y = 80;
+    private final static int SCORE_D = 40;
     protected final static BoardGameGrid<OthelloPiece> grid = new BoardGameGrid<OthelloPiece>(BOARD_DIM);
     private static BoardGameCell cellBackground = null;
+    private final StringBuilder[] scoreLabels = new StringBuilder[numPlayers];
     
-    protected OthelloModule() {
-        super(BOARD_DIM);
+    @Override
+    protected final void prepareGame() {
+        int x = SCORE_X + 16;
+        for (int i = 0; i < numPlayers; i++) {
+            StringBuilder label = scoreLabels[i];
+            if (label == null) {
+                label = new StringBuilder();
+                scoreLabels[i] = label;
+            }
+            BoardGame.BoardGameScreen.addText(label, x, SCORE_Y);
+            x += SCORE_D;
+        }
     }
     
     @Override
@@ -52,14 +67,7 @@ public class OthelloModule extends BoardGameModule<OthelloPiece> {
     
     @Override
     protected final void pickColors() {
-        boolean defaultColors = true;
-        for (final BoardGamePlayer player : players) {
-            if (player.profile.color1 != null) {
-                defaultColors = false;
-                break;
-            }
-        }
-        final Pancolor color = defaultColors ? Pancolor.GREEN : BoardGame.pickNonPlayerColor();
+        final Pancolor color = isEachPlayerDefaultColor() ? Pancolor.GREEN : BoardGame.pickNonPlayerColor();
         cellBackground = new BoardGameCell() {
             @Override public final Panmage getImage() { return BoardGame.square; }
             @Override public final Pancolor getColor() { return color; }};
@@ -85,24 +93,22 @@ public class OthelloModule extends BoardGameModule<OthelloPiece> {
         }
         grid.set(cellIndex, new OthelloPiece(currentPlayerIndex));
         flipOutflankedPieces(grid.getX(cellIndex), grid.getY(cellIndex));
-        try {
-            for (int i = 0; i < numPlayers; i++) {
-                // If a player's turn is skipped, just peak so that no state is added for the skipped turn
-                BoardGame.toggleCurrentPlayerPeak();
-                highlightPossibleCells();
-                if (!BoardGame.highlightSquares.isEmpty()) {
-                    return null;
-                }
+        updateCounts();
+        for (int i = 0; i < numPlayers; i++) {
+            // If a player's turn is skipped, just peak so that no state is added for the skipped turn
+            BoardGame.toggleCurrentPlayer();
+            highlightPossibleCells();
+            if (!BoardGame.highlightSquares.isEmpty()) {
+                return null;
             }
-            return getFinalResult();
-        } finally {
-            BoardGame.toggleCurrentPlayerCommit();
         }
+        return getFinalResult();
     }
     
     @Override
     protected final void onLoad() {
         highlightPossibleCells();
+        updateCounts();
     }
     
     @Override
@@ -113,6 +119,21 @@ public class OthelloModule extends BoardGameModule<OthelloPiece> {
     @Override
     protected final OthelloPiece parse(final char value, final int player) {
         return new OthelloPiece(player);
+    }
+    
+    @Override
+    protected final void renderView(final Panderer renderer) {
+        int x = SCORE_X;
+        for (int i = 0; i < numPlayers; i++) {
+            renderCircle(renderer, x, i);
+            x += SCORE_D;
+        }
+    }
+    
+    protected final void renderCircle(final Panderer renderer, final float x, final int playerIndex) {
+        final int d = BoardGame.DIM;
+        final Pancolor color = players[playerIndex].getColor();
+        renderer.render(BoardGame.room, BoardGame.circle, x, SCORE_Y, BoardGame.DEPTH_CELL, 0, 0, d, d, 0, false, false, color.getRf(), color.getGf(), color.getBf());
     }
     
     private final void highlightPossibleCells() {
@@ -201,7 +222,14 @@ public class OthelloModule extends BoardGameModule<OthelloPiece> {
         }
     }
     
-    protected final BoardGameResult getFinalResult() {
+    protected final void updateCounts() {
+        final int[] counts = getCounts();
+        for (int i = 0; i < numPlayers; i++) {
+            Chartil.set(scoreLabels[i], Integer.toString(counts[i]));
+        }
+    }
+    
+    protected final int[] getCounts() {
         final int[] counts = new int[numPlayers];
         final int w = grid.getWidth(), h = grid.getHeight();
         for (int y = 0; y < h; y++) {
@@ -213,6 +241,11 @@ public class OthelloModule extends BoardGameModule<OthelloPiece> {
                 counts[piece.player]++;
             }
         }
+        return counts;
+    }
+    
+    protected final BoardGameResult getFinalResult() {
+        final int[] counts = getCounts();
         int maxPlayer = -1, maxCount = -1;
         for (int playerIndex = 0; playerIndex < numPlayers; playerIndex++) {
             final int count = counts[playerIndex];
