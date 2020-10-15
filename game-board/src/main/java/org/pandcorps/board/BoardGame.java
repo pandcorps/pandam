@@ -84,6 +84,7 @@ public class BoardGame extends BaseGame {
     
     protected final static CheckersModule CHECKERS = new CheckersModule();
     protected final static OthelloModule OTHELLO = new OthelloModule();
+    protected final static FourInARowModule FOUR_IN_A_ROW = new FourInARowModule();
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage imgCursor = null;
@@ -101,6 +102,14 @@ public class BoardGame extends BaseGame {
     protected static Panmage squareBlack = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
+    protected static Panmage verticalSquare = null;
+    protected static Panmage verticalCircle = null;
+    protected static Panmage pawn = null;
+    protected static Panmage rook = null;
+    protected static Panmage knight = null;
+    protected static Panmage bishop = null;
+    protected static Panmage queen = null;
+    protected static Panmage king = null;
     protected static Font font = null;
     
     protected final static List<BoardGameProfile> profiles = new ArrayList<BoardGameProfile>();
@@ -162,6 +171,14 @@ public class BoardGame extends BaseGame {
         squareBlack = Menu.getSquare(BLACK);
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
+        verticalCircle = engine.createImage(PRE_IMG + "vertical.circle", RES + "VerticalCircle.png");
+        verticalSquare = engine.createImage(PRE_IMG + "vertical.square", RES + "VerticalSquare.png");
+        pawn = engine.createImage(PRE_IMG + "pawn", RES + "Pawn.png");
+        rook = engine.createImage(PRE_IMG + "rook", RES + "Rook.png");
+        knight = engine.createImage(PRE_IMG + "knight", RES + "Knight.png");
+        bishop = engine.createImage(PRE_IMG + "bishop", RES + "Bishop.png");
+        queen = engine.createImage(PRE_IMG + "queen", RES + "Queen.png");
+        king = engine.createImage(PRE_IMG + "king", RES + "King.png");
         font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), Pancolor.WHITE, Pancolor.WHITE, Pancolor.WHITE, null, Pancolor.BLACK);
         loadProfiles();
     }
@@ -498,15 +515,14 @@ public class BoardGame extends BaseGame {
     }
     
     protected abstract static class BoardGameModule<P extends BoardGamePiece> {
-        protected final int numVerticalCells;
         protected final BoardGamePlayer[] players = new BoardGamePlayer[NUM_PLAYERS];
         protected final int numPlayers = players.length;
         protected int currentPlayerIndex = 0;
+        protected P pieceToMove = null;
         protected boolean turnTaken = false;
         protected BoardGameResult result = null;
         
-        protected BoardGameModule(final int numVerticalCells) {
-            this.numVerticalCells = numVerticalCells;
+        protected BoardGameModule() {
             for (int i = 0; i < numPlayers; i++) {
                 players[i] = new BoardGamePlayer(i);
             }
@@ -589,6 +605,37 @@ public class BoardGame extends BaseGame {
         protected abstract char serialize(final P piece);
         
         protected abstract P parse(final char pieceType, final int player);
+        
+        protected final BoardGameResult processTouchToMove(final int cellIndex) {
+            if (pieceToMove == null) {
+                pickPieceToMove(cellIndex);
+                return null;
+            } else {
+                pickDestination(cellIndex);
+                return BoardGame.highlightSquares.isEmpty() ? getFinalResult() : null;
+            }
+        }
+        
+        protected final void pickPieceToMove(final int cellIndex) {
+            if (!BoardGame.isHighlight(cellIndex)) {
+                return;
+            }
+            pieceToMove = getGrid().get(cellIndex);
+            highlightAllowedDestinations();
+        }
+        
+        //@OverrideMe
+        protected void highlightAllowedDestinations() {
+        }
+        
+        //@OverrideMe
+        protected void pickDestination(final int cellIndex) {
+        }
+        
+        //@OverrideMe
+        protected BoardGameResult getFinalResult() {
+            return null;
+        }
         
         private P parse(final char pieceType, final int player, final int x, final int y) {
             final P piece = parse(pieceType, player);
@@ -1067,9 +1114,14 @@ public class BoardGame extends BaseGame {
     protected final static BoardGameCell square1 = new BoardGameCell() {
         @Override public final Panmage getImage() { return square; }
         @Override public final Pancolor getColor() { return module.players[1].getColor(); }};
+    protected final static Pancolor getCurrentPlayerColor() { return module.players[module.currentPlayerIndex].getColor(); }
     protected final static BoardGameCell squareC = new BoardGameCell() {
         @Override public final Panmage getImage() { return square; }
-        @Override public final Pancolor getColor() { return module.players[module.currentPlayerIndex].getColor(); }};
+        @Override public final Pancolor getColor() { return getCurrentPlayerColor(); }};
+    protected final static Pancolor getWinnerColor() { return module.players[module.result.playerIndex].getColor(); }
+    protected final static BoardGameCell verticalSquareW = new BoardGameCell() {
+        @Override public final Panmage getImage() { return verticalSquare; }
+        @Override public final Pancolor getColor() { return getWinnerColor(); }};
     protected final static BoardGameCell squareH = new BoardGameCell() {
         @Override public final Panmage getImage() { return square; }
         @Override public final Pancolor getColor() { return highlightColor; }};
