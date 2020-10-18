@@ -85,6 +85,7 @@ public class BoardGame extends BaseGame {
     protected final static CheckersModule CHECKERS = new CheckersModule();
     protected final static OthelloModule OTHELLO = new OthelloModule();
     protected final static FourInARowModule FOUR_IN_A_ROW = new FourInARowModule();
+    protected final static ChessModule CHESS = new ChessModule();
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage imgCursor = null;
@@ -368,7 +369,7 @@ public class BoardGame extends BaseGame {
             }
         }
         
-        protected final void addText(final StringBuilder label, final int y) {
+        protected final static void addText(final StringBuilder label, final int y) {
             addText(label, (module.getGrid().w * DIM) + 8, y);
         }
         
@@ -389,7 +390,7 @@ public class BoardGame extends BaseGame {
                 label2.append("Turn");
             } else {
                 if (result.resultStatus == RESULT_TIE) {
-                    label.append("Tie Game");
+                    label.append(module.getTieLabel());
                 } else {
                     label.append(players[result.playerIndex].profile.name);
                     label2.append("Wins");
@@ -635,6 +636,10 @@ public class BoardGame extends BaseGame {
         //@OverrideMe
         protected BoardGameResult getFinalResult() {
             return null;
+        }
+        
+        protected String getTieLabel() {
+            return "Tie Game";
         }
         
         private P parse(final char pieceType, final int player, final int x, final int y) {
@@ -1134,6 +1139,12 @@ public class BoardGame extends BaseGame {
             return squareH;
         }
         return (x % 2) == (y % 2) ? square0 : square1;
+    }
+    protected final static BoardGameCell getPlayerSquareInverted(final int x, final int y) {
+        if (isHighlightSquare(x, y)) {
+            return squareH;
+        }
+        return (x % 2) == (y % 2) ? square1 : square0;
     }
     
     protected abstract static class BoardGamePiece {
