@@ -51,16 +51,26 @@ public class Menu {
         @Override
         protected final void afterBaseLoad() {
             final int d = BoardGame.DIM;
-            final int left = buttonLeft, right = getButtonRight() - d;
+            final int left = buttonLeft + (d * 2), right = getButtonRight() - (d * 3);
             final int bottom = buttonBottom, top = getButtonTop() - d;
             final Panmage hi = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, Pancolor.CYAN);
+            final Panmage white = BoardGame.square;
             final Panmage black = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, BoardGame.BLACK);
             final Panmage red = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, Pancolor.RED);
             final Panmage green = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, Pancolor.GREEN);
+            final Panmage blue = new AdjustedPanmage(Pantil.vmid(), BoardGame.verticalSquare, FourInARowModule.COLOR_BG);
             final Panmage circleWhite = BoardGame.circle;
             final Panmage circleBlack = new AdjustedPanmage(Pantil.vmid(), BoardGame.circle, BoardGame.BLACK);
             final Panmage circleRed = new AdjustedPanmage(Pantil.vmid(), BoardGame.circle, Pancolor.RED);
+            final Panmage vertRed = new AdjustedPanmage(Pantil.vmid(), BoardGame.verticalCircle, Pancolor.RED);
+            final Panmage vertYellow = new AdjustedPanmage(Pantil.vmid(), BoardGame.verticalCircle, Pancolor.YELLOW);
+            final Panmage queenWhite = BoardGame.queen;
+            final Panmage kingWhite = BoardGame.king;
+            final Panmage queenBlack = new AdjustedPanmage(Pantil.vmid(), BoardGame.queen, BoardGame.BLACK);
+            final Panmage kingBlack = new AdjustedPanmage(Pantil.vmid(), BoardGame.king, BoardGame.BLACK);
             addModule(left, top, black, circleBlack, red, null, red, null, black, circleRed, hi, BoardGame.CHECKERS);
+            addModule(left, bottom, blue, vertYellow, blue, vertRed, blue, vertYellow, blue, vertRed, hi, BoardGame.FOUR_IN_A_ROW);
+            addModule(right, top, white, queenWhite, black, kingWhite, black, queenBlack, white, kingBlack, hi, BoardGame.CHESS);
             addModule(right, bottom, green, circleBlack, green, circleWhite, green, circleWhite, green, circleBlack, hi, BoardGame.OTHELLO);
         }
     }
