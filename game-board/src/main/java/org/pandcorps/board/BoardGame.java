@@ -886,23 +886,22 @@ public class BoardGame extends BaseGame {
             return isValid(index) ? Coltil.get(grid, index) : null;
         }
         
-        protected final void set(final int x, final int y, final P piece) {
+        private final void set(final int index, final int x, final int y, final P piece) {
             // Null out previous location here? Separate move method to do that?
-            Coltil.set(grid, getIndexRequired(x, y), piece);
-            if (piece != null) {
+            Coltil.set(grid, index, piece);
+            if ((piece != null) && ((piece.x != x) || (piece.y != y))) { // Can detach and reattach in same place; don't want to unset below then
                 unset(piece);
                 piece.x = x;
                 piece.y = y;
             }
         }
         
+        protected final void set(final int x, final int y, final P piece) {
+            set(getIndexRequired(x, y), x, y, piece);
+        }
+        
         protected final void set(final int index, final P piece) {
-            Coltil.set(grid, index, piece);
-            if (piece != null) {
-                unset(piece);
-                piece.x = getX(index);
-                piece.y = getY(index);
-            }
+            set(index, getX(index), getY(index), piece);
         }
         
         protected final void set(final List<P> pieces) {
@@ -916,7 +915,7 @@ public class BoardGame extends BaseGame {
         
         private final void unset(final P piece) {
             final int index = getIndexOptional(piece.x, piece.y);
-            if (isValid(index)) {
+            if (get(index) == piece) { // Make sure piece wasn't detached; otherwise another piece might be in its old cell
                 Coltil.set(grid, index, null);
             }
         }
