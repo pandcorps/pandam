@@ -31,11 +31,6 @@ import org.pandcorps.core.img.*;
 public class CheckersModule extends BoardGameModule<CheckersPiece> {
     private final static int BOARD_DIM = 8;
     protected final static BoardGameGrid<CheckersPiece> grid = new BoardGameGrid<CheckersPiece>(BOARD_DIM);
-    private static CheckersPiece pieceToMove = null;
-    
-    protected CheckersModule() {
-        super(BOARD_DIM);
-    }
     
     @Override
     protected final void initGame() {
@@ -76,23 +71,10 @@ public class CheckersModule extends BoardGameModule<CheckersPiece> {
     
     @Override
     protected final BoardGameResult processTouch(final int cellIndex) {
-        if (pieceToMove == null) {
-            pickPieceToMove(cellIndex);
-            return null;
-        } else {
-            pickDestination(cellIndex);
-            return BoardGame.highlightSquares.isEmpty() ? getFinalResult() : null;
-        }
+        return processTouchToMove(cellIndex);
     }
     
-    protected final void pickPieceToMove(final int cellIndex) {
-        if (!BoardGame.isHighlight(cellIndex)) {
-            return;
-        }
-        pieceToMove = grid.get(cellIndex);
-        highlightAllowedDestinations();
-    }
-    
+    @Override
     protected final void pickDestination(final int cellIndex) {
         final MoveResult result = pieceToMove.moveToDestination(cellIndex);
         if (result.success) {
@@ -125,15 +107,16 @@ public class CheckersModule extends BoardGameModule<CheckersPiece> {
     }
     
     protected final void highlightMovablePieces() {
-        getMovablePieces(currentPlayerIndex, BoardGame.highlightSquares);
+        setMovablePieces(BoardGame.highlightSquares, currentPlayerIndex);
     }
     
-    protected final static void highlightAllowedDestinations() {
+    @Override
+    protected final void highlightAllowedDestinations() {
         pieceToMove.getAllowedDestinations(BoardGame.highlightSquares);
     }
     
     // Used to highlight pieces that the player can select (an empty List would mean that the game is over)
-    protected final static Set<Integer> getMovablePieces(final int player, final Set<Integer> movable) {
+    protected final static void setMovablePieces(final Set<Integer> movable, final int player) {
         movable.clear();
         final List<CheckersPiece> all = grid.getPieces(player);
         for (final CheckersPiece piece : all) {
@@ -142,17 +125,18 @@ public class CheckersModule extends BoardGameModule<CheckersPiece> {
             }
         }
         if (!movable.isEmpty()) {
-            return movable;
+            return;
         }
         for (final CheckersPiece piece : all) {
             if (piece.isAbleToMove()) {
                 movable.add(piece.getIndexWrapped());
             }
         }
-        return movable;
+        return;
     }
     
-    protected final static BoardGameResult getFinalResult() {
+    @Override
+    protected final BoardGameResult getFinalResult() {
         final Set<Integer> players = new HashSet<Integer>(2);
         for (final CheckersPiece piece : grid.grid) {
             if (piece == null) {
