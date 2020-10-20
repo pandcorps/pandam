@@ -73,11 +73,13 @@ public abstract class ChessPiece extends BoardGamePiece {
         add(set, grid.getIndexOptional(x, y));
     }
     
-    protected final void addIfEmpty(final Set<Integer> set, final int x, final int y) {
+    protected final boolean addIfEmpty(final Set<Integer> set, final int x, final int y) {
         final int index = grid.getIndexOptional(x, y);
         if (grid.isValid(index) && grid.get(index) == null) {
             add(set, index);
+            return true;
         }
+        return false;
     }
     
     protected final void addIfOccupiedByOpponent(final Set<Integer> set, final int x, final int y) {
@@ -86,7 +88,7 @@ public abstract class ChessPiece extends BoardGamePiece {
             return;
         }
         final ChessPiece piece = grid.get(index);
-        if (piece != null && piece.player != player) {
+        if ((piece != null) && (piece.player != player)) {
             add(set, index);
         }
     }
@@ -139,7 +141,6 @@ public abstract class ChessPiece extends BoardGamePiece {
             grid.set(dx, dy, this);
             return isThisPlayerInCheck();
         } finally {
-            x = ox; y = oy;
             grid.set(ox, oy, this);
             grid.set(dx, dy, oldPiece);
         }
@@ -176,6 +177,11 @@ public abstract class ChessPiece extends BoardGamePiece {
         return piece;
     }
     
+    @Override
+    public final String toString() {
+        return getClass().getSimpleName() + " (" + x + ", " + y + ")";
+    }
+    
     protected final static class Pawn extends ChessPiece {
         protected Pawn(final int player) {
             super(player);
@@ -189,8 +195,8 @@ public abstract class ChessPiece extends BoardGamePiece {
         @Override
         protected final void addAllowedDestinations(final Set<Integer> set) {
             final int dir = getDirection(), yd = y + dir;
-            addIfEmpty(set, x, yd);
-            if (!moved) {
+            final boolean empty = addIfEmpty(set, x, yd);
+            if (empty && !moved) {
                 addIfEmpty(set, x, y + (dir * 2));
             }
             addIfOccupiedByOpponent(set, x - 1, yd);
