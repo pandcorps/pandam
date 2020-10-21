@@ -545,7 +545,7 @@ public class BoardGame extends BaseGame {
                     final int touchEndIndex = grid.getIndex(touch);
                     if (touchEndIndex == touchStartIndex) {
                         final boolean handled = processTouchMenu(touchEndIndex);
-                        if (!handled && grid.isValid(touchEndIndex)) {
+                        if (!handled && grid.isValid(touchEndIndex) && (module.result == null)) {
                             result = processTouch(touchEndIndex);
                             if (module.turnTaken) {
                                 addState();
