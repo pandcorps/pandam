@@ -313,7 +313,10 @@ public class Pantext extends Panctor {
         if (cursorLine >= 0 && cursorChar >= 0) { // && cursorLine on page
             if (cursorEnabled && cursorTime < 6) {
                 final Panteraction interaction = Pangine.getEngine().getInteraction();
-                final char ch = interaction.isInsEnabled() ? CHAR_CURSOR_INS : CHAR_CURSOR;
+                char ch = interaction.isInsEnabled() ? CHAR_CURSOR_INS : CHAR_CURSOR;
+                if (f.getIndex(ch) == Font.INDEX_ILLEGAL) {
+                    ch = '_';
+                }
                 render(renderer, layer, x, y, z + 1, ch, cursorChar, cursorLine);
             }
             cursorTime++;
