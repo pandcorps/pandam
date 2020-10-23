@@ -56,7 +56,7 @@ public class BoardGame extends BaseGame {
     protected final static int DEPTH_PIECE = 2;
     protected final static int DEPTH_CURSOR = 4;
     
-    protected final static Pancolor BLACK = new FinPancolor(96);
+    protected final static Pancolor BLACK = Pancolor.DARK_GREY;
     protected final static Pancolor ORANGE = new FinPancolor(Pancolor.MAX_VALUE, 128, 0);
     
     protected final static String SEG_CONTEXT = "CTX";

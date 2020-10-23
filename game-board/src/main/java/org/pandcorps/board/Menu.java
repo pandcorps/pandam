@@ -47,6 +47,10 @@ public class Menu {
     private static BoardGameProfile profile;
     private static Variable<Pancolor> color;
     
+    protected final static void goModule() {
+        Panscreen.set(new ModuleScreen());
+    }
+    
     protected final static class ModuleScreen extends BaseScreen {
         @Override
         protected final void afterBaseLoad() {
@@ -72,6 +76,10 @@ public class Menu {
             addModule(left, bottom, blue, vertYellow, blue, vertRed, blue, vertYellow, blue, vertRed, hi, BoardGame.FOUR_IN_A_ROW);
             addModule(right, top, white, queenWhite, black, kingWhite, black, queenBlack, white, kingBlack, hi, BoardGame.CHESS);
             addModule(right, bottom, green, circleBlack, green, circleWhite, green, circleWhite, green, circleBlack, hi, BoardGame.OTHELLO);
+            addExit(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goModule();
+                }});
         }
     }
     
@@ -121,36 +129,40 @@ public class Menu {
             final int top = getButtonTop();
             addPair(top - pairOffsetButton, "Save Game", BoardGame.imgSave, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    goSaveGameScreen();
+                    goSaveGame();
                 }});
             addPair(top - pairOffsetButton - 24, "Load Game", BoardGame.imgOpen, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    goLoadGameScreen();
+                    goLoadGame();
                 }});
             addPair(top - pairOffsetButton - 48, "Change Game", BoardGame.imgMenu, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    Panscreen.set(new ModuleScreen());
+                    goModule();
                 }});
             addDone(false, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     BoardGame.goGame();
                 }});
-            final ActionEndListener exitListener = new ActionEndListener() {
+            addExit(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    goPrompt(
-                            "Exit?", true,
-                            new ActionEndListener() {
-                                @Override public final void onActionEnd(final ActionEndEvent event) {
-                                    Pangine.getEngine().exit();
-                                }},
-                            new ActionEndListener() {
-                                @Override public final void onActionEnd(final ActionEndEvent event) {
-                                    goMenu();
-                                }});
-                }};
-            final TouchButton btnExit = addTopRight("Exit", BoardGame.imgExit, exitListener);
-            addBackListener(btnExit, exitListener);
+                    goMenu();
+                }});
         }
+    }
+    
+    protected final static void addExit(final ActionEndListener noListener) {
+        final ActionEndListener exitListener = new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                goPrompt(
+                        "Exit?", true,
+                        new ActionEndListener() {
+                            @Override public final void onActionEnd(final ActionEndEvent event) {
+                                Pangine.getEngine().exit();
+                            }},
+                        noListener);
+            }};
+        final TouchButton btnExit = addTopRight("Exit", BoardGame.imgExit, exitListener);
+        addBackListener(btnExit, exitListener);
     }
     
     protected final static void addDone(final ActionEndListener listener) {
@@ -229,6 +241,9 @@ public class Menu {
     
     protected final static Panmage getSquareActive() {
         final BoardGameProfile profile = getProfile();
+        if (profile == null) {
+            return getSquareActiveDefault();
+        }
         final Panmage active1 = getSquareActive(profile.color1);
         if (active1 != null) {
             return active1;
@@ -237,6 +252,10 @@ public class Menu {
         if (active2 != null) {
             return active2;
         }
+        return getSquareActiveDefault();
+    }
+    
+    protected final static Panmage getSquareActiveDefault() {
         return getSquare(Pancolor.CYAN);
     }
     
@@ -253,7 +272,10 @@ public class Menu {
     }
     
     protected final static BoardGameProfile getProfile() {
-        return (profile == null) ? BoardGame.module.players[0].profile : profile;
+        if ((profile == null) && (BoardGame.module != null)) {
+            return BoardGame.module.players[0].profile;
+        }
+        return profile;
     }
     
     protected final static Pantext addText(final int x, final int y, final String value) {
@@ -489,15 +511,15 @@ public class Menu {
         }
     }
     
-    protected final static void goSaveGameScreen() {
+    protected final static void goSaveGame() {
         Panscreen.set(new SaveScreen(BoardGame.imgSave, true, new SaveGameHandler() {
             @Override public final void handle(final String fileName) {
                 BoardGame.save(fileName);
-                goSaveGameScreen();
+                goSaveGame();
             }}));
     }
     
-    protected final static void goLoadGameScreen() {
+    protected final static void goLoadGame() {
         Panscreen.set(new SaveScreen(BoardGame.imgOpen, false, new SaveGameHandler() {
             @Override public final void handle(final String fileName) {
                 load(fileName);
@@ -510,7 +532,7 @@ public class Menu {
             BoardGame.goGame();
         } catch (final Exception e) {
             Iotil.delete(fileName);
-            goLoadGameScreen();
+            goLoadGame();
         }
     }
     
