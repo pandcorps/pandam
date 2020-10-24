@@ -31,20 +31,20 @@ public class TouchKeyboard {
 	private final static char CHAR_BACKSPACE = '<';
 	private final Panmage img;
 	private final Panmage imgAct;
-	private final MultiFont fonts;
+	private final Font font;
 	private final Panlayer layer;
 	private final int offX;
 	private final int offY;
 	private final static int z = 0;
 	
-    public TouchKeyboard(final Panmage img, final Panmage imgAct, final MultiFont fonts) {
-    	this(img, imgAct, fonts, getCenteredY(img));
+    public TouchKeyboard(final Panmage img, final Panmage imgAct, final Font font) {
+    	this(img, imgAct, font, getCenteredY(img));
     }
     
-    public TouchKeyboard(final Panmage img, final Panmage imgAct, final MultiFont fonts, int y) {
+    public TouchKeyboard(final Panmage img, final Panmage imgAct, final Font font, int y) {
     	this.img = img;
     	this.imgAct = imgAct;
-    	this.fonts = fonts;
+    	this.font = font;
     	layer = Pangame.getGame().getCurrentRoom();
         final char[][] layout = {
                 {'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'},
@@ -55,8 +55,8 @@ public class TouchKeyboard {
         final int w = (int) size.getX(), h = (int) size.getY();
         final Pangine engine = Pangine.getEngine();
         int minX = (engine.getEffectiveWidth() - (w * 10)) / 2;
-        offX = (w - fonts.getWidth()) / 2;
-        offY = (h - fonts.getHeight()) / 2;
+        offX = (w - font.getWidth()) / 2;
+        offY = (h - font.getHeight()) / 2;
         for (final char[] row : layout) {
             int x = minX;
             for (final char c : row) {
@@ -71,7 +71,7 @@ public class TouchKeyboard {
     private final TouchButton newTouchKey(final char c, final int x, final int y) {
     	final Panteraction inter = Pangine.getEngine().getInteraction();
     	final String txt = String.valueOf(Chartil.toUpperCase(c));
-    	final TouchButton btn = new TouchButton(inter, layer, txt, x, y, z, img, imgAct, null, 0, 0, fonts, txt, offX, offY, true);
+    	final TouchButton btn = new TouchButton(inter, layer, txt, x, y, z, img, imgAct, null, 0, 0, font, txt, offX, offY, true);
     	btn.setMappedInput(c == CHAR_BACKSPACE ? inter.KEY_BACKSPACE : inter.getKey(c));
     	Pangine.getEngine().registerTouchButton(btn);
     	return btn;
