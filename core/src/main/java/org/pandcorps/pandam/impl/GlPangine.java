@@ -270,6 +270,9 @@ public abstract class GlPangine extends Pangine {
 				image.rebindTexture();
 			}
 		}
+		if (GlPanmage.colorArrayEnabled) {
+		    enableColorArray();
+		}
 	}
 	
 	protected abstract void initInput() throws Exception;
@@ -990,6 +993,10 @@ public abstract class GlPangine extends Pangine {
 	public final void enableColorArray() {
 	    gl.glEnableClientState(gl.GL_COLOR_ARRAY);
 	    GlPanmage.colorArrayEnabled = true;
+	}
+	
+	protected final void setColorArrayNumChannels(final int colorArrayNumChannels) {
+	    GlPanmage.colorArrayNumChannels = colorArrayNumChannels;
 	}
 	
 	@Override
