@@ -32,6 +32,7 @@ import org.pandcorps.pandam.*;
 public final class GlPanmage extends Panmage {
 	private final static int NULL_TID = 0;
 	/*package*/ static boolean colorArrayEnabled = false;
+	/*package*/ static int colorArrayNumChannels = 3;
 	public static boolean saveTextures = false;
 	private final int w;
 	private final int h;
@@ -345,14 +346,14 @@ public final class GlPanmage extends Panmage {
                 gl.glTexCoordPointer(2, gl.GL_FLOAT, 0, 0);
                 if (colorArrayEnabled) {
                     gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufC);
-                    gl.glColorPointer(3, gl.GL_FLOAT, 0, 0);
+                    gl.glColorPointer(colorArrayNumChannels, gl.GL_FLOAT, 0, 0);
                 }
     	    	gl.glBindBuffer(gl.GL_ARRAY_BUFFER, l.bufV);
                 gl.glVertexPointer(3, gl.GL_FLOAT, 0, 0);
     	    } else {
 	    	    gl.glTexCoordPointer(2, 0, t.getBuffer());
 	    	    if (colorArrayEnabled) {
-	    	        gl.glColorPointer(3, 0, l.c.getBuffer());
+	    	        gl.glColorPointer(colorArrayNumChannels, 0, l.c.getBuffer());
 	    	    }
 	            gl.glVertexPointer(3, 0, l.v.getBuffer());
     	    }
@@ -598,8 +599,12 @@ public final class GlPanmage extends Panmage {
         }
         if (colorArrayEnabled) {
             final int size = quadSupported ? 4 : 6;
+            final boolean alphaNeeded = colorArrayNumChannels > 3;
             for (int i = 0; i < size; i++) {
                 c.append(r); c.append(g); c.append(b);
+                if (alphaNeeded) {
+                    c.append(1.0f);
+                }
             }
         }
         
