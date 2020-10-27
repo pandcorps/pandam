@@ -39,10 +39,11 @@ import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 
 public class BoardGame extends BaseGame {
-    protected final static String TITLE = "Board Games";
-    protected final static String VERSION = "0.0.1";
+    protected final static String TITLE = "2-Player Games For 1 Device";
+    protected final static String VERSION = "1.0.0";
     protected final static String YEAR = "2020";
     protected final static String AUTHOR = "Andrew M. Martin";
+    protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
     
     protected final static String RES = "org/pandcorps/board/";
     
@@ -58,6 +59,7 @@ public class BoardGame extends BaseGame {
     
     protected final static Pancolor BLACK = Pancolor.DARK_GREY;
     protected final static Pancolor ORANGE = new FinPancolor(Pancolor.MAX_VALUE, 128, 0);
+    protected final static Pancolor HIGHLIGHT_DEFAULT = Pancolor.CYAN;
     
     protected final static String SEG_CONTEXT = "CTX";
     protected final static String SEG_STATE = "BGS";
@@ -302,7 +304,7 @@ public class BoardGame extends BaseGame {
         } else if (!(isAllDark(color0) || isAllDark(color1))) {
             return BLACK;
         }
-        return new FinPancolor((color0.getR() + color1.getR()) / 2, (color0.getG() + color1.getG()) / 2, (color0.getB() + color1.getB()) / 2);
+        return HIGHLIGHT_DEFAULT;
     }
     
     private final static boolean isAnyDark(final Pancolor color) {
@@ -314,13 +316,20 @@ public class BoardGame extends BaseGame {
     }
     
     private final static boolean isDark(final short channel) {
-        return channel < 128;
+        return channel <= 128;
     }
     
     private static int touchStartIndex = NULL_INDEX;
     
     protected final static void goGame() {
         Panscreen.set(new BoardGameScreen());
+    }
+    
+    protected final static void registerCapture(final Panctor actor) {
+        final Pangine engine = Pangine.getEngine();
+        final Panteraction interaction = engine.getInteraction();
+        actor.register(interaction.KEY_F1, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { engine.captureScreen(); }});
     }
     
     protected static class BaseScreen extends Panscreen {
@@ -344,12 +353,14 @@ public class BoardGame extends BaseGame {
             final int h = Pangine.getEngine().getEffectiveHeight();
             addText(label, h - 16);
             addText(label2, h - 26);
-            if (Coltil.isValued(module.getGrid().grid)) {
+            final BoardGameGrid<?> grid = module.getGrid();
+            if (Coltil.isValued(grid.grid)) {
                 module.resumeGame();
             } else {
                 loadGame();
             }
             module.pickColors(); // Must be done after loading game (which picks player profiles)
+            registerCapture(grid);
         }
         
         protected final void loadGame() {
@@ -369,14 +380,21 @@ public class BoardGame extends BaseGame {
             }
         }
         
-        protected final static void addText(final StringBuilder label, final int y) {
-            addText(label, (module.getGrid().w * DIM) + 8, y);
+        protected final static Pantext addText(final CharSequence label, final int y) {
+            return addText(label, (module.getGrid().w * DIM) + 8, y);
         }
         
-        protected final static void addText(final StringBuilder label, final int x, final int y) {
+        protected final static Pantext addText(final CharSequence label, final int x, final int y) {
             final Pantext text = new Pantext(Pantil.vmid(), font, label);
             text.getPosition().set(x, y);
             room.addActor(text);
+            return text;
+        }
+        
+        protected final static Pantext addTextCentered(final CharSequence label, final int x, final int y) {
+            final Pantext text = addText(label, x, y);
+            text.centerX();
+            return text;
         }
         
         @Override
