@@ -88,10 +88,8 @@ public class ChessModule extends BoardGameModule<ChessPiece> {
     
     @Override
     protected final void pickDestination(final int cellIndex) {
-        if (BoardGame.isHighlight(cellIndex)) {
-            pieceToMove.moveToDestination(cellIndex);
-            BoardGame.toggleCurrentPlayer();
-        }
+        pieceToMove.moveToDestination(cellIndex);
+        BoardGame.toggleCurrentPlayer();
         initTurn();
     }
     

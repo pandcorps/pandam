@@ -331,8 +331,8 @@ public abstract class ChessPiece extends BoardGamePiece {
         }
         
         private final void addCastling(final Set<Integer> set, final int dx, final int rx) {
-            // Assert that King has not moved
-            if (moved) {
+            // Assert that King has not moved (and is not in the middle of evaluating a potential move)
+            if (moved || (x != 4)) {
                 return;
             }
             final ChessPiece rook = grid.get(rx, y);
@@ -363,10 +363,16 @@ public abstract class ChessPiece extends BoardGamePiece {
         
         private final boolean isAnyInCheck(final int dx) {
             final int left = Math.min(x, dx), right = Math.max(x, dx);
-            for (int bx = left; bx <= right; bx++) {
-                if (wouldBeInCheck(bx, y)) {
-                    return true;
+            final boolean oldMoved = moved;
+            try {
+                moved = true;
+                for (int bx = left; bx <= right; bx++) {
+                    if (wouldBeInCheck(bx, y)) {
+                        return true;
+                    }
                 }
+            } finally {
+                moved = oldMoved;
             }
             return false;
         }
