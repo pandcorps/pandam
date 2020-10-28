@@ -325,6 +325,10 @@ public class BoardGame extends BaseGame {
         Panscreen.set(new BoardGameScreen());
     }
     
+    protected final static void reload() {
+        module.getGrid().reload();
+    }
+    
     protected final static void registerCapture(final Panctor actor) {
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
@@ -629,9 +633,16 @@ public class BoardGame extends BaseGame {
             if (pieceToMove == null) {
                 pickPieceToMove(cellIndex);
                 return null;
-            } else {
+            } else if (BoardGame.isHighlight(cellIndex)) {
                 pickDestination(cellIndex);
                 return BoardGame.highlightSquares.isEmpty() ? getFinalResult() : null;
+            } else { // Illegal destination picked for pieceToMove
+                /*
+                Sometimes multiple moves are allowed in a single turn, like double-jumping in Checkers.
+                So don't just cancel move.  Reload state to revert any previous moves for the turn.
+                */
+                reload();
+                return null;
             }
         }
         
@@ -1061,6 +1072,10 @@ public class BoardGame extends BaseGame {
             if (isRedoAllowed()) {
                 setState(currentStateIndex + 1);
             }
+        }
+        
+        protected final void reload() {
+            setState(currentStateIndex);
         }
         
         protected final void renderView(final Panderer renderer) {
