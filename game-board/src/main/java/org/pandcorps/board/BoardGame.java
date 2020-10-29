@@ -75,10 +75,7 @@ public class BoardGame extends BaseGame {
     
     protected final static int NUM_PLAYERS = 2;
     
-    protected final static int INDEX_UNDO = Integer.MAX_VALUE;
-    protected final static int INDEX_REDO = INDEX_UNDO - 1;
-    protected final static int INDEX_NEW = INDEX_UNDO - 2;
-    protected final static int INDEX_MENU = INDEX_UNDO - 3;
+    private static int nextMenuIndex = Integer.MAX_VALUE;
     
     protected final static int RESULT_NULL = -1;
     protected final static int RESULT_WIN = 0;
@@ -114,6 +111,7 @@ public class BoardGame extends BaseGame {
     protected static Panmage queen = null;
     protected static Panmage king = null;
     protected static Font font = null;
+    protected static List<MenuButton> menuButtons = null;
     
     protected final static List<BoardGameProfile> profiles = new ArrayList<BoardGameProfile>();
     protected static BoardGameModule<? extends BoardGamePiece> module = null;
@@ -183,7 +181,56 @@ public class BoardGame extends BaseGame {
         queen = engine.createImage(PRE_IMG + "queen", RES + "Queen.png");
         king = engine.createImage(PRE_IMG + "king", RES + "King.png");
         font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), Pancolor.WHITE, Pancolor.WHITE, Pancolor.WHITE, null, Pancolor.BLACK);
+        initMenuButtons();
         loadProfiles();
+    }
+    
+    private final static void initMenuButtons() {
+        menuButtons = Arrays.asList(
+                new MenuButton(9, 1, imgUndo) {
+                    @Override
+                    protected final boolean isActive() {
+                        return module.getGrid().isUndoAllowed();
+                    }
+                    @Override
+                    protected final void onTouch() {
+                        module.getGrid().undo();
+                    }
+                },
+                new MenuButton(11, 1, imgRedo) {
+                    @Override
+                    protected final boolean isActive() {
+                        return module.getGrid().isRedoAllowed();
+                    }
+                    @Override
+                    protected final void onTouch() {
+                        module.getGrid().redo();
+                    }
+                },
+                new MenuButton(9, 3, imgPlus) {
+                    @Override
+                    protected final void onTouch() {
+                        module.getGrid().detach();
+                        Menu.goPrompt(
+                                "New game?",
+                                new ActionEndListener() {
+                                    @Override public final void onActionEnd(final ActionEndEvent event) {
+                                        module.startNewGame();
+                                        goGame();
+                                    }},
+                                new ActionEndListener() {
+                                    @Override public final void onActionEnd(final ActionEndEvent event) {
+                                        goGame();
+                                    }});
+                    }
+                },
+                new MenuButton(11, 3, imgMenu) {
+                    @Override
+                    protected final void onTouch() {
+                        goMenu();
+                    }
+                }
+        );
     }
     
     private final static void loadProfiles() {
@@ -504,30 +551,11 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static boolean processTouchMenu(final int index) {
-        switch (index) {
-            case INDEX_UNDO:
-                module.getGrid().undo();
+        for (final MenuButton menuButton : menuButtons) {
+            if (menuButton.index == index) {
+                menuButton.onTouch();
                 return true;
-            case INDEX_REDO:
-                module.getGrid().redo();
-                return true;
-            case INDEX_NEW:
-                module.getGrid().detach();
-                Menu.goPrompt(
-                        "New game?",
-                        new ActionEndListener() {
-                            @Override public final void onActionEnd(final ActionEndEvent event) {
-                                module.startNewGame();
-                                goGame();
-                            }},
-                        new ActionEndListener() {
-                            @Override public final void onActionEnd(final ActionEndEvent event) {
-                                goGame();
-                            }});
-                return true;
-            case INDEX_MENU:
-                goMenu();
-                return true;
+            }
         }
         return false;
     }
@@ -848,10 +876,6 @@ public class BoardGame extends BaseGame {
         private final int h;
         private final int numCells;
         protected final List<P> grid;
-        private final int xUndo, yUndo;
-        private final int xRedo, yRedo;
-        private final int xNew, yNew;
-        private final int xMenu, yMenu;
         private final Map<Integer, BoardGamePieceList<P>> lists = new HashMap<Integer, BoardGamePieceList<P>>();
         private final List<BoardGameState<P>> states = new ArrayList<BoardGameState<P>>();
         private int currentStateIndex = 0;
@@ -866,12 +890,6 @@ public class BoardGame extends BaseGame {
             this.h = h;
             numCells = w * h;
             grid = new ArrayList<P>(numCells);
-            final int mx1 = (w + 1), my1 = 1;
-            final int mx2 = (w + 3), my2 = 3;
-            xUndo = mx1; yUndo = my1;
-            xRedo = mx2; yRedo = my1;
-            xNew = mx1; yNew = my2;
-            xMenu = mx2; yMenu = my2;
         }
         
         protected final void clear() {
@@ -997,14 +1015,11 @@ public class BoardGame extends BaseGame {
             final int index = getIndexOptional(x, y);
             if (isValid(index)) {
                 return index;
-            } else if ((x == xUndo) && (y == yUndo)) {
-                return INDEX_UNDO;
-            } else if ((x == xRedo) && (y == yRedo)) {
-                return INDEX_REDO;
-            } else if ((x == xNew) && (y == yNew)) {
-                return INDEX_NEW;
-            } else if ((x == xMenu) && (y == yMenu)) {
-                return INDEX_MENU;
+            }
+            for (final MenuButton menuButton : menuButtons) {
+                if ((x == menuButton.x) && (y == menuButton.y)) {
+                    return menuButton.index;
+                }
             }
             return NULL_INDEX;
         }
@@ -1093,26 +1108,21 @@ public class BoardGame extends BaseGame {
                     }
                 }
             }
-            renderMenu(renderer, imgUndo, xUndo, yUndo, false, isUndoAllowed());
-            renderMenu(renderer, imgUndo, xRedo, yRedo, true, isRedoAllowed());
-            renderMenu(renderer, imgPlus, xNew, yNew, false, true);
-            renderMenu(renderer, imgMenu, xMenu, yMenu, false, true);
+            for (final MenuButton menuButton : menuButtons) {
+                renderMenu(renderer, menuButton);
+            }
             module.renderView(renderer);
         }
         
         protected final void render(final Panderer renderer, final Panmage image, final int x, final int y, final int z, final Pancolor color) {
-            render(renderer, image, x, y, z, false, color);
+            renderer.render(getLayer(), image, x, y, z, 0, 0, DIM, DIM, 0, false, false, color.getRf(), color.getGf(), color.getBf());
         }
         
-        protected final void render(final Panderer renderer, final Panmage image, final int x, final int y, final int z, final boolean mirror, final Pancolor color) {
-            renderer.render(getLayer(), image, x, y, z, 0, 0, DIM, DIM, 0, mirror, false, color.getRf(), color.getGf(), color.getBf());
-        }
-        
-        protected final void renderMenu(final Panderer renderer, final Panmage image, final int x, final int y, final boolean mirror, final boolean active) {
-            final int xd = x * DIM, yd = y * DIM;
-            final Pancolor color = active ? Pancolor.WHITE : Pancolor.DARK_GREY;
+        protected final void renderMenu(final Panderer renderer, final MenuButton menuButton) {
+            final int xd = menuButton.x * DIM, yd = menuButton.y * DIM;
+            final Pancolor color = menuButton.isActive() ? Pancolor.WHITE : Pancolor.DARK_GREY;
             render(renderer, square, xd, yd, DEPTH_CELL, color);
-            render(renderer, image, xd, yd, DEPTH_PIECE, mirror, color);
+            render(renderer, menuButton.img, xd, yd, DEPTH_PIECE, color);
         }
     }
     
@@ -1350,6 +1360,26 @@ public class BoardGame extends BaseGame {
             this.currentStateIndex = currentStateIndex;
             this.profileIndices = profileIndices;
         }
+    }
+    
+    protected abstract static class MenuButton {
+        private final int x, y;
+        private final int index;
+        private final Panmage img;
+        
+        protected MenuButton(final int x, final int y, final Panmage img) {
+            this.x = x;
+            this.y = y;
+            this.index = nextMenuIndex;
+            nextMenuIndex--;
+            this.img = img;
+        }
+        
+        protected boolean isActive() {
+            return true;
+        }
+        
+        protected abstract void onTouch();
     }
     
     public final static void main(final String[] args) {
