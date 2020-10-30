@@ -122,7 +122,8 @@ public class CheckersPiece extends BoardGamePiece {
             return CheckersModule.MOVE_ILLEGAL;
         }
         final Set<Integer> tmp = new HashSet<Integer>();
-        if (!CheckersModule.getMovablePieces(player, tmp).contains(getIndexWrapped())) {
+        CheckersModule.setMovablePieces(tmp, player);
+        if (!tmp.contains(getIndexWrapped())) {
             return CheckersModule.MOVE_ILLEGAL;
         } else if (!getAllowedDestinations(tmp).contains(Integer.valueOf(destination))) {
             return CheckersModule.MOVE_ILLEGAL;
