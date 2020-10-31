@@ -34,10 +34,15 @@ public class ChessModule extends BoardGameModule<ChessPiece> {
     private final static int BOARD_DIM = 8;
     protected final static BoardGameGrid<ChessPiece> grid = new BoardGameGrid<ChessPiece>(BOARD_DIM);
     private final static StringBuilder checkLabel = new StringBuilder();
+    private static MenuButton promoteToKnight = null;
+    private static MenuButton promoteToBishop = null;
+    private static MenuButton promoteToRook = null;
+    private static MenuButton promoteToQueen = null;
     
     @Override
     protected final void prepareGame() {
         BoardGame.BoardGameScreen.addText(checkLabel, Pangine.getEngine().getEffectiveHeight() - 36);
+        preparePromotionButtons();
     }
     
     @Override
@@ -88,14 +93,18 @@ public class ChessModule extends BoardGameModule<ChessPiece> {
     
     @Override
     protected final void pickDestination(final int cellIndex) {
-        pieceToMove.moveToDestination(cellIndex);
-        BoardGame.toggleCurrentPlayer();
-        initTurn();
+        if (pieceToMove.moveToDestination(cellIndex)) {
+            finishTurn();
+        } else {
+            BoardGame.highlightSquares.clear();
+        }
     }
     
     @Override
     protected final BoardGameResult getFinalResult() {
-        if (isCurrentPlayerInCheck()) {
+        if (BoardGame.isExtraMenuButtonAvailable()) {
+            return null;
+        } else if (isCurrentPlayerInCheck()) {
             return new BoardGameResult(BoardGame.RESULT_WIN, BoardGame.getNextPlayerIndex());
         }
         return BoardGameResult.newTie();
@@ -122,12 +131,18 @@ public class ChessModule extends BoardGameModule<ChessPiece> {
     }
     
     private final void initTurn() {
+        BoardGame.clearExtraMenuButtons();
         highlightMovablePieces();
         pieceToMove = null;
         Chartil.clear(checkLabel);
         if (isCurrentPlayerInCheck()) {
             checkLabel.append(BoardGame.highlightSquares.isEmpty() ? "Checkmate" : "Check");
         }
+    }
+    
+    protected final void finishTurn() {
+        BoardGame.toggleCurrentPlayer();
+        initTurn();
     }
     
     private final void highlightMovablePieces() {
@@ -163,5 +178,33 @@ public class ChessModule extends BoardGameModule<ChessPiece> {
             }
         }
         return false;
+    }
+    
+    private final static MenuButton newPromotionButton(final int x, final Panmage img, final char pieceType) {
+        return new MenuButton(x, 5, img) {
+            @Override
+            protected final void onTouch() {
+                final ChessPiece oldPiece = BoardGame.CHESS.pieceToMove;
+                grid.set(oldPiece.x, oldPiece.y, BoardGame.CHESS.parse(pieceType, oldPiece.player));
+                BoardGame.CHESS.finishTurn();
+            }
+        };
+    }
+    
+    private final static void preparePromotionButtons() {
+        if (promoteToQueen != null) {
+            return;
+        }
+        promoteToKnight = newPromotionButton(9, BoardGame.knight, ChessPiece.VALUE_KNIGHT);
+        promoteToBishop = newPromotionButton(10, BoardGame.bishop, ChessPiece.VALUE_BISHOP);
+        promoteToRook = newPromotionButton(11, BoardGame.rook, ChessPiece.VALUE_ROOK);
+        promoteToQueen = newPromotionButton(12, BoardGame.queen, ChessPiece.VALUE_QUEEN);
+    }
+    
+    protected final void addPromotionButtons() {
+        BoardGame.addExtraMenuButton(promoteToKnight);
+        BoardGame.addExtraMenuButton(promoteToBishop);
+        BoardGame.addExtraMenuButton(promoteToRook);
+        BoardGame.addExtraMenuButton(promoteToQueen);
     }
 }

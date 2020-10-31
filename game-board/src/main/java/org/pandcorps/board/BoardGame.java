@@ -112,6 +112,7 @@ public class BoardGame extends BaseGame {
     protected static Panmage king = null;
     protected static Font font = null;
     protected static List<MenuButton> menuButtons = null;
+    protected static int numStandardMenuButtons = 0;
     
     protected final static List<BoardGameProfile> profiles = new ArrayList<BoardGameProfile>();
     protected static BoardGameModule<? extends BoardGamePiece> module = null;
@@ -186,7 +187,8 @@ public class BoardGame extends BaseGame {
     }
     
     private final static void initMenuButtons() {
-        menuButtons = Arrays.asList(
+        menuButtons = new ArrayList<MenuButton>(8);
+        menuButtons.addAll(Arrays.asList(
                 new MenuButton(9, 1, imgUndo) {
                     @Override
                     protected final boolean isActive() {
@@ -230,7 +232,24 @@ public class BoardGame extends BaseGame {
                         goMenu();
                     }
                 }
-        );
+        ));
+        numStandardMenuButtons = menuButtons.size();
+    }
+    
+    protected final static void addExtraMenuButton(final MenuButton menuButton) {
+        menuButtons.add(menuButton);
+    }
+    
+    protected final static void clearExtraMenuButtons() {
+        int size = menuButtons.size();
+        while (size > numStandardMenuButtons) {
+            size--;
+            menuButtons.remove(size);
+        }
+    }
+    
+    protected final static boolean isExtraMenuButtonAvailable() {
+        return menuButtons.size() > numStandardMenuButtons;
     }
     
     private final static void loadProfiles() {
@@ -597,10 +616,10 @@ public class BoardGame extends BaseGame {
                         final boolean handled = processTouchMenu(touchEndIndex);
                         if (!handled && grid.isValid(touchEndIndex) && (module.result == null)) {
                             result = processTouch(touchEndIndex);
-                            if (module.turnTaken) {
-                                addState();
-                                module.turnTaken = false;
-                            }
+                        }
+                        if (module.turnTaken) {
+                            addState();
+                            module.turnTaken = false;
                         }
                     }
                     touchStartIndex = NULL_INDEX;
