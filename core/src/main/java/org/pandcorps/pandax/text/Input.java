@@ -33,6 +33,7 @@ public abstract class Input extends TextItem {
     protected final InputSubmitListener listener;
     protected InputSubmitListener changeListener = null;
     protected int max = 0;
+    protected boolean cursorEnabled = true;
     protected boolean properName = false;
     
     public Input(final Font font, final InputSubmitListener listener) {
@@ -71,7 +72,7 @@ public abstract class Input extends TextItem {
         final Pangine engine = Pangine.getEngine();
         final Panteraction interaction = engine.getInteraction();
         interaction.inactivateAll();
-        label.setCursorEnabled(true);
+        label.setCursorEnabled(cursorEnabled);
         if (engine.isTouchSupported()) {
         	final ActionEndListener endListener = new ActionEndListener() {
 	            @Override public void onActionEnd(final ActionEndEvent event) {
@@ -180,6 +181,11 @@ public abstract class Input extends TextItem {
     
     public void setMax(final int max) {
     	this.max = max;
+    }
+    
+    public void setCursorEnabled(final boolean cursorEnabled) {
+        this.cursorEnabled = cursorEnabled;
+        label.setCursorEnabled(cursorEnabled);
     }
     
     public void setProperName(final boolean properName) {
