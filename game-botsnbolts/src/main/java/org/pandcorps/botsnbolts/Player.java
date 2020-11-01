@@ -875,6 +875,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     private final void unfreeze() {
         hurtForce(1);
+        BotsnBoltsGame.fxCrumble.startSound();
         shatter(this, BotsnBoltsGame.getIceShatter());
     }
     
