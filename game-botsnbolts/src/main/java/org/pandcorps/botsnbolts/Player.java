@@ -1237,7 +1237,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             final byte belowRight = getBehavior(BotsnBoltsGame.tm.getContainer(pr, py1));
             final boolean sand = left == TILE_SAND || right == TILE_SAND;
             final boolean belowSand = belowLeft == TILE_SAND || belowRight == TILE_SAND;
-            if ((sand || belowSand) && !prf.hazardProtection) {
+            if ((sand || belowSand) && (!prf.hazardProtection || "Y".equals(RoomLoader.variables.get("sandForced")))) {
                 if (belowSand || !isAnySolidBehavior(belowLeft) || !isAnySolidBehavior(belowRight)) {
                     pos.addY(-1);
                 }
