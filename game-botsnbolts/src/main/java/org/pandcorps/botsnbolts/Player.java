@@ -79,6 +79,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static double GRAPPLING_ANGLE_MAX_UP = Math.PI / 8.0;
     private final static double GRAPPLING_ANGLE_MAX_DIAG = 3.0 * GRAPPLING_ANGLE_MAX_UP;
     private final static int GRAPPLING_OFF_Y = 12;
+    private final static int DAMAGE_FREEZE = 1;
     private final static int VEL_ROOM_CHANGE = 10;
     protected final static float NULL_COORD = -2000;
     
@@ -634,26 +635,30 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return false;
         }
         hurtForce(damage);
-        BotsnBoltsGame.fxHurt.startSound();
+        if (!prf.stunProtection) {
+            BotsnBoltsGame.fxHurt.startSound();
+        }
         return true;
     }
     
     private final void hurtForce(final int damage) {
-        stateHandler.onHurt(this);
-        lastHurt = getClock();
+        if (!prf.stunProtection) {
+            stateHandler.onHurt(this);
+            lastHurt = getClock();
+        }
         isFree(); // Calls onFree(); do after setting lastHurt to avoid loop
         blinkTimer = 0;
         if (!prf.infiniteHealth) {
             health -= damage;
         }
-        if ((v > 0) && !isGrounded()) {
+        if ((v > 0) && !isGrounded() && !prf.stunProtection) {
             v = 0;
         }
         startCharge = NULL_CLOCK;
         lastCharge = NULL_CLOCK;
         if (health <= 0) {
             defeat();
-        } else {
+        } else if (!prf.stunProtection) {
             addFollower(burst(BotsnBoltsGame.flash, 0, CENTER_Y, BotsnBoltsGame.DEPTH_POWER_UP));
             puff(-12, 25);
             puff(0, 30);
@@ -681,7 +686,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final boolean freeze() {
-        if (isInvincible()) {
+        if (prf.stunProtection) {
+            hurt(DAMAGE_FREEZE);
+            return false;
+        } else if (isInvincible()) {
             return false;
         }
         stateHandler.onHurt(this);
@@ -881,7 +889,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void unfreeze() {
-        hurtForce(1);
+        hurtForce(DAMAGE_FREEZE);
         BotsnBoltsGame.fxCrumble.startSound();
         shatter(this, BotsnBoltsGame.getIceShatter());
     }
