@@ -66,6 +66,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int VEL_JUMP = 8;
     protected final static float VEL_BOUNCE_BOMB = 7.5f;
     protected final static int VEL_SPRING = 10;
+    private final static int VEL_FALL_PROTECTION = 15;
     private final static int VEL_WALK = 3;
     protected final static int VEL_PROJECTILE = 8;
     private final static float VX_SPREAD1;
@@ -389,9 +390,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     private final void startJump(final Carrier jumpStartedOnCarrier) {
         this.jumpStartedOnCarrier = jumpStartedOnCarrier;
-        v = VEL_JUMP;
-        if (sanded) {
-            v -= 2;
+        if (isOnFallProtectionRow()) {
+            v = VEL_FALL_PROTECTION;
+        } else {
+            v = VEL_JUMP;
+            if (sanded) {
+                v -= 2;
+            }
         }
         lastJump = getClock();
         BotsnBoltsGame.fxJump.startSound();
@@ -1705,6 +1710,35 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (stateHandler == LADDER_HANDLER) {
             changeRoom(0, 1);
         }
+    }
+    
+    @Override
+    protected final boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
+        if (super.isSolid(index, floor, left, right, y)) {
+            return true;
+        } else if (isFallProtectionRow(BotsnBoltsGame.tm.getRow(index))) {
+            return true;
+        }
+        return false;
+    }
+    
+    private final boolean isFallProtectionRow(final int row) {
+        return !isAdjacentRoomBelow() && prf.fallProtection && (row == 0);
+    }
+    
+    private final boolean isOnFallProtectionRow() {
+        if (!prf.fallProtection) {
+            return false;
+        }
+        try {
+            prf.fallProtection = false;
+            if (getSolid(-1, false) != -1) {
+                return false; // On normal solid
+            }
+        } finally {
+            prf.fallProtection = true;
+        }
+        return isFallProtectionRow(BotsnBoltsGame.tm.getContainerRow(getPosition().getY() - 1));
     }
     
     @Override
