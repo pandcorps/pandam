@@ -643,7 +643,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         lastHurt = getClock();
         isFree(); // Calls onFree(); do after setting lastHurt to avoid loop
         blinkTimer = 0;
-        health -= damage;
+        if (!prf.infiniteHealth) {
+            health -= damage;
+        }
         if ((v > 0) && !isGrounded()) {
             v = 0;
         }
