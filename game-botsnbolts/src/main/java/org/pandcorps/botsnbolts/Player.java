@@ -391,7 +391,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     private final void startJump(final Carrier jumpStartedOnCarrier) {
         this.jumpStartedOnCarrier = jumpStartedOnCarrier;
-        if (isOnFallProtectionRow()) {
+        if (prf.highJump || isOnFallProtectionRow()) {
             v = VEL_FALL_PROTECTION;
         } else {
             v = VEL_JUMP;
@@ -1180,7 +1180,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 }
                 break;
             case BotsnBoltsGame.TILE_DEFEAT :
-                defeat();
+                if (prf.infiniteHealth) {
+                    v = VEL_FALL_PROTECTION;
+                } else {
+                    defeat();
+                }
                 break;
             case BotsnBoltsGame.TILE_HURT :
                 if (!isCollisionStandingOnTile(index)) {
