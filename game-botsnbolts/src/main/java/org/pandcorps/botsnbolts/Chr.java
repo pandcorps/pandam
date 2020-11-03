@@ -112,6 +112,10 @@ public abstract class Chr extends GuyPlatform {
         return isUnderWater() ? -4 : -MAX_V;
     }
     
+    protected final boolean isAdjacentRoomBelow() {
+        return RoomLoader.getAdjacentRoom(this, 0, -1) != null;
+    }
+    
     protected final void fixX() {
         if (!isJumpPossible()) {
             getPosition().addX(getMirrorMultiplier());
