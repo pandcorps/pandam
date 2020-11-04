@@ -1730,7 +1730,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final boolean isSolid(final int index, final boolean floor, final float left, final float right, final float y) {
         if (super.isSolid(index, floor, left, right, y)) {
             return true;
-        } else if (isFallProtectionRow(BotsnBoltsGame.tm.getRow(index))) {
+        } else if (!BotsnBoltsGame.tm.isBad(index) && isFallProtectionRow(BotsnBoltsGame.tm.getRow(index))) {
             return true;
         }
         return false;
