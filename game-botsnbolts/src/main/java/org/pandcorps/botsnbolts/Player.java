@@ -1457,8 +1457,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final int getColumn() {
-        final TileMap tm = BotsnBoltsGame.tm;
-        return tm.getColumn(tm.getContainer(this));
+        return BotsnBoltsGame.tm.getContainerColumn(getPosition().getX());
     }
     
     private final void startGrapple() {
@@ -3083,8 +3082,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 return;
             }
             final TileMap tm = BotsnBoltsGame.tm;
-            final int index = tm.getContainer(this);
-            final int x = tm.getColumn(index), y = tm.getRow(index);
+            final int x = tm.getContainerColumn(pos.getX()), y = tm.getContainerRow(pos.getY());
             final boolean solidLeft = isSolidTile(x - 1, y), solidRight = isSolidTile(x + 1, y);
             if (!solidLeft && isSolidTile(x - 1, y + 1)) {
                 destroy();
