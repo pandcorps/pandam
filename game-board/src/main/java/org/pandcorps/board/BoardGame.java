@@ -500,6 +500,9 @@ public class BoardGame extends BaseGame {
     protected final static void toggleCurrentPlayer() {
         module.currentPlayerIndex = getNextPlayerIndex();
         module.turnTaken = true;
+        if (module.isReverseRequired()) {
+            module.getGrid().reverse();
+        }
     }
     
     protected final static int getNextPlayerIndex() {
@@ -712,6 +715,10 @@ public class BoardGame extends BaseGame {
         //@OverrideMe
         protected BoardGameResult getFinalResult() {
             return null;
+        }
+        
+        protected boolean isReverseRequired() {
+            return false;
         }
         
         protected String getTieLabel() {
@@ -1053,6 +1060,19 @@ public class BoardGame extends BaseGame {
         
         protected final int getY(final int index) {
             return index / w;
+        }
+        
+        protected final void reverse() {
+            final int half = numCells / 2, last = numCells - 1;
+            for (int index = 0; index < half; index++) {
+                final int reversedIndex = last - index;
+                final P first = get(index);
+                final P opposing = get(reversedIndex);
+                if ((first != null) || (opposing != null)) {
+                    set(index, opposing);
+                    set(reversedIndex, first);
+                }
+            }
         }
         
         protected final void addState() {
