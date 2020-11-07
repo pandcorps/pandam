@@ -155,6 +155,11 @@ public class CheckersModule extends BoardGameModule<CheckersPiece> {
         return new BoardGameResult(BoardGame.RESULT_WIN, players.iterator().next().intValue());
     }
     
+    @Override
+    protected final boolean isReverseRequired() {
+        return true;
+    }
+    
     protected final static class MoveResult {
         private final boolean success;
         private final Set<Integer> extraCaptureDestinations;
