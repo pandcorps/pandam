@@ -385,13 +385,19 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
+    private final void onAirJumpNormal() {
+        if (prf.airJump) {
+            startJump();
+        }
+    }
+    
     private final void startJump() {
         startJump(null);
     }
     
     private final void startJump(final Carrier jumpStartedOnCarrier) {
         this.jumpStartedOnCarrier = jumpStartedOnCarrier;
-        if (prf.highJump || isOnFallProtectionRow()) {
+        if (isOnFallProtectionRow()) {
             v = VEL_FALL_PROTECTION;
         } else {
             v = VEL_JUMP;
@@ -3007,6 +3013,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void airJump(final Player player) {
+            player.onAirJumpNormal();
         }
     };
     
