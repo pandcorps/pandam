@@ -30,8 +30,8 @@ import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 
 public class CheckersPiece extends BoardGamePiece {
-    private final static int[] DIRECTIONS_0 = { 1 };
-    private final static int[] DIRECTIONS_1 = { -1 };
+    private final static int[] DIRECTIONS_UP = { 1 };
+    private final static int[] DIRECTIONS_DOWN = { -1 };
     private final static int[] DIRECTIONS_CROWNED = { 1, -1 };
     private final static BoardGameGrid<CheckersPiece> grid = CheckersModule.grid;
     protected boolean crowned = false;
@@ -44,7 +44,8 @@ public class CheckersPiece extends BoardGamePiece {
         if (crowned) {
             return DIRECTIONS_CROWNED;
         }
-        return (player == 0) ? DIRECTIONS_0 : DIRECTIONS_1;
+        //return (player == 0) ? DIRECTIONS_UP : DIRECTIONS_DOWN; // Correct if grid isn't reversed when toggling player
+        return (player == BoardGame.module.currentPlayerIndex) ? DIRECTIONS_UP : DIRECTIONS_DOWN; // Current player always moving upward
     }
     
     protected final boolean isAbleToCapture() {
