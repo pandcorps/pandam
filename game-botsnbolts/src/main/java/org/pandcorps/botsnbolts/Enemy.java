@@ -2034,8 +2034,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         private final void startMove() {
             final TileMap tm = BotsnBoltsGame.tm;
-            final int index = tm.getContainer(this);
-            final int row = tm.getRow(index), col = tm.getColumn(index);
+            final Panple pos = getPosition();
+            final int row = tm.getContainerRow(pos.getY()), col = tm.getContainerColumn(pos.getX());
             dir = isSolidTile(col + velX, row + velY) ? -1 : 1;
         }
         
