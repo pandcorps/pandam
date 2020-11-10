@@ -150,9 +150,10 @@ public abstract class ChessPiece extends BoardGamePiece {
         return ChessModule.isPlayerInCheck(player);
     }
     
-    protected void moveToDestination(final int cellIndex) {
+    protected boolean moveToDestination(final int cellIndex) {
         grid.set(cellIndex, this);
         moved = true;
+        return true;
     }
     
     protected final static ChessPiece parse(final char value, final int player) {
@@ -204,12 +205,23 @@ public abstract class ChessPiece extends BoardGamePiece {
         }
         
         @Override
+        protected final boolean moveToDestination(final int cellIndex) {
+            super.moveToDestination(cellIndex);
+            if (grid.isValid(x, y + getDirection())) {
+                return true;
+            }
+            BoardGame.CHESS.addPromotionButtons();
+            return false;
+        }
+        
+        @Override
         protected final Panmage getImage() {
             return BoardGame.pawn;
         }
         
         protected final int getDirection() {
-            return (player == 0) ? 1 : -1;
+            //return (player == 0) ? 1 : -1; // Correct if grid isn't reversed when toggling player
+            return (player == BoardGame.CHESS.currentPlayerIndex) ? 1 : -1; // Current player always moving upward
         }
     }
     
@@ -378,7 +390,7 @@ public abstract class ChessPiece extends BoardGamePiece {
         }
         
         @Override
-        protected final void moveToDestination(final int cellIndex) {
+        protected final boolean moveToDestination(final int cellIndex) {
             final int oldX = x;
             super.moveToDestination(cellIndex);
             if (Math.abs(x - oldX) > 1) { // Must be castling if moving more than 1 cell
@@ -393,6 +405,7 @@ public abstract class ChessPiece extends BoardGamePiece {
                 final ChessPiece rook = grid.get(rookOldX, y);
                 rook.moveToDestination(grid.getIndexRequired(rookNewX, y));
             }
+            return true;
         }
         
         @Override
