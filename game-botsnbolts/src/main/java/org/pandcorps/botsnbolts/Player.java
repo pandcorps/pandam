@@ -657,11 +657,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (!prf.infiniteHealth) {
             health -= damage;
         }
-        if ((v > 0) && !isGrounded() && !prf.stunProtection) {
-            v = 0;
+        if (!prf.stunProtection) {
+            if ((v > 0) && !isGrounded()) {
+                v = 0;
+            }
+            startCharge = NULL_CLOCK;
+            lastCharge = NULL_CLOCK;
         }
-        startCharge = NULL_CLOCK;
-        lastCharge = NULL_CLOCK;
         if (health <= 0) {
             defeat();
         } else if (!prf.stunProtection) {
