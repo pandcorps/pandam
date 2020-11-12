@@ -51,7 +51,12 @@ public class Profile {
     /*package*/ boolean adaptiveBatteries = true;
     /*package*/ boolean infiniteStamina = true;
     /*package*/ boolean infiniteLives = true;
-    /*package*/ final static int NUM_DIFFICULTY_SETTINGS = 7;
+    /*package*/ boolean infiniteHealth = false;
+    /*package*/ boolean stunProtection = false;
+    /*package*/ boolean fallProtection = false;
+    /*package*/ boolean hazardProtection = false;
+    /*package*/ boolean airJump = false;
+    /*package*/ final static int NUM_DIFFICULTY_SETTINGS = 12;
     private final Profile old;
     
     /*package*/ Profile() {
@@ -90,13 +95,21 @@ public class Profile {
         adaptiveBatteries = src.adaptiveBatteries;
         infiniteStamina = src.infiniteStamina;
         infiniteLives = src.infiniteLives;
+        infiniteHealth = src.infiniteHealth;
+        stunProtection = src.stunProtection;
+        fallProtection = src.fallProtection;
+        hazardProtection = src.hazardProtection;
+        airJump = src.airJump;
     }
     
     private final boolean isSame() {
         return (shootMode == old.shootMode) && (jumpMode == old.jumpMode) && (autoClimb == old.autoClimb) && (autoCharge == old.autoCharge)
                 && (levelSuggestions == old.levelSuggestions) && (frequentCheckpoints == old.frequentCheckpoints)
                 && (boltUsageHints == old.boltUsageHints) && (endureSpikes == old.endureSpikes) && (adaptiveBatteries == old.adaptiveBatteries)
-                && (infiniteStamina == old.infiniteStamina) && (infiniteLives == old.infiniteLives);
+                && (infiniteStamina == old.infiniteStamina) && (infiniteLives == old.infiniteLives)
+                && (infiniteHealth == old.infiniteHealth) && (stunProtection == old.stunProtection)
+                && (fallProtection == old.fallProtection) && (hazardProtection == old.hazardProtection)
+                && (airJump == old.airJump);
     }
     
     private final void loadBolts() {
@@ -164,6 +177,11 @@ public class Profile {
         adaptiveBatteries = seg.getBoolean(8, adaptiveBatteries);
         infiniteStamina = seg.getBoolean(9, infiniteStamina);
         infiniteLives = seg.getBoolean(10, infiniteLives);
+        infiniteHealth = seg.getBoolean(11, infiniteHealth);
+        stunProtection = seg.getBoolean(12, stunProtection);
+        fallProtection = seg.getBoolean(13, fallProtection);
+        hazardProtection = seg.getBoolean(14, hazardProtection);
+        airJump = seg.getBoolean(15, airJump);
     }
     
     /*package*/ final void saveBolts() {
@@ -198,13 +216,20 @@ public class Profile {
         seg.setBoolean(8, adaptiveBatteries);
         seg.setBoolean(9, infiniteStamina);
         seg.setBoolean(10, infiniteLives);
+        seg.setBoolean(11, infiniteHealth);
+        seg.setBoolean(12, stunProtection);
+        seg.setBoolean(13, fallProtection);
+        seg.setBoolean(14, hazardProtection);
+        seg.setBoolean(15, airJump);
         Savtil.save(seg, LOC_PROFILE);
         old.load(this);
     }
     
     /*package*/ final int getDifficulty() {
         return toDifficulty(levelSuggestions) + toDifficulty(frequentCheckpoints) + toDifficulty(boltUsageHints) + toDifficulty(endureSpikes) +
-                toDifficulty(adaptiveBatteries) + toDifficulty(infiniteStamina) + toDifficulty(infiniteLives);
+                toDifficulty(adaptiveBatteries) + toDifficulty(infiniteStamina) + toDifficulty(infiniteLives) +
+                toDifficulty(infiniteHealth) + toDifficulty(stunProtection) + toDifficulty(fallProtection) +
+                toDifficulty(hazardProtection) + toDifficulty(airJump);
     }
     
     private final static int toDifficulty(final boolean setting) {
