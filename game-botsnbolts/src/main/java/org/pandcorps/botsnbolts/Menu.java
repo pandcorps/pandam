@@ -415,10 +415,22 @@ public class Menu {
     }
     
     private final static TouchButton addTopRightButton(final Panlayer layer, final String name, final Panmage img, final Panctor src, final ActionEndListener listener) {
+        return addRightButton(layer, BotsnBoltsGame.GAME_H - 23, name, img, src, listener);
+    }
+    
+    private final static TouchButton addRightButton(final Panlayer layer, final int y, final String name, final Panmage img, final Panctor src, final ActionEndListener listener) {
         // Some devices have rounded corners and won't display an image exactly in the corner, so move inward
-        final TouchButton btn = addButton(layer, name, BotsnBoltsGame.GAME_W - 31, BotsnBoltsGame.GAME_H - 23, true, true, null, img, img, false, null, false, 16);
+        final TouchButton btn = addButton(layer, name, BotsnBoltsGame.GAME_W - 31, y, true, true, null, img, img, false, null, false, 16);
         src.register(btn, listener);
         return btn;
+    }
+    
+    private final static TouchButton addBottomRightButton(final Panlayer layer, final String name, final Panmage img, final Panctor src, final ActionEndListener listener) {
+        return addRightButton(layer, 7, name, img, src, listener);
+    }
+    
+    private final static void addRightText(final int y, final String label) {
+        addText(BotsnBoltsGame.GAME_W - 71, y, label);
     }
     
     protected final static void showUpDown() {
@@ -1057,16 +1069,33 @@ public class Menu {
     private final static int optionsX = 48;
     private static int optionsY = 0;
     
-    protected final static class OptionsScreen extends Panscreen {
+    protected static class OptionsScreen extends Panscreen {
+        protected Panroom room = null;
+        protected Panctor bg = null;
+        
         @Override
         protected final void load() throws Exception {
-            final Panroom room = Pangame.getGame().getCurrentRoom();
+            loadScreen();
+            loadOptions();
+            loadMeter();
+            loadInput();
+        }
+        
+        private final void loadScreen() {
+            room = Pangame.getGame().getCurrentRoom();
             BotsnBoltsGame.room = room;
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(new FinPancolor(96));
-            final Panctor bg = new LevelStartBg(24);
+            bg = new LevelStartBg(24);
             room.addActor(bg);
-            addText(BotsnBoltsGame.GAME_W / 2, 180, "Try disabling these if you like a challenge").centerX();
+            addText(BotsnBoltsGame.GAME_W / 2, 180, getLabel()).centerX();
+        }
+        
+        protected String getLabel() {
+            return "Try disabling these if you like a challenge";
+        }
+        
+        protected void loadOptions() {
             optionsY = 156;
             final Profile prf = BotsnBoltsGame.getPrimaryPlayerContext().prf;
             addOption(bg, "Suggest next level", new OptionSetter() {
@@ -1090,6 +1119,9 @@ public class Menu {
             addOption(bg, "Infinite 1-ups", new OptionSetter() {
                 @Override public final boolean set() {
                     return (prf.infiniteLives = !prf.infiniteLives); }});
+        }
+        
+        private final void loadMeter() {
             final int meterTextX = BotsnBoltsGame.GAME_W - optionsX - 32;
             addText(meterTextX, 156, "Hard");
             addText(meterTextX, 60, "Easy");
@@ -1097,16 +1129,35 @@ public class Menu {
             meter.getPosition().set(meterTextX + 12, 84);
             BotsnBoltsGame.addActor(meter);
             addVersion();
-            addTopRightButton(room, "LevelSelect", RoomLoader.isFirstLevelFinished() ? imgLevelSelect : imgPlay, bg, new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) {
-                    exitOptions();
-                }});
-            bg.register(engine.getInteraction().BACK, new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) {
-                    exitOptions();
-                }});
+        }
+        
+        private final void loadInput() {
+            final ActionEndListener topRightListener = getTopRightListener();
+            addRightText(BotsnBoltsGame.GAME_H - 19, "Back");
+            addTopRightButton(room, "Back", getTopRightIcon(), bg, topRightListener);
+            bg.register(Pangine.getEngine().getInteraction().BACK, topRightListener);
+            loadExtraInput();
             Player.registerCapture(bg);
             addCursor(room);
+        }
+        
+        protected Panmage getTopRightIcon() {
+            return RoomLoader.isFirstLevelFinished() ? imgLevelSelect : imgPlay;
+        }
+        
+        protected ActionEndListener getTopRightListener() {
+            return new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    exitOptions();
+                }};
+        }
+        
+        protected void loadExtraInput() {
+            addRightText(11, "More");
+            addBottomRightButton(room, "Assists", imgOptions, bg, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    goAssists();
+                }});
         }
     }
     
@@ -1123,8 +1174,12 @@ public class Menu {
     }
     
     private final static void exitOptions() {
-        BotsnBoltsGame.getPrimaryPlayerContext().prf.saveProfile(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
+        save(); // Save in case goLevelSelect will actually start first level instead of level select (checks isSame anyway, so won't save twice)
         goLevelSelect();
+    }
+    
+    private final static void save() {
+        BotsnBoltsGame.getPrimaryPlayerContext().prf.saveProfile();
     }
     
     private final static Pantext addText(final int x, final int y, final String label) {
@@ -1153,6 +1208,61 @@ public class Menu {
     
     private static interface OptionSetter {
         public boolean set();
+    }
+    
+    private final static void goAssists() {
+        save();
+        Panscreen.set(new AssistsScreen());
+    }
+    
+    private final static void exitAssists() {
+        save();
+        goOptions();
+    }
+    
+    protected final static class AssistsScreen extends OptionsScreen {
+        @Override
+        protected final String getLabel() {
+            return "Try enabling these if the game is too hard";
+        }
+        
+        @Override
+        protected final void loadOptions() {
+            optionsY = 140;
+            final Profile prf = BotsnBoltsGame.getPrimaryPlayerContext().prf;
+            addOption(bg, "Infinite health", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.infiniteHealth = !prf.infiniteHealth); }});
+            addOption(bg, "Stun protection", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.stunProtection = !prf.stunProtection); }});
+            addOption(bg, "Fall protection", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.fallProtection = !prf.fallProtection); }});
+            addOption(bg, "Hazard protection", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.hazardProtection = !prf.hazardProtection); }});
+            addOption(bg, "Air jump", new OptionSetter() {
+                @Override public final boolean set() {
+                    return (prf.airJump = !prf.airJump); }});
+        }
+        
+        @Override
+        protected final Panmage getTopRightIcon() {
+            return imgOptions;
+        }
+        
+        @Override
+        protected final ActionEndListener getTopRightListener() {
+            return new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    exitAssists();
+                }};
+        }
+        
+        @Override
+        protected final void loadExtraInput() {
+        }
     }
     
     protected abstract static class StartScreen extends Panscreen {
