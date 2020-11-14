@@ -54,8 +54,11 @@ public class BoardGame extends BaseGame {
     protected final static int TITLE_H = TITLE_ROWS * DIM; // 128;
     
     protected final static int DEPTH_CELL = 0;
-    protected final static int DEPTH_PIECE = 2;
-    protected final static int DEPTH_CURSOR = 4;
+    protected final static int DEPTH_PREVIOUS_TURN = 2;
+    protected final static int DEPTH_PIECE = 4;
+    protected final static int DEPTH_CURSOR = 6;
+    
+    protected final static int TURN_DISPLAY_DISTANCE = DIM / 2;
     
     protected final static Pancolor BLACK = Pancolor.DARK_GREY;
     protected final static Pancolor ORANGE = new FinPancolor(Pancolor.MAX_VALUE, 128, 0);
@@ -100,6 +103,7 @@ public class BoardGame extends BaseGame {
     protected static Panmage imgExit = null;
     protected static Panmage square = null;
     protected static Panmage squareBlack = null;
+    protected static Panmage imgPreviousTurn = null;
     protected static Panmage circle = null;
     protected static Panmage circles = null;
     protected static Panmage verticalSquare = null;
@@ -171,6 +175,7 @@ public class BoardGame extends BaseGame {
         imgExit = engine.createImage(PRE_IMG + "exit", RES + "Exit.png");
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
         squareBlack = Menu.getSquare(BLACK);
+        imgPreviousTurn = engine.createImage(PRE_IMG + "previous.turn", RES + "PreviousTurn.png");
         circle = engine.createImage(PRE_IMG + "circle", RES + "Circle.png");
         circles = engine.createImage(PRE_IMG + "circles", RES + "Circles.png");
         verticalCircle = engine.createImage(PRE_IMG + "vertical.circle", RES + "VerticalCircle.png");
@@ -592,6 +597,7 @@ public class BoardGame extends BaseGame {
         protected final int numPlayers = players.length;
         protected int currentPlayerIndex = 0;
         protected P pieceToMove = null;
+        protected List<Integer> pieceToMoveTurnIndices = null;
         protected boolean turnTaken = false;
         protected BoardGameResult result = null;
         
@@ -701,7 +707,17 @@ public class BoardGame extends BaseGame {
                 return;
             }
             pieceToMove = getGrid().get(cellIndex);
+            if (pieceToMoveTurnIndices == null) {
+                pieceToMoveTurnIndices = new ArrayList<>();
+            } else {
+                pieceToMoveTurnIndices.clear();
+            }
+            addTurnIndex(cellIndex);
             highlightAllowedDestinations();
+        }
+        
+        protected final void addTurnIndex(final int cellIndex) {
+            pieceToMoveTurnIndices.add(Integer.valueOf(cellIndex));
         }
         
         //@OverrideMe
@@ -772,6 +788,12 @@ public class BoardGame extends BaseGame {
                     seg.setInt(2, result.resultStatus);
                     seg.setInt(3, result.playerIndex);
                 }
+                final int numTurnIndices = Coltil.size(state.previousTurnIndices);
+                for (int i = 0; i < numTurnIndices; i++) {
+                    final Field field = new Field();
+                    field.setInt(0, state.previousTurnIndices.get(i));
+                    seg.addField(4, field);
+                }
                 seg.saveln(w);
             }
             writeEndOfFile(w, seg);
@@ -828,7 +850,16 @@ public class BoardGame extends BaseGame {
                 } else {
                     result = new BoardGameResult(resultStatus, seg.intValue(3));
                 }
-                states.add(new BoardGameState<P>(pieces, playerIndex, result));
+                final List<Field> turnIndexFields = seg.getRepetitions(4);
+                final int numTurnIndices = Coltil.size(turnIndexFields);
+                List<Integer> turnIndices = null;
+                if (numTurnIndices > 0) {
+                    turnIndices = new ArrayList<Integer>(numTurnIndices);
+                    for (final Field turnIndexField : turnIndexFields) {
+                        turnIndices.add(turnIndexField.getInteger());
+                    }
+                }
+                states.add(new BoardGameState<P>(pieces, playerIndex, turnIndices, result));
             }
             validateEndOfFile(in);
             getGrid().setState(context.currentStateIndex);
@@ -877,6 +908,7 @@ public class BoardGame extends BaseGame {
             currentPlayerIndex = 0;
             result = null;
             getGrid().clear();
+            Coltil.clear(pieceToMoveTurnIndices);
         }
         
         protected final boolean isEachPlayerDefaultColor() {
@@ -1037,7 +1069,14 @@ public class BoardGame extends BaseGame {
         }
         
         protected final int getIndex(final Touch touch) {
-            final int x = convertScreenToGrid(touch.getX()), y = convertScreenToGrid(touch.getY());
+            final int tx, ty;
+            if (cursor == null) {
+                tx = touch.getX(); ty = touch.getY();
+            } else {
+                final Panple pos = cursor.getPosition();
+                tx = Math.round(pos.getX()); ty = Math.round(pos.getY());
+            }
+            final int x = convertScreenToGrid(tx), y = convertScreenToGrid(ty);
             final int index = getIndexOptional(x, y);
             if (isValid(index)) {
                 return index;
@@ -1062,8 +1101,12 @@ public class BoardGame extends BaseGame {
             return index / w;
         }
         
+        private final int getLastIndex() {
+            return numCells - 1;
+        }
+        
         protected final void reverse() {
-            final int half = numCells / 2, last = numCells - 1;
+            final int half = numCells / 2, last = getLastIndex();
             for (int index = 0; index < half; index++) {
                 final int reversedIndex = last - index;
                 final P first = get(index);
@@ -1072,6 +1115,17 @@ public class BoardGame extends BaseGame {
                     set(index, opposing);
                     set(reversedIndex, first);
                 }
+            }
+            reverseTurnIndices();
+        }
+        
+        protected final void reverseTurnIndices() {
+            final int size = Coltil.size(module.pieceToMoveTurnIndices);
+            final int last = getLastIndex();
+            for (int i = 0; i < size; i++) {
+                final int index = module.pieceToMoveTurnIndices.get(i).intValue();
+                final int reversedIndex = last - index;
+                module.pieceToMoveTurnIndices.set(i, Integer.valueOf(reversedIndex));
             }
         }
         
@@ -1091,7 +1145,7 @@ public class BoardGame extends BaseGame {
         protected BoardGameState<P> newState() {
             final List<P> copied = module.copy(grid);
             set(copied);
-            return new BoardGameState<P>(copied, module.currentPlayerIndex, module.result);
+            return new BoardGameState<P>(copied, module.currentPlayerIndex, Coltil.copyList(module.pieceToMoveTurnIndices), module.result);
         }
         
         protected final void setState(final int newStateIndex) {
@@ -1099,6 +1153,7 @@ public class BoardGame extends BaseGame {
             module.currentPlayerIndex = state.playerIndex;
             set(state.grid);
             currentStateIndex = newStateIndex;
+            module.pieceToMoveTurnIndices = Coltil.copyList(state.previousTurnIndices);
             module.result = state.result;
             module.onLoad();
             autosave();
@@ -1147,9 +1202,42 @@ public class BoardGame extends BaseGame {
                     }
                 }
             }
+            renderTurnIndices(renderer);
+            renderMenuButtons(renderer);
+            renderModule(renderer);
+        }
+        
+        private final void renderTurnIndices(final Panderer renderer) {
+            final List<Integer> turnIndices = module.pieceToMoveTurnIndices;
+            final int size = Coltil.size(turnIndices);
+            if (size <= 1) {
+                return;
+            }
+            for (int dst = 1; dst < size; dst++) {
+                final int srcTileIndex = turnIndices.get(dst - 1).intValue();
+                final int srcX = getX(srcTileIndex) * DIM, srcY = getY(srcTileIndex) * DIM;
+                final int dstTileIndex = turnIndices.get(dst).intValue();
+                final int dstX = getX(dstTileIndex) * DIM, dstY = getY(dstTileIndex) * DIM;
+                final int diffX = dstX - srcX, diffY = dstY - srcY;
+                final int diff = Math.max(Math.abs(diffX), Math.abs(diffY));
+                if (diff == 0) {
+                    continue;
+                }
+                final int offX = TURN_DISPLAY_DISTANCE * diffX / diff, offY = TURN_DISPLAY_DISTANCE * diffY / diff;
+                final int dots = diff / TURN_DISPLAY_DISTANCE;
+                for (int dot = (dst == 1) ? 0 : 1; dot <= dots; dot++) {
+                    render(renderer, imgPreviousTurn, srcX + (dot * offX), srcY + (dot * offY), DEPTH_PREVIOUS_TURN, highlightColor);
+                }
+            }
+        }
+        
+        private final void renderMenuButtons(final Panderer renderer) {
             for (final MenuButton menuButton : menuButtons) {
                 renderMenu(renderer, menuButton);
             }
+        }
+        
+        private final void renderModule(final Panderer renderer) {
             module.renderView(renderer);
         }
         
@@ -1366,13 +1454,15 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static class BoardGameState<P extends BoardGamePiece> {
-        private final int playerIndex;
         private final List<P> grid;
+        private final int playerIndex;
+        private final List<Integer> previousTurnIndices;
         private final BoardGameResult result;
         
-        protected BoardGameState(final List<P> grid, final int playerIndex, final BoardGameResult result) {
-            this.playerIndex = playerIndex;
+        protected BoardGameState(final List<P> grid, final int playerIndex, final List<Integer> previousTurnIndices, final BoardGameResult result) {
             this.grid = grid;
+            this.playerIndex = playerIndex;
+            this.previousTurnIndices = previousTurnIndices;
             this.result = result;
         }
     }
