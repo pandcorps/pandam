@@ -175,6 +175,13 @@ public final class Coltil {
 		return list;
 	}
 	
+	public final static <E> List<E> copyList(final List<E> list) {
+	    if (list == null) {
+	        return null;
+	    }
+	    return new ArrayList<E>(list);
+	}
+	
 	//private final static Object[] EMPTY = {};
 	
 	//public final static <E> E[] unnull(final E... a) {
