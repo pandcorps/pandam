@@ -40,7 +40,7 @@ import org.pandcorps.pandax.text.Fonts.*;
 
 public class BoardGame extends BaseGame {
     protected final static String TITLE = "2-Player Games For 1 Device";
-    protected final static String VERSION = "1.0.0";
+    protected final static String VERSION = "1.0.1";
     protected final static String YEAR = "2020";
     protected final static String AUTHOR = "Andrew M. Martin";
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
@@ -57,6 +57,9 @@ public class BoardGame extends BaseGame {
     protected final static int DEPTH_PREVIOUS_TURN = 2;
     protected final static int DEPTH_PIECE = 4;
     protected final static int DEPTH_CURSOR = 6;
+    
+    protected final static int TEXT_OFF_TOP = 13;
+    protected final static int TEXT_LINE_HEIGHT = 9;
     
     protected final static int TURN_DISPLAY_DISTANCE = DIM / 2;
     
@@ -98,6 +101,7 @@ public class BoardGame extends BaseGame {
     protected static Panmage imgEdit = null;
     protected static Panmage imgOpen = null;
     protected static Panmage imgSave = null;
+    protected static Panmage imgX = null;
     protected static Panmage imgDelete = null;
     protected static Panmage imgDone = null;
     protected static Panmage imgExit = null;
@@ -170,7 +174,8 @@ public class BoardGame extends BaseGame {
         imgEdit = engine.createImage(PRE_IMG + "edit", RES + "Pencil.png");
         imgOpen = engine.createImage(PRE_IMG + "open", RES + "Open.png");
         imgSave = engine.createImage(PRE_IMG + "save", RES + "Save.png");
-        imgDelete = engine.createImage(PRE_IMG + "delete", RES + "Delete.png");
+        imgX = engine.createImage(PRE_IMG + "delete", RES + "Delete.png");
+        imgDelete = new AdjustedPanmage(Pantil.vmid(), imgX, Pancolor.RED);
         imgDone = engine.createImage(PRE_IMG + "done", RES + "Check.png");
         imgExit = engine.createImage(PRE_IMG + "exit", RES + "Exit.png");
         square = engine.createImage(PRE_IMG + "square", RES + "Square.png");
@@ -425,9 +430,9 @@ public class BoardGame extends BaseGame {
         @Override
         protected final void afterBaseLoad() {
             module.prepare();
-            final int h = Pangine.getEngine().getEffectiveHeight();
-            addText(label, h - 16);
-            addText(label2, h - 26);
+            final int top = Pangine.getEngine().getEffectiveHeight() - TEXT_OFF_TOP;
+            addText(label, top);
+            addText(label2, top - TEXT_LINE_HEIGHT);
             final BoardGameGrid<?> grid = module.getGrid();
             if (Coltil.isValued(grid.grid)) {
                 module.resumeGame();
@@ -511,7 +516,11 @@ public class BoardGame extends BaseGame {
     }
     
     protected final static int getNextPlayerIndex() {
-        return (module.currentPlayerIndex + 1) % module.players.length;
+        return getNextPlayerIndex(module.currentPlayerIndex);
+    }
+    
+    protected final static int getNextPlayerIndex(final int currentPlayerIndex) {
+        return (currentPlayerIndex + 1) % module.players.length;
     }
     
     protected final static void addState() {
@@ -598,6 +607,7 @@ public class BoardGame extends BaseGame {
         protected int currentPlayerIndex = 0;
         protected P pieceToMove = null;
         protected List<Integer> pieceToMoveTurnIndices = null;
+        protected P lastCapturedPiece = null;
         protected boolean turnTaken = false;
         protected BoardGameResult result = null;
         
@@ -712,6 +722,7 @@ public class BoardGame extends BaseGame {
             } else {
                 pieceToMoveTurnIndices.clear();
             }
+            lastCapturedPiece = null;
             addTurnIndex(cellIndex);
             highlightAllowedDestinations();
         }
@@ -776,12 +787,7 @@ public class BoardGame extends BaseGame {
                     if (piece == null) {
                         continue;
                     }
-                    final Field field = new Field();
-                    field.setInt(0, piece.player);
-                    field.setInt(1, piece.x);
-                    field.setInt(2, piece.y);
-                    field.setChar(3, serialize(piece));
-                    seg.addField(1, field);
+                    seg.addField(1, toField(piece));
                 }
                 final BoardGameResult result = state.result;
                 if (result != null) {
@@ -794,9 +800,21 @@ public class BoardGame extends BaseGame {
                     field.setInt(0, state.previousTurnIndices.get(i));
                     seg.addField(4, field);
                 }
+                if (state.lastCapturedPiece != null) {
+                    seg.setField(5, toField(state.lastCapturedPiece));
+                }
                 seg.saveln(w);
             }
             writeEndOfFile(w, seg);
+        }
+        
+        private final Field toField(final P piece) {
+            final Field field = new Field();
+            field.setInt(0, piece.player);
+            field.setInt(1, piece.x);
+            field.setInt(2, piece.y);
+            field.setChar(3, serialize(piece));
+            return field;
         }
         
         public final void load(final String loc) throws IOException {
@@ -836,12 +854,8 @@ public class BoardGame extends BaseGame {
                 final List<Field> fields = seg.getRepetitions(1);
                 final List<P> pieces = new ArrayList<P>(fields.size());
                 for (final Field field : fields) {
-                    final int player = field.intValue(0);
-                    final int x = field.intValue(1);
-                    final int y = field.intValue(2);
-                    final char pieceType = field.charValue(3);
-                    final P piece = parse(pieceType, player, x, y);
-                    Coltil.set(pieces, grid.getIndexRequired(x, y), piece);
+                    final P piece = toPiece(field);
+                    Coltil.set(pieces, grid.getIndexRequired(piece.x, piece.y), piece);
                 }
                 final int resultStatus = seg.getInt(2, RESULT_NULL);
                 final BoardGameResult result;
@@ -859,10 +873,20 @@ public class BoardGame extends BaseGame {
                         turnIndices.add(turnIndexField.getInteger());
                     }
                 }
-                states.add(new BoardGameState<P>(pieces, playerIndex, turnIndices, result));
+                final Field lastCapturedPieceField = seg.getField(5);
+                final P lastCapturedPiece = (lastCapturedPieceField == null) ? null : toPiece(lastCapturedPieceField);
+                states.add(new BoardGameState<P>(pieces, playerIndex, turnIndices, lastCapturedPiece, result));
             }
             validateEndOfFile(in);
             getGrid().setState(context.currentStateIndex);
+        }
+        
+        private final P toPiece(final Field field) {
+            final int player = field.intValue(0);
+            final int x = field.intValue(1);
+            final int y = field.intValue(2);
+            final char pieceType = field.charValue(3);
+            return parse(pieceType, player, x, y);
         }
         
         protected final void loadProfile(final int playerIndex, final int profileIndex) throws IOException {
@@ -909,6 +933,7 @@ public class BoardGame extends BaseGame {
             result = null;
             getGrid().clear();
             Coltil.clear(pieceToMoveTurnIndices);
+            lastCapturedPiece = null;
         }
         
         protected final boolean isEachPlayerDefaultColor() {
@@ -991,22 +1016,23 @@ public class BoardGame extends BaseGame {
             return isValid(index) ? Coltil.get(grid, index) : null;
         }
         
-        private final void set(final int index, final int x, final int y, final P piece) {
-            // Null out previous location here? Separate move method to do that?
+        private final P set(final int index, final int x, final int y, final P piece) {
+            final P old = Coltil.get(grid, index);
             Coltil.set(grid, index, piece);
             if ((piece != null) && ((piece.x != x) || (piece.y != y))) { // Can detach and reattach in same place; don't want to unset below then
                 unset(piece);
                 piece.x = x;
                 piece.y = y;
             }
+            return old;
         }
         
-        protected final void set(final int x, final int y, final P piece) {
-            set(getIndexRequired(x, y), x, y, piece);
+        protected final P set(final int x, final int y, final P piece) {
+            return set(getIndexRequired(x, y), x, y, piece);
         }
         
-        protected final void set(final int index, final P piece) {
-            set(index, getX(index), getY(index), piece);
+        protected final P set(final int index, final P piece) {
+            return set(index, getX(index), getY(index), piece);
         }
         
         protected final void set(final List<P> pieces) {
@@ -1145,7 +1171,7 @@ public class BoardGame extends BaseGame {
         protected BoardGameState<P> newState() {
             final List<P> copied = module.copy(grid);
             set(copied);
-            return new BoardGameState<P>(copied, module.currentPlayerIndex, Coltil.copyList(module.pieceToMoveTurnIndices), module.result);
+            return new BoardGameState<P>(copied, module.currentPlayerIndex, Coltil.copyList(module.pieceToMoveTurnIndices), module.copy(module.lastCapturedPiece), module.result);
         }
         
         protected final void setState(final int newStateIndex) {
@@ -1154,6 +1180,7 @@ public class BoardGame extends BaseGame {
             set(state.grid);
             currentStateIndex = newStateIndex;
             module.pieceToMoveTurnIndices = Coltil.copyList(state.previousTurnIndices);
+            module.lastCapturedPiece = module.copy(state.lastCapturedPiece);
             module.result = state.result;
             module.onLoad();
             autosave();
@@ -1204,6 +1231,7 @@ public class BoardGame extends BaseGame {
             }
             renderTurnIndices(renderer);
             renderMenuButtons(renderer);
+            renderLastCapturedPiece(renderer);
             renderModule(renderer);
         }
         
@@ -1235,6 +1263,18 @@ public class BoardGame extends BaseGame {
             for (final MenuButton menuButton : menuButtons) {
                 renderMenu(renderer, menuButton);
             }
+        }
+        
+        private final void renderLastCapturedPiece(final Panderer renderer) {
+            final P lastCapturedPiece = module.lastCapturedPiece;
+            if ((lastCapturedPiece == null) || isExtraMenuButtonAvailable()) {
+                return;
+            }
+            final int x = 9 * DIM, y = 5 * DIM;
+            final int capturedPlayer = lastCapturedPiece.player;
+            render(renderer, lastCapturedPiece.getImage(), x, y, DEPTH_CELL, module.players[capturedPlayer].getColor());
+            final int otherPlayer = getNextPlayerIndex(capturedPlayer);
+            render(renderer, imgX, x, y, DEPTH_PIECE, module.players[otherPlayer].getColor());
         }
         
         private final void renderModule(final Panderer renderer) {
@@ -1457,12 +1497,14 @@ public class BoardGame extends BaseGame {
         private final List<P> grid;
         private final int playerIndex;
         private final List<Integer> previousTurnIndices;
+        private final P lastCapturedPiece;
         private final BoardGameResult result;
         
-        protected BoardGameState(final List<P> grid, final int playerIndex, final List<Integer> previousTurnIndices, final BoardGameResult result) {
+        protected BoardGameState(final List<P> grid, final int playerIndex, final List<Integer> previousTurnIndices, final P lastCapturedPiece, final BoardGameResult result) {
             this.grid = grid;
             this.playerIndex = playerIndex;
             this.previousTurnIndices = previousTurnIndices;
+            this.lastCapturedPiece = lastCapturedPiece;
             this.result = result;
         }
     }
