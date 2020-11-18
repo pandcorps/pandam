@@ -78,6 +78,7 @@ public class CheckersModule extends BoardGameModule<CheckersPiece> {
     protected final void pickDestination(final int cellIndex) {
         final MoveResult result = pieceToMove.moveToDestination(cellIndex);
         if (result.success) {
+            addTurnIndex(cellIndex);
             if (Coltil.isValued(result.extraCaptureDestinations)) {
                 BoardGame.setHighlightSquares(result.extraCaptureDestinations);
                 return;
