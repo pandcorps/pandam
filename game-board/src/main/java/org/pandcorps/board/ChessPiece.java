@@ -151,7 +151,7 @@ public abstract class ChessPiece extends BoardGamePiece {
     }
     
     protected boolean moveToDestination(final int cellIndex) {
-        grid.set(cellIndex, this);
+        BoardGame.CHESS.lastCapturedPiece = BoardGame.CHESS.copy(grid.set(cellIndex, this));
         moved = true;
         return true;
     }
