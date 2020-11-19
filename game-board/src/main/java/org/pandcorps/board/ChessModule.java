@@ -41,7 +41,7 @@ public class ChessModule extends BoardGameModule<ChessPiece> {
     
     @Override
     protected final void prepareGame() {
-        BoardGame.BoardGameScreen.addText(checkLabel, Pangine.getEngine().getEffectiveHeight() - 36);
+        BoardGame.BoardGameScreen.addText(checkLabel, Pangine.getEngine().getEffectiveHeight() - BoardGame.TEXT_OFF_TOP - (BoardGame.TEXT_LINE_HEIGHT * 2));
         preparePromotionButtons();
     }
     
@@ -93,6 +93,7 @@ public class ChessModule extends BoardGameModule<ChessPiece> {
     
     @Override
     protected final void pickDestination(final int cellIndex) {
+        addTurnIndex(cellIndex);
         if (pieceToMove.moveToDestination(cellIndex)) {
             finishTurn();
         } else {
@@ -108,6 +109,11 @@ public class ChessModule extends BoardGameModule<ChessPiece> {
             return new BoardGameResult(BoardGame.RESULT_WIN, BoardGame.getNextPlayerIndex());
         }
         return BoardGameResult.newTie();
+    }
+    
+    @Override
+    protected final boolean isReverseRequired() {
+        return true;
     }
     
     @Override
