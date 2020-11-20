@@ -57,7 +57,7 @@ public class Menu {
             final int d = BoardGame.DIM;
             final int left = buttonLeft + (d * 2), right = getButtonRight() - (d * 3);
             final int bottom = buttonBottom, top = getButtonTop() - d;
-            final Panmage hi = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, Pancolor.CYAN);
+            final Panmage hi = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, BoardGame.HIGHLIGHT_DEFAULT);
             final Panmage white = BoardGame.square;
             final Panmage black = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, BoardGame.BLACK);
             final Panmage red = new AdjustedPanmage(Pantil.vmid(), BoardGame.square, Pancolor.RED);
@@ -80,6 +80,14 @@ public class Menu {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     goModule();
                 }});
+            final Pangine engine = Pangine.getEngine();
+            final int midX = engine.getEffectiveWidth() / 2, midY = engine.getEffectiveHeight() / 2, textH = 12;
+            final Pantext title = BoardGameScreen.addTextCentered(BoardGame.TITLE, midX, midY + textH);
+            BoardGame.registerCapture(title);
+            BoardGameScreen.addTextCentered(BoardGame.COPYRIGHT, midX, midY);
+            BoardGameScreen.addTextCentered(BoardGame.AUTHOR, midX, midY - textH);
+            BoardGameScreen.addTextCentered("Pick a Game", midX, midY - (textH * 2));
+            BoardGameScreen.addTextCentered(BoardGame.VERSION, midX, 8);
         }
     }
     
@@ -256,7 +264,7 @@ public class Menu {
     }
     
     protected final static Panmage getSquareActiveDefault() {
-        return getSquare(Pancolor.CYAN);
+        return getSquare(BoardGame.HIGHLIGHT_DEFAULT);
     }
     
     protected final static Panmage getSquareActive(final Pancolor color) {
