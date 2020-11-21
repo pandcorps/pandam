@@ -1051,8 +1051,11 @@ public class BoardGame extends BaseGame {
             }
         }
         
-        protected final void remove(final int x, final int y) {
-            Coltil.set(grid, getIndexRequired(x, y), null);
+        protected final P remove(final int x, final int y) {
+            final int index = getIndexRequired(x, y);
+            final P piece = Coltil.get(grid, index);
+            Coltil.set(grid, index, null);
+            return piece;
         }
         
         /*protected final void set(final BoardGameCell cell, final P piece) {
@@ -1172,6 +1175,10 @@ public class BoardGame extends BaseGame {
             final List<P> copied = module.copy(grid);
             set(copied);
             return new BoardGameState<P>(copied, module.currentPlayerIndex, Coltil.copyList(module.pieceToMoveTurnIndices), module.copy(module.lastCapturedPiece), module.result);
+        }
+        
+        protected final BoardGameState<P> getCurrentState() {
+            return states.get(currentStateIndex);
         }
         
         protected final void setState(final int newStateIndex) {
@@ -1365,6 +1372,10 @@ public class BoardGame extends BaseGame {
             this.player = player;
         }
         
+        protected final int getIndexRequired() {
+            return module.getGrid().getIndexRequired(x, y);
+        }
+        
         protected final Integer getIndexWrapped() {
             return module.getGrid().getIndexWrapped(x, y);
         }
@@ -1496,7 +1507,7 @@ public class BoardGame extends BaseGame {
     protected final static class BoardGameState<P extends BoardGamePiece> {
         private final List<P> grid;
         private final int playerIndex;
-        private final List<Integer> previousTurnIndices;
+        protected final List<Integer> previousTurnIndices;
         private final P lastCapturedPiece;
         private final BoardGameResult result;
         
