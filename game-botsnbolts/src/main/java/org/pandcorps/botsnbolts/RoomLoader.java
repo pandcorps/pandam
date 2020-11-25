@@ -513,6 +513,9 @@ public abstract class RoomLoader {
     }
     
     protected final static void addShadowBelow(final TileMap tm, final int tileIndex) {
+        if (tm.isBad(tileIndex)) {
+            return;
+        }
         addShadow(tm, tm.getColumn(tileIndex), tm.getRow(tileIndex) - 1);
     }
     
@@ -523,6 +526,9 @@ public abstract class RoomLoader {
     }
     
     protected final static void removeShadowBelow(final TileMap tm, final int tileIndex) {
+        if (tm.isBad(tileIndex)) {
+            return;
+        }
         removeShadow(tm, tm.getColumn(tileIndex), tm.getRow(tileIndex) - 1);
     }
     
@@ -1380,7 +1386,7 @@ public abstract class RoomLoader {
         return rooms.get(new BotCell(x, y));
     }
     
-    protected final static BotRoomCell getAdjacentRoom(final Player player, final int dirX, final int dirY) {
+    protected final static BotRoomCell getAdjacentRoom(final Panctor actor, final int dirX, final int dirY) {
         final int x, y;
         if (dirX < 0) {
             x = room.x - 1;
@@ -1389,7 +1395,7 @@ public abstract class RoomLoader {
             x = room.x + room.w;
             y = room.y;
         } else {
-            x = room.x + Math.min(room.w - 1, Math.max(0, Mathtil.floor(player.getPosition().getX() / BotsnBoltsGame.GAME_W)));
+            x = room.x + Math.min(room.w - 1, Math.max(0, Mathtil.floor(actor.getPosition().getX() / BotsnBoltsGame.GAME_W)));
             y = room.y + dirY;
         }
         final BotCell cell = new BotCell(x, y);
