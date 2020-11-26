@@ -82,15 +82,17 @@ public abstract class ChessPiece extends BoardGamePiece {
         return false;
     }
     
-    protected final void addIfOccupiedByOpponent(final Set<Integer> set, final int x, final int y) {
+    protected final boolean addIfOccupiedByOpponent(final Set<Integer> set, final int x, final int y) {
         final int index = grid.getIndexOptional(x, y);
         if (!grid.isValid(index)) {
-            return;
+            return false;
         }
         final ChessPiece piece = grid.get(index);
         if ((piece != null) && (piece.player != player)) {
             add(set, index);
+            return true;
         }
+        return false;
     }
     
     protected final void addLine(final Set<Integer> set, final int xd, final int yd) {
@@ -151,9 +153,13 @@ public abstract class ChessPiece extends BoardGamePiece {
     }
     
     protected boolean moveToDestination(final int cellIndex) {
-        BoardGame.CHESS.lastCapturedPiece = BoardGame.CHESS.copy(grid.set(cellIndex, this));
+        setLastCapturedPiece(grid.set(cellIndex, this));
         moved = true;
         return true;
+    }
+    
+    protected final void setLastCapturedPiece(final ChessPiece piece) {
+        BoardGame.CHESS.lastCapturedPiece = BoardGame.CHESS.copy(piece);
     }
     
     protected final static ChessPiece parse(final char value, final int player) {
@@ -200,13 +206,30 @@ public abstract class ChessPiece extends BoardGamePiece {
             if (empty && !moved) {
                 addIfEmpty(set, x, y + (dir * 2));
             }
-            addIfOccupiedByOpponent(set, x - 1, yd);
-            addIfOccupiedByOpponent(set, x + 1, yd);
+            addDiagonalDestination(set, x - 1, yd);
+            addDiagonalDestination(set, x + 1, yd);
+        }
+        
+        private final void addDiagonalDestination(final Set<Integer> set, final int xd, final int yd) {
+            if (addIfOccupiedByOpponent(set, xd, yd)) {
+                return;
+            }
+            // Check for opportunity to capture a pawn en passant
+            final BoardGamePiece neighbor = grid.get(xd, y);
+            if ((neighbor == null) || (neighbor.player == player) || !(neighbor instanceof Pawn) || !((Pawn) neighbor).isVulnerableToCaptureEnPassant()) {
+                return;
+            }
+            add(set, xd, yd);
         }
         
         @Override
         protected final boolean moveToDestination(final int cellIndex) {
+            final int oldX = x, oldY = y;
             super.moveToDestination(cellIndex);
+            if ((x != oldX) && (BoardGame.CHESS.lastCapturedPiece == null)) {
+                // If moved diagonally without capturing, then must be capturing en passant
+                setLastCapturedPiece(grid.remove(x, oldY));
+            }
             if (grid.isValid(x, y + getDirection())) {
                 return true;
             }
@@ -222,6 +245,32 @@ public abstract class ChessPiece extends BoardGamePiece {
         protected final int getDirection() {
             //return (player == 0) ? 1 : -1; // Correct if grid isn't reversed when toggling player
             return (player == BoardGame.CHESS.currentPlayerIndex) ? 1 : -1; // Current player always moving upward
+        }
+        
+        protected final boolean isVulnerableToCaptureEnPassant() {
+            if (player == BoardGame.CHESS.currentPlayerIndex) {
+                return false;
+            } else if (Coltil.size(BoardGame.CHESS.pieceToMoveTurnIndices) == 2) {
+                return isVulnerableToCaptureEnPassant(BoardGame.CHESS.pieceToMoveTurnIndices);
+            }
+            final BoardGameState<ChessPiece> state = grid.getCurrentState();
+            if (state == null) {
+                return false;
+            }
+            final List<Integer> turnIndices = state.previousTurnIndices;
+            if (Coltil.size(turnIndices) != 2) {
+                return false; // No previous turn; this must be first turn
+            }
+            return isVulnerableToCaptureEnPassant(turnIndices);
+        }
+        
+        private final boolean isVulnerableToCaptureEnPassant(final List<Integer> turnIndices) {
+            if (getIndexRequired() != turnIndices.get(1).intValue()) {
+                return false; // Previous turn didn't end here, so this piece wasn't moved last turn
+            }
+            final int prevY = grid.getY(turnIndices.get(0));
+            final int distance = Math.abs(y - prevY);
+            return distance == 2;
         }
     }
     
