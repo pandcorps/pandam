@@ -15,4 +15,6 @@ M|`_,QQQQQQQQQQQQQQQQQQ/-\
 M|--\qqqqqqqqqqqqqqqqqq(.)
 M|..)qqqqqqqqqqqqqqqqqq`_,
 
+VAR|sandForced|Y
+
 RPT|3|0|20|14|Drought
