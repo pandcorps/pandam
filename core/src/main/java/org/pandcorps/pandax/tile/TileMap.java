@@ -103,11 +103,19 @@ public class TileMap extends Panctor implements Savable {
         return j * w + i;
     }
     
+    private final void validate(final int index) {
+        if (isBad(index) ) {
+            throw new IllegalArgumentException("Invalid tile index " + index);
+        }
+    }
+    
     public final int getRow(final int index) {
+        validate(index);
         return index / w;
     }
     
     public final int getColumn(final int index) {
+        validate(index);
         return index % w;
     }
     
