@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020, Andrew M. Martin
+Copyright (c) 2009-2021, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -42,7 +42,7 @@ import org.pandcorps.championsofslam.Champion.*;
 public final class ChampionsOfSlamGame extends BaseGame {
     protected final static String TITLE = "Champions of Slam";
     protected final static String VERSION = "0.0.1";
-    protected final static String YEAR = "2018";
+    protected final static String YEAR = "2018-2021";
     protected final static String AUTHOR = "Andrew M. Martin";
     
     protected final static String RES = "org/pandcorps/championsofslam/";
