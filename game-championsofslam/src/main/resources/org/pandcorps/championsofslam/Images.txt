@@ -1,0 +1,31 @@
+BDY|16|legs.still
+BDY|16|legs.walk1
+BDY|16|legs.walk2
+BDY|16|legs.hurt
+BDY|16|fg.still
+BDY|16|fg.hurt
+BDY|16|fg.jab
+BDY|16|fg.uppercut
+BDY|16|bg.uppercut
+BDY|16|head
+PNT|16|legs.still|shorts
+PNT|16|legs.walk1|shorts
+PNT|16|legs.walk2|shorts
+PNT|16|legs.hurt|shorts
+BOT|16|legs.still|boots
+BOT|16|legs.walk1|boots
+BOT|16|legs.walk2|boots
+BOT|16|legs.hurt|boots
+SHR|16|fg.still|gloves
+SHR|16|fg.hurt|gloves
+SHR|16|fg.jab|gloves
+SHR|16|fg.uppercut|gloves
+SHR|16|bg.uppercut|gloves
+EYE
+EYE
+MTH
+MTH
+HAR
+HAR
+# Labels start with row1, cell1/cell2/etc., row2, cell1/2/etc.
+# Code will automatically index eyes/mouth/hair art
