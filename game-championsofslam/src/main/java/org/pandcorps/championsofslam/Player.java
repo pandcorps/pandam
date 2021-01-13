@@ -67,37 +67,37 @@ public class Player extends Champion {
                     return getColorKey(def.hairColor.b); }},
             new ChampionOption("SHIRT", "") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getIndexKey(def.shirtStyle.shirtIndex, 0); }},
+                    return getIndexKey(def.shirt.style.styleIndex, 0); }},
             new ChampionOption("SHIRT", "R ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.shirtColor.r); }},
+                    return getColorKey(def.shirt.color.r); }},
             new ChampionOption("SHIRT", "G ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.shirtColor.g); }},
+                    return getColorKey(def.shirt.color.g); }},
             new ChampionOption("SHIRT", "B ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.shirtColor.b); }},
+                    return getColorKey(def.shirt.color.b); }},
             new ChampionOption("PANTS", "") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getIndexKey(def.pantsStyle.pantsIndex, 0); }},
+                    return getIndexKey(def.pants.style.styleIndex, 0); }},
             new ChampionOption("PANTS", "R ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.pantsColor.r); }},
+                    return getColorKey(def.pants.color.r); }},
             new ChampionOption("PANTS", "G ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.pantsColor.g); }},
+                    return getColorKey(def.pants.color.g); }},
             new ChampionOption("PANTS", "B ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.pantsColor.b); }},
+                    return getColorKey(def.pants.color.b); }},
             new ChampionOption("BOOTS", "R ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.bootsColor.r); }},
+                    return getColorKey(def.boots.color.r); }},
             new ChampionOption("BOOTS", "G ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.bootsColor.g); }},
+                    return getColorKey(def.boots.color.g); }},
             new ChampionOption("BOOTS", "B ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.bootsColor.b); }}
+                    return getColorKey(def.boots.color.b); }}
     };
     private static int numPlayers = 0;
     
@@ -483,41 +483,37 @@ public class Player extends Champion {
                     def.hairColor.b = increment(def.hairColor.b, dir);
                     break;
                 case 9:
-                    do {
-                        def.shirtStyle = ChampionsOfSlamGame.shirtStyles[increment(def.shirtStyle.shirtIndex, getNumShirts(), dir)];
-                    } while (def.isInvalid());
+                    increment(def.shirt, Images.shirtStyles, dir);
                     break;
                 case 10:
-                    def.shirtColor.r = increment(def.shirtColor.r, dir);
+                    def.shirt.color.r = increment(def.shirt.color.r, dir);
                     break;
                 case 11:
-                    def.shirtColor.g = increment(def.shirtColor.g, dir);
+                    def.shirt.color.g = increment(def.shirt.color.g, dir);
                     break;
                 case 12:
-                    def.shirtColor.b = increment(def.shirtColor.b, dir);
+                    def.shirt.color.b = increment(def.shirt.color.b, dir);
                     break;
                 case 13:
-                    do {
-                        def.pantsStyle = ChampionsOfSlamGame.pantsStyles[increment(def.pantsStyle.pantsIndex, getNumPants(), dir)];
-                    } while (def.isInvalid());
+                    increment(def.pants, Images.pantsStyles, dir);
                     break;
                 case 14:
-                    def.pantsColor.r = increment(def.pantsColor.r, dir);
+                    def.pants.color.r = increment(def.pants.color.r, dir);
                     break;
                 case 15:
-                    def.pantsColor.g = increment(def.pantsColor.g, dir);
+                    def.pants.color.g = increment(def.pants.color.g, dir);
                     break;
                 case 16:
-                    def.pantsColor.b = increment(def.pantsColor.b, dir);
+                    def.pants.color.b = increment(def.pants.color.b, dir);
                     break;
                 case 17:
-                    def.bootsColor.r = increment(def.bootsColor.r, dir);
+                    def.boots.color.r = increment(def.boots.color.r, dir);
                     break;
                 case 18:
-                    def.bootsColor.g = increment(def.bootsColor.g, dir);
+                    def.boots.color.g = increment(def.boots.color.g, dir);
                     break;
                 case 19:
-                    def.bootsColor.b = increment(def.bootsColor.b, dir);
+                    def.boots.color.b = increment(def.boots.color.b, dir);
                     break;
             }
             player.setPausedText();
@@ -543,6 +539,10 @@ public class Player extends Champion {
                 return min;
             }
             return i;
+        }
+        
+        private final void increment(final Clothing clothing, final Map<Object, ClothingStyle> styles, final int dir) {
+            clothing.style = styles.get(increment(clothing.style.styleIndex, styles.size(), dir));
         }
         
         @Override
