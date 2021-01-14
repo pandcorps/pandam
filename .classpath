@@ -9,9 +9,11 @@
 	<classpathentry kind="src" path="game-base/src/main/java"/>
 	<classpathentry kind="src" path="game-base/src/main/resources"/>
 	<classpathentry kind="src" path="game-board/src/main/java"/>
+	<classpathentry kind="src" path="game-board/src/main/resources"/>
 	<classpathentry kind="src" path="game-botsnbolts/src/main/java"/>
 	<classpathentry kind="src" path="game-botsnbolts/src/main/resources"/>
 	<classpathentry kind="src" path="game-championsofslam/src/main/java"/>
+	<classpathentry kind="src" path="game-championsofslam/src/main/resources"/>
 	<classpathentry kind="src" path="game-furguardians/src/main/java"/>
 	<classpathentry kind="src" path="game-furguardians/src/main/resources"/>
 	<classpathentry kind="src" path="game-furguardians/src/test/java"/>
