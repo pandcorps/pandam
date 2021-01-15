@@ -29,8 +29,14 @@ import org.pandcorps.pandax.tile.*;
 public class Chr extends Guy4 {
     private ChrDefinition def = null;
     
-    protected Chr() {
-        def = new ChrDefinition();
+    protected Chr(final ChrDefinition def) {
+        this.def = def;
+        setSpeed(1);
+        face(Direction.South);
+    }
+    
+    protected final static ChrDefinition newSampleDefinition() {
+        final ChrDefinition def = new ChrDefinition();
         /*def.bodyTypeX = 0;
         def.bodyTypeY = 0;
         def.armorX = 0;
@@ -59,13 +65,8 @@ public class Chr extends Guy4 {
         def.armor.r = 0.5f;
         def.armor.g = 0.5f;
         def.armor.b = 0.5f;
-        setSpeed(1);
-        face(Direction.South);
+        return def;
     }
-public final void setDir(final Direction dir) {
-    face(dir);
-    this.walk(dir);
-}
     
     @Override
     protected final void renderView(final Panderer renderer) {
