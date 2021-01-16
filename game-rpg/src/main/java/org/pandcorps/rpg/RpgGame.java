@@ -265,17 +265,14 @@ public class RpgGame extends BaseGame {
 	
 	private final static void createPlayer(final int i, final int j) {
 		if (player == null) {
-			final CharacterLayer face = new CharacterLayer(1, 200, 152, 112, 216, 168, 128, 232, 184, 144, 248, 200, 160);
+			/*final CharacterLayer face = new CharacterLayer(1, 200, 152, 112, 216, 168, 128, 232, 184, 144, 248, 200, 160);
 			final CharacterLayer hair = new CharacterLayer(1, 0, 0, 128, 0, 0, 160, 00, 0, 192, 0, 0, 224);
 			final CharacterLayer legs = new CharacterLayer(0, 0, 128, 128, 0, 160, 160, 0, 192, 192, 0, 224, 224);
 			final CharacterLayer feet = new CharacterLayer(0, 72, 72, 72, 104, 104, 104, 136, 136, 136, 168, 168, 168);
 			final CharacterLayer torso = new CharacterLayer(0, 128, 128, 128, 160, 160, 160, 192, 192, 192, 224, 224, 224);
-			final CharacterDefinition def = new CharacterDefinition(face, 4, hair, legs, feet, torso);
-			player = new Player("act.player", def);
-			final Chr chr = new Chr();
-			//tm.getLayer().addActor(chr);
-			chr.init(tm, 0, 0);
-			player.chr = chr;
+			final CharacterDefinition def = new CharacterDefinition(face, 4, hair, legs, feet, torso);*/
+			player = new Player(Chr.newSampleDefinition());
+			player.init(tm, 0, 0);
 		}
 		player.active = true;
 		player.init(tm, i, j);
