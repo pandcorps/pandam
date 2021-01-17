@@ -26,17 +26,15 @@ import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandax.tile.*;
 
-public class Player extends Character {
+public class Player extends Chr {
     /*package*/ boolean active = true;
-    protected Chr chr = null;
     
-	protected Player(final String id, final CharacterDefinition def) {
-		super(id, def);
+	protected Player(final ChrDefinition def) {
+		super(def);
 	}
 
 	@Override
     protected void onStill() {
-	    chr.setDir(getDirection());
 		if (!active) {
 			return;
 		}
@@ -44,7 +42,7 @@ public class Player extends Character {
         final String label = TileOccupant.getInteractLabel(getFacing());
         if (label == null) {
         	RpgGame.hudInteract.setVisible(false);
-        } else if (!(RpgGame.hudInteract.isVisible() && label.equals(RpgGame.hudInteractText))) {
+        } else if (!(RpgGame.hudInteract.isVisible() && label.contentEquals(RpgGame.hudInteractText))) {
         	RpgGame.hudInteract.setVisible(true);
         	RpgGame.hudInteractText.setLength(0);
         	RpgGame.hudInteractText.append(label);
