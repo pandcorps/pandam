@@ -57,8 +57,9 @@ public class BlockGame extends BaseGame {
     
     protected final static int NEXT_Y = GRID_H + 1;
     
-    protected final static int Z_GRID = 0;
-    protected final static int Z_FALLING = 2;
+    protected final static int Z_BG = 2;
+    protected final static int Z_GRID = 2;
+    protected final static int Z_FALLING = 4;
     
     protected final static int FALL_TIME = 30;
     protected final static int FAST_TIME = 4;
@@ -83,6 +84,7 @@ public class BlockGame extends BaseGame {
     protected final static int INITIAL_ENEMY_COUNT_PER_COLOR = 1;
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
+    protected static Panmage block = null;
     protected static CellType[] STONE_TYPES = new CellType[NUM_COLORS];
     protected static CellType[] ENEMY_TYPES = new CellType[NUM_COLORS];
     protected static Panroom room = null;
@@ -120,7 +122,7 @@ public class BlockGame extends BaseGame {
     }
     
     private final static void loadResources() {
-        final Panmage block = Pangine.getEngine().createImage("block", RES + "Block.png");
+        block = Pangine.getEngine().createImage("block", RES + "Block.png");
         initColor(0, block, Pancolor.CYAN);
         initColor(1, block, Pancolor.BLUE);
         initColor(2, block, Pancolor.DARK_GREY);
@@ -171,11 +173,52 @@ public class BlockGame extends BaseGame {
     protected final static class BlockScreen extends Panscreen {
         @Override
         protected final void load() throws Exception {
-            Pangine.getEngine().enableColorArray();
+            final Pangine engine = Pangine.getEngine();
+            engine.enableColorArray();
             room = Pangame.getGame().getCurrentRoom();
+            final Panlayer bg = engine.createLayer("bg", GAME_W, GAME_H, room.getSize().getZ(), room);
+            bg.addActor(new Background());
+            bg.setConstant(true);
+            room.addBeneath(bg);
+            room.setClearDepthEnabled(false);
             grid = new Grid();
             players.clear();
             new Player().register(ControlScheme.getDefaultKeyboard());
+        }
+    }
+    
+    protected final static class Background extends Panctor {
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final int topNext = GAME_H - DIM;
+            final int topGrid = topNext - (DIM * 2);
+            final float r = 0.0f, g = 0.5f, b = 1.0f;
+            for (int j = 0; j < 2; j++) {
+                for (int i = 0; i < 8; i++) {
+                    final int x = (GRID_HALF * DIM * j) + X + (DIM * i), y = ((i >= 3) && (i <= 4)) ? topNext : topGrid;
+                    if (i == 2) {
+                        renderer.render(layer, block, x, y, Z_BG, 16, 8, DIM, DIM, 0, false, false, r, g, b);
+                        renderer.render(layer, block, x, y + DIM, Z_BG, 8, 8, DIM, DIM, 1, false, false, r, g, b);
+                        renderer.render(layer, block, x, topNext, Z_BG, 0, 8, DIM, DIM, 0, false, false, r, g, b);
+                    } else if (i == 5) {
+                        renderer.render(layer, block, x, y, Z_BG, 16, 8, DIM, DIM, 3, false, false, r, g, b);
+                        renderer.render(layer, block, x, y + DIM, Z_BG, 8, 8, DIM, DIM, 3, false, false, r, g, b);
+                        renderer.render(layer, block, x, topNext, Z_BG, 0, 8, DIM, DIM, 3, false, false, r, g, b);
+                    } else {
+                        renderer.render(layer, block, x, y, Z_BG, 8, 8, DIM, DIM, 0, false, false, r, g, b);
+                    }
+                    renderer.render(layer, block, x, 0, Z_BG, 8, 8, DIM, DIM, 2, false, false, r, g, b);
+                }
+            }
+            final int left = X - DIM, right = X + (GRID_W * DIM);
+            for (int i = 0; i < GRID_H; i++) {
+                renderer.render(layer, block, left, Y + (DIM * i), Z_BG, 8, 8, DIM, DIM, 1, false, false, r, g, b);
+                renderer.render(layer, block, right, Y + (DIM * i), Z_BG, 8, 8, DIM, DIM, 3, false, false, r, g, b);
+            }
+            renderer.render(layer, block, left, topGrid, Z_BG, 0, 8, DIM, DIM, 0, false, false, r, g, b);
+            renderer.render(layer, block, right, topGrid, Z_BG, 0, 8, DIM, DIM, 3, false, false, r, g, b);
+            renderer.render(layer, block, left, 0, Z_BG, 0, 8, DIM, DIM, 1, false, false, r, g, b);
+            renderer.render(layer, block, right, 0, Z_BG, 0, 8, DIM, DIM, 2, false, false, r, g, b);
         }
     }
     
