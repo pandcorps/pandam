@@ -62,7 +62,7 @@ public class BlockGame extends BaseGame {
     protected final static int Z_FALLING = 4;
     
     protected final static int FALL_TIME = 30;
-    protected final static int FAST_TIME = 4;
+    protected final static int FAST_TIME = 3;
     protected final static int GRID_DROP_TIME = 8;
     protected final static int MOVE_HOLD_TIME = 12;
     protected final static int MOVE_FAST_TIME = FAST_TIME;
@@ -219,6 +219,42 @@ public class BlockGame extends BaseGame {
             renderer.render(layer, block, right, topGrid, Z_BG, 0, 8, DIM, DIM, 3, false, false, r, g, b);
             renderer.render(layer, block, left, 0, Z_BG, 0, 8, DIM, DIM, 1, false, false, r, g, b);
             renderer.render(layer, block, right, 0, Z_BG, 0, 8, DIM, DIM, 2, false, false, r, g, b);
+            final int rightBg = right + DIM, rightNext = rightBg - (DIM * 3), rightFar = GAME_W - DIM;
+            final int xMid = (GAME_W / 2) - (DIM * 2);
+            final int topBg = topNext - DIM;
+            render8s(renderer, layer, 0, 0, 9, 1);
+            render8s(renderer, layer, rightBg, 0, 9, 1);
+            render8s(renderer, layer, 0, 1, 1, 19);
+            render8s(renderer, layer, rightFar, 1, 1, 19);
+            render8s(renderer, layer, 0, topNext, 12, 1);
+            render8s(renderer, layer, rightNext, topNext, 12, 1);
+            render8s(renderer, layer, xMid, topBg, 4, 2);
+            render8s(renderer, layer, left, topBg, 3, 1);
+            render8s(renderer, layer, rightNext, topBg, 3, 1);
+            render16s(renderer, layer, DIM, DIM, 4, 9);
+            render16s(renderer, layer, rightBg, DIM, 4, 9);
+        }
+        
+        private final static void render8s(final Panderer renderer, final Panlayer layer, final int x, final int y, final int w, final int h) {
+            renderBgs(renderer, layer, x, y, w, h, 0, 0, DIM);
+        }
+        
+        private final static void render16s(final Panderer renderer, final Panlayer layer, final int x, final int y, final int w, final int h) {
+            renderBgs(renderer, layer, x, y, w, h, 0, 16, 16);
+        }
+        
+        private final static void renderBgs(final Panderer renderer, final Panlayer layer, final int x, final int y, final int w, final int h,
+                final float ix, final float iy, final int d) {
+            final float df = d;
+            for (int j = 0; j < h; j++) {
+                final float yj = y + (j * df);
+                for (int i = 0; i < w; i++) {
+                    final float b = Mathtil.randf(0.0f, 1.0f);
+                    final float g = Mathtil.randf(0.0f, b);
+                    final float r = Mathtil.randf(0.0f, g);
+                    renderer.render(layer, block, x + (i * df), yj, Z_BG, ix, iy, df, df, 0, false, false, r, g, b);
+                }
+            }
         }
     }
     
@@ -274,6 +310,9 @@ public class BlockGame extends BaseGame {
             indicesDropped.clear();
             for (final Integer key : indicesToDrop) {
                 final int baseIndex = key.intValue();
+                if (baseIndex >= GRID_SIZE) {
+                    continue;
+                }
                 int index = baseIndex;
                 int beneath = index - GRID_W;
                 if ((beneath < 0) || (cells[beneath] != null)) {
@@ -570,11 +609,17 @@ public class BlockGame extends BaseGame {
         }
         
         private final void onMoveStart(final int dir) {
+            if (stoneY >= GRID_H) {
+                return;
+            }
             nextDir = dir;
             moveTimer = MOVE_HOLD_TIME;
         }
         
         private final void onMoveContinue(final int dir) {
+            if (stoneY >= GRID_H) {
+                return;
+            }
             moveTimer--;
             if (moveTimer <= 0) {
                 nextDir = dir;
