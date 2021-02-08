@@ -26,7 +26,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.game.*;
-import org.pandcorps.game.actor.Burst;
+import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
@@ -90,7 +90,6 @@ public class BlockGame extends BaseGame {
     protected static Panmage block = null;
     protected static Panmage black = null;
     protected static Panimation anmPuff = null;
-    protected static Panimation anmBurst = null;
     protected final static Panple size = new FinPanple2(DIM, DIM);
     protected final static CellBehavior STONE_BEHAVIOR = new CellBehavior(0.0f, 0.0f, TILE_STONE);
     protected final static CellBehavior ENEMY_BEHAVIOR = new CellBehavior(8.0f, 0.0f, TILE_ENEMY);
@@ -139,33 +138,38 @@ public class BlockGame extends BaseGame {
         initColor(0, block, 0.5f, 1.0f, 1.0f);
         initColor(1, block, 0.0f, 0.5f, 1.0f);
         initColor(2, block, 0.5f, 0.5f, 0.5f);
-        anmPuff = newAnimation(3, 16, 16, 16, 24, 24, 24);
-        anmBurst = newAnimation(4, 24, 0, 24, 8, 24, 16);
+        anmPuff = newAnimation(3, 1.0f, 1.0f, 1.0f, 16, 16, 16, 24, 24, 24);
     }
     
     private final static void initColor(final int i, final Panmage block, final float r, final float g, final float b) {
-        STONE_TYPES[i] = newStone(r, g, b);
-        ENEMY_TYPES[i] = newEnemy(r, g, b);
+        final CellColor color = new CellColor(r, g, b);
+        STONE_TYPES[i] = newStone(color);
+        ENEMY_TYPES[i] = newEnemy(color);
+        color.anmBurst = newAnimation(4, r, g, b, 24, 0, 24, 8, 24, 16);
     }
     
-    private final static CellType newStone(final float r, final float g, final float b) {
-        return new CellType(r, g, b, STONE_BEHAVIOR);
+    private final static CellType newStone(final CellColor color) {
+        return new CellType(color, STONE_BEHAVIOR);
     }
     
-    private final static CellType newEnemy(final float r, final float g, final float b) {
-        return new CellType(r, g, b, ENEMY_BEHAVIOR);
+    private final static CellType newEnemy(final CellColor color) {
+        return new CellType(color, ENEMY_BEHAVIOR);
     }
     
-    private final static Panimation newAnimation(final int dur, final int x0, final int y0, final int x1, final int y1, final int x2, final int y2) {
-        return Pangine.getEngine().createAnimation(Pantil.vmid(), newFrame(dur, x0, y0), newFrame(dur, x1, y1), newFrame(dur, x2, y2));
+    private final static Panimation newAnimation(final int dur, final float r, final float g, final float b,
+            final int x0, final int y0, final int x1, final int y1, final int x2, final int y2) {
+        return Pangine.getEngine().createAnimation(Pantil.vmid(),
+                newFrame(dur, r, g, b, x0, y0),
+                newFrame(dur, r, g, b, x1, y1),
+                newFrame(dur, r, g, b, x2, y2));
     }
     
-    private final static Panframe newFrame(final int dur, final int x, final int y) {
-        return Pangine.getEngine().createFrame(Pantil.vmid(), newSub(x, y), dur);
+    private final static Panframe newFrame(final int dur, final float r, final float g, final float b, final int x, final int y) {
+        return Pangine.getEngine().createFrame(Pantil.vmid(), newSub(r, g, b, x, y), dur);
     }
     
-    private final static Panmage newSub(final int x, final int y) {
-        return new SubPanmage(Pantil.vmid(), null, null, null, block, x, y, size);
+    private final static Panmage newSub(final float r, final float g, final float b, final int x, final int y) {
+        return new AdjustedPanmage(Pantil.vmid(), block, 0, false, false, r, g, b, x, y, size);
     }
     
     protected final static CellType randomStone() {
@@ -185,12 +189,12 @@ public class BlockGame extends BaseGame {
         return grid.getCell(x, y) != null;
     }
     
-    protected final static void burst(final int index) {
-        burst(grid.getX(index), grid.getY(index));
+    protected final static void burst(final int index, final CellType cellType) {
+        burst(grid.getX(index), grid.getY(index), cellType);
     }
     
-    protected final static void burst(final int x, final int y) {
-        burst(anmBurst, x, y);
+    protected final static void burst(final int x, final int y, final CellType cellType) {
+        burst(cellType.color.anmBurst, x, y);
     }
     
     protected final static void puff(final int x, final int y) {
@@ -413,7 +417,8 @@ public class BlockGame extends BaseGame {
             indicesToCheckForMatches.clear();
             for (Integer key : indicesToClear) {
                 final int index = key.intValue();
-                if (cells[index].behavior.b == TILE_ENEMY) {
+                final CellType cellType = cells[index];
+                if (cellType.behavior.b == TILE_ENEMY) {
                     enemyCount--;
                 }
                 cells[index] = null;
@@ -424,7 +429,7 @@ public class BlockGame extends BaseGame {
                         indicesToDrop.add(Integer.valueOf(indexAbove));
                     }
                 }
-                burst(index);
+                burst(index, cellType);
             }
             indicesToClear.clear();
         }
@@ -578,14 +583,23 @@ public class BlockGame extends BaseGame {
         }
     }
     
-    protected final static class CellType {
+    protected final static class CellColor {
         private final float r, g, b;
-        private final CellBehavior behavior;
+        protected Panimation anmBurst = null;
         
-        protected CellType(final float r, float g, float b, final CellBehavior behavior) {
+        protected CellColor(final float r, float g, float b) {
             this.r = r;
             this.g = g;
             this.b = b;
+        }
+    }
+    
+    protected final static class CellType {
+        private final CellColor color;
+        private final CellBehavior behavior;
+        
+        protected CellType(final CellColor color, final CellBehavior behavior) {
+            this.color = color;
             this.behavior = behavior;
         }
         
@@ -593,7 +607,7 @@ public class BlockGame extends BaseGame {
             if (other == null) {
                 return false;
             }
-            return (r == other.r) && (g == other.g) && (b == other.b);
+            return color == other.color;
         }
     }
     
@@ -860,7 +874,8 @@ public class BlockGame extends BaseGame {
     
     protected final static void render(final Panderer renderer, final int x, final int y, final int z, final CellType type) {
         final CellBehavior b = type.behavior;
-        renderer.render(room, block, X + (x * DIM), Y + (y * DIM), z, b.ix, b.iy, DIM, DIM, 0, false, false, type.r, type.g, type.b);
+        final CellColor c = type.color;
+        renderer.render(room, block, X + (x * DIM), Y + (y * DIM), z, b.ix, b.iy, DIM, DIM, 0, false, false, c.r, c.g, c.b);
     }
     
     public final static void main(final String[] args) {

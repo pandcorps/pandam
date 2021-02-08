@@ -33,6 +33,9 @@ public class AdjustedPanmage extends Panmage {
     private final float r;
     private final float g;
     private final float b;
+    private final float subX;
+    private final float subY;
+    private final Panple subSize;
     
     public AdjustedPanmage(final String id, final Panmage src, final int rot, final boolean mirror, final boolean flip) {
         this(id, src, rot, mirror, flip, 1.0f, 1.0f, 1.0f);
@@ -47,6 +50,11 @@ public class AdjustedPanmage extends Panmage {
     }
     
     public AdjustedPanmage(final String id, final Panmage src, final int rot, final boolean mirror, final boolean flip, final float r, final float g, final float b) {
+        this(id, src, rot, mirror, flip, r, g, b, 0, 0, null);
+    }
+    
+    public AdjustedPanmage(final String id, final Panmage src, final int rot, final boolean mirror, final boolean flip, final float r, final float g, final float b,
+            final float subX, final float subY, final Panple subSize) {
         super(id, src.getOrigin(), src.getBoundingMinimum(), src.getBoundingMaximum());
         this.src = src;
         this.rot = rot;
@@ -55,11 +63,14 @@ public class AdjustedPanmage extends Panmage {
         this.r = r;
         this.g = g;
         this.b = b;
+        this.subX = subX;
+        this.subY = subY;
+        this.subSize = subSize;
     }
     
     @Override
     public final Panple getSize() {
-        return src.getSize();
+        return (subSize == null) ? src.getSize() : subSize;
     }
 
     @Override
@@ -67,7 +78,7 @@ public class AdjustedPanmage extends Panmage {
                                 final float ix, final float iy, final float iw, final float ih,
                                 final int rot, final boolean mirror, final boolean flip,
                                 final float r, final float g, final float b) {
-        render(src, layer, x, y, z, ix, iy, iw, ih, (this.rot + rot) % 4, this.mirror ^ mirror, this.flip ^ flip, this.r * r, this.g * g, this.b * b);
+        render(src, layer, x, y, z, subX + ix, subY + iy, iw, ih, (this.rot + rot) % 4, this.mirror ^ mirror, this.flip ^ flip, this.r * r, this.g * g, this.b * b);
     }
     
     @Override
