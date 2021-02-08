@@ -123,8 +123,8 @@ public class BlockGame extends BaseGame {
     
     private final static void loadResources() {
         block = Pangine.getEngine().createImage("block", RES + "Block.png");
-        initColor(0, block, Pancolor.CYAN);
-        initColor(1, block, Pancolor.BLUE);
+        initColor(0, block, new FinPancolor(128, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE));
+        initColor(1, block, new FinPancolor(0, 128, Pancolor.MAX_VALUE));
         initColor(2, block, Pancolor.DARK_GREY);
     }
     
@@ -188,11 +188,15 @@ public class BlockGame extends BaseGame {
     }
     
     protected final static class Background extends Panctor {
+        private final static Random rand = new Random();
+        private final static long seed = Mathtil.newSeed();
+        
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
+            rand.setSeed(seed);
             final int topNext = GAME_H - DIM;
             final int topGrid = topNext - (DIM * 2);
-            final float r = 0.0f, g = 0.5f, b = 1.0f;
+            final float r = 0.0f, g = 0.25f, b = 0.5f;
             for (int j = 0; j < 2; j++) {
                 for (int i = 0; i < 8; i++) {
                     final int x = (GRID_HALF * DIM * j) + X + (DIM * i), y = ((i >= 3) && (i <= 4)) ? topNext : topGrid;
@@ -249,9 +253,9 @@ public class BlockGame extends BaseGame {
             for (int j = 0; j < h; j++) {
                 final float yj = y + (j * df);
                 for (int i = 0; i < w; i++) {
-                    final float b = Mathtil.randf(0.0f, 1.0f);
-                    final float g = Mathtil.randf(0.0f, b);
-                    final float r = Mathtil.randf(0.0f, g);
+                    final float b = Mathtil.randf(rand, 0.0f, 1.0f);
+                    final float g = Mathtil.randf(rand, 0.0f, b);
+                    final float r = Mathtil.randf(rand, 0.0f, g);
                     renderer.render(layer, block, x + (i * df), yj, Z_BG, ix, iy, df, df, 0, false, false, r, g, b);
                 }
             }

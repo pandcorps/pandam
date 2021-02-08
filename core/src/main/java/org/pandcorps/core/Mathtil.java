@@ -70,6 +70,10 @@ public final class Mathtil {
     }
 
 	public final static float randf(final float min, final float max) {
+	    return randf(rand, min, max);
+	}
+	
+	public final static float randf(final Random rand, final float min, final float max) {
 		return rand.nextFloat() * (max - min) + min;
 	}
 	
