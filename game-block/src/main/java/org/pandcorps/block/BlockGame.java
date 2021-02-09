@@ -25,14 +25,17 @@ package org.pandcorps.block;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
+import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 
 public class BlockGame extends BaseGame {
@@ -83,21 +86,27 @@ public class BlockGame extends BaseGame {
     protected final static int ROT_MAX = 3;
     
     protected final static int NUM_COLORS = 3;
+    protected final static int NUM_PLAYERS = 2;
     
-    protected final static int INITIAL_ENEMY_COUNT_PER_COLOR = 1;
+    protected final static int LEVEL_MIN = 1; // Level n will have 3n enemies (n of each color)
+    protected final static int LEVEL_MAX = 64;
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage block = null;
     protected static Panmage black = null;
     protected static Panimation anmPuff = null;
+    protected static Font font = null;
     protected final static Panple size = new FinPanple2(DIM, DIM);
     protected final static CellBehavior STONE_BEHAVIOR = new CellBehavior(0.0f, 0.0f, TILE_STONE);
     protected final static CellBehavior ENEMY_BEHAVIOR = new CellBehavior(8.0f, 0.0f, TILE_ENEMY);
     protected static CellType[] STONE_TYPES = new CellType[NUM_COLORS];
     protected static CellType[] ENEMY_TYPES = new CellType[NUM_COLORS];
     protected static Panroom room = null;
+    protected static Background background = null;
     protected static Grid grid = null;
-    protected final static List<Player> players = new ArrayList<Player>(2);
+    protected final static List<ControlScheme> controlSchemes = new ArrayList<ControlScheme>(NUM_PLAYERS);
+    protected final static List<Player> players = new ArrayList<Player>(NUM_PLAYERS);
+    private static int level = LEVEL_MIN;
     
     @Override
     protected final boolean isFullScreen() {
@@ -126,7 +135,7 @@ public class BlockGame extends BaseGame {
                     loadResources();
                 }});
         }
-        Panscreen.set(new LogoScreen(BlockScreen.class, loaders));
+        Panscreen.set(new LogoScreen(LevelStartScreen.class, loaders));
     }
     
     private final static void loadResources() {
@@ -137,8 +146,9 @@ public class BlockGame extends BaseGame {
         black = Pangine.getEngine().createImage("black", img);
         initColor(0, block, 0.5f, 1.0f, 1.0f);
         initColor(1, block, 0.0f, 0.5f, 1.0f);
-        initColor(2, block, 0.5f, 0.5f, 0.5f);
-        anmPuff = newAnimation(3, 1.0f, 1.0f, 1.0f, 16, 16, 16, 24, 24, 24);
+        initColor(2, block, 0.375f, 0.375f, 0.375f);
+        anmPuff = newAnimation(3, 0.75f, 1.0f, 1.0f, 16, 16, 16, 24, 24, 24);
+        font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), new FinPancolor(192, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE));
     }
     
     private final static void initColor(final int i, final Panmage block, final float r, final float g, final float b) {
@@ -207,20 +217,149 @@ public class BlockGame extends BaseGame {
         room.addActor(burst);
     }
     
-    protected final static class BlockScreen extends Panscreen {
+    protected abstract static class BackgroundScreen extends Panscreen {
         @Override
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
             engine.enableColorArray();
             room = Pangame.getGame().getCurrentRoom();
             final Panlayer bg = engine.createLayer("bg", GAME_W, GAME_H, room.getSize().getZ(), room);
-            bg.addActor(new Background());
+            if (background == null) {
+                background = new Background();
+            }
+            bg.addActor(background);
             bg.setConstant(true);
             room.addBeneath(bg);
             room.setClearDepthEnabled(false);
+        }
+        
+        protected abstract void loadBlock();
+        
+        @Override
+        protected final void destroy() {
+            background.detach();
+        }
+    }
+    
+    protected final static class BlockScreen extends BackgroundScreen {
+        @Override
+        protected final void loadBlock() {
             grid = new Grid();
             players.clear();
-            new Player().register(ControlScheme.getDefaultKeyboard());
+            for (final ControlScheme ctrl : controlSchemes) {
+                new Player().register(ctrl);
+            }
+        }
+    }
+    
+    protected abstract static class TextScreen extends BackgroundScreen {
+        protected Pantext text = null;
+        
+        @Override
+        protected final void loadBlock() {
+            text = new Pantext(Pantil.vmid(), font, getText());
+            text.getPosition().set(GAME_W / 2, GAME_H / 2, Z_PUFF);
+            text.centerX();
+            room.addActor(text);
+            final Panscreen nextScreen = getNextScreen();
+            loadText();
+            if (nextScreen == null) {
+                return;
+            }
+            Pangine.getEngine().addTimer(text, 30, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    Panscreen.set(nextScreen);
+                }});
+        }
+        
+        protected abstract String getText();
+        
+        protected void loadText() {
+        }
+        
+        protected Panscreen getNextScreen() {
+            return null;
+        }
+    }
+    
+    protected final static class DeviceSelectScreen extends TextScreen {
+        @Override
+        protected final String getText() {
+            return "Press any button player " + (controlSchemes.size() + 1);
+        }
+        
+        @Override
+        protected final void loadText() {
+            text.register(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    final Device device = event.getDevice();
+                    if ((device instanceof Mouse) || (device instanceof Touchscreen)) {
+                        return;
+                    }
+                    for (final ControlScheme ctrl : controlSchemes) {
+                        if (device == ctrl.getDevice()) {
+                            return;
+                        }
+                    }
+                    controlSchemes.add(ControlScheme.getDefault(device));
+                    if (controlSchemes.size() < NUM_PLAYERS) {
+                        Panscreen.set(new DeviceSelectScreen());
+                    }
+                    //elseStartGame;
+                }});
+        }
+    }
+    
+    protected final static class LevelStartScreen extends TextScreen {
+        @Override
+        protected final String getText() {
+            return "Level " + level + " start";
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            return new BlockScreen();
+        }
+    }
+    
+    protected final static class LevelCompleteScreen extends TextScreen {
+        @Override
+        protected final String getText() {
+            return "Level " + (level - 1) + " complete"; // Level incremented before this screen
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            if (level >= LEVEL_MAX) {
+                return new VictoryScreen();
+            }
+            return new LevelStartScreen();
+        }
+    }
+    
+    protected final static class VictoryScreen extends TextScreen {
+        @Override
+        protected final String getText() {
+            return "You win!";
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            level = 1;
+            return new LevelStartScreen(); //TODO Menu screen
+        }
+    }
+    
+    protected final static class GameOverScreen extends TextScreen {
+        @Override
+        protected final String getText() {
+            return "Game over";
+        }
+        
+        @Override
+        protected final Panscreen getNextScreen() {
+            level = 1;
+            return new LevelStartScreen(); //TODO Menu screen
         }
     }
     
@@ -295,7 +434,7 @@ public class BlockGame extends BaseGame {
                 for (int i = 0; i < w; i++) {
                     final float b = Mathtil.randf(rand, 0.25f, 1.0f);
                     final float g = Mathtil.randf(rand, 0.0f, b);
-                    final float r = Mathtil.randf(rand, 0.0f, g);
+                    final float r = Mathtil.randf(rand, 0.0f, Math.min(g, 0.75f * b));
                     renderer.render(layer, block, x + (i * df), yj, Z_BG, ix, iy, df, df, 0, false, false, r, g, b);
                 }
             }
@@ -311,6 +450,8 @@ public class BlockGame extends BaseGame {
         private final Set<Integer> indicesToClear = new HashSet<Integer>();
         private int dropTimer = 0;
         private int enemyCount = 0;
+        private final int[] enemiesNeeded = new int[NUM_COLORS];
+        private int enemiesAdded = 0;
         
         protected Grid() {
             room.addActor(this);
@@ -318,11 +459,62 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void initEnemies() {
-            enemyCount = INITIAL_ENEMY_COUNT_PER_COLOR * NUM_COLORS;
-            for (int i = 0; i < INITIAL_ENEMY_COUNT_PER_COLOR; i++) {
-                for (int c = 0; c < NUM_COLORS; c++) {
-                    //TODO Avoid collisions and matches
-                    cells[Mathtil.randi(0, GRID_W * GRID_H / 2)] = ENEMY_TYPES[c];
+            while (!attemptInitEnemies());
+        }
+        
+        private final boolean attemptInitEnemies() {
+            enemyCount = level * NUM_COLORS;
+            final int baseSize = LEVEL_MAX * NUM_COLORS;
+            for (int i = 0; i < NUM_COLORS; i++) {
+                enemiesNeeded[i] = level;
+            }
+            int n = baseSize;
+            enemiesAdded = 0;
+            for (int i = 0; i < baseSize; i++) {
+                initEnemy(i, n);
+                n--;
+            }
+            if (enemiesAdded < enemyCount) {
+                int y = baseSize / GRID_W, xRaw = 0;
+                while (enemiesAdded < enemyCount) {
+                    final int x2 = xRaw / 2;
+                    final int x = ((xRaw % 2) == 0) ? x2 : (GRID_W - x2 - 1);
+                    final int i = getIndex(x, y);
+                    initEnemy(i, enemyCount - enemiesAdded);
+                    if (enemiesAdded >= enemyCount) {
+                        break;
+                    }
+                    xRaw++;
+                    if (xRaw >= GRID_W) {
+                        xRaw = 0;
+                        y++;
+                        if (y >= (GRID_H - 1)) {
+                            return false; // Ran out of room, start over
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        
+        private final void initEnemy(final int i, final int n) {
+            final int rnd = Mathtil.randi(0, n);
+            int enemiesNeededSum = 0;
+            for (int colorIndex = 0; colorIndex < NUM_COLORS; colorIndex++) {
+                enemiesNeededSum += enemiesNeeded[colorIndex];
+                if (rnd < enemiesNeededSum) {
+                    for (int colorAttempt = 0; colorAttempt < NUM_COLORS; colorAttempt++) {
+                        final int attemptIndex = (colorIndex + colorAttempt) % NUM_COLORS;
+                        cells[i] = ENEMY_TYPES[attemptIndex];
+                        if (isMatched(i)) {
+                            cells[i] = null;
+                        } else {
+                            enemiesNeeded[attemptIndex]--;
+                            enemiesAdded++;
+                            break;
+                        }
+                    }
+                    break;
                 }
             }
         }
@@ -366,7 +558,7 @@ public class BlockGame extends BaseGame {
                 } else if (indicesDropped.contains(key)) {
                     continue;
                 }
-                while (true) {
+                while (index < GRID_SIZE) {
                     final CellType cellType = cells[index];
                     if ((cellType == null) || (cellType.behavior.b != TILE_STONE)) {
                         break;
@@ -500,6 +692,10 @@ public class BlockGame extends BaseGame {
             return false;
         }
         
+        private final boolean isMatched(final int index) {
+            return (matchVertical(index, false) >= MATCH_THRESHOLD) || (matchHorizontal(index, false) >= MATCH_THRESHOLD);
+        }
+        
         protected final boolean isFree() {
             return indicesToDrop.isEmpty() && indicesToCheckForMatches.isEmpty();
         }
@@ -547,12 +743,12 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void onVictory() {
-            //TODO
+            level++;
+            Panscreen.set(new LevelCompleteScreen());
         }
         
         protected final void onDefeated() {
-            throw new Error("DEFEATED!");
-            //TODO
+            Panscreen.set(new GameOverScreen());
         }
         
         protected final void renderView(final Panderer renderer) {
