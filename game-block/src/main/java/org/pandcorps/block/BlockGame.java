@@ -86,7 +86,8 @@ public class BlockGame extends BaseGame {
     protected final static int ROT_MAX = 3;
     
     protected final static int NUM_COLORS = 3;
-    protected final static int NUM_PLAYERS = 2;
+    
+    protected final static int MAX_PLAYERS = 2;
     
     protected final static int LEVEL_MIN = 1; // Level n will have 3n enemies (n of each color)
     protected final static int LEVEL_MAX = 64;
@@ -104,8 +105,10 @@ public class BlockGame extends BaseGame {
     protected static Panroom room = null;
     protected static Background background = null;
     protected static Grid grid = null;
-    protected final static List<ControlScheme> controlSchemes = new ArrayList<ControlScheme>(NUM_PLAYERS);
-    protected final static List<Player> players = new ArrayList<Player>(NUM_PLAYERS);
+    protected final static List<ControlScheme> controlSchemes = new ArrayList<ControlScheme>(MAX_PLAYERS);
+    protected static ControlScheme inactiveControlScheme = null;
+    private final static Set<Panput> customMappedInputs = new HashSet<Panput>();
+    protected final static List<Player> players = new ArrayList<Player>(MAX_PLAYERS);
     private static int level = LEVEL_MIN;
     
     @Override
@@ -135,7 +138,7 @@ public class BlockGame extends BaseGame {
                     loadResources();
                 }});
         }
-        Panscreen.set(new LogoScreen(LevelStartScreen.class, loaders));
+        Panscreen.set(new LogoScreen(DeviceSelectScreen.class, loaders));
     }
     
     private final static void loadResources() {
@@ -231,6 +234,12 @@ public class BlockGame extends BaseGame {
             bg.setConstant(true);
             room.addBeneath(bg);
             room.setClearDepthEnabled(false);
+            registerGlobal();
+            loadBlock();
+        }
+        
+        protected final void registerGlobal() {
+            GuyPlatform.registerCapture(background);
         }
         
         protected abstract void loadBlock();
@@ -238,6 +247,20 @@ public class BlockGame extends BaseGame {
         @Override
         protected final void destroy() {
             background.detach();
+        }
+        
+        protected final static Pantext addText(final CharSequence msg, final float x, final float y) {
+            return addText(msg, x, y, false);
+        }
+        
+        protected final static Pantext addText(final CharSequence msg, final float x, final float y, final boolean center) {
+            final Pantext text = new Pantext(Pantil.vmid(), font, msg);
+            text.getPosition().set(x, y, Z_PUFF);
+            if (center) {
+                text.centerX();
+            }
+            room.addActor(text);
+            return text;
         }
     }
     
@@ -257,10 +280,7 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final void loadBlock() {
-            text = new Pantext(Pantil.vmid(), font, getText());
-            text.getPosition().set(GAME_W / 2, GAME_H / 2, Z_PUFF);
-            text.centerX();
-            room.addActor(text);
+            text = addText(getText(), GAME_W / 2, GAME_H / 2, true);
             final Panscreen nextScreen = getNextScreen();
             loadText();
             if (nextScreen == null) {
@@ -298,15 +318,229 @@ public class BlockGame extends BaseGame {
                     }
                     for (final ControlScheme ctrl : controlSchemes) {
                         if (device == ctrl.getDevice()) {
+                            if (device instanceof Keyboard) {
+                                controlSchemes.add(new ControlScheme());
+                                goMapInput();
+                            }
                             return;
                         }
                     }
                     controlSchemes.add(ControlScheme.getDefault(device));
-                    if (controlSchemes.size() < NUM_PLAYERS) {
-                        Panscreen.set(new DeviceSelectScreen());
-                    }
-                    //elseStartGame;
+                    Panscreen.set(new MenuScreen());
                 }});
+        }
+    }
+    
+    protected final static void goMapInput() {
+        customMappedInputs.clear();
+        Panscreen.set(new MapInputScreen(0));
+    }
+    
+    protected final static class MapInputScreen extends BackgroundScreen {
+        private final static int X_LABEL = X + 40;
+        private final static String[] INPUT_NAMES = { "Up", "Down", "Left", "Right", "Clockwise", "Counterclockwise", "Start" };
+        private final int playerIndex;
+        private final List<Panput> inputs = new ArrayList<Panput>();
+        private int y = 128;
+        
+        protected MapInputScreen(final int playerIndex) {
+            this.playerIndex = playerIndex;
+        }
+        
+        @Override
+        protected final void loadBlock() {
+            addText("Player " + (playerIndex + 1));
+            addNextLabel();
+            background.register(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    final Panput input = event.getInput();
+                    if (customMappedInputs.contains(input)) {
+                        goMapInput(); // Collision with other player, so just start over for both
+                    } else if (inputs.contains(input)) {
+                        Panscreen.set(new MapInputScreen(playerIndex)); // Collision with self, so start over for self
+                    }
+                    inputs.add(input);
+                    if (inputs.size() <= INPUT_NAMES.length) {
+                        addNextLabel();
+                    } else {
+                        onFinish();
+                    }
+                }});
+        }
+        
+        protected final void addNextLabel() {
+            addText(INPUT_NAMES[inputs.size()]);
+        }
+        
+        protected final void addText(final String msg) {
+            addText(msg, X_LABEL, y);
+            y -= 12;
+        }
+        
+        protected final void onFinish() {
+            controlSchemes.set(playerIndex, new ControlScheme(
+                    inputs.get(1), inputs.get(0), inputs.get(2), inputs.get(3),
+                    inputs.get(4), inputs.get(5), null, inputs.get(6)));
+            Panscreen.set((playerIndex >= (controlSchemes.size() - 1)) ? new MenuScreen() : new MapInputScreen(playerIndex + 1));
+        }
+    }
+    
+    protected final static class MenuScreen extends BackgroundScreen {
+        private final static int X_CURSOR = X + 24;
+        private final static int X_OPTION = X + 40;
+        private final static int X_VALUE = X + 128;
+        private final List<Option> options = new ArrayList<Option>();
+        private int y = 128;
+        private int optionIndex = 0;
+        private Pantext cursor = null;
+        
+        @Override
+        protected final void loadBlock() {
+            cursor = addText("*", X_CURSOR, y);
+            addOption("Level", new IntOption() {
+                @Override protected final int get() {
+                    return level;
+                }
+                @Override protected final void set(final int value) {
+                    level = value;
+                }
+                @Override
+                protected final int max() {
+                    return LEVEL_MAX;
+                }});
+            addOption("Players", new IntOption() {
+                @Override protected final int get() {
+                    return controlSchemes.size();
+                }
+                @Override protected final void set(final int value) {
+                    if (value <= 1) {
+                        while (controlSchemes.size() > 1) {
+                            inactiveControlScheme = controlSchemes.remove(controlSchemes.size() - 1);
+                        }
+                    } else {
+                        if (inactiveControlScheme == null) {
+                            Panscreen.set(new DeviceSelectScreen());
+                        } else {
+                            controlSchemes.add(inactiveControlScheme);
+                        }
+                    }
+                }
+                @Override
+                protected final int max() {
+                    return MAX_PLAYERS;
+                }});
+            addOption("Map Input", new Option() {
+                @Override protected final void onAction() {
+                    goMapInput();
+                }});
+            addOption("Start", new Option() {
+                @Override protected final void onAction() {
+                    startGame();
+                }});
+            register(controlSchemes.get(0));
+        }
+        
+        protected final void addOption(final String msg, final Option option) {
+            addText(msg, X_OPTION, y);
+            option.y = y;
+            options.add(option);
+            option.init();
+            y -= 32;
+        }
+        
+        protected final void register(final ControlScheme scheme) {
+            background.register(scheme.getUp(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onUp(); }});
+            background.register(scheme.getDown(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onDown(); }});
+            background.register(scheme.getLeft(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onX(-1); }});
+            background.register(scheme.getRight(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onX(1); }});
+            background.register(scheme.get1(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
+            background.register(scheme.get2(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
+            background.register(scheme.getSubmit(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { startGame(); }});
+        }
+        
+        protected final void startGame() {
+            Panscreen.set(new LevelStartScreen());
+        }
+        
+        protected final void onUp() {
+            if (optionIndex <= 0) {
+                optionIndex = options.size() - 1;
+            } else {
+                optionIndex--;
+            }
+            updateCursor();
+        }
+        
+        protected final void onDown() {
+            if (optionIndex >= (options.size() - 1)) {
+                optionIndex = 0;
+            } else {
+                optionIndex++;
+            }
+            updateCursor();
+        }
+        
+        protected final void onX(final int dir) {
+            getOption().onX(dir);
+        }
+        
+        protected final void onAction() {
+            getOption().onAction();
+        }
+        
+        protected final void updateCursor() {
+            cursor.getPosition().setY(getOption().y);
+        }
+        
+        protected final Option getOption() {
+            return options.get(optionIndex);
+        }
+        
+        protected abstract class Option {
+            protected int y;
+            
+            protected void init() {
+            }
+            
+            protected void onX(final int dir) {
+            }
+            
+            protected void onAction() {
+            }
+        }
+        
+        protected abstract class IntOption extends Option {
+            private StringBuilder valueSequence = null;
+            
+            @Override
+            protected final void onX(final int dir) {
+                set(Math.max(Math.min(get() + dir, max()), 1));
+                setValueSequence();
+            }
+            
+            protected final void init() {
+                valueSequence = new StringBuilder();
+                setValueSequence();
+                addText(valueSequence, X_VALUE, y);
+            }
+            
+            protected final void setValueSequence() {
+                Chartil.clear(valueSequence);
+                valueSequence.append("< ").append(get()).append(" >");
+            }
+            
+            protected abstract int get();
+            
+            protected abstract void set(final int value);
+            
+            protected abstract int max();
         }
     }
     
@@ -345,8 +579,7 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final Panscreen getNextScreen() {
-            level = 1;
-            return new LevelStartScreen(); //TODO Menu screen
+            return new MenuScreen();
         }
     }
     
@@ -358,8 +591,7 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final Panscreen getNextScreen() {
-            level = 1;
-            return new LevelStartScreen(); //TODO Menu screen
+            return new MenuScreen();
         }
     }
     
@@ -367,6 +599,7 @@ public class BlockGame extends BaseGame {
         private final static Random rand = new Random();
         private final static long seed = Mathtil.newSeed();
         
+        @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             rand.setSeed(seed);
@@ -404,8 +637,8 @@ public class BlockGame extends BaseGame {
             final int topBg = topNext - DIM;
             render8s(renderer, layer, 0, 0, 9, 1);
             render8s(renderer, layer, rightBg, 0, 9, 1);
-            render8s(renderer, layer, 0, 1, 1, 19);
-            render8s(renderer, layer, rightFar, 1, 1, 19);
+            render8s(renderer, layer, 0, DIM, 1, 18);
+            render8s(renderer, layer, rightFar, DIM, 1, 18);
             render8s(renderer, layer, 0, topNext, 12, 1);
             render8s(renderer, layer, rightNext, topNext, 12, 1);
             render8s(renderer, layer, xMid, topBg, 4, 2);
@@ -442,7 +675,7 @@ public class BlockGame extends BaseGame {
     }
     
     protected final static class Grid extends Panctor implements StepListener {
-        private final CellType[] cells = new CellType[GRID_SIZE];
+        protected final CellType[] cells = new CellType[GRID_SIZE];
         private Set<Integer> indicesToDrop = new TreeSet<Integer>();
         private Set<Integer> indicesToDropBack = new TreeSet<Integer>();
         private Set<Integer> indicesDropped = new HashSet<Integer>();
@@ -452,14 +685,36 @@ public class BlockGame extends BaseGame {
         private int enemyCount = 0;
         private final int[] enemiesNeeded = new int[NUM_COLORS];
         private int enemiesAdded = 0;
+        private boolean paused = false;
+        private int pauser = -1;
+        private PauseMenu pauseMenu = null;
         
         protected Grid() {
+            this(true);
+        }
+        
+        protected Grid(final boolean initializationNeeded) {
+            if (!initializationNeeded) {
+                return;
+            }
             room.addActor(this);
             initEnemies();
+            registerGlobal();
+        }
+        
+        protected final void registerGlobal() {
+            background.register(Pangine.getEngine().getInteraction().KEY_ESCAPE, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    togglePause(0);
+                }});
         }
         
         protected final void initEnemies() {
-            while (!attemptInitEnemies());
+            while (attemptInitEnemies()) {
+                for (int i = 0; i < GRID_SIZE; i++) {
+                    cells[i] = null;
+                }
+            }
         }
         
         private final boolean attemptInitEnemies() {
@@ -521,6 +776,9 @@ public class BlockGame extends BaseGame {
         
         @Override
         public final void onStep(final StepEvent event) {
+            if (paused) {
+                return;
+            }
             ENEMY_BEHAVIOR.ix = Pangine.getEngine().isOn(15) ? 8.0f : 16.0f;
             if (enemyCount <= 0) {
                 onVictory();
@@ -692,12 +950,27 @@ public class BlockGame extends BaseGame {
             return false;
         }
         
-        private final boolean isMatched(final int index) {
+        protected final boolean isMatched(final int index) {
             return (matchVertical(index, false) >= MATCH_THRESHOLD) || (matchHorizontal(index, false) >= MATCH_THRESHOLD);
         }
         
+        protected final void togglePause(final int playerIndex) {
+            if (paused) {
+                if (pauser == playerIndex) {
+                    Panctor.destroy(pauseMenu);
+                } else {
+                    return;
+                }
+            }
+            paused = !paused;
+            if (paused) {
+                pauser = playerIndex;
+                pauseMenu = new PauseMenu(playerIndex);
+            }
+        }
+        
         protected final boolean isFree() {
-            return indicesToDrop.isEmpty() && indicesToCheckForMatches.isEmpty();
+            return !paused && indicesToDrop.isEmpty() && indicesToCheckForMatches.isEmpty();
         }
         
         protected final int getX(final int index) {
@@ -751,6 +1024,7 @@ public class BlockGame extends BaseGame {
             Panscreen.set(new GameOverScreen());
         }
         
+        @Override
         protected final void renderView(final Panderer renderer) {
             int x = 0, y = 0;
             for (int i = 0; i < GRID_SIZE; i++) {
@@ -808,6 +1082,7 @@ public class BlockGame extends BaseGame {
     }
     
     protected final static class Player extends Panctor {
+        private final int playerIndex;
         private final int startX;
         private int timer = FALL_TIME;
         private int stoneX;
@@ -822,6 +1097,7 @@ public class BlockGame extends BaseGame {
         private int moveTimer = 0;
         
         protected Player() {
+            playerIndex = players.size();
             startX = (GRID_HALF * players.size()) + (GRID_HALF / 2) - 1;
             players.add(this);
             room.addActor(this);
@@ -844,6 +1120,8 @@ public class BlockGame extends BaseGame {
                 @Override public final void onAction(final ActionEvent event) { onRightContinue(); }});
             register(scheme.getDown(), new ActionListener() {
                 @Override public final void onAction(final ActionEvent event) { onDown(); }});
+            register(scheme.getSubmit(), new ActionListener() {
+                @Override public final void onAction(final ActionEvent event) { onPause(); }});
         }
         
         protected final void pickRandomStones() {
@@ -863,7 +1141,7 @@ public class BlockGame extends BaseGame {
         }
         
         private final void onMoveStart(final int dir) {
-            if (stoneY >= GRID_H) {
+            if ((stoneY >= GRID_H) || grid.paused) {
                 return;
             }
             nextDir = dir;
@@ -871,7 +1149,7 @@ public class BlockGame extends BaseGame {
         }
         
         private final void onMoveContinue(final int dir) {
-            if (stoneY >= GRID_H) {
+            if ((stoneY >= GRID_H) || grid.paused) {
                 return;
             }
             moveTimer--;
@@ -912,6 +1190,9 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void onClockwise() {
+            if (grid.paused) {
+                return;
+            }
             nextRot = 1;
         }
         
@@ -926,6 +1207,9 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void onCounterclockwise() {
+            if (grid.paused) {
+                return;
+            }
             nextRot = -1;
         }
         
@@ -940,9 +1224,15 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void onDown() {
-            if (timer > FAST_TIME) {
+            if (grid.paused) {
+                return;
+            } else if (timer > FAST_TIME) {
                 timer = FAST_TIME;
             }
+        }
+        
+        protected final void onPause() {
+            grid.togglePause(playerIndex);
         }
 
         public final void onStep() {
@@ -1058,6 +1348,7 @@ public class BlockGame extends BaseGame {
             return isOccupied(stoneX, stoneY) || isOccupied(getOtherStoneX(), getOtherStoneY());
         }
         
+        @Override
         protected final void renderView(final Panderer renderer) {
             if (stoneType != null) {
                 render(renderer, stoneX, stoneY, Z_FALLING, stoneType);
@@ -1072,6 +1363,129 @@ public class BlockGame extends BaseGame {
         final CellBehavior b = type.behavior;
         final CellColor c = type.color;
         renderer.render(room, block, X + (x * DIM), Y + (y * DIM), z, b.ix, b.iy, DIM, DIM, 0, false, false, c.r, c.g, c.b);
+    }
+    
+    protected abstract static class BasePauseMenu extends Panctor {
+        protected final int playerIndex;
+        private final List<Pantext> texts = new ArrayList<Pantext>();
+        private final Pantext cursor;
+        private int cursorIndex = 0;
+        
+        protected BasePauseMenu(final int playerIndex) {
+            this.playerIndex = playerIndex;
+            final float x = (playerIndex == 0) ? 16.0f : 192.0f;
+            getPosition().set(x, 128.0f, Z_GRID);
+            final float xText = x + 16;
+            texts.add(BackgroundScreen.addText(getTitle(), xText, 96));
+            texts.add(BackgroundScreen.addText(get0(), xText, 80));
+            texts.add(BackgroundScreen.addText(get1(), xText, 64));
+            cursor = BackgroundScreen.addText("*", x + 4, 64);
+            texts.add(cursor);
+            register(controlSchemes.get(playerIndex));
+            room.addActor(this);
+        }
+        
+        protected final void register(final ControlScheme scheme) {
+            background.register(scheme.getUp(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onY(); }});
+            background.register(scheme.getDown(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onY(); }});
+            background.register(scheme.get1(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
+            background.register(scheme.get2(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
+        }
+        
+        protected final void onY() {
+            cursorIndex = (cursorIndex + 1) % 2;
+            cursor.getPosition().setY(texts.get(cursorIndex).getPosition().getY());
+        }
+        
+        protected final void onAction() {
+            if (cursorIndex == 0) {
+                on0();
+            } else {
+                on1();
+            }
+        }
+        
+        protected abstract String getTitle();
+        
+        protected abstract String get0();
+        
+        protected abstract String get1();
+        
+        protected abstract void on0();
+        
+        protected abstract void on1();
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panple pos = getPosition();
+            renderer.render(getLayer(), black, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 64, 64, 0, false, false);
+        }
+        
+        @Override
+        protected final void onDestroy() {
+            for (final Pantext text : texts) {
+                text.destroy();
+            }
+        }
+    }
+    
+    protected final static class PauseMenu extends BasePauseMenu {
+        protected PauseMenu(final int playerIndex) {
+            super(playerIndex);
+        }
+        
+        @Override protected final String getTitle() {
+            return "Paused";
+        }
+        
+        @Override protected final String get0() {
+            return "Play";
+        }
+        
+        @Override protected final String get1() {
+            return "Quit";
+        }
+        
+        @Override protected final void on0() {
+            grid.togglePause(playerIndex);
+            destroy();
+        }
+        
+        @Override protected final void on1() {
+            new QuitPauseMenu(playerIndex);
+            destroy();
+        }
+    }
+    
+    protected final static class QuitPauseMenu extends BasePauseMenu {
+        protected QuitPauseMenu(final int playerIndex) {
+            super(playerIndex);
+        }
+        
+        @Override protected final String getTitle() {
+            return "Quit?";
+        }
+        
+        @Override protected final String get0() {
+            return "No";
+        }
+        
+        @Override protected final String get1() {
+            return "Yes";
+        }
+        
+        @Override protected final void on0() {
+            new PauseMenu(playerIndex);
+            destroy();
+        }
+        
+        @Override protected final void on1() {
+            Panscreen.set(new MenuScreen());
+        }
     }
     
     public final static void main(final String[] args) {
