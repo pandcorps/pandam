@@ -46,6 +46,9 @@ public class BlockGame extends BaseGame {
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
     
     protected final static String RES = "org/pandcorps/block/";
+    protected final static String RES_IMG = RES + "image/";
+    protected final static String RES_SND = RES + "sound/";
+    protected final static String RES_MUS = RES + "music/";
     
     protected final static int DIM = 8;
     protected final static int GAME_W = 288;
@@ -97,6 +100,13 @@ public class BlockGame extends BaseGame {
     protected static Panmage black = null;
     protected static Panimation anmPuff = null;
     protected static Font font = null;
+    protected static Pansound fxMove = null; // Left/right, not down
+    protected static Pansound fxRotate = null;
+    protected static Pansound fxThud = null;
+    protected static Pansound fxMatch = null;
+    protected static Pansound fxVictory = null;
+    protected static Pansound fxDefeat = null;
+    protected static Pansound music = null;
     protected final static Panple size = new FinPanple2(DIM, DIM);
     protected final static CellBehavior STONE_BEHAVIOR = new CellBehavior(0.0f, 0.0f, TILE_STONE);
     protected final static CellBehavior ENEMY_BEHAVIOR = new CellBehavior(8.0f, 0.0f, TILE_ENEMY);
@@ -109,7 +119,7 @@ public class BlockGame extends BaseGame {
     protected static ControlScheme inactiveControlScheme = null;
     private final static Set<Panput> customMappedInputs = new HashSet<Panput>();
     protected final static List<Player> players = new ArrayList<Player>(MAX_PLAYERS);
-    private static int level = LEVEL_MIN;
+    protected static int level = LEVEL_MIN;
     
     @Override
     protected final boolean isFullScreen() {
@@ -142,7 +152,12 @@ public class BlockGame extends BaseGame {
     }
     
     private final static void loadResources() {
-        block = Pangine.getEngine().createImage("block", RES + "Block.png");
+        loadImages();
+        loadAudio();
+    }
+    
+    private final static void loadImages() {
+        block = Pangine.getEngine().createImage("block", RES_IMG + "Block.png");
         final ImgFactory f = ImgFactory.getFactory();
         final Img img = f.create(1, 1);
         img.setRGB(0, 0, f.getDataElement(0, 0, 0, 255));
@@ -152,6 +167,18 @@ public class BlockGame extends BaseGame {
         initColor(2, block, 0.375f, 0.375f, 0.375f);
         anmPuff = newAnimation(3, 0.75f, 1.0f, 1.0f, 16, 16, 16, 24, 24, 24);
         font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), new FinPancolor(192, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE));
+    }
+    
+    private final static void loadAudio() {
+        Pansound.setDefaultReplayThreshold(4);
+        final Panaudio audio = Pangine.getEngine().getAudio();
+        fxMove = audio.createSound(RES_SND + "Move.mid");
+        fxRotate = audio.createSound(RES_SND + "Rotate.mid");
+        fxThud = audio.createSound(RES_SND + "Thud.mid");
+        fxMatch = audio.createSound(RES_SND + "Match.mid");
+        fxVictory = audio.createTransition(RES_SND + "Victory.mid");
+        fxDefeat = audio.createTransition(RES_SND + "Defeat.mid");
+        music = audio.createMusic(RES_MUS + "Music.mid");
     }
     
     private final static void initColor(final int i, final Panmage block, final float r, final float g, final float b) {
@@ -165,7 +192,7 @@ public class BlockGame extends BaseGame {
         return new CellType(color, STONE_BEHAVIOR);
     }
     
-    private final static CellType newEnemy(final CellColor color) {
+    protected final static CellType newEnemy(final CellColor color) {
         return new CellType(color, ENEMY_BEHAVIOR);
     }
     
@@ -246,7 +273,11 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final void destroy() {
+            destroyBlock();
             background.detach();
+        }
+        
+        protected void destroyBlock() {
         }
         
         protected final static Pantext addText(final CharSequence msg, final float x, final float y) {
@@ -272,6 +303,12 @@ public class BlockGame extends BaseGame {
             for (final ControlScheme ctrl : controlSchemes) {
                 new Player().register(ctrl);
             }
+            music.startMusic();
+        }
+        
+        @Override
+        protected final void destroyBlock() {
+            Pangine.getEngine().getAudio().stopMusic();
         }
     }
     
@@ -280,7 +317,11 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final void loadBlock() {
-            text = addText(getText(), GAME_W / 2, GAME_H / 2, true);
+            int y = GAME_H / 2;
+            for (final String msg : getTexts()) {
+                text = addText(msg, GAME_W / 2, y, true);
+                y -= 8;
+            }
             final Panscreen nextScreen = getNextScreen();
             loadText();
             if (nextScreen == null) {
@@ -292,7 +333,7 @@ public class BlockGame extends BaseGame {
                 }});
         }
         
-        protected abstract String getText();
+        protected abstract String[] getTexts();
         
         protected void loadText() {
         }
@@ -304,8 +345,8 @@ public class BlockGame extends BaseGame {
     
     protected final static class DeviceSelectScreen extends TextScreen {
         @Override
-        protected final String getText() {
-            return "Press any button player " + (controlSchemes.size() + 1);
+        protected final String[] getTexts() {
+            return new String[] { "Player " + (controlSchemes.size() + 1), "Press any button" };
         }
         
         @Override
@@ -337,7 +378,7 @@ public class BlockGame extends BaseGame {
     }
     
     protected final static class MapInputScreen extends BackgroundScreen {
-        private final static int X_LABEL = X + 40;
+        private final static int X_LABEL = X;
         private final static String[] INPUT_NAMES = { "Up", "Down", "Left", "Right", "Clockwise", "Counterclockwise", "Start" };
         private final int playerIndex;
         private final List<Panput> inputs = new ArrayList<Panput>();
@@ -349,9 +390,9 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final void loadBlock() {
-            addText("Player " + (playerIndex + 1));
+            final Pantext text = addText("Player " + (playerIndex + 1));
             addNextLabel();
-            background.register(new ActionEndListener() {
+            text.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     final Panput input = event.getInput();
                     if (customMappedInputs.contains(input)) {
@@ -372,12 +413,14 @@ public class BlockGame extends BaseGame {
             addText(INPUT_NAMES[inputs.size()]);
         }
         
-        protected final void addText(final String msg) {
-            addText(msg, X_LABEL, y);
+        protected final Pantext addText(final String msg) {
+            final Pantext text = addText(msg, X_LABEL, y);
             y -= 12;
+            return text;
         }
         
         protected final void onFinish() {
+            customMappedInputs.addAll(inputs);
             controlSchemes.set(playerIndex, new ControlScheme(
                     inputs.get(1), inputs.get(0), inputs.get(2), inputs.get(3),
                     inputs.get(4), inputs.get(5), null, inputs.get(6)));
@@ -386,11 +429,11 @@ public class BlockGame extends BaseGame {
     }
     
     protected final static class MenuScreen extends BackgroundScreen {
-        private final static int X_CURSOR = X + 24;
-        private final static int X_OPTION = X + 40;
-        private final static int X_VALUE = X + 128;
+        private final static int X_CURSOR = X;
+        private final static int X_OPTION = X + 8;
+        private final static int X_VALUE = X + 80;
         private final List<Option> options = new ArrayList<Option>();
-        private int y = 128;
+        private int y = 112;
         private int optionIndex = 0;
         private Pantext cursor = null;
         
@@ -437,6 +480,10 @@ public class BlockGame extends BaseGame {
                 @Override protected final void onAction() {
                     startGame();
                 }});
+            addOption("Quit", new Option() {
+                @Override protected final void onAction() {
+                    Pangine.getEngine().exit();
+                }});
             register(controlSchemes.get(0));
         }
         
@@ -449,19 +496,20 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void register(final ControlScheme scheme) {
-            background.register(scheme.getUp(), new ActionEndListener() {
+            final Panctor actor = cursor;
+            actor.register(scheme.getUp(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onUp(); }});
-            background.register(scheme.getDown(), new ActionEndListener() {
+            actor.register(scheme.getDown(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onDown(); }});
-            background.register(scheme.getLeft(), new ActionEndListener() {
+            actor.register(scheme.getLeft(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onX(-1); }});
-            background.register(scheme.getRight(), new ActionEndListener() {
+            actor.register(scheme.getRight(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onX(1); }});
-            background.register(scheme.get1(), new ActionEndListener() {
+            actor.register(scheme.get1(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
-            background.register(scheme.get2(), new ActionEndListener() {
+            actor.register(scheme.get2(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
-            background.register(scheme.getSubmit(), new ActionEndListener() {
+            actor.register(scheme.getSubmit(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { startGame(); }});
         }
         
@@ -533,7 +581,13 @@ public class BlockGame extends BaseGame {
             
             protected final void setValueSequence() {
                 Chartil.clear(valueSequence);
-                valueSequence.append("< ").append(get()).append(" >");
+                valueSequence.append("< ");
+                if (max() < 10) {
+                    valueSequence.append(get());
+                } else {
+                    valueSequence.append(Chartil.padZero(get(), 2));
+                }
+                valueSequence.append(" >");
             }
             
             protected abstract int get();
@@ -546,8 +600,8 @@ public class BlockGame extends BaseGame {
     
     protected final static class LevelStartScreen extends TextScreen {
         @Override
-        protected final String getText() {
-            return "Level " + level + " start";
+        protected final String[] getTexts() {
+            return new String[] { "Level " + level, "Start" };
         }
         
         @Override
@@ -558,8 +612,8 @@ public class BlockGame extends BaseGame {
     
     protected final static class LevelCompleteScreen extends TextScreen {
         @Override
-        protected final String getText() {
-            return "Level " + (level - 1) + " complete"; // Level incremented before this screen
+        protected final String[] getTexts() {
+            return new String[] { "Level " + (level - 1), "Complete" }; // Level incremented before this screen
         }
         
         @Override
@@ -573,8 +627,8 @@ public class BlockGame extends BaseGame {
     
     protected final static class VictoryScreen extends TextScreen {
         @Override
-        protected final String getText() {
-            return "You win!";
+        protected final String[] getTexts() {
+            return new String[] { "You win!" };
         }
         
         @Override
@@ -585,8 +639,8 @@ public class BlockGame extends BaseGame {
     
     protected final static class GameOverScreen extends TextScreen {
         @Override
-        protected final String getText() {
-            return "Game over";
+        protected final String[] getTexts() {
+            return new String[] { "Game over" };
         }
         
         @Override
@@ -703,14 +757,14 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void registerGlobal() {
-            background.register(Pangine.getEngine().getInteraction().KEY_ESCAPE, new ActionEndListener() {
+            register(Pangine.getEngine().getInteraction().KEY_ESCAPE, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     togglePause(0);
                 }});
         }
         
         protected final void initEnemies() {
-            while (attemptInitEnemies()) {
+            while (!attemptInitEnemies()) {
                 for (int i = 0; i < GRID_SIZE; i++) {
                     cells[i] = null;
                 }
@@ -718,8 +772,13 @@ public class BlockGame extends BaseGame {
         }
         
         private final boolean attemptInitEnemies() {
+            initBaseEnemies();
+            return initExtraEnemies();
+        }
+        
+        protected final void initBaseEnemies() {
             enemyCount = level * NUM_COLORS;
-            final int baseSize = LEVEL_MAX * NUM_COLORS;
+            final int baseSize = getEnemyBaseSize();
             for (int i = 0; i < NUM_COLORS; i++) {
                 enemiesNeeded[i] = level;
             }
@@ -729,7 +788,11 @@ public class BlockGame extends BaseGame {
                 initEnemy(i, n);
                 n--;
             }
+        }
+        
+        protected final boolean initExtraEnemies() {
             if (enemiesAdded < enemyCount) {
+                final int baseSize = getEnemyBaseSize();
                 int y = baseSize / GRID_W, xRaw = 0;
                 while (enemiesAdded < enemyCount) {
                     final int x2 = xRaw / 2;
@@ -753,7 +816,7 @@ public class BlockGame extends BaseGame {
         }
         
         private final void initEnemy(final int i, final int n) {
-            final int rnd = Mathtil.randi(0, n);
+            final int rnd = Mathtil.randi(0, n - 1);
             int enemiesNeededSum = 0;
             for (int colorIndex = 0; colorIndex < NUM_COLORS; colorIndex++) {
                 enemiesNeededSum += enemiesNeeded[colorIndex];
@@ -764,7 +827,9 @@ public class BlockGame extends BaseGame {
                         if (isMatched(i)) {
                             cells[i] = null;
                         } else {
-                            enemiesNeeded[attemptIndex]--;
+                            if (enemiesNeeded[attemptIndex] > 0) {
+                                enemiesNeeded[attemptIndex]--;
+                            }
                             enemiesAdded++;
                             break;
                         }
@@ -772,6 +837,10 @@ public class BlockGame extends BaseGame {
                     break;
                 }
             }
+        }
+        
+        private final int getEnemyBaseSize() {
+            return LEVEL_MAX * NUM_COLORS;
         }
         
         @Override
@@ -880,6 +949,7 @@ public class BlockGame extends BaseGame {
                     }
                 }
                 burst(index, cellType);
+                fxMatch.startSound();
             }
             indicesToClear.clear();
         }
@@ -1016,11 +1086,13 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void onVictory() {
+            fxVictory.startSound();
             level++;
             Panscreen.set(new LevelCompleteScreen());
         }
         
         protected final void onDefeated() {
+            fxDefeat.startSound();
             Panscreen.set(new GameOverScreen());
         }
         
@@ -1135,21 +1207,32 @@ public class BlockGame extends BaseGame {
             stoneRot = ROT_EAST;
             stoneType = nextStoneType;
             otherStoneType = nextOtherStoneType;
+            clearNextMove();
             pickRandomStones();
             puff(startX, NEXT_Y);
             puff(startX + 1, NEXT_Y);
         }
         
+        private final void clearNextMove() {
+            nextDir = 0;
+            nextRot = 0;
+        }
+        
+        private final boolean isMoveForbidden() {
+            return (stoneY >= GRID_H) || grid.paused || (stoneType == null);
+        }
+        
         private final void onMoveStart(final int dir) {
-            if ((stoneY >= GRID_H) || grid.paused) {
+            if (isMoveForbidden()) {
                 return;
             }
             nextDir = dir;
             moveTimer = MOVE_HOLD_TIME;
+            fxMove.startSound();
         }
         
         private final void onMoveContinue(final int dir) {
-            if ((stoneY >= GRID_H) || grid.paused) {
+            if (isMoveForbidden()) {
                 return;
             }
             moveTimer--;
@@ -1189,11 +1272,16 @@ public class BlockGame extends BaseGame {
             }
         }
         
-        protected final void onClockwise() {
-            if (grid.paused) {
+        private final void onRotate(final int dir) {
+            if (isMoveForbidden()) {
                 return;
             }
-            nextRot = 1;
+            nextRot = dir;
+            fxRotate.startSound();
+        }
+        
+        protected final void onClockwise() {
+            onRotate(1);
         }
         
         protected final void clockwise() {
@@ -1207,10 +1295,7 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void onCounterclockwise() {
-            if (grid.paused) {
-                return;
-            }
-            nextRot = -1;
+            onRotate(-1);
         }
         
         protected final void counterclockwise() {
@@ -1255,8 +1340,7 @@ public class BlockGame extends BaseGame {
             } else if (nextRot < 0) {
                 counterclockwise();
             }
-            nextDir = 0;
-            nextRot = 0;
+            clearNextMove();
         }
         
         private final void stepDrop() {
@@ -1290,6 +1374,7 @@ public class BlockGame extends BaseGame {
                 grid.onDefeated();
             }
             stoneType = null;
+            fxThud.startSound();
         }
         
         protected final void adjustRotationIfNeeded(final int oldX, final int oldRot) {
@@ -1373,9 +1458,9 @@ public class BlockGame extends BaseGame {
         
         protected BasePauseMenu(final int playerIndex) {
             this.playerIndex = playerIndex;
-            final float x = (playerIndex == 0) ? 16.0f : 192.0f;
+            final float x = (playerIndex == 0) ? 8.0f : (GAME_W - 72);
             getPosition().set(x, 128.0f, Z_GRID);
-            final float xText = x + 16;
+            final float xText = x + 12;
             texts.add(BackgroundScreen.addText(getTitle(), xText, 96));
             texts.add(BackgroundScreen.addText(get0(), xText, 80));
             texts.add(BackgroundScreen.addText(get1(), xText, 64));
@@ -1386,13 +1471,13 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void register(final ControlScheme scheme) {
-            background.register(scheme.getUp(), new ActionEndListener() {
+            register(scheme.getUp(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onY(); }});
-            background.register(scheme.getDown(), new ActionEndListener() {
+            register(scheme.getDown(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onY(); }});
-            background.register(scheme.get1(), new ActionEndListener() {
+            register(scheme.get1(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
-            background.register(scheme.get2(), new ActionEndListener() {
+            register(scheme.get2(), new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
         }
         
@@ -1422,7 +1507,7 @@ public class BlockGame extends BaseGame {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panple pos = getPosition();
-            renderer.render(getLayer(), black, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 64, 64, 0, false, false);
+            renderer.render(getLayer(), black, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 64, GAME_H - (DIM * 2), 0, false, false);
         }
         
         @Override
