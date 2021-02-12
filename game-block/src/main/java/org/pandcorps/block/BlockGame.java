@@ -43,7 +43,8 @@ public class BlockGame extends BaseGame {
     protected final static String VERSION = "0.0.1";
     protected final static String YEAR = "2021";
     protected final static String AUTHOR = "Andrew M. Martin";
-    protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
+    protected final static String COPYRIGHT_SHORT = Pantext.CHAR_COPYRIGHT + " " + YEAR;
+    protected final static String COPYRIGHT = "Copyright " + COPYRIGHT_SHORT;
     
     protected final static String RES = "org/pandcorps/block/";
     protected final static String RES_IMG = RES + "image/";
@@ -53,6 +54,7 @@ public class BlockGame extends BaseGame {
     protected final static int DIM = 8;
     protected final static int GAME_W = 288;
     protected final static int GAME_H = 160;
+    protected final static int GAME_HALF = GAME_W / 2;
     protected final static int GRID_W = 16;
     protected final static int GRID_H = 16;
     protected final static int GRID_AND_NEXT_H = GRID_H + 2;
@@ -76,7 +78,8 @@ public class BlockGame extends BaseGame {
     protected final static int MOVE_HOLD_TIME = 12;
     protected final static int MOVE_FAST_TIME = 2;
     
-    protected final static int MATCH_THRESHOLD = 3;
+    protected final static int MATCH_THRESHOLD_MIN = 3;
+    protected final static int MATCH_THRESHOLD_MAX = 4;
     
     protected final static byte TILE_STONE = Tile.BEHAVIOR_SOLID; // Falls when tiles beneath are cleared
     protected final static byte TILE_ENEMY = 2; // Stays in its place until cleared
@@ -120,6 +123,7 @@ public class BlockGame extends BaseGame {
     private final static Set<Panput> customMappedInputs = new HashSet<Panput>();
     protected final static List<Player> players = new ArrayList<Player>(MAX_PLAYERS);
     protected static int level = LEVEL_MIN;
+    protected static int matchThreshold = MATCH_THRESHOLD_MAX;
     
     @Override
     protected final boolean isFullScreen() {
@@ -312,14 +316,29 @@ public class BlockGame extends BaseGame {
         }
     }
     
-    protected abstract static class TextScreen extends BackgroundScreen {
+    protected abstract static class TitledScreen extends BackgroundScreen {
+        @Override
+        protected final void loadBlock() {
+            int y = GAME_H - 32;
+            addText(TITLE, GAME_HALF, y, true);
+            y -= 8;
+            addText(COPYRIGHT_SHORT, GAME_HALF, y, true);
+            y -= 8;
+            addText(AUTHOR, GAME_HALF, y, true);
+            loadExtra();
+        }
+        
+        protected abstract void loadExtra();
+    }
+    
+    protected abstract static class TextScreen extends TitledScreen {
         protected Pantext text = null;
         
         @Override
-        protected final void loadBlock() {
+        protected final void loadExtra() {
             int y = GAME_H / 2;
             for (final String msg : getTexts()) {
-                text = addText(msg, GAME_W / 2, y, true);
+                text = addText(msg, GAME_HALF, y, true);
                 y -= 8;
             }
             final Panscreen nextScreen = getNextScreen();
@@ -327,9 +346,12 @@ public class BlockGame extends BaseGame {
             if (nextScreen == null) {
                 return;
             }
-            Pangine.getEngine().addTimer(text, 30, new TimerListener() {
+            Pangine.getEngine().addTimer(text, 15, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
-                    Panscreen.set(nextScreen);
+                    text.register(new ActionEndListener() {
+                        @Override public final void onActionEnd(final ActionEndEvent event) {
+                            Panscreen.set(nextScreen);
+                        }});
                 }});
         }
         
@@ -377,19 +399,19 @@ public class BlockGame extends BaseGame {
         Panscreen.set(new MapInputScreen(0));
     }
     
-    protected final static class MapInputScreen extends BackgroundScreen {
+    protected final static class MapInputScreen extends TitledScreen {
         private final static int X_LABEL = X;
         private final static String[] INPUT_NAMES = { "Up", "Down", "Left", "Right", "Clockwise", "Counterclockwise", "Start" };
         private final int playerIndex;
         private final List<Panput> inputs = new ArrayList<Panput>();
-        private int y = 128;
+        private int y = 100;
         
         protected MapInputScreen(final int playerIndex) {
             this.playerIndex = playerIndex;
         }
         
         @Override
-        protected final void loadBlock() {
+        protected final void loadExtra() {
             final Pantext text = addText("Player " + (playerIndex + 1));
             addNextLabel();
             text.register(new ActionEndListener() {
@@ -401,9 +423,11 @@ public class BlockGame extends BaseGame {
                         Panscreen.set(new MapInputScreen(playerIndex)); // Collision with self, so start over for self
                     }
                     inputs.add(input);
-                    if (inputs.size() <= INPUT_NAMES.length) {
+                    if (inputs.size() < INPUT_NAMES.length) {
+                        fxRotate.startSound();
                         addNextLabel();
                     } else {
+                        fxMatch.startSound();
                         onFinish();
                     }
                 }});
@@ -428,17 +452,17 @@ public class BlockGame extends BaseGame {
         }
     }
     
-    protected final static class MenuScreen extends BackgroundScreen {
+    protected final static class MenuScreen extends TitledScreen {
         private final static int X_CURSOR = X;
         private final static int X_OPTION = X + 8;
         private final static int X_VALUE = X + 80;
         private final List<Option> options = new ArrayList<Option>();
-        private int y = 112;
+        private int y = 96;
         private int optionIndex = 0;
         private Pantext cursor = null;
         
         @Override
-        protected final void loadBlock() {
+        protected final void loadExtra() {
             cursor = addText("*", X_CURSOR, y);
             addOption("Level", new IntOption() {
                 @Override protected final int get() {
@@ -450,6 +474,21 @@ public class BlockGame extends BaseGame {
                 @Override
                 protected final int max() {
                     return LEVEL_MAX;
+                }});
+            addOption("Match", new IntOption() {
+                @Override protected final int get() {
+                    return matchThreshold;
+                }
+                @Override protected final void set(final int value) {
+                    matchThreshold = value;
+                }
+                @Override
+                protected final int min() {
+                    return MATCH_THRESHOLD_MIN;
+                }
+                @Override
+                protected final int max() {
+                    return MATCH_THRESHOLD_MAX;
                 }});
             addOption("Players", new IntOption() {
                 @Override protected final int get() {
@@ -492,7 +531,7 @@ public class BlockGame extends BaseGame {
             option.y = y;
             options.add(option);
             option.init();
-            y -= 32;
+            y -= 16;
         }
         
         protected final void register(final ControlScheme scheme) {
@@ -514,6 +553,7 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void startGame() {
+            fxMatch.startSound();
             Panscreen.set(new LevelStartScreen());
         }
         
@@ -545,6 +585,7 @@ public class BlockGame extends BaseGame {
         
         protected final void updateCursor() {
             cursor.getPosition().setY(getOption().y);
+            fxMove.startSound();
         }
         
         protected final Option getOption() {
@@ -569,8 +610,16 @@ public class BlockGame extends BaseGame {
             
             @Override
             protected final void onX(final int dir) {
-                set(Math.max(Math.min(get() + dir, max()), 1));
+                int value = get() + dir;
+                final int mx = max(), mn = min();
+                if (value > mx) {
+                    value = mn;
+                } else if (value < mn) {
+                    value = mx;
+                }
+                set(value);
                 setValueSequence();
+                fxRotate.startSound();
             }
             
             protected final void init() {
@@ -593,6 +642,10 @@ public class BlockGame extends BaseGame {
             protected abstract int get();
             
             protected abstract void set(final int value);
+            
+            protected int min() {
+                return 1;
+            }
             
             protected abstract int max();
         }
@@ -687,7 +740,7 @@ public class BlockGame extends BaseGame {
             renderer.render(layer, block, left, 0, Z_BG, 0, 8, DIM, DIM, 1, false, false, r, g, b);
             renderer.render(layer, block, right, 0, Z_BG, 0, 8, DIM, DIM, 2, false, false, r, g, b);
             final int rightBg = right + DIM, rightNext = rightBg - (DIM * 3), rightFar = GAME_W - DIM;
-            final int xMid = (GAME_W / 2) - (DIM * 2);
+            final int xMid = GAME_HALF - (DIM * 2);
             final int topBg = topNext - DIM;
             render8s(renderer, layer, 0, 0, 9, 1);
             render8s(renderer, layer, rightBg, 0, 9, 1);
@@ -741,7 +794,7 @@ public class BlockGame extends BaseGame {
         private int enemiesAdded = 0;
         private boolean paused = false;
         private int pauser = -1;
-        private PauseMenu pauseMenu = null;
+        private BasePauseMenu pauseMenu = null;
         
         protected Grid() {
             this(true);
@@ -881,6 +934,7 @@ public class BlockGame extends BaseGame {
                 int beneath = index - GRID_W;
                 if ((beneath < 0) || (cells[beneath] != null)) {
                     queueColumnForMatching(baseIndex);
+                    fxThud.startSound();
                     continue;
                 } else if (indicesDropped.contains(key)) {
                     continue;
@@ -924,11 +978,11 @@ public class BlockGame extends BaseGame {
                 final int index = key.intValue();
                 final int verticalSize = matchVertical(index, false);
                 final int horizontalSize = matchHorizontal(index, false);
-                if (verticalSize >= MATCH_THRESHOLD) {
+                if (verticalSize >= matchThreshold) {
                     indicesToClear.add(key);
                     matchVertical(index, true);
                 }
-                if (horizontalSize >= MATCH_THRESHOLD) {
+                if (horizontalSize >= matchThreshold) {
                     indicesToClear.add(key);
                     matchHorizontal(index, true);
                 }
@@ -1021,7 +1075,7 @@ public class BlockGame extends BaseGame {
         }
         
         protected final boolean isMatched(final int index) {
-            return (matchVertical(index, false) >= MATCH_THRESHOLD) || (matchHorizontal(index, false) >= MATCH_THRESHOLD);
+            return (matchVertical(index, false) >= matchThreshold) || (matchHorizontal(index, false) >= matchThreshold);
         }
         
         protected final void togglePause(final int playerIndex) {
@@ -1032,10 +1086,11 @@ public class BlockGame extends BaseGame {
                     return;
                 }
             }
+            fxMatch.startSound();
             paused = !paused;
             if (paused) {
                 pauser = playerIndex;
-                pauseMenu = new PauseMenu(playerIndex);
+                new PauseMenu(playerIndex);
             }
         }
         
@@ -1192,8 +1247,8 @@ public class BlockGame extends BaseGame {
                 @Override public final void onAction(final ActionEvent event) { onRightContinue(); }});
             register(scheme.getDown(), new ActionListener() {
                 @Override public final void onAction(final ActionEvent event) { onDown(); }});
-            register(scheme.getSubmit(), new ActionListener() {
-                @Override public final void onAction(final ActionEvent event) { onPause(); }});
+            register(scheme.getSubmit(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { onPause(); }});
         }
         
         protected final void pickRandomStones() {
@@ -1458,16 +1513,18 @@ public class BlockGame extends BaseGame {
         
         protected BasePauseMenu(final int playerIndex) {
             this.playerIndex = playerIndex;
-            final float x = (playerIndex == 0) ? 8.0f : (GAME_W - 72);
-            getPosition().set(x, 128.0f, Z_GRID);
+            final float x = (playerIndex == 0) ? DIM : (GAME_W - 72);
+            getPosition().set(x, DIM, Z_GRID);
             final float xText = x + 12;
             texts.add(BackgroundScreen.addText(getTitle(), xText, 96));
             texts.add(BackgroundScreen.addText(get0(), xText, 80));
             texts.add(BackgroundScreen.addText(get1(), xText, 64));
-            cursor = BackgroundScreen.addText("*", x + 4, 64);
+            cursor = BackgroundScreen.addText("*", x + 4, -DIM); // Next line will set y
+            setCursorPosition();
             texts.add(cursor);
             register(controlSchemes.get(playerIndex));
             room.addActor(this);
+            grid.pauseMenu = this;
         }
         
         protected final void register(final ControlScheme scheme) {
@@ -1483,7 +1540,12 @@ public class BlockGame extends BaseGame {
         
         protected final void onY() {
             cursorIndex = (cursorIndex + 1) % 2;
-            cursor.getPosition().setY(texts.get(cursorIndex).getPosition().getY());
+            setCursorPosition();
+            fxMove.startSound();
+        }
+        
+        private final void setCursorPosition() {
+            cursor.getPosition().setY(texts.get(cursorIndex + 1).getPosition().getY()); // 0 is the title, so add 1
         }
         
         protected final void onAction() {
@@ -1541,6 +1603,7 @@ public class BlockGame extends BaseGame {
         }
         
         @Override protected final void on1() {
+            fxRotate.startSound();
             new QuitPauseMenu(playerIndex);
             destroy();
         }
@@ -1564,11 +1627,13 @@ public class BlockGame extends BaseGame {
         }
         
         @Override protected final void on0() {
+            fxRotate.startSound();
             new PauseMenu(playerIndex);
             destroy();
         }
         
         @Override protected final void on1() {
+            fxRotate.startSound();
             Panscreen.set(new MenuScreen());
         }
     }
