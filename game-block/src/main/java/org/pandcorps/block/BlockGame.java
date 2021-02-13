@@ -1434,7 +1434,7 @@ public class BlockGame extends BaseGame {
         
         protected final void adjustRotationIfNeeded(final int oldX, final int oldRot) {
             fixStoneX();
-            if (isEitherFallingStoneOccupied()) {
+            if (isEitherFallingStoneOccupied() || isOtherStoneTooHigh()) {
                 stoneX = oldX;
                 stoneRot = oldRot;
                 // Try another rot; north-to-south or east-to-west always work if we adjust position too
@@ -1456,6 +1456,10 @@ public class BlockGame extends BaseGame {
         
         protected final void fixStoneX() {
             stoneX = Math.min(Math.max(stoneX, getMinStoneX()), getMaxStoneX());
+        }
+        
+        private final boolean isOtherStoneTooHigh() {
+            return (stoneRot == ROT_NORTH) && (stoneY >= GRID_H - 1);
         }
         
         protected final int getOtherStoneX() {
