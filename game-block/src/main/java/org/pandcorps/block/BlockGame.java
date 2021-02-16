@@ -68,9 +68,11 @@ public class BlockGame extends BaseGame {
     
     protected final static int Z_BG = 0;
     protected final static int Z_GRID = 2;
-    protected final static int Z_FALLING = 4;
-    protected final static int Z_BURST = 6;
-    protected final static int Z_PUFF = 8;
+    protected final static int Z_FALLING_1 = 4;
+    protected final static int Z_FALLING_2 = 6;
+    protected final static int Z_BURST = 8;
+    protected final static int Z_PUFF = 10;
+    private final static int[] Z_FALLINGS = { Z_FALLING_1, Z_FALLING_2 };
     
     protected final static int FALL_TIME = 30;
     protected final static int FAST_TIME = 2;
@@ -383,11 +385,13 @@ public class BlockGame extends BaseGame {
                         if (device == ctrl.getDevice()) {
                             if (device instanceof Keyboard) {
                                 controlSchemes.add(new ControlScheme());
+                                fxMatch.startSound();
                                 goMapInput();
                             }
                             return;
                         }
                     }
+                    fxMatch.startSound();
                     controlSchemes.add(ControlScheme.getDefault(device));
                     Panscreen.set(new MenuScreen());
                 }});
@@ -419,8 +423,10 @@ public class BlockGame extends BaseGame {
                     final Panput input = event.getInput();
                     if (customMappedInputs.contains(input)) {
                         goMapInput(); // Collision with other player, so just start over for both
+                        return;
                     } else if (inputs.contains(input)) {
                         Panscreen.set(new MapInputScreen(playerIndex)); // Collision with self, so start over for self
+                        return;
                     }
                     inputs.add(input);
                     if (inputs.size() < INPUT_NAMES.length) {
@@ -463,6 +469,7 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final void loadExtra() {
+            level = Math.min(level, LEVEL_MAX);
             cursor = addText("*", X_CURSOR, y);
             addOption("Level", new IntOption() {
                 @Override protected final int get() {
@@ -671,7 +678,7 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final Panscreen getNextScreen() {
-            if (level >= LEVEL_MAX) {
+            if (level > LEVEL_MAX) { // Level incremented before this screen
                 return new VictoryScreen();
             }
             return new LevelStartScreen();
@@ -795,6 +802,7 @@ public class BlockGame extends BaseGame {
         private boolean paused = false;
         private int pauser = -1;
         private BasePauseMenu pauseMenu = null;
+        private int startTimer = 60;
         
         protected Grid() {
             this(true);
@@ -900,6 +908,9 @@ public class BlockGame extends BaseGame {
         public final void onStep(final StepEvent event) {
             if (paused) {
                 return;
+            } else if (startTimer > 0) {
+                startTimer--;
+                return;
             }
             ENEMY_BEHAVIOR.ix = Pangine.getEngine().isOn(15) ? 8.0f : 16.0f;
             if (enemyCount <= 0) {
@@ -976,6 +987,9 @@ public class BlockGame extends BaseGame {
         private final void stepMatch() {
             for (final Integer key : indicesToCheckForMatches) {
                 final int index = key.intValue();
+                if (cells[index] == null) {
+                    continue;
+                }
                 final int verticalSize = matchVertical(index, false);
                 final int horizontalSize = matchHorizontal(index, false);
                 if (verticalSize >= matchThreshold) {
@@ -1089,13 +1103,20 @@ public class BlockGame extends BaseGame {
             fxMatch.startSound();
             paused = !paused;
             if (paused) {
+                Pangine.getEngine().getAudio().pauseMusic();
                 pauser = playerIndex;
                 new PauseMenu(playerIndex);
+            } else {
+                try {
+                    Pangine.getEngine().getAudio().resumeMusic();
+                } catch (final Exception e) {
+                    throw Panception.get(e);
+                }
             }
         }
         
         protected final boolean isFree() {
-            return !paused && indicesToDrop.isEmpty() && indicesToCheckForMatches.isEmpty();
+            return !paused && (startTimer <= 0) && indicesToDrop.isEmpty() && indicesToCheckForMatches.isEmpty();
         }
         
         protected final int getX(final int index) {
@@ -1210,6 +1231,7 @@ public class BlockGame extends BaseGame {
     
     protected final static class Player extends Panctor {
         private final int playerIndex;
+        private final int otherPlayerIndex;
         private final int startX;
         private int timer = FALL_TIME;
         private int stoneX;
@@ -1225,11 +1247,11 @@ public class BlockGame extends BaseGame {
         
         protected Player() {
             playerIndex = players.size();
+            otherPlayerIndex = (playerIndex + 1) % MAX_PLAYERS;
             startX = (GRID_HALF * players.size()) + (GRID_HALF / 2) - 1;
             players.add(this);
             room.addActor(this);
             pickRandomStones();
-            startNextStones();
         }
         
         protected final void register(final ControlScheme scheme) {
@@ -1262,10 +1284,12 @@ public class BlockGame extends BaseGame {
             stoneRot = ROT_EAST;
             stoneType = nextStoneType;
             otherStoneType = nextOtherStoneType;
+            timer = FALL_TIME;
             clearNextMove();
             pickRandomStones();
             puff(startX, NEXT_Y);
             puff(startX + 1, NEXT_Y);
+            controlSchemes.get(playerIndex).getDown().inactivate();
         }
         
         private final void clearNextMove() {
@@ -1309,6 +1333,8 @@ public class BlockGame extends BaseGame {
             stoneX--;
             if (isEitherFallingStoneOccupied()) {
                 stoneX++;
+            } else {
+                slowDrop();
             }
         }
         
@@ -1324,6 +1350,8 @@ public class BlockGame extends BaseGame {
             stoneX++;
             if (isEitherFallingStoneOccupied()) {
                 stoneX--;
+            } else {
+                slowDrop();
             }
         }
         
@@ -1369,6 +1397,10 @@ public class BlockGame extends BaseGame {
             } else if (timer > FAST_TIME) {
                 timer = FAST_TIME;
             }
+        }
+        
+        private final void slowDrop() {
+            timer = Math.min(timer + 2, FALL_TIME);
         }
         
         protected final void onPause() {
@@ -1433,6 +1465,7 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void adjustRotationIfNeeded(final int oldX, final int oldRot) {
+            slowDrop();
             fixStoneX();
             if (isEitherFallingStoneOccupied() || isOtherStoneTooHigh()) {
                 stoneX = oldX;
@@ -1459,7 +1492,7 @@ public class BlockGame extends BaseGame {
         }
         
         private final boolean isOtherStoneTooHigh() {
-            return (stoneRot == ROT_NORTH) && (stoneY >= GRID_H - 1);
+            return (stoneRot == ROT_NORTH) && (stoneY >= GRID_H - 1) && (grid.enemyCount <= 72);
         }
         
         protected final int getOtherStoneX() {
@@ -1494,12 +1527,13 @@ public class BlockGame extends BaseGame {
         
         @Override
         protected final void renderView(final Panderer renderer) {
+            final int z = Z_FALLINGS[Pangine.getEngine().isOn(8) ? playerIndex : otherPlayerIndex];
             if (stoneType != null) {
-                render(renderer, stoneX, stoneY, Z_FALLING, stoneType);
-                render(renderer, getOtherStoneX(), getOtherStoneY(), Z_FALLING, otherStoneType);
+                render(renderer, stoneX, stoneY, z, stoneType);
+                render(renderer, getOtherStoneX(), getOtherStoneY(), z, otherStoneType);
             }
-            render(renderer, startX, NEXT_Y, Z_FALLING, nextStoneType);
-            render(renderer, startX + 1, NEXT_Y, Z_FALLING, nextOtherStoneType);
+            render(renderer, startX, NEXT_Y, z, nextStoneType);
+            render(renderer, startX + 1, NEXT_Y, z, nextOtherStoneType);
         }
     }
     

@@ -957,6 +957,10 @@ public abstract class GlPangine extends Pangine {
 	}
 
 	private final void onAction(final Panput input) {
+	    // Panput.inactivate wasn't working without this
+	    if (!input.isActive()) {
+	        return;
+	    }
 		for (final ActionListener listener : Coltil.unnull(interaction.getListeners(input))) {
 			//listener.onAction(ActionEvent.INSTANCE);
 			if (!isActive(getActor(listener))) {
