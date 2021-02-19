@@ -333,12 +333,16 @@ public class BlockGame extends BaseGame {
         protected abstract void loadExtra();
     }
     
+    private final static int getTextY() {
+        return GAME_H / 2;
+    }
+    
     protected abstract static class TextScreen extends TitledScreen {
         protected Pantext text = null;
         
         @Override
         protected final void loadExtra() {
-            int y = GAME_H / 2;
+            int y = getTextY();
             for (final String msg : getTexts()) {
                 text = addText(msg, GAME_HALF, y, true);
                 y -= 8;
@@ -458,19 +462,30 @@ public class BlockGame extends BaseGame {
         }
     }
     
-    protected final static class MenuScreen extends TitledScreen {
+    protected static class MenuScreen extends TitledScreen {
         private final static int X_CURSOR = X;
-        private final static int X_OPTION = X + 8;
+        protected final static int X_OPTION = X + 8;
         private final static int X_VALUE = X + 80;
+        protected final static int Y_OFFSET = 16;
         private final List<Option> options = new ArrayList<Option>();
-        private int y = 96;
+        protected int y;
         private int optionIndex = 0;
         private Pantext cursor = null;
         
         @Override
         protected final void loadExtra() {
-            level = Math.min(level, LEVEL_MAX);
+            y = getTopY();
             cursor = addText("*", X_CURSOR, y);
+            loadMenu();
+            register(controlSchemes.get(0));
+        }
+        
+        protected int getTopY() {
+            return 96;
+        }
+        
+        protected void loadMenu() {
+            level = Math.min(level, LEVEL_MAX);
             addOption("Level", new IntOption() {
                 @Override protected final int get() {
                     return level;
@@ -530,7 +545,6 @@ public class BlockGame extends BaseGame {
                 @Override protected final void onAction() {
                     Pangine.getEngine().exit();
                 }});
-            register(controlSchemes.get(0));
         }
         
         protected final void addOption(final String msg, final Option option) {
@@ -538,7 +552,7 @@ public class BlockGame extends BaseGame {
             option.y = y;
             options.add(option);
             option.init();
-            y -= 16;
+            y -= Y_OFFSET;
         }
         
         protected final void register(final ControlScheme scheme) {
@@ -697,15 +711,23 @@ public class BlockGame extends BaseGame {
         }
     }
     
-    protected final static class GameOverScreen extends TextScreen {
+    protected final static class GameOverScreen extends MenuScreen {
         @Override
-        protected final String[] getTexts() {
-            return new String[] { "Game over" };
+        protected final void loadMenu() {
+            addText("Game over", GAME_HALF, y + Y_OFFSET, true);
+            addOption("Continue", new Option() {
+                @Override protected final void onAction() {
+                    Panscreen.set(new LevelStartScreen());
+                }});
+            addOption("Quit", new Option() {
+                @Override protected final void onAction() {
+                    Panscreen.set(new MenuScreen());
+                }});
         }
         
         @Override
-        protected final Panscreen getNextScreen() {
-            return new MenuScreen();
+        protected final int getTopY() {
+            return getTextY() - Y_OFFSET;
         }
     }
     
@@ -1169,7 +1191,13 @@ public class BlockGame extends BaseGame {
         
         protected final void onDefeated() {
             fxDefeat.startSound();
-            Panscreen.set(new GameOverScreen());
+            final int waitTimer = 90;
+            startTimer = waitTimer * 2;
+            Pangine.getEngine().getAudio().stopMusic();
+            Pangine.getEngine().addTimer(this, waitTimer, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    Panscreen.set(new GameOverScreen());
+                }});
         }
         
         @Override
