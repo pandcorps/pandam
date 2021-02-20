@@ -27,7 +27,11 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 
 public class Cursor extends Panctor implements StepListener {
+    private final static int INACTIVE_THRESHOLD = 90;
 	private static Cursor active = null;
+	private static int lastMouseX = -1, lastMouseY = -1;
+	private boolean hiddenWhenUnused = false;
+	private int inactiveTimer = 0;
 	
 	public final static Cursor addCursor(final Panlayer layer, final Panmage img) {
 		Panctor.destroy(active);
@@ -57,12 +61,34 @@ public class Cursor extends Panctor implements StepListener {
 		return getActive() != null;
 	}
 	
+	public final Cursor setHiddenWhenUnused(final boolean hiddenWhenUnused) {
+	    this.hiddenWhenUnused = hiddenWhenUnused;
+	    setVisible(!hiddenWhenUnused);
+	    return this;
+	}
+	
 	@Override
 	public final void onStep(final StepEvent event) {
 		final Pangine engine = Pangine.getEngine();
 		final Panlayer layer = getLayer();
 		final Panple o = (layer == null) ? FinPanple.ORIGIN : layer.getOrigin();
-		getPosition().set(o.getX() + engine.getMouseX(), o.getY() + engine.getMouseY());
+		final int mouseX = engine.getMouseX(), mouseY = engine.getMouseY();
+		if (hiddenWhenUnused) {
+    		if ((mouseX != lastMouseX) || (mouseY != lastMouseY)) {
+    		    if (lastMouseX != -1) {
+    		        setVisible(true);
+    		    }
+    		    lastMouseX = mouseX;
+    		    lastMouseY = mouseY;
+    		    inactiveTimer = 0;
+    		} else if (inactiveTimer < INACTIVE_THRESHOLD) {
+    		    inactiveTimer++;
+    		    if (inactiveTimer >= INACTIVE_THRESHOLD) {
+    		        setVisible(false);
+    		    }
+    		}
+		}
+		getPosition().set(o.getX() + mouseX, o.getY() + mouseY);
 	}
 	
 	@Override
