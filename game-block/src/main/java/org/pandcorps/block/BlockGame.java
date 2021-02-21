@@ -72,6 +72,7 @@ public class BlockGame extends BaseGame {
     protected final static int Z_FALLING_2 = 6;
     protected final static int Z_BURST = 8;
     protected final static int Z_PUFF = 10;
+    protected final static int Z_CURSOR = 12;
     private final static int[] Z_FALLINGS = { Z_FALLING_1, Z_FALLING_2 };
     
     protected final static int FALL_TIME = 30;
@@ -105,6 +106,7 @@ public class BlockGame extends BaseGame {
     protected static Panmage black = null;
     protected static Panimation anmPuff = null;
     protected static Font font = null;
+    protected static Panmage cursorImg = null;
     protected static Pansound fxMove = null; // Left/right, not down
     protected static Pansound fxRotate = null;
     protected static Pansound fxThud = null;
@@ -120,6 +122,7 @@ public class BlockGame extends BaseGame {
     protected static Panroom room = null;
     protected static Background background = null;
     protected static Grid grid = null;
+    private static Cursor cursor = null;
     protected final static List<ControlScheme> controlSchemes = new ArrayList<ControlScheme>(MAX_PLAYERS);
     protected static ControlScheme inactiveControlScheme = null;
     private final static Set<Panput> customMappedInputs = new HashSet<Panput>();
@@ -173,6 +176,10 @@ public class BlockGame extends BaseGame {
         initColor(2, block, 0.375f, 0.375f, 0.375f);
         anmPuff = newAnimation(3, 0.75f, 1.0f, 1.0f, 16, 16, 16, 24, 24, 24);
         font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), new FinPancolor(192, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE));
+        if (isCursorNeeded()) {
+            final Panmage cursorRaw = Pangine.getEngine().createImage("cursor.raw", new FinPanple2(0, 7), null, null, RES_IMG + "Cursor.png");
+            cursorImg = new AdjustedPanmage("cursor", cursorRaw, 0.75f, 1.0f, 1.0f);
+        }
     }
     
     private final static void loadAudio() {
@@ -216,6 +223,23 @@ public class BlockGame extends BaseGame {
     
     private final static Panmage newSub(final float r, final float g, final float b, final int x, final int y) {
         return new AdjustedPanmage(Pantil.vmid(), block, 0, false, false, r, g, b, x, y, size);
+    }
+    
+    private final static boolean isCursorNeeded() {
+        return Pangine.getEngine().isMouseSupported();
+    }
+    
+    private final static Cursor addCursor() {
+        if (!isCursorNeeded()) {
+            return null;
+        }
+        cursor = Cursor.addCursorIfNeeded(room, cursorImg).setHiddenWhenUnused(true);
+        cursor.getPosition().setZ(Z_CURSOR);
+        return cursor;
+    }
+    
+    private final static void hideCursor() {
+        Panctor.setInvisible(cursor);
     }
     
     protected final static CellType randomStone() {
@@ -478,6 +502,7 @@ public class BlockGame extends BaseGame {
             cursor = addText("*", X_CURSOR, y);
             loadMenu();
             register(controlSchemes.get(0));
+            addCursor();
         }
         
         protected int getTopY() {
@@ -607,6 +632,7 @@ public class BlockGame extends BaseGame {
         protected final void updateCursor() {
             cursor.getPosition().setY(getOption().y);
             fxMove.startSound();
+            hideCursor();
         }
         
         protected final Option getOption() {
@@ -1589,6 +1615,7 @@ public class BlockGame extends BaseGame {
             setCursorPosition();
             texts.add(cursor);
             register(controlSchemes.get(playerIndex));
+            addCursor();
             room.addActor(this);
             grid.pauseMenu = this;
         }
@@ -1608,6 +1635,7 @@ public class BlockGame extends BaseGame {
             cursorIndex = (cursorIndex + 1) % 2;
             setCursorPosition();
             fxMove.startSound();
+            hideCursor();
         }
         
         private final void setCursorPosition() {
