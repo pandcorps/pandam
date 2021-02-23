@@ -22,15 +22,19 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.in;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
+
+import java.util.*;
 
 public class Cursor extends Panctor implements StepListener {
     private final static int INACTIVE_THRESHOLD = 90;
 	private static Cursor active = null;
 	private static int lastMouseX = -1, lastMouseY = -1;
 	private boolean hiddenWhenUnused = false;
+	private List<Panctor> actorsToHide = null;
 	private int inactiveTimer = 0;
 	
 	public final static Cursor addCursor(final Panlayer layer, final Panmage img) {
@@ -63,7 +67,27 @@ public class Cursor extends Panctor implements StepListener {
 	
 	public final Cursor setHiddenWhenUnused(final boolean hiddenWhenUnused) {
 	    this.hiddenWhenUnused = hiddenWhenUnused;
-	    setVisible(!hiddenWhenUnused);
+	    return setVisibleAll(!hiddenWhenUnused);
+	}
+	
+	public final Cursor setHiddenWhenUnused(final Panctor... actorsToHide) {
+	    this.actorsToHide = Arrays.asList(actorsToHide);
+	    return setHiddenWhenUnused(true);
+	}
+	
+	public final Cursor hide() {
+	    return setVisibleAll(false);
+	}
+	
+	public final Cursor show() {
+        return setVisibleAll(true);
+    }
+	
+	public final Cursor setVisibleAll(final boolean visible) {
+	    setVisible(visible);
+	    for (final Panctor actor : Coltil.unnull(actorsToHide)) {
+	        actor.setVisible(visible);
+	    }
 	    return this;
 	}
 	
@@ -76,7 +100,7 @@ public class Cursor extends Panctor implements StepListener {
 		if (hiddenWhenUnused) {
     		if ((mouseX != lastMouseX) || (mouseY != lastMouseY)) {
     		    if (lastMouseX != -1) {
-    		        setVisible(true);
+    		        show();
     		    }
     		    lastMouseX = mouseX;
     		    lastMouseY = mouseY;
@@ -84,7 +108,7 @@ public class Cursor extends Panctor implements StepListener {
     		} else if (inactiveTimer < INACTIVE_THRESHOLD) {
     		    inactiveTimer++;
     		    if (inactiveTimer >= INACTIVE_THRESHOLD) {
-    		        setVisible(false);
+    		        hide();
     		    }
     		}
 		}
