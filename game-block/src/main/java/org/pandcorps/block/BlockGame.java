@@ -29,6 +29,7 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
@@ -96,10 +97,12 @@ public class BlockGame extends BaseGame {
     
     protected final static int NUM_COLORS = 3;
     
-    protected final static int MAX_PLAYERS = 2;
+    protected static int MAX_PLAYERS = 2;
     
     protected final static int LEVEL_MIN = 1; // Level n will have 3n enemies (n of each color)
     protected final static int LEVEL_MAX = 64;
+    
+    protected final static int DIM_TEXT = 8;
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage block = null;
@@ -125,6 +128,7 @@ public class BlockGame extends BaseGame {
     private static Cursor cursor = null;
     protected final static List<ControlScheme> controlSchemes = new ArrayList<ControlScheme>(MAX_PLAYERS);
     protected static ControlScheme inactiveControlScheme = null;
+    protected static ControlScheme defaultKeyboard = null;
     private final static Set<Panput> customMappedInputs = new HashSet<Panput>();
     protected final static List<Player> players = new ArrayList<Player>(MAX_PLAYERS);
     protected static int level = LEVEL_MIN;
@@ -161,6 +165,8 @@ public class BlockGame extends BaseGame {
     }
     
     private final static void loadResources() {
+        MAX_PLAYERS = getMaxPlayers();
+        defaultKeyboard = ControlScheme.getDefaultKeyboard();
         loadImages();
         loadAudio();
     }
@@ -175,7 +181,7 @@ public class BlockGame extends BaseGame {
         initColor(1, block, 0.0f, 0.5f, 1.0f);
         initColor(2, block, 0.375f, 0.375f, 0.375f);
         anmPuff = newAnimation(3, 0.75f, 1.0f, 1.0f, 16, 16, 16, 24, 24, 24);
-        font = Fonts.getClassic(new FontRequest(FontType.Upper, 8), new FinPancolor(192, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE));
+        font = Fonts.getClassic(new FontRequest(FontType.Upper, DIM_TEXT), new FinPancolor(192, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE));
         if (isCursorNeeded()) {
             final Panmage cursorRaw = Pangine.getEngine().createImage("cursor.raw", new FinPanple2(0, 7), null, null, RES_IMG + "Cursor.png");
             cursorImg = new AdjustedPanmage("cursor", cursorRaw, 0.75f, 1.0f, 1.0f);
@@ -225,6 +231,10 @@ public class BlockGame extends BaseGame {
         return new AdjustedPanmage(Pantil.vmid(), block, 0, false, false, r, g, b, x, y, size);
     }
     
+    private final static String getCursorCharacter() {
+        return isCursorNeeded() ? "*" : "";
+    }
+    
     private final static boolean isCursorNeeded() {
         return Pangine.getEngine().isMouseSupported();
     }
@@ -239,7 +249,68 @@ public class BlockGame extends BaseGame {
     }
     
     private final static void hideCursor() {
-        Panctor.setInvisible(cursor);
+        Cursor.hide(cursor);
+    }
+    
+    protected final static boolean isKeyboardRegistered() {
+        for (final ControlScheme ctrl : Coltil.unnull(controlSchemes)) {
+            if (ctrl.getDevice() instanceof Keyboard) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    protected final static void registerMenuUpDown(final Panctor actor, final ControlScheme scheme, final ActionEndListener listenerUp, final ActionEndListener listenerDown) {
+        actor.register(scheme.getUp(), listenerUp);
+        actor.register(scheme.getDown(), listenerDown);
+        if (!isKeyboardRegistered()) {
+            actor.register(defaultKeyboard.getUp(), listenerUp);
+            actor.register(defaultKeyboard.getDown(), listenerDown);
+        }
+    }
+    
+    protected final static void registerMenuLeftRight(final Panctor actor, final ControlScheme scheme, final ActionEndListener listenerLeft, final ActionEndListener listenerRight) {
+        actor.register(scheme.getLeft(), listenerLeft);
+        actor.register(scheme.getRight(), listenerRight);
+        if (!isKeyboardRegistered()) {
+            actor.register(defaultKeyboard.getLeft(), listenerLeft);
+            actor.register(defaultKeyboard.getRight(), listenerRight);
+        }
+    }
+    
+    protected final static void registerMenu12(final Panctor actor, final ControlScheme scheme, final ActionEndListener listener) {
+        actor.register(scheme.get1(), listener);
+        actor.register(scheme.get2(), listener);
+        if (!isKeyboardRegistered()) {
+            actor.register(defaultKeyboard.get1(), listener);
+            actor.register(defaultKeyboard.get2(), listener);
+        }
+    }
+    
+    protected final static void registerMenuSubmit(final Panctor actor, final ControlScheme scheme, final ActionEndListener listener) {
+        actor.register(scheme.getSubmit(), listener);
+        if (!isKeyboardRegistered()) {
+            actor.register(defaultKeyboard.getSubmit(), listener);
+        }
+    }
+    
+    protected final static TouchButton newTouchButton(final Panctor actor, final int x, final int y, final int w, final int h, final ActionEndListener listener) {
+        final TouchButton button;
+        final Pangine engine = Pangine.getEngine();
+        final Panteraction in = engine.getInteraction();
+        button = new TouchButton(in, Pantil.vmid(), x - 2, y - 2, w + 4, h + 4, true);
+        engine.registerTouchButton(button);
+        actor.register(button, listener);
+        return button;
+    }
+    
+    private final static int getNumPlayers() {
+        return Math.max(controlSchemes.size(), 1);
+    }
+    
+    private final static int getMaxPlayers() {
+        return isCursorNeeded() ? 2 : 1;
     }
     
     protected final static CellType randomStone() {
@@ -277,13 +348,22 @@ public class BlockGame extends BaseGame {
         room.addActor(burst);
     }
     
+    private static int oldNumPlayers = 1;
+    
     protected abstract static class BackgroundScreen extends Panscreen {
         @Override
         protected final void load() throws Exception {
             final Pangine engine = Pangine.getEngine();
             engine.enableColorArray();
+            engine.setBgColor(Pancolor.BLACK);
             room = Pangame.getGame().getCurrentRoom();
             final Panlayer bg = engine.createLayer("bg", GAME_W, GAME_H, room.getSize().getZ(), room);
+            final int numPlayers = getNumPlayers();
+            if (numPlayers != oldNumPlayers) {
+                Panctor.destroy(background);
+                oldNumPlayers = numPlayers;
+                background = null;
+            }
             if (background == null) {
                 background = new Background();
             }
@@ -330,9 +410,17 @@ public class BlockGame extends BaseGame {
         protected final void loadBlock() {
             grid = new Grid();
             players.clear();
+            final int numPlayers = getNumPlayers();
             for (final ControlScheme ctrl : controlSchemes) {
-                new Player().register(ctrl);
+                final int startX;
+                if (numPlayers < 2) {
+                    startX = (GRID_W / 2) - 1;
+                } else {
+                    startX = (GRID_HALF * players.size()) + (GRID_HALF / 2) - 1;
+                }
+                new Player(startX).register(ctrl);
             }
+            addCursor(); // Can be used to click pause button and click options on pause menu
             music.startMusic();
         }
         
@@ -398,6 +486,9 @@ public class BlockGame extends BaseGame {
     protected final static class DeviceSelectScreen extends TextScreen {
         @Override
         protected final String[] getTexts() {
+            if (!isCursorNeeded()) {
+                return new String[] { "Tap to start" };
+            }
             return new String[] { "Player " + (controlSchemes.size() + 1), "Press any button" };
         }
         
@@ -499,7 +590,7 @@ public class BlockGame extends BaseGame {
         @Override
         protected final void loadExtra() {
             y = getTopY();
-            cursor = addText("*", X_CURSOR, y);
+            cursor = addText(getCursorCharacter(), X_CURSOR, y);
             loadMenu();
             register(controlSchemes.get(0));
             addCursor();
@@ -537,7 +628,7 @@ public class BlockGame extends BaseGame {
                 protected final int max() {
                     return MATCH_THRESHOLD_MAX;
                 }});
-            addOption("Players", new IntOption() {
+            addOption("Players", MAX_PLAYERS > 1, new IntOption() {
                 @Override protected final int get() {
                     return controlSchemes.size();
                 }
@@ -572,6 +663,13 @@ public class BlockGame extends BaseGame {
                 }});
         }
         
+        protected final void addOption(final String msg, final boolean needed, final Option option) {
+            if (!needed) {
+                return;
+            }
+            addOption(msg, option);
+        }
+        
         protected final void addOption(final String msg, final Option option) {
             addText(msg, X_OPTION, y);
             option.y = y;
@@ -582,19 +680,15 @@ public class BlockGame extends BaseGame {
         
         protected final void register(final ControlScheme scheme) {
             final Panctor actor = cursor;
-            actor.register(scheme.getUp(), new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) { onUp(); }});
-            actor.register(scheme.getDown(), new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) { onDown(); }});
-            actor.register(scheme.getLeft(), new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) { onX(-1); }});
-            actor.register(scheme.getRight(), new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) { onX(1); }});
-            actor.register(scheme.get1(), new ActionEndListener() {
+            registerMenuUpDown(actor, scheme,
+                new ActionEndListener() { @Override public final void onActionEnd(final ActionEndEvent event) { onUp(); }},
+                new ActionEndListener() { @Override public final void onActionEnd(final ActionEndEvent event) { onDown(); }});
+            registerMenuLeftRight(actor, scheme,
+                new ActionEndListener() { @Override public final void onActionEnd(final ActionEndEvent event) { onX(-1); }},
+                new ActionEndListener() { @Override public final void onActionEnd(final ActionEndEvent event) { onX(1); }});
+            registerMenu12(actor, scheme, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
-            actor.register(scheme.get2(), new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
-            actor.register(scheme.getSubmit(), new ActionEndListener() {
+            registerMenuSubmit(actor, scheme, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { startGame(); }});
         }
         
@@ -643,6 +737,8 @@ public class BlockGame extends BaseGame {
             protected int y;
             
             protected void init() {
+                newTouchButton(cursor, X, y, GRID_W * DIM_TEXT, DIM_TEXT, new ActionEndListener() {
+                    @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
             }
             
             protected void onX(final int dir) {
@@ -672,7 +768,11 @@ public class BlockGame extends BaseGame {
             protected final void init() {
                 valueSequence = new StringBuilder();
                 setValueSequence();
-                addText(valueSequence, X_VALUE, y);
+                final Pantext text = addText(valueSequence, X_VALUE, y);
+                newTouchButton(text, X_VALUE, y, DIM_TEXT, DIM_TEXT, new ActionEndListener() {
+                    @Override public final void onActionEnd(final ActionEndEvent event) { onX(-1); }});
+                newTouchButton(text, X_VALUE + ((max() < 10) ? 4 : 5) * 8, y, DIM_TEXT, DIM_TEXT, new ActionEndListener() {
+                    @Override public final void onActionEnd(final ActionEndEvent event) { onX(1); }});
             }
             
             protected final void setValueSequence() {
@@ -758,6 +858,9 @@ public class BlockGame extends BaseGame {
     }
     
     protected final static class Background extends Panctor {
+        private final static int topNext = GAME_H - DIM;
+        private final static int topGrid = topNext - (DIM * 2);
+        private final static float r = 0.0f, g = 0.25f, b = 0.5f;
         private final static Random rand = new Random();
         private final static long seed = Mathtil.newSeed();
         
@@ -765,26 +868,6 @@ public class BlockGame extends BaseGame {
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
             rand.setSeed(seed);
-            final int topNext = GAME_H - DIM;
-            final int topGrid = topNext - (DIM * 2);
-            final float r = 0.0f, g = 0.25f, b = 0.5f;
-            for (int j = 0; j < 2; j++) {
-                for (int i = 0; i < 8; i++) {
-                    final int x = (GRID_HALF * DIM * j) + X + (DIM * i), y = ((i >= 3) && (i <= 4)) ? topNext : topGrid;
-                    if (i == 2) {
-                        renderer.render(layer, block, x, y, Z_BG, 16, 8, DIM, DIM, 0, false, false, r, g, b);
-                        renderer.render(layer, block, x, y + DIM, Z_BG, 8, 8, DIM, DIM, 1, false, false, r, g, b);
-                        renderer.render(layer, block, x, topNext, Z_BG, 0, 8, DIM, DIM, 0, false, false, r, g, b);
-                    } else if (i == 5) {
-                        renderer.render(layer, block, x, y, Z_BG, 16, 8, DIM, DIM, 3, false, false, r, g, b);
-                        renderer.render(layer, block, x, y + DIM, Z_BG, 8, 8, DIM, DIM, 3, false, false, r, g, b);
-                        renderer.render(layer, block, x, topNext, Z_BG, 0, 8, DIM, DIM, 3, false, false, r, g, b);
-                    } else {
-                        renderer.render(layer, block, x, y, Z_BG, 8, 8, DIM, DIM, 0, false, false, r, g, b);
-                    }
-                    renderer.render(layer, block, x, 0, Z_BG, 8, 8, DIM, DIM, 2, false, false, r, g, b);
-                }
-            }
             final int left = X - DIM, right = X + (GRID_W * DIM);
             for (int i = 0; i < GRID_H; i++) {
                 renderer.render(layer, block, left, Y + (DIM * i), Z_BG, 8, 8, DIM, DIM, 1, false, false, r, g, b);
@@ -794,23 +877,49 @@ public class BlockGame extends BaseGame {
             renderer.render(layer, block, right, topGrid, Z_BG, 0, 8, DIM, DIM, 3, false, false, r, g, b);
             renderer.render(layer, block, left, 0, Z_BG, 0, 8, DIM, DIM, 1, false, false, r, g, b);
             renderer.render(layer, block, right, 0, Z_BG, 0, 8, DIM, DIM, 2, false, false, r, g, b);
-            final int rightBg = right + DIM, rightNext = rightBg - (DIM * 3), rightFar = GAME_W - DIM;
-            final int xMid = GAME_HALF - (DIM * 2);
+            final int rightBg = right + DIM, rightFar = GAME_W - DIM;
             final int topBg = topNext - DIM;
             render8s(renderer, layer, 0, 0, 9, 1);
             render8s(renderer, layer, rightBg, 0, 9, 1);
             render8s(renderer, layer, 0, DIM, 1, 18);
             render8s(renderer, layer, rightFar, DIM, 1, 18);
-            render8s(renderer, layer, 0, topNext, 12, 1);
-            render8s(renderer, layer, rightNext, topNext, 12, 1);
-            render8s(renderer, layer, xMid, topBg, 4, 2);
-            render8s(renderer, layer, left, topBg, 3, 1);
-            render8s(renderer, layer, rightNext, topBg, 3, 1);
+            render8s(renderer, layer, 0, topNext, 9, 1);
+            render8s(renderer, layer, rightBg, topNext, 9, 1);
+            render8s(renderer, layer, left, topBg, 1, 2);
+            render8s(renderer, layer, right, topBg, 1, 2);
             render16s(renderer, layer, DIM, DIM, 4, 9);
             render16s(renderer, layer, rightBg, DIM, 4, 9);
-            renderer.render(layer, black, X, Y, Z_BG, 0, 0, 128, 128, 0, false, false);
-            renderer.render(layer, black, 104, topGrid, Z_BG, 0, 0, 16, 16, 0, false, false);
-            renderer.render(layer, black, 168, topGrid, Z_BG, 0, 0, 16, 16, 0, false, false);
+            if (getNumPlayers() < 2) {
+                renderTop(renderer, layer, X, GRID_W);
+            } else {
+                for (int j = 0; j < 2; j++) {
+                    renderTop(renderer, layer, (GRID_HALF * DIM * j) + X, GRID_HALF);
+                }
+            }
+        }
+        
+        private final static void renderTop(final Panderer renderer, final Panlayer layer, final int xBase, final int w) {
+            final int openLeft = (w / 2) - 2, openRight = openLeft + 3;
+            for (int i = 0; i < w; i++) {
+                // Top
+                final int x = xBase + (DIM * i), y = ((i > openLeft) && (i < openRight)) ? topNext : topGrid;
+                if (i == openLeft) {
+                    renderer.render(layer, block, x, y, Z_BG, 16, 8, DIM, DIM, 0, false, false, r, g, b);
+                    renderer.render(layer, block, x, y + DIM, Z_BG, 8, 8, DIM, DIM, 1, false, false, r, g, b);
+                    renderer.render(layer, block, x, topNext, Z_BG, 0, 8, DIM, DIM, 0, false, false, r, g, b);
+                } else if (i == openRight) {
+                    renderer.render(layer, block, x, y, Z_BG, 16, 8, DIM, DIM, 3, false, false, r, g, b);
+                    renderer.render(layer, block, x, y + DIM, Z_BG, 8, 8, DIM, DIM, 3, false, false, r, g, b);
+                    renderer.render(layer, block, x, topNext, Z_BG, 0, 8, DIM, DIM, 3, false, false, r, g, b);
+                } else {
+                    renderer.render(layer, block, x, y, Z_BG, 8, 8, DIM, DIM, 0, false, false, r, g, b);
+                    if (y == topGrid) {
+                        render8s(renderer, layer, x, y + DIM, 1, 2);
+                    }
+                }
+                // Bottom
+                renderer.render(layer, block, x, 0, Z_BG, 8, 8, DIM, DIM, 2, false, false, r, g, b);
+            }
         }
         
         private final static void render8s(final Panderer renderer, final Panlayer layer, final int x, final int y, final int w, final int h) {
@@ -827,9 +936,9 @@ public class BlockGame extends BaseGame {
             for (int j = 0; j < h; j++) {
                 final float yj = y + (j * df);
                 for (int i = 0; i < w; i++) {
-                    final float b = Mathtil.randf(rand, 0.25f, 1.0f);
+                    final float b = Mathtil.randf(rand, 0.35f, 1.0f);
                     final float g = Mathtil.randf(rand, 0.0f, b);
-                    final float r = Mathtil.randf(rand, 0.0f, Math.min(g, 0.75f * b));
+                    final float r = Mathtil.randf(rand, 0.0f, Math.min(g, 0.65f * b));
                     renderer.render(layer, block, x + (i * df), yj, Z_BG, ix, iy, df, df, 0, false, false, r, g, b);
                 }
             }
@@ -1155,6 +1264,7 @@ public class BlockGame extends BaseGame {
                 pauser = playerIndex;
                 new PauseMenu(playerIndex);
             } else {
+                hideCursor();
                 try {
                     Pangine.getEngine().getAudio().resumeMusic();
                 } catch (final Exception e) {
@@ -1299,10 +1409,10 @@ public class BlockGame extends BaseGame {
         private int nextRot = 0;
         private int moveTimer = 0;
         
-        protected Player() {
+        protected Player(final int startX) {
             playerIndex = players.size();
             otherPlayerIndex = (playerIndex + 1) % MAX_PLAYERS;
-            startX = (GRID_HALF * players.size()) + (GRID_HALF / 2) - 1;
+            this.startX = startX;
             players.add(this);
             room.addActor(this);
             pickRandomStones();
@@ -1598,8 +1708,11 @@ public class BlockGame extends BaseGame {
     }
     
     protected abstract static class BasePauseMenu extends Panctor {
+        private final static int PAUSE_MENU_W = 64;
+        private final static int OFF_TEXT = 12;
         protected final int playerIndex;
         private final List<Pantext> texts = new ArrayList<Pantext>();
+        private final List<TouchButton> buttons = new ArrayList<TouchButton>();
         private final Pantext cursor;
         private int cursorIndex = 0;
         
@@ -1607,27 +1720,31 @@ public class BlockGame extends BaseGame {
             this.playerIndex = playerIndex;
             final float x = (playerIndex == 0) ? DIM : (GAME_W - 72);
             getPosition().set(x, DIM, Z_GRID);
-            final float xText = x + 12;
+            final float xText = x + OFF_TEXT;
             texts.add(BackgroundScreen.addText(getTitle(), xText, 96));
-            texts.add(BackgroundScreen.addText(get0(), xText, 80));
-            texts.add(BackgroundScreen.addText(get1(), xText, 64));
-            cursor = BackgroundScreen.addText("*", x + 4, -DIM); // Next line will set y
+            addOption(get0(), 80, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { on0(); }});
+            addOption(get1(), 64, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) { on1(); }});
+            cursor = BackgroundScreen.addText(getCursorCharacter(), x + 4, -DIM); // Next line will set y
             setCursorPosition();
             texts.add(cursor);
             register(controlSchemes.get(playerIndex));
-            addCursor();
             room.addActor(this);
             grid.pauseMenu = this;
         }
         
+        private final void addOption(final CharSequence msg, final int y, final ActionEndListener listener) {
+            final float x = getPosition().getX();
+            texts.add(BackgroundScreen.addText(msg, x + OFF_TEXT, y));
+            buttons.add(newTouchButton(this, Math.round(x), y, PAUSE_MENU_W, DIM_TEXT, listener));
+        }
+        
         protected final void register(final ControlScheme scheme) {
-            register(scheme.getUp(), new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) { onY(); }});
-            register(scheme.getDown(), new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) { onY(); }});
-            register(scheme.get1(), new ActionEndListener() {
-                @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
-            register(scheme.get2(), new ActionEndListener() {
+            registerMenuUpDown(this, scheme,
+                new ActionEndListener() { @Override public final void onActionEnd(final ActionEndEvent event) { onY(); }},
+                new ActionEndListener() { @Override public final void onActionEnd(final ActionEndEvent event) { onY(); }});
+            registerMenu12(this, scheme, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { onAction(); }});
         }
         
@@ -1663,13 +1780,17 @@ public class BlockGame extends BaseGame {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panple pos = getPosition();
-            renderer.render(getLayer(), black, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 64, GAME_H - (DIM * 2), 0, false, false);
+            renderer.render(getLayer(), black, pos.getX(), pos.getY(), pos.getZ(), 0, 0, PAUSE_MENU_W, GAME_H - (DIM * 2), 0, false, false);
         }
         
         @Override
         protected final void onDestroy() {
             for (final Pantext text : texts) {
                 text.destroy();
+            }
+            final Pangine engine = Pangine.getEngine();
+            for (final TouchButton button : buttons) {
+                engine.unregisterTouchButton(button);
             }
         }
     }

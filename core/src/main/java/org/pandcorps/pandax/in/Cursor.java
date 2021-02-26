@@ -79,14 +79,30 @@ public class Cursor extends Panctor implements StepListener {
 	    return setVisibleAll(false);
 	}
 	
+	public final static void hide(final Cursor cursor) {
+	    if (cursor != null) {
+	        cursor.hide();
+	    }
+	}
+	
 	public final Cursor show() {
         return setVisibleAll(true);
+    }
+	
+	public final static void show(final Cursor cursor) {
+        if (cursor != null) {
+            cursor.show();
+        }
     }
 	
 	public final Cursor setVisibleAll(final boolean visible) {
 	    setVisible(visible);
 	    for (final Panctor actor : Coltil.unnull(actorsToHide)) {
 	        actor.setVisible(visible);
+	    }
+	    if (!visible) {
+	        lastMouseX = -1;
+	        inactiveTimer = INACTIVE_THRESHOLD;
 	    }
 	    return this;
 	}
