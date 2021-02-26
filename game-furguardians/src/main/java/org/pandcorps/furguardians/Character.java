@@ -27,6 +27,9 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends GuyPlatform {
+    protected final static int VEL_DESTROY_HELD = Player.VEL_BUMP;
+    protected Player holder = null;
+    
 	protected Character(final int offX, final int h) {
 		super(offX, h);
 	}
@@ -51,6 +54,34 @@ public abstract class Character extends GuyPlatform {
 	protected final void onBump(final int t) {
 	    Tiles.bump(this, t);
 	}
+	
+	//@OverrideMe
+	protected boolean isHoldable() {
+	    return false;
+	}
+	
+	//@OverrideMe
+    protected void onStepEndHeld() {
+    }
+	
+	//@OverrideMe
+    protected boolean isShieldWhenHeld() {
+        return false;
+    }
+    
+    //@OverrideMe
+    protected void destroyWhenHeld() {
+        flipAndFall(VEL_DESTROY_HELD);
+    }
+	
+	//@OverrideMe
+    protected void onRelease() {
+    }
+    
+    protected void onKickUpward(final Player player) {
+        v = Player.VEL_KICKED_UPWARD;
+        chv = player.chv;
+    }
 	
 	@Override
 	protected final TileMap getTileMap() {

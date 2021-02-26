@@ -38,15 +38,20 @@ import org.pandcorps.furguardians.Gem.*;
 import org.pandcorps.furguardians.Level.*;
 import org.pandcorps.furguardians.Profile.*;
 
-public class Player extends Character implements CollisionListener {
+public class Player extends Character implements CollisionListener, StepEndListener {
 	protected final static int PLAYER_X = 6;
 	protected final static int PLAYER_H = 23; // 15
+	protected final static int PLAYER_H_DUCK = 14;
     private final static int _VEL_WALK = 3;
+    private final static int VEL_MINECART = _VEL_WALK + 1;
+    private final static int VEL_RUN = 6;
 	private final static int VEL_RETURN = 2;
 	private final static int VEL_CATCH_UP = 8;
 	private final static int VEL_JUMP = 8;
 	private final static int VEL_JUMP_DRAGON = (VEL_JUMP + MAX_V) / 2;
+	protected final static int VEL_KICKED_UPWARD = VEL_JUMP_DRAGON;
 	protected final static int VEL_BUMP = 4;
+	private final static int ATTACK_TIME = 4;
 	protected final static int OFF_BIRD = 32;
 	protected final static byte MODE_NORMAL = 0;
 	private final static byte MODE_RETURN = 1;
@@ -61,6 +66,7 @@ public class Player extends Character implements CollisionListener {
 	protected final static byte POWER_DOUBLE = 2;
 	protected static byte powerMode = MODE_NORMAL;
 	protected static int powerTimer = 0;
+	protected static boolean fullControlMode = true;
 	
 	protected final static void clearPower() {
 	    powerMode = MODE_NORMAL;
@@ -219,6 +225,19 @@ public class Player extends Character implements CollisionListener {
 	    protected Panimation guyRun = null;
 	    protected Panmage guyJump = null;
 	    protected Panmage guyFall = null;
+	    protected Panmage guyDuck = null;
+	    protected Panmage guyKick = null;
+	    protected Panmage guyAttack = null;
+	    protected Panmage guyAttackJump = null;
+	    protected Panmage guyHolding = null;
+	    protected Panmage guyHoldingUp = null;
+	    protected Panimation guyHoldingRun = null;
+	    protected Panmage guyHoldingJump = null; // One of the frames from guyHoldingRun
+	    protected Panmage guyHoldingFall = null;
+	    protected Panmage guyHoldingDuck = null;
+	    protected Panmage guyFront = null;
+	    protected Panmage guyLadder1 = null;
+	    protected Panmage guyLadder2 = null;
 	    protected Panimation mapSouth = null;
 	    protected Panimation mapEast = null;
 	    protected Panimation mapWest = null;
@@ -343,6 +362,32 @@ public class Player extends Character implements CollisionListener {
 	    	guyJump = null;
 	    	Panmage.destroy(guyFall);
 	    	guyFall = null;
+	    	Panmage.destroy(guyDuck);
+            guyDuck = null;
+            Panmage.destroy(guyKick);
+            guyKick = null;
+	    	Panmage.destroy(guyAttack);
+            guyAttack = null;
+            Panmage.destroy(guyAttackJump);
+            guyAttackJump = null;
+            Panmage.destroy(guyHolding);
+            guyHolding = null;
+            Panmage.destroy(guyHoldingUp);
+            guyHoldingUp = null;
+            Panmage.destroyAll(guyHoldingRun);
+            guyHoldingRun = null;
+            Panmage.destroy(guyHoldingJump);
+            guyHoldingJump = null;
+            Panmage.destroy(guyHoldingFall);
+            guyHoldingFall = null;
+            Panmage.destroy(guyHoldingDuck);
+            guyHoldingDuck = null;
+            Panmage.destroy(guyFront);
+            guyFront = null;
+            Panmage.destroy(guyLadder1);
+            guyLadder1 = null;
+            Panmage.destroy(guyLadder2);
+            guyLadder2 = null;
 	    	Panmage.destroyAll(mapSouth);
 	    	mapSouth = null;
 	    	Panmage.destroyAll(mapEast);
@@ -397,7 +442,10 @@ public class Player extends Character implements CollisionListener {
 	protected final PlayerContext pc;
 	protected byte mode = MODE_NORMAL;
 	protected byte jumpMode = MODE_NORMAL;
+	protected AttackMode attackMode = ATTACK_FIREBALL; //TODO: ATTACK_NONE;
 	private boolean flying = false;
+	protected Character held = null;
+	private float heldOldZ = 0;
 	private final Panple safe = new ImplPanple();
 	private boolean safeMirror = false;
 	private Panple returnDestination = null;
@@ -419,6 +467,8 @@ public class Player extends Character implements CollisionListener {
 	private int hurtTimer = 0;
 	private int stompTimer = 0;
 	private int activeTimer = 0;
+	private int attackTimer = 0;
+	private int kickTimer = 0;
 	private final Bubble bubble = new Bubble();
 	private final PowerOverlay powerOverlay;
 	private final Panctor container;
@@ -464,6 +514,15 @@ public class Player extends Character implements CollisionListener {
 			@Override public final void onAction(final ActionEvent event) { right(); }});
 		register(ctrl.getLeft(), new ActionListener() {
 			@Override public final void onAction(final ActionEvent event) { left(); }});
+		if (fullControlMode) {
+		    final Panput runInput = getRunInput(), downInput = getDownInput(), upInput = getUpInput();
+		    register(runInput, new ActionStartListener() {
+	            @Override public final void onActionStart(final ActionStartEvent event) { attack(); }});
+    		register(downInput, new ActionListener() {
+                @Override public final void onAction(final ActionEvent event) { down(); }});
+    		register(upInput, new ActionListener() {
+                @Override public final void onAction(final ActionEvent event) { up(); }});
+		}
 		
 		registerCapture(this);
 		
@@ -508,6 +567,18 @@ public class Player extends Character implements CollisionListener {
 	private final Panput getJumpInput() {
 		return pc.ctrl.get1();
 	}
+	
+	private final Panput getRunInput() {
+        return fullControlMode ? pc.ctrl.get2() : null;
+    }
+	
+	private final Panput getDownInput() {
+        return fullControlMode ? pc.ctrl.getDown() : null;
+    }
+	
+	private final Panput getUpInput() {
+        return fullControlMode ? pc.ctrl.getUp() : null;
+    }
 	
 	protected final void loadState(final Player p) {
 	    if (p == null) {
@@ -583,6 +654,10 @@ public class Player extends Character implements CollisionListener {
 		} else if (isAutoRunEnabled()) {
 		    this.activeTimer += 8;
 		}
+		if (holder != null) {
+		    releaseHeld(true);
+		    return;
+		}
 		final byte jumpMode = getCurrentJumpMode();
 		if (jumpMode == JUMP_FLY) {
 			if (isGrounded()) {
@@ -636,6 +711,17 @@ public class Player extends Character implements CollisionListener {
 		}
 	}
 	
+	private final void attack() {
+	    if (isInputDisabled()) {
+            return;
+	    } else if (holder != null) {
+	        return;
+        } else if (isDucking()) {
+            return;
+        }
+	    attackMode.onAttack(this);
+	}
+	
 	private final void right() {
 		if (isInputDisabled()) {
 			return;
@@ -651,8 +737,39 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	protected final int getVelWalk() {
-		return (Level.theme == Theme.Minecart) ? (_VEL_WALK + 1) : _VEL_WALK;
+		if (Level.theme == Theme.Minecart) {
+		    return VEL_MINECART;
+		} else if (isRunning()) {
+		    return VEL_RUN;
+		}
+		return _VEL_WALK;
 	}
+	
+	protected final boolean isRunning() {
+	    return Panput.isActive(getRunInput());
+	}
+	
+	private final void down() {
+        if (isInputDisabled()) {
+            return;
+        }
+        //TODO ladder, tubes
+    }
+	
+	private final boolean isDucking() {
+	    return Panput.isActive(getDownInput());
+	}
+	
+	private final void up() {
+        if (isInputDisabled()) {
+            return;
+        }
+        //TODO ladder, tubes
+    }
+	
+	private final boolean isLookingUp() {
+        return Panput.isActive(getUpInput());
+    }
 	
 	private final void togglePause() {
 		final Pangine engine = Pangine.getEngine();
@@ -783,7 +900,12 @@ public class Player extends Character implements CollisionListener {
 			registerPause();
 			firstStep = false;
 		}
+		setH(PLAYER_H);
 		onStepPower();
+		onStepAttack();
+		onStepKick();
+		onStepHolding();
+		onStepDuck();
 	    if (hurtTimer > 0) {
 	        hurtTimer--;
 	        if (hurtTimer == 0 && mode == MODE_FROZEN) {
@@ -843,6 +965,75 @@ public class Player extends Character implements CollisionListener {
 	        if (spark) {
 	            burst(FurGuardiansGame.doubleFx, Mathtil.randi(-10, 10), Mathtil.randi(0, 24), isMirror());
 	        }
+	    }
+	}
+	
+	private final void onStepAttack() {
+	    if (attackTimer > 0) {
+	        attackTimer--;
+	    }
+	}
+	
+	private final void onStepKick() {
+        if (kickTimer > 0) {
+            kickTimer--;
+        }
+    }
+	
+	private final void onStepHolding() {
+	    if (isHolding()) {
+	        if (!isRunning()) {
+	            releaseHeld();
+	        }
+	    }
+	}
+	
+	private final boolean isHolding() {
+	    return held != null;
+	}
+	
+	protected final boolean startHolding(final Character actor) {
+	    if (attackTimer > 0) {
+	        return false;
+	    } else if (held != null) {
+	        //TODO Collide
+	        return false;
+	    } else if (actor.holder != null) {
+	        return false;
+	    } else if (!isRunning()) {
+            return false;
+        } else if (!actor.isHoldable()) {
+            return false;
+        }
+	    held = actor;
+	    held.holder = this;
+	    heldOldZ = actor.getPosition().getZ();
+	    return true;
+	}
+	
+	private final void releaseHeld() {
+	    releaseHeld(isLookingUp());
+	}
+	
+	private final void releaseHeld(final boolean kickUpward) {
+	    held.getPosition().setZ(heldOldZ);
+	    if (kickUpward) {
+	        held.onKickUpward(this);
+	    } else {
+	        held.onRelease();
+	    }
+	    kickTimer = ATTACK_TIME; // original always kicks, even when dropping a key
+        held = null;
+	}
+	
+	@Override
+    protected final boolean isHoldable() {
+	    return (chv == 0) && isDucking() && isGrounded();
+	}
+	
+	private final void onStepDuck() {
+	    if (isDucking() && isGrounded()) {
+	        hv = 0;
 	    }
 	}
 
@@ -930,6 +1121,8 @@ public class Player extends Character implements CollisionListener {
 				}
 			} else if (belowLeft == FurGuardiansGame.TILE_ICE || belowRight == FurGuardiansGame.TILE_ICE) {
 			    thv = initCurrentHorizontalVelocityIce();
+			} else if (isDucking() && isGrounded()) {
+			    thv = initCurrentHorizontalVelocityIce(); // Maybe add parameter for friction; slide less when ducking?
 			} else if (hv != 0 && isGrounded()) {
 			    thv = initCurrentHorizontalVelocityAccelerating();
 			} else {
@@ -972,7 +1165,10 @@ public class Player extends Character implements CollisionListener {
 	}
 	
 	@Override
-	protected final void onStepEnd() {
+	public final void onStepEnd(final StepEndEvent event) {
+	    if (holder != null) {
+	        return; // Let holder's onStepEnd handle everything
+	    }
 		hv = 0;
 		final Panple pos = getPosition();
 		final float x = pos.getX(), y = pos.getY();
@@ -985,7 +1181,17 @@ public class Player extends Character implements CollisionListener {
 			FurGuardiansGame.setPosition(container, x, y, FurGuardiansGame.getDepthContainer(jumpMode));
 			container.setMirror(isMirror());
 		}
+		if (held != null) {
+		    FurGuardiansGame.setPosition(held, x + (10 * getMirrorMultiplier()), y + (isDucking() ? 1 : 3), FurGuardiansGame.getDepthPlayerBack(jumpMode));
+		    held.setMirror(isMirror());
+		    held.onStepEndHeld();
+		}
 		acc.onStepEnd(this);
+	}
+	
+	@Override
+	protected final void onStepEndHeld() {
+	    changeView(pc.guyDuck);
 	}
 	
 	private final boolean isAnimated() {
@@ -998,8 +1204,16 @@ public class Player extends Character implements CollisionListener {
 		safeMirror = isMirror();
 		evaluateCombo();
 		if (mode != MODE_FROZEN) {
-			if (hv != 0 && isAnimated()) {
-				changeView(pc.guyRun);
+		    if (onDucking()) {
+		        // Nothing else to do
+		    } else if (attackMode.setGroundView(this)) {
+		        // Nothing else to do
+		    } else if (kickTimer > 0) {
+		        changeView(pc.guyKick);
+		    } else if (hv != 0 && isAnimated()) {
+				changeView(isHolding() ? pc.guyHoldingRun : pc.guyRun);
+			} else if (isHolding()) {
+			    changeView(isLookingUp() ? pc.guyHoldingUp : pc.guyHolding);
 			} else {
 				changeView(pc.guy);
 			}
@@ -1013,6 +1227,15 @@ public class Player extends Character implements CollisionListener {
 		}
 	}
 	
+	private final boolean onDucking() {
+	    if (isDucking()) {
+            changeView(isHolding() ? pc.guyHoldingDuck : pc.guyDuck);
+            setH(PLAYER_H_DUCK);
+            return true;
+        }
+	    return false;
+	}
+	
 	@Override
 	protected void onLanded() {
 		super.onLanded();
@@ -1024,7 +1247,15 @@ public class Player extends Character implements CollisionListener {
 		if (!isAnimated()) {
 			return flying;
 		} else if (mode != MODE_FROZEN) {
-			changeView(v > 0 ? pc.guyJump : pc.guyFall);
+		    if (onDucking()) {
+                // Nothing else to do
+            } else if (attackMode.setAirView(this)) {
+                // Nothing else to do
+            } else if (isHolding()) {
+                changeView(v > 0 ? pc.guyHoldingJump : pc.guyHoldingFall);
+            } else {
+		        changeView(v > 0 ? pc.guyJump : pc.guyFall);
+		    }
 		}
 		if (acc.back != null) {
 			final byte jumpMode = getCurrentJumpMode();
@@ -1041,6 +1272,12 @@ public class Player extends Character implements CollisionListener {
 	@Override
 	public void onCollision(final CollisionEvent event) {
 		final Collidable other = event.getCollider();
+		if (other instanceof Character) {
+		    final Character chr = (Character) other;
+		    if ((chr.holder != null) || startHolding(chr)) {
+		        return;
+		    }
+        }
 		if (other instanceof Enemy) {
 		    /*if (other.isDestroyed()) { // Might happen if two Players stomp same Enemy at same time
 		        return; // But this is handled in Pangine
@@ -1267,6 +1504,65 @@ public class Player extends Character implements CollisionListener {
 		acc.destroy();
 		Panctor.destroy(flyer);
 	}
+	
+	protected abstract static class AttackMode {
+	    protected abstract void onAttack(final Player player);
+	    
+	    protected boolean setGroundView(final Player player) {
+            return false;
+        }
+	    
+	    protected boolean setAirView(final Player player) {
+	        return false;
+	    }
+	}
+	
+	protected abstract static class ProjectileAttackMode extends AttackMode {
+	    @Override
+        protected final void onAttack(final Player player) {
+	        if (!isAttackAllowed()) {
+	            return;
+	        }
+	        player.attackTimer = ATTACK_TIME;
+	        newProjectile(player);
+	        FurGuardiansGame.soundWhoosh.startSound();
+	    }
+        
+        protected boolean setGroundView(final Player player) {
+            if (player.attackTimer > 0) {
+                player.changeView(player.pc.guyAttack);
+                return true;
+            }
+            return false;
+        }
+        
+        protected boolean setAirView(final Player player) {
+            if (player.attackTimer > 0) {
+                player.changeView(player.pc.guyAttackJump);
+                return true;
+            }
+            return false;
+        }
+        
+        protected boolean isAttackAllowed() {
+            return true; // Limit projectiles
+        }
+        
+        protected abstract void newProjectile(final Player player);
+    }
+	
+	protected final static AttackMode ATTACK_NONE = new AttackMode() {
+	    @Override
+	    protected final void onAttack(final Player player) {
+	    }
+	};
+	
+	protected final static AttackMode ATTACK_FIREBALL = new ProjectileAttackMode() {
+        @Override
+        protected final void newProjectile(final Player player) {
+            //TODO
+        }
+    };
 	
 	protected final static class Bubble extends Panctor {
 		{
