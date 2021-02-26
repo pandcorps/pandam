@@ -192,11 +192,15 @@ public abstract class BaseGame extends Pangame {
 	}
 	
 	public final static Panframe[] createFrames(final String name, final int dur, final Panmage... ia) {
+	    return createFrames(name, dur, Arrays.asList(ia));
+	}
+	
+	public final static Panframe[] createFrames(final String name, final int dur, final List<Panmage> ia) {
 		final Pangine engine = Pangine.getEngine();
-	    final int size = ia.length;
+	    final int size = ia.size();
 	    final Panframe[] fa = new Panframe[size];
 	    for (int i = 0; i < size; i++) {
-	        final Panmage img = ia[i];
+	        final Panmage img = ia.get(i);
 	        fa[i] = engine.createFrame(PRE_FRM + name + "." + i, img, dur);
 	    }
 	    return fa;
@@ -221,6 +225,14 @@ public abstract class BaseGame extends Pangame {
 	public final static Panimation createAnm(final String name, final int dur, final Panple o, final Panple n, final Panple x, final Img... a) {
 		return Pangine.getEngine().createAnimation(PRE_ANM + name, createFrames(name, dur, createSheet(name, o, n, x, a)));
 	}
+	
+	public final static Panimation createAnm(final String name, final int dur, final Panmage... ia) {
+	    return Pangine.getEngine().createAnimation(PRE_ANM + name, createFrames(name, dur, ia));
+	}
+	
+	public final static Panimation createAnm(final String name, final int dur, final List<Panmage> ia) {
+        return Pangine.getEngine().createAnimation(PRE_ANM + name, createFrames(name, dur, ia));
+    }
 	
 	public final static Panlayer createHud(final Panroom room) {
 		final Pangine engine = Pangine.getEngine();
