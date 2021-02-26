@@ -67,7 +67,7 @@ public class FurGuardiansGame extends BaseGame {
 	Enemy Elementals, winged Imp, Banshee, Wraith, Shade, Orc.
 	Nether Wisp in Chaos levels with curse/poison effect.
 	Drolock should walk sometimes.
-	Gargoyles catch/carry Player, like moving platforms, one can jump to/from them, but not run on them.
+	Gargoyles catch/hold Player, like moving platforms, one can jump to/from them, but not run on them.
 	Cannons on ground that Player enters to be launched.
 	Cannons in air that auto-fire, others that wait for jump input.
 	Item/costume/vehicle/power-up found in Level that Player or certain monster(s) can use
@@ -153,6 +153,8 @@ public class FurGuardiansGame extends BaseGame {
 	private final static int DUR_MAP = 6;
 	protected final static int DUR_BLINK = 120;
 	protected final static int DUR_CLOSED = DUR_BLINK / 30;
+	protected final static int DUR_OPEN = DUR_BLINK - DUR_CLOSED;
+	private final static int DUR_RUN = 2;
 	
 	protected final static short SPEED_FADE = 6;
 	
@@ -249,6 +251,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static FinPanple2 oBird = new FinPanple2(BIRD_X, BIRD_Y);
 	protected static Img[] guysBlank = null;
 	protected static Img[] guysRide = null;
+	protected static Img[] guysHoldGlobal = null;
 	protected final static HashMap<String, Img> facesAll = new HashMap<String, Img>();
 	protected final static HashMap<String, Img[]> faceMapsAll = new HashMap<String, Img[]>();
 	protected final static HashMap<String, Img[]> tailsAll = new HashMap<String, Img[]>();
@@ -793,6 +796,7 @@ public class FurGuardiansGame extends BaseGame {
 		protected final PixelFilter f;
 		protected final Img[] guys;
 		protected final Img guyBlink;
+		protected final Img[] guysHold;
 		protected final Img face;
 		protected final Img[] tails;
 		protected final Img eyes;
@@ -831,6 +835,16 @@ public class FurGuardiansGame extends BaseGame {
 			filterStrip(guysRaw, guys, greyMask, f);
 			final boolean hasStill = hasStill(guys);
 			guyBlink = Imtil.copy(getStill(guys, hasStill));
+			if (Player.fullControlMode) {
+    			if (guysHoldGlobal == null) {
+    	            guysHoldGlobal = loadChrStrip("full/BearHold.png", 32, true);
+    	            Img.setTemporary(false, guysHoldGlobal);
+    	        }
+    			guysHold = new Img[guysHoldGlobal.length];
+                filterStrip(guysHoldGlobal, guysHold, greyMask, f);
+			} else {
+			    guysHold = null;
+			}
 			final Img faceRaw = getImg(facesAll, "Face", anm);
 			face = Imtil.filter(faceRaw, greyMask, f);
 			final String tailAnm = avatar.getTailAnm();
@@ -914,6 +928,11 @@ public class FurGuardiansGame extends BaseGame {
 					buildGuy(guys[i], face, tails, eyes, clothings == null ? null : clothings[i], clothingOverlays == null ? null : clothingOverlays[i], (i == 3) ? -1 : 0, tailH);
 				}
 				buildGuy(guyBlink, face, tails, eyesBlink, clothings == null ? null : getStill(clothings, hasStill), clothingOverlays == null ? null : getStill(clothingOverlays, hasStill), 0, 0);
+				if (Player.fullControlMode) {
+    				for (int i = 0; i < 3; i++) {
+    				    buildGuy(guysHold[i], face, tails, eyes, null, null, 0, i);
+    				}
+				}
 			}
 			Img.close(clothings);
 		}
@@ -922,6 +941,7 @@ public class FurGuardiansGame extends BaseGame {
 			Img.close(guys);
 			Img.close(tails);
 			Img.close(guyBlink, face);
+			Img.close(guysHold);
 		}
 	}
 	
@@ -941,6 +961,11 @@ public class FurGuardiansGame extends BaseGame {
 		pc.destroy();
 		final Profile profile = pc.profile;
 	    final Avatar avatar = profile.currentAvatar;
+	    if (avatar.mod != null) {
+	        //TODO support full, bird, dragon, wings
+	        reloadAnimalModImages(pc, avatar.mod);
+	        return;
+	    }
 	    final String anm = avatar.anm, baseAnm = avatar.getBaseAnm();
 	    final PlayerImages pi = new PlayerImages(avatar);
 	    final Img guys[] = pi.guys, tails[] = pi.tails, eyes = pi.eyes;
@@ -955,7 +980,7 @@ public class FurGuardiansGame extends BaseGame {
 		final Panmage guyB = engine.createImage(ipre + "blink", oStill, ng, xg, pi.guyBlink);
 		final String fpre = PRE_FRM + pre + ".";
 		final String spre = fpre + "still.";
-		final Panframe gfs1 = engine.createFrame(spre + "1", guy, DUR_BLINK - DUR_CLOSED), gfs2 = engine.createFrame(spre + "2", guyB, DUR_CLOSED);
+		final Panframe gfs1 = engine.createFrame(spre + "1", guy, DUR_OPEN), gfs2 = engine.createFrame(spre + "2", guyB, DUR_CLOSED);
 		pc.guy = engine.createAnimation(PRE_ANM + pre + ".still", gfs1, gfs2);
 		
 		final boolean needWing = avatar.jumpMode == Player.JUMP_FLY;
@@ -1028,10 +1053,11 @@ public class FurGuardiansGame extends BaseGame {
 			    final Panmage guy1 = hasStill ? engine.createImage(ipre + "1", og, ng, xg, guys[0]) : guy;
 				final Panmage guy2 = engine.createImage(ipre + "2", og, ng, xg, guys[1]);
 				final Panmage guy3 = engine.createImage(ipre + "3", og, ng, xg, guys[2]);
-				final Panframe gfr1 = engine.createFrame(rpre + "1", guy1, 2), gfr2 = engine.createFrame(rpre + "2", guy2, 2), gfr3 = engine.createFrame(rpre + "3", guy3, 2);
+				final Panframe gfr1 = engine.createFrame(rpre + "1", guy1, 2), gfr2 = engine.createFrame(rpre + "2", guy2, 2), gfr3 = engine.createFrame(rpre + "3", guy3, DUR_RUN);
 				pc.guyRun = engine.createAnimation(PRE_ANM + pre + ".run", gfr2, gfr3, gfr1);
 				pc.guyJump = engine.createImage(ipre + "jump", og, ng, xg, guys[3]);
 				pc.guyFall = engine.createImage(ipre + "fall", og, ng, xg, guys[4]);
+				reloadAnimalFullControlImages(pc, pi, pre);
 			    //guy = engine.createImage(pre, new FinPanple2(8, 0), null, null, ImtilX.loadImage(RES + "chr/Player.png"));
 			}
 		    
@@ -1203,6 +1229,113 @@ public class FurGuardiansGame extends BaseGame {
 		pi.close();
 	}
 	
+	private final static void reloadAnimalFullControlImages(final PlayerContext pc, final PlayerImages pi, final String pre) {
+	    if (!Player.fullControlMode) {
+	        return;
+	    }
+	    final Pangine engine = Pangine.getEngine();
+	    //TODO
+	    pc.guyDuck = null;
+	    pc.guyKick = pc.guyRun.getImage(2); //TODO
+	    pc.guyAttack = null;
+	    pc.guyAttackJump = null;
+	    final Panframe[] holdRunFrames = new Panframe[3];
+	    for (int i = 0; i < 3; i++) {
+	        holdRunFrames[i] = engine.createFrame(PRE_FRM + ".hold." + i, engine.createImage(PRE_IMG + pre + ".hold." + i, og, ng, xg, pi.guysHold[i]), DUR_RUN);
+	    }
+	    pc.guyHolding = holdRunFrames[0].getImage();
+	    pc.guyHoldingUp = pc.guyHolding; //TODO
+	    pc.guyHoldingRun = engine.createAnimation(PRE_ANM + ".hold.run", holdRunFrames[1], holdRunFrames[2], holdRunFrames[0]);
+	    pc.guyHoldingJump = holdRunFrames[2].getImage();
+	    pc.guyHoldingFall = pc.guyHoldingJump;
+	    pc.guyHoldingDuck = null;
+	    pc.guyFront = null;
+	    pc.guyLadder1 = null;
+	    pc.guyLadder2 = null;
+	    pc.fireball = null;
+	}
+	
+	private final static void reloadAnimalModImages(final PlayerContext pc, final String name) {
+	    final Pangine engine = Pangine.getEngine();
+	    currO = og; currMin = ng; currMax = xg;
+        currLoc = "mod/chr/" + name + "/"; currPre = "mod.chr." + name + "."; currPreImg = PRE_IMG + "." + currPre;
+        final String preAnm = PRE_ANM + "." + currPre, preFrm = PRE_FRM + "." + currPre;
+        Imtil.onlyResources = false;
+        final List<Panmage> walks = loadImages("walk");
+	    final int numWalks = walks.size();
+	    final Panmage still = loadImage("still", walks.get(numWalks - 1));
+	    final Panmage jump = loadImage("jump", walks.get(numWalks - 2));
+	    final Panmage fall = loadImage("fall", jump);
+	    final Panmage blink = loadImage("blink", still);
+	    final List<Panmage> holdWalks = loadImages("hold_walk");
+        final int numHoldWalks = walks.size();
+        final Panmage holdStill = loadImage("hold_still", holdWalks.get(numHoldWalks - 1));
+        final Panmage holdJump = loadImage("hold_jump", holdWalks.get(numHoldWalks - 2));
+        final Panmage holdFall = loadImage("hold_fall", holdJump);
+	    pc.guy = engine.createAnimation(preAnm + "still", engine.createFrame(preFrm + ".still", still, DUR_OPEN), engine.createFrame(preFrm + ".blink", blink, DUR_CLOSED));
+	    pc.guyRun = createAnm(currPre + ".walk", DUR_RUN, walks);
+	    //TODO add guyFast; use guyRun if fast images not available
+	    pc.guyJump = jump;
+	    pc.guyFall = fall;
+	    pc.guyDuck = loadImage("duck", null);
+	    pc.guyKick = loadImage("kick", null);
+	    pc.guyAttack = loadImage("attack", null);
+	    pc.guyAttackJump = loadImage("attack_jump", null);
+	    pc.guyHolding = holdStill;
+	    pc.guyHoldingUp = loadImage("hold_up", null);
+	    pc.guyHoldingRun = createAnm(currPre + ".hold_walk", DUR_RUN, holdWalks);
+	    pc.guyHoldingJump = holdJump;
+	    pc.guyHoldingFall = holdFall;
+	    pc.guyHoldingDuck = loadImage("hold_duck", null);
+	    pc.guyFront = loadImage("front", still);
+	    pc.guyLadder1 = loadImage("ladder0", null);
+	    pc.guyLadder2 = loadImage("ladder1", null); //TODO mirror ladder0 if not available
+	    pc.mapSouth = loadAnm("map_south", DUR_MAP, pc.guyRun); //TODO Change origin if using guyRun
+	    pc.mapNorth = loadAnm("map_north", DUR_MAP, pc.guyRun);
+	    pc.mapEast = loadAnm("map_east", DUR_MAP, pc.guyRun);;
+	    pc.mapWest = loadAnm("map_west", DUR_MAP, pc.guyRun);;
+	    pc.mapLadder = loadAnm("map_ladder", DUR_MAP, pc.guyRun);;
+	    pc.mapPose = loadImage("map_pose", jump);
+	    final Panmage prjDefault = projectile1.getImage();
+	    currO = prjDefault.getOrigin(); currMin = prjDefault.getBoundingMinimum(); currMax = prjDefault.getBoundingMaximum();
+	    final Panmage fireball = loadImage("fireball", prjDefault); //TODO recolor default projectile
+        pc.fireball = createRotateAnimation(currPre + "fireball", fireball);
+	    Imtil.onlyResources = true;
+	}
+	
+	private static Panple currO = null, currMin = null, currMax = null;
+	private static String currLoc = null, currPre = null, currPreImg = null;
+	
+	private final static Panmage loadImage(final String name, final Panmage def) {
+	    final String loc = currLoc + name + ".png";
+	    if (!Iotil.exists(loc)) {
+	        return def;
+	    }
+	    return Pangine.getEngine().createImage(currPreImg + name, currO, currMin, currMax, loc);
+	}
+	
+	private final static List<Panmage> loadImages(final String pre) {
+	    List<Panmage> list = null;
+        for (int i = 0; ; i++) {
+            final Panmage image = loadImage(pre + i, null);
+            if (image == null) {
+                break;
+            } else if (list == null) {
+                list = new ArrayList<Panmage>(3);
+            }
+            list.add(image);
+        }
+        return list;
+	}
+	
+	private final static Panimation loadAnm(final String pre, final int dur, final Panimation def) {
+	    final List<Panmage> images = loadImages(pre);
+	    if (images == null) {
+	        return def;
+	    }
+	    return createAnm(currPre + pre, DUR_MAP, loadImages(pre));
+	}
+	
 	private final static Panimation createNorth(final Img[] maps, final int mi, final Img wing, final Img drgn, final Img[] clothingMap,
 	                                            final Img tailNorth, final Img faceNorth,
 	                                            final String pre, final String suf) {
@@ -1339,11 +1472,7 @@ public class FurGuardiansGame extends BaseGame {
 		    drowid = new EnemyDefinition("Drowid", 1, null, true, 1);
 			Coltil.set(allEnemies, Level.DROWID, drowid); // Teleport when stomped
 			final Panmage pimg1 = createImage("projectile1", RES + "enemy/Projectile1.png", 8, CENTER_8, new FinPanple2(-3, -3), new FinPanple2(2, 2));
-		    final Panframe[] pfrms = new Panframe[4];
-		    for (int i = 0; i < 4; i++) {
-		        pfrms[i] = engine.createFrame(PRE_FRM + "projectile1." + i, pimg1, 4, (4 - i) % 4, false, false);
-		    }
-		    projectile1 = engine.createAnimation(PRE_ANM + "projectile1", pfrms);
+		    projectile1 = createRotateAnimation("projectile1", pimg1);
 			drolock = new EnemyDefinition("Drolock", 4, null, false, 0, 0);
 			drolock.projectile = projectile1;
 			Coltil.set(allEnemies, Level.DROLOCK, drolock); // Teleport/shoot periodically
@@ -1423,7 +1552,10 @@ public class FurGuardiansGame extends BaseGame {
 			thrownImp.code = imp.code;
 			armorBall.stepHandler = new InteractionHandler() {
 				@Override public final boolean onInteract(final Enemy enemy, final Player player) {
-					if (enemy.timer == 0) {
+				    if (enemy.holder != null) {
+				        enemy.initTimer(0);
+				        return false;
+				    } else if (enemy.timer == 0) {
 						if (!enemy.full){
 							return false;
 						} else if (enemy.timerMode == 5) {
@@ -1953,6 +2085,15 @@ public class FurGuardiansGame extends BaseGame {
 	    return engine.createAnimation(PRE_ANM + id, engine.createFrame(PRE_FRM + id, img, 1));
 	}
 	
+	protected final static Panimation createRotateAnimation(final String name, final Panmage img) {
+	    final Pangine engine = Pangine.getEngine();
+	    final Panframe[] pfrms = new Panframe[4];
+        for (int i = 0; i < 4; i++) {
+            pfrms[i] = engine.createFrame(PRE_FRM + name + "." + i, img, 4, (4 - i) % 4, false, false);
+        }
+        return engine.createAnimation(PRE_ANM + name, pfrms);
+	}
+	
 	protected final static Img[] loadBlockLetterStrip() {
 	    final Img[] blStrip = ImtilX.loadStrip(RES + "misc/BlockLetters.png");
 	    Img.setTemporary(false, blStrip);
@@ -2110,7 +2251,7 @@ public class FurGuardiansGame extends BaseGame {
 		act.getPosition().set(x, y, (Level.tm == null) ? 0 : Level.tm.getForegroundDepth() + depth);
 	}
 	
-	protected final static void setDepth(final Panctor act, final float depth) {
+	protected final static void setDepth(final SpecPanctor act, final float depth) {
 		act.getPosition().setZ(Level.tm.getForegroundDepth() + depth);
 	}
 	

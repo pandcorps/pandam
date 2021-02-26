@@ -30,6 +30,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
+import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.tile.*;
@@ -45,6 +46,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
     private final static int _VEL_WALK = 3;
     private final static int VEL_MINECART = _VEL_WALK + 1;
     private final static int VEL_RUN = 6;
+    private final static int VEL_FIREBALL = VEL_RUN + 1;
 	private final static int VEL_RETURN = 2;
 	private final static int VEL_CATCH_UP = 8;
 	private final static int VEL_JUMP = 8;
@@ -249,6 +251,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	    protected Panimation backJump = null;
 	    protected Panimation backFall = null;
 	    protected Panimation bird = null;
+	    protected Panimation fireball = null;
 	    
 	    public PlayerContext(final Profile profile, final ControlScheme ctrl, final int index) {
 	        this.profile = profile;
@@ -410,6 +413,8 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	    	backFall = null;
 	    	Panmage.destroyAll(bird);
 	    	bird = null;
+	    	Panmage.destroyAll(fireball);
+	    	fireball = null;
 	    }
 	    
 	    public final static Profile getProfile(final PlayerContext pc) {
@@ -469,6 +474,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	private int activeTimer = 0;
 	private int attackTimer = 0;
 	private int kickTimer = 0;
+	private final Set<PlayerProjectile> projectiles = new HashSet<PlayerProjectile>();
 	private final Bubble bubble = new Bubble();
 	private final PowerOverlay powerOverlay;
 	private final Panctor container;
@@ -1122,7 +1128,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 			} else if (belowLeft == FurGuardiansGame.TILE_ICE || belowRight == FurGuardiansGame.TILE_ICE) {
 			    thv = initCurrentHorizontalVelocityIce();
 			} else if (isDucking() && isGrounded()) {
-			    thv = initCurrentHorizontalVelocityIce(); // Maybe add parameter for friction; slide less when ducking?
+			    thv = initCurrentHorizontalVelocitySlide(0.25f);
 			} else if (hv != 0 && isGrounded()) {
 			    thv = initCurrentHorizontalVelocityAccelerating();
 			} else {
@@ -1560,7 +1566,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	protected final static AttackMode ATTACK_FIREBALL = new ProjectileAttackMode() {
         @Override
         protected final void newProjectile(final Player player) {
-            //TODO
+            new PlayerFireball(player);
         }
     };
 	
@@ -1795,4 +1801,127 @@ public class Player extends Character implements CollisionListener, StepEndListe
             getPosition().addX(dir);
         }
     }
+	
+	protected static interface PlayerProjectile extends SpecPanctor, CollisionListener, AllOobListener {
+	    public Player getPlayer();
+	    
+	    public void onCollide(final Enemy enemy);
+	}
+	
+	protected final static void initPlayerProjectile(final PlayerProjectile prj, final Player player) {
+	    final Panlayer layer = player.getLayer();
+	    if (layer == null) {
+	        return;
+	    }
+	    final boolean mirror = player.isMirror();
+	    prj.setMirror(mirror);
+	    final Panple ppos = player.getPosition();
+	    prj.getPosition().set(ppos.getX() + (Panctor.getMirrorMultiplier(mirror) * 6), ppos.getY() + 18);
+	    FurGuardiansGame.setDepth(prj, FurGuardiansGame.DEPTH_SPARK);
+	    player.projectiles.add(prj);
+	    layer.addActor((Panctor) prj);
+	}
+	
+	protected final static boolean onPlayerProjectileStep(final PlayerProjectile prj) {
+	    if (!prj.isInView()) {
+            prj.destroy();
+            return true;
+        }
+        return false;
+	}
+	
+	protected final static void onPlayerProjectileCollision(final PlayerProjectile prj, final CollisionEvent event) {
+	    final Collidable collider = event.getCollider();
+	    if (collider instanceof Enemy) {
+	        prj.onCollide((Enemy) collider);
+	    }
+	}
+	
+	protected final static void onPlayerProjectileCollide(final PlayerProjectile prj, final Enemy enemy) {
+	    enemy.defeat(prj.getPlayer(), VEL_BUMP, Enemy.DEFEAT_HIT);
+	    prj.destroy();
+	}
+	
+	protected final static void onPlayerProjectileDestroy(final PlayerProjectile prj) {
+	    prj.getPlayer().projectiles.remove(prj);
+	}
+	
+	protected abstract static class TileAwarePlayerProjectile extends Character implements PlayerProjectile {
+	    private final Player player;
+	    private boolean destroyNeeded = false;
+	    
+        protected TileAwarePlayerProjectile(final Player player) {
+            super(3, 6);
+            this.player = player;
+            initPlayerProjectile(this, player);
+        }
+        
+        @Override
+        public final Player getPlayer() {
+            return player;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            if (destroyNeeded) {
+                destroy();
+                return true;
+            }
+            return onPlayerProjectileStep(this);
+        }
+        
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+            onPlayerProjectileCollision(this, event);
+        }
+        
+        public void onCollide(final Enemy enemy) {
+            onPlayerProjectileCollide(this, enemy);
+        }
+        
+        @Override
+        protected final void onWall(final byte xResult) {
+            destroyNeeded = true;
+        }
+        
+        @Override
+        protected final void onStart() {
+            destroy();
+        }
+        
+        @Override
+        protected final void onEnd() {
+            destroy();
+        }
+        
+        @Override
+        protected final boolean onFell() {
+            destroy();
+            return true;
+        }
+        
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+            destroy();
+        }
+        
+        @Override
+        protected final void onDestroy() {
+            onPlayerProjectileDestroy(this);
+        }
+	}
+	
+	protected final static class PlayerFireball extends TileAwarePlayerProjectile {
+	    protected PlayerFireball(final Player player) {
+	        super(player);
+	        hv = getMirrorMultiplier() * VEL_FIREBALL;
+	        v = 1;
+	        setView(player.pc.fireball);
+	    }
+	    
+	    @Override
+	    protected final void onGrounded() {
+	        v = 6;
+	    }
+	}
 }

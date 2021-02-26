@@ -498,6 +498,7 @@ public class Panctor extends BasePantity implements SpecPanctor {
         return !isDestroyed() && (layer != null) && layer.isActive();
     }
 	
+	@Override
 	public final boolean isInView() {
 		final Panlayer layer = getLayer();
 		if (layer == null) {

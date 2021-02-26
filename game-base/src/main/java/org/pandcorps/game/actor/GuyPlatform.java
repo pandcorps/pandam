@@ -265,11 +265,15 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     protected final int initCurrentHorizontalVelocityIce() {
+        return initCurrentHorizontalVelocitySlide(0.125f);
+    }
+    
+    protected final int initCurrentHorizontalVelocitySlide(final float friction) {
         final float dif = hv - chv;
         if (dif > 0) {
-            chv += 0.125f;
+            chv += friction;
         } else if (dif < 0) {
-            chv -= 0.125f;
+            chv -= friction;
         }
         return Math.round(chv);
     }
@@ -555,6 +559,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected void onScrolled() {
     }
     
+    //TODO Rename, keep confusing it with Panctor.onStepEnd(StepEndEvent)
     //@OverrideMe
     protected void onStepEnd() {
     }

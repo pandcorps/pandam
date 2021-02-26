@@ -40,7 +40,7 @@ import org.pandcorps.furguardians.Spawner.*;
 public class Enemy extends Character {
     protected final static byte DEFEAT_STOMP = 0;
 	protected final static byte DEFEAT_BUMP = 1;
-	private final static byte DEFEAT_HIT = 2;
+	protected final static byte DEFEAT_HIT = 2;
 	private final static byte DEFEAT_ELECTROCUTE = 3;
 	protected final static int DEFAULT_X = 5;
 	protected final static int DEFAULT_H = 15;
@@ -494,11 +494,28 @@ public class Enemy extends Character {
 	}
 	
 	protected final boolean onHurtPlayer(final Player player) {
-	    if (def.hurtHandler != null) {
+	    final Character held = player.held;
+	    if ((held != null) && held.isShieldWhenHeld()) {
+	        defeat(player, VEL_DESTROY_HELD, DEFEAT_HIT);
+	        held.destroyWhenHeld();
+	        return false;
+	    } else if (def.hurtHandler != null) {
 	        return def.hurtHandler.onInteract(this, player);
 	    }
 	    return true;
 	}
+	
+	@Override
+	protected boolean isShieldWhenHeld() {
+	    return true;
+	}
+	
+	@Override
+    protected void destroyWhenHeld() {
+	    defeat(holder, VEL_DESTROY_HELD, DEFEAT_HIT);
+	    holder.held = null;
+	    holder = null;
+    }
 	
 	@Override
 	protected final void onScrolled() {
@@ -625,6 +642,24 @@ public class Enemy extends Character {
         
         protected ArmorBall(final EnemyDefinition def, final float x, final float y) {
             super(def, x, y);
+        }
+        
+        @Override
+        protected final boolean isHoldable() {
+            return true;
+        }
+        
+        @Override
+        protected final void onRelease() {
+            FurGuardiansGame.soundArmor.startSound();
+            //TODO Change to BounceBall
+        }
+        
+        @Override
+        protected final void onKickUpward(final Player player) {
+            FurGuardiansGame.soundArmor.startSound();
+            //v = Player.VEL_KICKED_UPWARD;
+            //TODO Change to BounceBall with higher vertical velocity
         }
 
         @Override

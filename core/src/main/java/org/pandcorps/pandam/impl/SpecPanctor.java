@@ -64,6 +64,8 @@ public interface SpecPanctor extends Pantity {
     public Panlayer getLayer();
 
 	public Pansplay getCurrentDisplay();
+	
+	public boolean isInView();
 
 	public boolean isDestroyed();
 }
