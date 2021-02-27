@@ -1018,6 +1018,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	}
 	
 	private final void releaseHeld() {
+	    //TODO make sure object not stuck in wall
 	    releaseHeld(isLookingUp());
 	}
 	
@@ -1057,6 +1058,10 @@ public class Player extends Character implements CollisionListener, StepEndListe
 		} else if (FurGuardiansGame.TILE_HURT == b) {
 			startHurt();
 		}
+	}
+	
+	protected final boolean isFacing(final SpecPanctor actor) {
+	    return ((actor.getPosition().getX() - getPosition().getX()) * getMirrorMultiplier()) > 0;
 	}
 	
 	private final static byte getBehavior(final int index) {

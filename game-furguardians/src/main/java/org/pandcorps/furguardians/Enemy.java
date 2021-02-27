@@ -495,7 +495,7 @@ public class Enemy extends Character {
 	
 	protected final boolean onHurtPlayer(final Player player) {
 	    final Character held = player.held;
-	    if ((held != null) && held.isShieldWhenHeld()) {
+	    if ((held != null) && held.isShieldWhenHeld() && player.isFacing(this)) {
 	        defeat(player, VEL_DESTROY_HELD, DEFEAT_HIT);
 	        held.destroyWhenHeld();
 	        return false;
@@ -625,10 +625,17 @@ public class Enemy extends Character {
 
         @Override
         public final void onCollision(final CollisionEvent event) {
+            if (holder != null) {
+                return; // Collisions will be handled by the holder
+            }
             final Collidable collider = event.getCollider();
             // Player handles its own collisions, so only check for Enemy
             if (collider instanceof Enemy) {
-                onCollision((Enemy) collider);
+                final Enemy enemyCollider = (Enemy) collider;
+                if (enemyCollider.holder != null) {
+                    return;
+                }
+                onCollision(enemyCollider);
             }
         }
         

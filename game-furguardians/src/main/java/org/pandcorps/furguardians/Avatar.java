@@ -45,6 +45,7 @@ public class Avatar extends EyeData implements Segmented {
     protected final Dragon dragon = new Dragon();
     protected final SimpleColor col2 = new SimpleColor();
     protected final Bird bird = new Bird();
+    protected String mod = null;
     
     private final static int[] randomColorChannels = {0, 1, 2};
     
@@ -425,6 +426,7 @@ public class Avatar extends EyeData implements Segmented {
         dragon.init();
         dragon.eye = Mathtil.randi(1, FurGuardiansGame.getNumDragonEyes());
         col2.set(1, 1, 1);
+        mod = null;
     }
     
     public void load(final Avatar src) {
@@ -443,6 +445,7 @@ public class Avatar extends EyeData implements Segmented {
         bird.setName(src.bird.getName());
         bird.eye = src.bird.eye;
         bird.kind = src.bird.kind;
+        mod = src.mod;
     }
     
     public void load(final Segment seg) {
@@ -466,7 +469,8 @@ public class Avatar extends EyeData implements Segmented {
     	bird.setName(seg.getValue(26, "Bird"));
     	bird.eye = seg.getInt(27, 1);
     	bird.kind = seg.getValue(28);
-    	hat.col2.load(seg, 29);
+    	hat.col2.load(seg, 29); // 29-31
+    	mod = seg.getValue(32);
     }
     
     @Override
@@ -487,7 +491,8 @@ public class Avatar extends EyeData implements Segmented {
     	seg.setValue(26, bird.getName());
     	seg.setInt(27, bird.eye);
     	seg.setValue(28, bird.kind);
-    	// 29 = hat.col2
+    	hat.col2.save(seg, 29); // 29 - 31
+    	seg.setValue(32, mod);
     }
     
     protected final Animal getAnimal() {
