@@ -78,9 +78,10 @@ public abstract class Character extends GuyPlatform {
     protected void onRelease() {
     }
     
-    protected void onKickUpward(final Player player) {
+    protected void onKickUpward() {
         v = Player.VEL_KICKED_UPWARD;
-        chv = player.chv;
+        hv = holder.hv;
+        chv = holder.chv;
     }
 	
 	@Override

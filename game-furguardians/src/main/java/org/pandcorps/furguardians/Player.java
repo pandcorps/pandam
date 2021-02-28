@@ -51,7 +51,8 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	private final static int VEL_CATCH_UP = 8;
 	private final static int VEL_JUMP = 8;
 	private final static int VEL_JUMP_DRAGON = (VEL_JUMP + MAX_V) / 2;
-	protected final static int VEL_KICKED_UPWARD = VEL_JUMP_DRAGON;
+	protected final static int VEL_BOUNCE = 9;
+	protected final static int VEL_KICKED_UPWARD = 14;
 	protected final static int VEL_BUMP = 4;
 	private final static int ATTACK_TIME = 4;
 	protected final static int OFF_BIRD = 32;
@@ -228,6 +229,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	    protected Panmage guyJump = null;
 	    protected Panmage guyFall = null;
 	    protected Panmage guyDuck = null;
+	    protected Panmage guySlide = null;
 	    protected Panmage guyKick = null;
 	    protected Panmage guyAttack = null;
 	    protected Panmage guyAttackJump = null;
@@ -367,6 +369,8 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	    	guyFall = null;
 	    	Panmage.destroy(guyDuck);
             guyDuck = null;
+            Panmage.destroy(guySlide);
+            guySlide = null;
             Panmage.destroy(guyKick);
             guyKick = null;
 	    	Panmage.destroy(guyAttack);
@@ -1025,11 +1029,12 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	private final void releaseHeld(final boolean kickUpward) {
 	    held.getPosition().setZ(heldOldZ);
 	    if (kickUpward) {
-	        held.onKickUpward(this);
+	        held.onKickUpward();
 	    } else {
 	        held.onRelease();
 	    }
 	    kickTimer = ATTACK_TIME; // original always kicks, even when dropping a key
+	    held.holder = null;
         held = null;
 	}
 	

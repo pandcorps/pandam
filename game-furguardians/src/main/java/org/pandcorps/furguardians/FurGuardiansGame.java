@@ -1235,7 +1235,8 @@ public class FurGuardiansGame extends BaseGame {
 	    }
 	    final Pangine engine = Pangine.getEngine();
 	    //TODO
-	    pc.guyDuck = null;
+	    pc.guyDuck = null; // Change bound max
+	    pc.guySlide = null; // Change sound max
 	    pc.guyKick = pc.guyRun.getImage(2); //TODO
 	    pc.guyAttack = null;
 	    pc.guyAttackJump = null;
@@ -1277,7 +1278,6 @@ public class FurGuardiansGame extends BaseGame {
 	    //TODO add guyFast; use guyRun if fast images not available
 	    pc.guyJump = jump;
 	    pc.guyFall = fall;
-	    pc.guyDuck = loadImage("duck", null);
 	    pc.guyKick = loadImage("kick", null);
 	    pc.guyAttack = loadImage("attack", null);
 	    pc.guyAttackJump = loadImage("attack_jump", null);
@@ -1296,6 +1296,8 @@ public class FurGuardiansGame extends BaseGame {
 	    pc.mapWest = loadAnm("map_west", DUR_MAP, pc.guyRun);;
 	    pc.mapLadder = loadAnm("map_ladder", DUR_MAP, pc.guyRun);;
 	    pc.mapPose = loadImage("map_pose", jump);
+	    pc.guyDuck = loadImage("duck", null); //TODO max
+        pc.guySlide = loadImage("slide", pc.guyDuck); //TODO max
 	    final Panmage prjDefault = projectile1.getImage();
 	    currO = prjDefault.getOrigin(); currMin = prjDefault.getBoundingMinimum(); currMax = prjDefault.getBoundingMaximum();
 	    final Panmage fireball = loadImage("fireball", prjDefault); //TODO recolor default projectile
@@ -1590,13 +1592,7 @@ public class FurGuardiansGame extends BaseGame {
 				}};
 			armorBall.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                    final Enemy e = new BounceBall(bounceBall, enemy, player);
-                    e.full = enemy.full;
-                    e.setEnemyMirror(player.isMirror());
-                    e.v = 9;
-                    player.pc.profile.stats.kicks++;
-                    enemy.destroy();
-                    soundArmor.startSound();
+                    new BounceBall(enemy, player);
                     return false;
                 }};
             armoredImp.splatDecider = new InteractionHandler() {
@@ -1604,7 +1600,7 @@ public class FurGuardiansGame extends BaseGame {
                     return player == null || !player.isDragonStomping();
                 }};
 			armoredImp.splatHandler = new BurstHandler() {@Override public final void onBurst(final CustomBurst burst) {
-				final Enemy ball = new ArmorBall(armorBall, burst);
+				final Enemy ball = new ArmorBall(burst);
 				ball.full = true;
 				ball.setMirror(burst.isMirror()); }};
 			bounceBall.stepHandler = new InteractionHandler() {
@@ -1619,18 +1615,24 @@ public class FurGuardiansGame extends BaseGame {
                 	if (enemy.v > 0) {
                 		return true;
                 	}
-                    enemy.v = -enemy.v * 0.9f;
+                	final float newV = -enemy.v * 0.9f;
+                    enemy.v = newV;
+                    final int oldSpeed = Math.abs(enemy.hv);
+                    if (oldSpeed > 0) {
+                        final int newSpeed = Math.min(oldSpeed, Math.round(newV * bounceBall.hv / Player.VEL_BOUNCE));
+                        final int oldDir = enemy.hv / oldSpeed;
+                        enemy.hv = newSpeed * oldDir;
+                    }
                     if (enemy.v >= 1) {
                     	soundArmor.startSound();
+                    } else {
+                        new ArmorBall(enemy);
                     }
                     return true;
                 }};
             bounceBall.stompHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                    final Enemy ball = new ArmorBall(armorBall, enemy);
-                    ball.full = enemy.full;
-                    ball.setMirror(enemy.isMirror());
-                    enemy.destroy();
+                    new ArmorBall(enemy);
                     soundArmor.startSound();
                     return true;
                 }};

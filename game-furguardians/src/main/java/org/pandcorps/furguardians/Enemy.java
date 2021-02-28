@@ -70,7 +70,7 @@ public class Enemy extends Character {
 		private final int avoidCount;
 		private final int offX;
 		private final int h;
-		private final int hv;
+		protected final int hv;
 		protected int award = GemBumped.AWARD_DEF;
 		protected Panimation projectile = null;
 		protected BurstHandler splatHandler = null;
@@ -577,8 +577,8 @@ public class Enemy extends Character {
 		initHv();
 	}
 	
-	protected final void initHv() {
-		hv = (isMirror() ? -1 : 1) * def.hv;
+	protected void initHv() {
+		hv = getMirrorMultiplier() * def.hv;
 	}
 	
 	protected final void facePlayers() {
@@ -643,8 +643,15 @@ public class Enemy extends Character {
 	}
 	
 	public final static class ArmorBall extends ColliderEnemy {
-        protected ArmorBall(final EnemyDefinition def, final Panctor ref) {
-            super(def, ref);
+	    protected ArmorBall(final Enemy ref) {
+            this((Panctor) ref);
+            full = ref.full;
+            setMirror(ref.isMirror());
+            ref.destroy();
+        }
+	    
+        protected ArmorBall(final Panctor ref) {
+            super(FurGuardiansGame.armorBall, ref);
         }
         
         protected ArmorBall(final EnemyDefinition def, final float x, final float y) {
@@ -658,15 +665,12 @@ public class Enemy extends Character {
         
         @Override
         protected final void onRelease() {
-            FurGuardiansGame.soundArmor.startSound();
-            //TODO Change to BounceBall
+            new BounceBall(this, holder);
         }
         
         @Override
-        protected final void onKickUpward(final Player player) {
-            FurGuardiansGame.soundArmor.startSound();
-            //v = Player.VEL_KICKED_UPWARD;
-            //TODO Change to BounceBall with higher vertical velocity
+        protected final void onKickUpward() {
+            new BounceBall(this, holder, 0, Player.VEL_KICKED_UPWARD);
         }
 
         @Override
@@ -691,9 +695,35 @@ public class Enemy extends Character {
     }
 	
 	public final static class BounceBall extends ColliderEnemy {
-        protected BounceBall(final EnemyDefinition def, final Panctor ref, final Player bouncer) {
-            super(def, ref);
+        protected BounceBall(final Enemy ref, final Player bouncer) {
+            this(ref, bouncer, FurGuardiansGame.bounceBall.hv, Player.VEL_BOUNCE);
+        }
+        
+        protected BounceBall(final Enemy ref, final Player bouncer, final int hv, final float v) {
+            super(FurGuardiansGame.bounceBall, ref);
             lastStomper = bouncer;
+            full = ref.full;
+            setEnemyMirror(bouncer.isMirror());
+            this.v = v;
+            bouncer.pc.profile.stats.kicks++;
+            ref.destroy();
+            FurGuardiansGame.soundArmor.startSound();
+            this.hv = getMirrorMultiplier() * hv;
+        }
+        
+        @Override
+        protected final void initTimer(final int timerMode) {
+            timer = 0;
+        }
+        
+        @Override
+        protected final void initHv() {
+            hv = getMirrorMultiplier() * Math.abs(hv);
+        }
+        
+        @Override
+        protected final float getMinV() {
+            return -Player.VEL_KICKED_UPWARD;
         }
 
         @Override
