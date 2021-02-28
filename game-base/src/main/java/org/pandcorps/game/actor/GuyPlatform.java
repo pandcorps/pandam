@@ -94,7 +94,10 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     
     protected final byte addY() {
         final byte yStatus = addY(v);
-        if (yStatus != Y_NORMAL) {
+        if ((v > 0) && ((yStatus == Y_BUMP) || (yStatus == Y_CEILING))) {
+            v = 0;
+        } else if ((v < 0) && ((yStatus == Y_LANDED) || (yStatus == Y_FLOOR) || (yStatus == Y_FELL))) {
+            // onLanded could change a negative v to positive for bouncing; only set to 0 if that didn't happen
             v = 0;
         }
         return yStatus;
