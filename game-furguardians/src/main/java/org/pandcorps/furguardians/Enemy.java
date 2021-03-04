@@ -670,7 +670,7 @@ public class Enemy extends Character {
         
         @Override
         protected final void onKickUpward() {
-            new BounceBall(this, holder, 0, Player.VEL_KICKED_UPWARD);
+            new BounceBall(this, holder, 0, Player.VEL_KICKED_UPWARD, false).initHorizontalVelocityOnKickUpward(holder);
         }
 
         @Override
@@ -695,17 +695,21 @@ public class Enemy extends Character {
     }
 	
 	public final static class BounceBall extends ColliderEnemy {
+	    protected final boolean dangerous;
+	    
         protected BounceBall(final Enemy ref, final Player bouncer) {
-            this(ref, bouncer, FurGuardiansGame.bounceBall.hv, Player.VEL_BOUNCE);
+            this(ref, bouncer, FurGuardiansGame.bounceBall.hv, Player.VEL_BOUNCE, true);
         }
         
-        protected BounceBall(final Enemy ref, final Player bouncer, final int hv, final float v) {
+        protected BounceBall(final Enemy ref, final Player bouncer, final int hv, final float v, final boolean dangerous) {
             super(FurGuardiansGame.bounceBall, ref);
+            this.dangerous = dangerous;
             lastStomper = bouncer;
             full = ref.full;
             setEnemyMirror(bouncer.isMirror());
             this.v = v;
             bouncer.pc.profile.stats.kicks++;
+            bouncer.startKick();
             ref.destroy();
             FurGuardiansGame.soundArmor.startSound();
             this.hv = getMirrorMultiplier() * hv;

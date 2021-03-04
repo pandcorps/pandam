@@ -24,6 +24,7 @@ package org.pandcorps.furguardians;
 
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends GuyPlatform {
@@ -80,6 +81,10 @@ public abstract class Character extends GuyPlatform {
     
     protected void onKickUpward() {
         v = Player.VEL_KICKED_UPWARD;
+        initHorizontalVelocityOnKickUpward(holder);
+    }
+    
+    protected final void initHorizontalVelocityOnKickUpward(final Player holder) {
         hv = holder.hv;
         chv = holder.chv;
     }
@@ -98,4 +103,67 @@ public abstract class Character extends GuyPlatform {
     protected final boolean isFloorBehavior(final byte b) {
         return b == FurGuardiansGame.TILE_FLOOR;
     }
+	
+	protected final boolean isTubeDownLeftSide(final int index) {
+	    //TODO keep map from tube tiles to destinations
+	    return (index % 2) == 0;
+	}
+	
+	protected final boolean isTubeDownRightSide(final int index) {
+	    //TODO
+	    return (index % 2) == 1;
+    }
+	
+	protected final void moveFromLeftSideToCenter() {
+	    final Panple pos = getPosition();
+	    pos.addX(16 - (Math.round(pos.getX()) % 16));
+	}
+	
+	protected final void moveFromRightSideToCenter() {
+	    final Panple pos = getPosition();
+        pos.addX(-(Math.round(pos.getX()) % 16));
+    }
+	
+	protected final static class Tuber extends Panctor implements StepListener {
+	    private final Panctor src;
+	    protected final int xDir, yDir;
+	    private int timer = 32;
+	    
+	    private Tuber(final Panctor src, final int xDir, final int yDir) {
+	        this.src = src;
+	        this.xDir = xDir;
+	        this.yDir = yDir;
+	        src.getLayer().addActor(this);
+	        src.detach();
+	        final Panple srcPos = src.getPosition();
+	        FurGuardiansGame.setPosition(this, srcPos.getX(), srcPos.getY(), FurGuardiansGame.DEPTH_BETWEEN);
+            setMirror(xDir < 0);
+            //TODO Sound
+	    }
+	    
+	    protected Tuber(final Panctor src, final Panmage view, final int xDir, final int yDir) {
+	        this(src, xDir, yDir);
+	        setView(view);
+	    }
+	    
+	    protected Tuber(final Panctor src, final Panimation view, final int xDir, final int yDir) {
+            this(src, xDir, yDir);
+            setView(view);
+        }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            if (timer <= 0) {
+                finish();
+                return;
+            }
+            getPosition().add(xDir, yDir);
+            timer--;
+        }
+        
+        private final void finish() {
+            getLayer().addActor(src);
+            destroy();
+        }
+	}
 }

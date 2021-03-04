@@ -127,6 +127,7 @@ public class FurGuardiansGame extends BaseGame {
     protected final static byte TILE_SAND = 11;
     protected final static byte TILE_HURT = 12;
 	
+    protected final static int DEPTH_BETWEEN = -2; // Between TileMap background and foreground
 	protected final static int DEPTH_BACK = 0;
 	protected final static int DEPTH_ENEMY_BACK = 6;
 	protected final static int DEPTH_ENEMY = 7;
@@ -240,6 +241,7 @@ public class FurGuardiansGame extends BaseGame {
 	private final static FinPanple2 ng = Character.getMin(Player.PLAYER_X);
 	private final static FinPanple2 xg = Character.getMax(Player.PLAYER_X, Player.PLAYER_H);
 	protected final static FinPanple2 og = new FinPanple2(17, 1);
+	protected final static FinPanple2 oc = new FinPanple2(16, 1);
 	protected final static FinPanple2 ow = new FinPanple2(18, 1);
 	protected final static FinPanple2 owf = new FinPanple2(18, 2);
 	protected final static FinPanple2 os = new FinPanple2(17, 11);
@@ -1287,15 +1289,17 @@ public class FurGuardiansGame extends BaseGame {
 	    pc.guyHoldingJump = holdJump;
 	    pc.guyHoldingFall = holdFall;
 	    pc.guyHoldingDuck = loadImage("hold_duck", null);
-	    pc.guyFront = loadImage("front", still);
-	    pc.guyLadder1 = loadImage("ladder0", null);
-	    pc.guyLadder2 = loadImage("ladder1", null); //TODO mirror ladder0 if not available
 	    pc.mapSouth = loadAnm("map_south", DUR_MAP, pc.guyRun); //TODO Change origin if using guyRun
 	    pc.mapNorth = loadAnm("map_north", DUR_MAP, pc.guyRun);
 	    pc.mapEast = loadAnm("map_east", DUR_MAP, pc.guyRun);;
 	    pc.mapWest = loadAnm("map_west", DUR_MAP, pc.guyRun);;
 	    pc.mapLadder = loadAnm("map_ladder", DUR_MAP, pc.guyRun);;
 	    pc.mapPose = loadImage("map_pose", jump);
+	    currO = oc;
+	    pc.guyFront = loadImage("front", still);
+        pc.guyLadder1 = loadImage("ladder0", null);
+        pc.guyLadder2 = loadImage("ladder1", null); //TODO mirror ladder0 if not available
+        currO = og;
 	    pc.guyDuck = loadImage("duck", null); //TODO max
         pc.guySlide = loadImage("slide", pc.guyDuck); //TODO max
 	    final Panmage prjDefault = projectile1.getImage();
@@ -1639,7 +1643,15 @@ public class FurGuardiansGame extends BaseGame {
             bounceBall.rewardHandler = armorBall.rewardHandler;
             bounceBall.hurtHandler = new InteractionHandler() {
                 @Override public final boolean onInteract(final Enemy enemy, final Player player) {
-                    return enemy.timer >= 3;
+                    if (enemy.timer >= 3) {
+                        if (!((BounceBall) enemy).dangerous) {
+                            // If Player throws ball straight up, just kick it if it falls back down on Player
+                            new BounceBall(enemy, player);
+                            return false;
+                        }
+                        return true;
+                    }
+                    return false;
                 }};
 			thrownImp.splat = imp.splat;
 			thrownImp.stepHandler = new InteractionHandler() {

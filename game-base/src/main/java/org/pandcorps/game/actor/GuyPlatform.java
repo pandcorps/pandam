@@ -531,6 +531,19 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return false;
     }
     
+    public final int getContainerTileIndex() {
+        return getTileMap().getContainer(this);
+    }
+    
+    public final int getNeighborTileIndex(final Direction dir) {
+        final int container = getContainerTileIndex();
+        final TileMap tm = getTileMap();
+        if (tm.isBad(container)) {
+            return -1;
+        }
+        return tm.getNeighbor(container, dir);
+    }
+    
     //@OverrideMe
     protected boolean onStepCustom() {
         return false;

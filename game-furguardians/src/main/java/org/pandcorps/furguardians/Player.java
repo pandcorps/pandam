@@ -763,8 +763,27 @@ public class Player extends Character implements CollisionListener, StepEndListe
         if (isInputDisabled()) {
             return;
         }
-        //TODO ladder, tubes
+        checkTubeDown();
+        //TODO ladder
     }
+	
+	private final void checkTubeDown() {
+	    if (!isGrounded() ) {
+	        return;
+	    }
+	    final int neighbor = getNeighborTileIndex(Direction.South);
+	    boolean tube = false;
+	    if (isTubeDownLeftSide(neighbor)) {
+	        moveFromLeftSideToCenter();
+	        tube = true;
+	    } else if (isTubeDownRightSide(neighbor)) {
+	        moveFromRightSideToCenter();
+	        tube = true;
+	    }
+	    if (tube) {
+	        new Tuber(this, pc.guyFront, 0, -1);
+	    }
+	}
 	
 	private final boolean isDucking() {
 	    return Panput.isActive(getDownInput());
@@ -1033,9 +1052,13 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	    } else {
 	        held.onRelease();
 	    }
-	    kickTimer = ATTACK_TIME; // original always kicks, even when dropping a key
+	    startKick(); // Original always kicks, even when dropping a key
 	    held.holder = null;
         held = null;
+	}
+	
+	protected final void startKick() {
+	    kickTimer = ATTACK_TIME;
 	}
 	
 	@Override
