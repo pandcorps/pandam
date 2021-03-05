@@ -183,7 +183,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             }
             boolean down = true;
             if (isWall(offWall, 0)) {
-                if (isWall(offWall, 1)) {
+                if (isWall(offWall, 1, true)) {
                     return X_WALL;
                 } else if (adjustY) {
                     pos.addY(1);
@@ -413,6 +413,10 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     protected boolean isWall(final int off, final int yoff) {
+        return isWall(off, yoff, false);
+    }
+    
+    protected boolean isWall(final int off, final int yoff, final boolean wallTileEvent) {
         final Panple pos = getPosition();
         final float px = pos.getX(), f = px + off, y = pos.getY() + yoff;
         final float left, right, b, top = y + H - 1;
@@ -426,6 +430,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             b = right;
         }
         boolean sol = false;
+        int solidIndex = -1;
         int t = -1;
         final TileMap tm = getTileMap();
         for (int i = 0; true; i += 16) {
@@ -441,6 +446,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
                 sandSolid = false;
                 if (!sol && isSolid(t, left, right, y)) {
                     sol = true;
+                    solidIndex = t;
                 }
                 sandSolid = true;
             }
@@ -449,6 +455,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
             }
         }
         if (sol) {
+            if (wallTileEvent) {
+                onWallTile(solidIndex);
+            }
             return true;
         } else if (yoff < 0) {
             final int t3 = tm.getContainer(b, y), t4 = tm.getContainer(b, top);
@@ -626,8 +635,14 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return false;
     }
     
+    // This instance bumped into any horizontal barrier (solid tile, far-left, far-right)
     //@OverrideMe
     protected void onWall(final byte xResult) {
+    }
+
+    // This instance bumped into a solid tile with the given index
+    //@OverrideMe
+    protected void onWallTile(final int tileIndex) {
     }
     
     //@OverrideMe
