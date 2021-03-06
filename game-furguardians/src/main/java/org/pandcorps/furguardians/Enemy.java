@@ -735,6 +735,11 @@ public class Enemy extends Character {
             //collider.onBump(this); // Doesn't give Player Gem
         	collider.onHit(lastStomper);
         }
+        
+        @Override
+        protected final void onWallTile(final int tileIndex) {
+            onWallTileBump(lastStomper, tileIndex);
+        }
     }
 	
 	public final static class Trio extends Enemy {

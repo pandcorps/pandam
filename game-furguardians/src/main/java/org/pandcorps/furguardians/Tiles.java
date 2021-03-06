@@ -80,9 +80,9 @@ public class Tiles {
 		return GemBumped.create(player, index, award);
 	}
     
-    protected final static void bump(final Character chr, final int index) {
+    protected final static byte bump(final Character chr, final int index) {
     	if (chr.getClass() != Player.class) {
-    		return;
+    		return Tile.BEHAVIOR_OPEN;
     	}
     	final Player player = (Player) chr;
     	final Tile t = Level.tm.getTile(index);
@@ -177,6 +177,7 @@ public class Tiles {
 	    		FurGuardiansGame.soundThud.startSound();
     		}
     	}
+    	return b;
     }
     
     private final static void bumpNetherCube(final Player player, final int index) {

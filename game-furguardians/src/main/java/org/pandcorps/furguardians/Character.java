@@ -88,6 +88,11 @@ public abstract class Character extends GuyPlatform {
         hv = holder.hv;
         chv = holder.chv;
     }
+    
+    // Can be called by sub-classes during onWallTile to break the tile if appropriate
+    protected final byte onWallTileBump(final Player player, final int tileIndex) {
+        return Tiles.bump(player, tileIndex);
+    }
 	
 	@Override
 	protected final TileMap getTileMap() {
