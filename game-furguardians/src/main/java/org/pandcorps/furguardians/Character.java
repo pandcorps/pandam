@@ -22,6 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.util.*;
+import java.util.Map;
+
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -29,6 +32,8 @@ import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends GuyPlatform {
     protected final static int VEL_DESTROY_HELD = Player.VEL_BUMP;
+    private final static Map<Integer, TubeHandler> tubeDownLefts = new HashMap<Integer, TubeHandler>();
+    private final static Map<Integer, TubeHandler> tubeDownRights = new HashMap<Integer, TubeHandler>();
     protected Player holder = null;
     
 	protected Character(final int offX, final int h) {
@@ -109,14 +114,39 @@ public abstract class Character extends GuyPlatform {
         return b == FurGuardiansGame.TILE_FLOOR;
     }
 	
-	protected final boolean isTubeDownLeftSide(final int index) {
-	    //TODO keep map from tube tiles to destinations
-	    return (index % 2) == 0;
+	protected final static void clearTubes() {
+	    tubeDownLefts.clear();
+	    tubeDownRights.clear();
 	}
 	
-	protected final boolean isTubeDownRightSide(final int index) {
-	    //TODO
-	    return (index % 2) == 1;
+	protected final static void addTubeDown(final int x, final int y, final TubeHandler dst) {
+	    final TileMap tm = Level.tm;
+	    tubeDownLefts.put(Integer.valueOf(tm.getIndexRequired(x, y)), dst);
+	    tubeDownRights.put(Integer.valueOf(tm.getIndexRequired(x + 1, y)), dst);
+	}
+	
+	protected final void checkTubeDown(final Panmage image) {
+	    final int neighbor = getNeighborTileIndex(Direction.South);
+        boolean tube = false;
+        TubeHandler dst;
+        if ((dst = getTubeDownLeftSide(neighbor)) != null) {
+            moveFromLeftSideToCenter();
+            tube = true;
+        } else if ((dst = getTubeDownRightSide(neighbor)) != null) {
+            moveFromRightSideToCenter();
+            tube = true;
+        }
+        if (tube) {
+            new Tuber(this, dst, image, 0, -1);
+        }
+	}
+	
+	protected final TubeHandler getTubeDownLeftSide(final int index) {
+	    return tubeDownLefts.get(Integer.valueOf(index));
+	}
+	
+	protected final TubeHandler getTubeDownRightSide(final int index) {
+	    return tubeDownRights.get(Integer.valueOf(index));
     }
 	
 	protected final void moveFromLeftSideToCenter() {
@@ -131,11 +161,13 @@ public abstract class Character extends GuyPlatform {
 	
 	protected final static class Tuber extends Panctor implements StepListener {
 	    private final Panctor src;
+	    private final TubeHandler dst;
 	    protected final int xDir, yDir;
 	    private int timer = 32;
 	    
-	    private Tuber(final Panctor src, final int xDir, final int yDir) {
+	    private Tuber(final Panctor src, final TubeHandler dst, final int xDir, final int yDir) {
 	        this.src = src;
+	        this.dst = dst;
 	        this.xDir = xDir;
 	        this.yDir = yDir;
 	        src.getLayer().addActor(this);
@@ -146,13 +178,13 @@ public abstract class Character extends GuyPlatform {
             //TODO Sound
 	    }
 	    
-	    protected Tuber(final Panctor src, final Panmage view, final int xDir, final int yDir) {
-	        this(src, xDir, yDir);
+	    protected Tuber(final Panctor src, final TubeHandler dst, final Panmage view, final int xDir, final int yDir) {
+	        this(src, dst, xDir, yDir);
 	        setView(view);
 	    }
 	    
-	    protected Tuber(final Panctor src, final Panimation view, final int xDir, final int yDir) {
-            this(src, xDir, yDir);
+	    protected Tuber(final Panctor src, final TubeHandler dst, final Panimation view, final int xDir, final int yDir) {
+            this(src, dst, xDir, yDir);
             setView(view);
         }
 
@@ -167,8 +199,19 @@ public abstract class Character extends GuyPlatform {
         }
         
         private final void finish() {
-            getLayer().addActor(src);
-            destroy();
+            dst.onTubeEntered(this);
         }
+	}
+	
+	protected static interface TubeHandler {
+	    public void onTubeEntered(final Tuber tuber);
+	}
+	
+	protected final static class TempTubeHandler implements TubeHandler {
+	    @Override
+	    public final void onTubeEntered(final Tuber tuber) {
+	        tuber.getLayer().addActor(tuber.src);
+	        tuber.destroy();
+	    }
 	}
 }

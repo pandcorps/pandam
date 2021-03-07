@@ -771,18 +771,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	    if (!isGrounded() ) {
 	        return;
 	    }
-	    final int neighbor = getNeighborTileIndex(Direction.South);
-	    boolean tube = false;
-	    if (isTubeDownLeftSide(neighbor)) {
-	        moveFromLeftSideToCenter();
-	        tube = true;
-	    } else if (isTubeDownRightSide(neighbor)) {
-	        moveFromRightSideToCenter();
-	        tube = true;
-	    }
-	    if (tube) {
-	        new Tuber(this, pc.guyFront, 0, -1);
-	    }
+	    checkTubeDown(pc.guyFront);
 	}
 	
 	private final boolean isDucking() {
