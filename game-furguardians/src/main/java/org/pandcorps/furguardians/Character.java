@@ -32,8 +32,10 @@ import org.pandcorps.pandax.tile.*;
 
 public abstract class Character extends GuyPlatform {
     protected final static int VEL_DESTROY_HELD = Player.VEL_BUMP;
-    private final static Map<Integer, TubeHandler> tubeDownLefts = new HashMap<Integer, TubeHandler>();
-    private final static Map<Integer, TubeHandler> tubeDownRights = new HashMap<Integer, TubeHandler>();
+    protected final static VerticalTubeManager downTubeManager = new VerticalTubeManager(-1);
+    protected final static VerticalTubeManager upTubeManager = new VerticalTubeManager(1);
+    protected final static HorizontalTubeManager rightTubeManager = new HorizontalTubeManager(1);
+    protected final static HorizontalTubeManager leftTubeManager = new HorizontalTubeManager(-1);
     protected Player holder = null;
     
 	protected Character(final int offX, final int h) {
@@ -57,7 +59,7 @@ public abstract class Character extends GuyPlatform {
     }
 	
 	@Override
-	protected final void onBump(final int t) {
+	protected void onBump(final int t) {
 	    Tiles.bump(this, t);
 	}
 	
@@ -115,38 +117,27 @@ public abstract class Character extends GuyPlatform {
     }
 	
 	protected final static void clearTubes() {
-	    tubeDownLefts.clear();
-	    tubeDownRights.clear();
+	    downTubeManager.clear();
+	    upTubeManager.clear();
 	}
 	
-	protected final static void addTubeDown(final int x, final int y, final TubeHandler dst) {
-	    final TileMap tm = Level.tm;
-	    tubeDownLefts.put(Integer.valueOf(tm.getIndexRequired(x, y)), dst);
-	    tubeDownRights.put(Integer.valueOf(tm.getIndexRequired(x + 1, y)), dst);
+	protected final boolean checkTubeDown(final Panmage image) {
+	    return downTubeManager.checkTube(this, image, getNeighborTileIndex(Direction.South));
 	}
 	
-	protected final void checkTubeDown(final Panmage image) {
-	    final int neighbor = getNeighborTileIndex(Direction.South);
-        boolean tube = false;
-        TubeHandler dst;
-        if ((dst = getTubeDownLeftSide(neighbor)) != null) {
-            moveFromLeftSideToCenter();
-            tube = true;
-        } else if ((dst = getTubeDownRightSide(neighbor)) != null) {
-            moveFromRightSideToCenter();
-            tube = true;
-        }
-        if (tube) {
-            new Tuber(this, dst, image, 0, -1);
-        }
-	}
+	protected final boolean checkTubeUp(final Panmage image, final int potentialTubeTileIndex) {
+	    if (Level.tm.getContainerColumn(getPosition().getX()) != Level.tm.getColumn(potentialTubeTileIndex)) {
+	        return false;
+	    }
+	    return upTubeManager.checkTube(this, image, potentialTubeTileIndex);
+    }
 	
-	protected final TubeHandler getTubeDownLeftSide(final int index) {
-	    return tubeDownLefts.get(Integer.valueOf(index));
-	}
+	protected final boolean checkTubeRight(final Panimation anm, final int potentialTubeTileIndex) {
+        return rightTubeManager.checkTube(this, anm, potentialTubeTileIndex);
+    }
 	
-	protected final TubeHandler getTubeDownRightSide(final int index) {
-	    return tubeDownRights.get(Integer.valueOf(index));
+	protected final boolean checkTubeLeft(final Panimation anm, final int potentialTubeTileIndex) {
+        return leftTubeManager.checkTube(this, anm, potentialTubeTileIndex);
     }
 	
 	protected final void moveFromLeftSideToCenter() {
@@ -214,4 +205,91 @@ public abstract class Character extends GuyPlatform {
 	        tuber.destroy();
 	    }
 	}
+	
+	protected abstract static class TubeManager {
+	    protected abstract void addTube(final int x, final int y, final TubeHandler dst);
+	    
+	    protected abstract void clear();
+	    
+	    protected final void put(final Map<Integer, TubeHandler> map, final int x, final int y, final TubeHandler dst) {
+	        if (dst == null) {
+	            return;
+	        }
+	        map.put(Integer.valueOf(Level.tm.getIndexRequired(x, y)), dst);
+	    }
+	    
+	    protected final TubeHandler get(final Map<Integer, TubeHandler> map, final int tileIndex) {
+            return map.get(Integer.valueOf(tileIndex));
+        }
+	}
+	
+	protected final static class VerticalTubeManager extends TubeManager {
+	    private final Map<Integer, TubeHandler> tubeLefts = new HashMap<Integer, TubeHandler>();
+	    private final Map<Integer, TubeHandler> tubeRights = new HashMap<Integer, TubeHandler>();
+	    private final int yDir;
+	    
+	    protected VerticalTubeManager(final int yDir) {
+	        this.yDir = yDir;
+	    }
+	    
+	    @Override
+	    protected final void addTube(final int x, final int y, final TubeHandler dst) {
+	        put(tubeLefts, x, y, dst);
+	        put(tubeRights, x + 1, y, dst);
+	    }
+	    
+	    protected final boolean checkTube(final Character chr, final Panmage image, final int potentialTubeTileIndex) {
+	        boolean tube = false;
+	        TubeHandler dst;
+	        if ((dst = get(tubeLefts, potentialTubeTileIndex)) != null) {
+	            chr.moveFromLeftSideToCenter();
+	            tube = true;
+	        } else if ((dst = get(tubeRights, potentialTubeTileIndex)) != null) {
+	            chr.moveFromRightSideToCenter();
+	            tube = true;
+	        }
+	        if (tube) {
+	            new Tuber(chr, dst, image, 0, yDir);
+	            return true;
+	        }
+	        return false;
+	    }
+	    
+	    @Override
+	    protected final void clear() {
+	        tubeLefts.clear();
+	        tubeRights.clear();
+	    }
+	}
+	
+	protected final static class HorizontalTubeManager extends TubeManager {
+        private final Map<Integer, TubeHandler> tubes = new HashMap<Integer, TubeHandler>();
+        private final int xDir;
+        
+        protected HorizontalTubeManager(final int xDir) {
+            this.xDir = xDir;
+        }
+        
+        @Override
+        protected final void addTube(final int x, final int y, final TubeHandler dst) {
+            put(tubes, x, y, dst);
+        }
+        
+        protected final boolean checkTube(final Character chr, final Panimation anm, final int potentialTubeTileIndex) {
+            if (!chr.isGrounded()) {
+                return false;
+            }
+            final TubeHandler dst = get(tubes, potentialTubeTileIndex);
+            if (dst != null) {
+                new Tuber(chr, dst, anm, xDir, 0);
+                return true;
+            }
+            return false;
+        }
+        
+        @Override
+        protected final void clear() {
+            tubes.clear();
+        }
+    }
 }

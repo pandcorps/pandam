@@ -582,6 +582,14 @@ public class Player extends Character implements CollisionListener, StepEndListe
         return fullControlMode ? pc.ctrl.get2() : null;
     }
 	
+	private final Panput getRightInput() {
+        return pc.ctrl.getRight();
+    }
+	
+	private final Panput getLeftInput() {
+        return pc.ctrl.getLeft();
+    }
+	
 	private final Panput getDownInput() {
         return fullControlMode ? pc.ctrl.getDown() : null;
     }
@@ -739,12 +747,20 @@ public class Player extends Character implements CollisionListener, StepEndListe
 		hv = getVelWalk();
 	}
 	
+	protected final boolean isRighting() {
+        return Panput.isActive(getRightInput());
+    }
+	
 	private final void left() {
 		if (isInputDisabled()) {
 			return;
 		}
 		hv = -getVelWalk();
 	}
+	
+	protected final boolean isLefting() {
+        return Panput.isActive(getLeftInput());
+    }
 	
 	protected final int getVelWalk() {
 		if (Level.theme == Theme.Minecart) {
@@ -758,6 +774,15 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	protected final boolean isRunning() {
 	    return Panput.isActive(getRunInput());
 	}
+	
+	@Override
+    protected final void onWallTile(final int tileIndex) {
+	    if (isRighting()) {
+	        checkTubeRight(pc.guyRun, tileIndex);
+	    } else if (isLefting()) {
+	        checkTubeLeft(pc.guyRun, tileIndex);
+	    }
+    }
 	
 	private final void down() {
         if (isInputDisabled()) {
@@ -1457,6 +1482,14 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	}
 	
 	@Override
+    protected final void onBump(final int t) {
+	    if (isLookingUp() && checkTubeUp(pc.guyFront, t)) {
+	        return;
+	    }
+        super.onBump(t);
+    }
+	
+	@Override
 	protected final boolean onFell() {
 		if (getCurrentJumpMode() == JUMP_FLY) {
 			final long clock = Pangine.getEngine().getClock();
@@ -1556,7 +1589,8 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	        FurGuardiansGame.soundWhoosh.startSound();
 	    }
         
-        protected boolean setGroundView(final Player player) {
+	    @Override
+        protected final boolean setGroundView(final Player player) {
             if (player.attackTimer > 0) {
                 player.changeView(player.pc.guyAttack);
                 return true;
@@ -1564,7 +1598,8 @@ public class Player extends Character implements CollisionListener, StepEndListe
             return false;
         }
         
-        protected boolean setAirView(final Player player) {
+	    @Override
+        protected final boolean setAirView(final Player player) {
             if (player.attackTimer > 0) {
                 player.changeView(player.pc.guyAttackJump);
                 return true;
@@ -1897,6 +1932,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
             onPlayerProjectileCollision(this, event);
         }
         
+        @Override
         public void onCollide(final Enemy enemy) {
             onPlayerProjectileCollide(this, enemy);
         }
