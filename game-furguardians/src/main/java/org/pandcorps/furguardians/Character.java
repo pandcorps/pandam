@@ -119,6 +119,8 @@ public abstract class Character extends GuyPlatform {
 	protected final static void clearTubes() {
 	    downTubeManager.clear();
 	    upTubeManager.clear();
+	    rightTubeManager.clear();
+	    leftTubeManager.clear();
 	}
 	
 	protected final boolean checkTubeDown(final Panmage image) {
