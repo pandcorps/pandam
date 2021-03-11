@@ -356,6 +356,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panimation portalClosed = null;
 	protected static Img[] dirts = null;
 	protected static Img[] terrains = null;
+	protected static Panmage common = null;
 	protected static Img[] crowns = null;
 	protected static int DIM_BUTTON = 0;
 	protected final static int MENU_W = 48, MENU_H = 40;
@@ -1923,6 +1924,9 @@ public class FurGuardiansGame extends BaseGame {
 		loaders.add(new Runnable() { @Override public final void run() {
 			terrains = Imtil.loadStrip(RES + "bg/Terrain.png", ImtilX.DIM);
 			Img.setTemporary(false, terrains); }});
+		loaders.add(new Runnable() { @Override public final void run() {
+		    common = engine.createImage(PRE_IMG + "common", RES + "bg/Common.png"); }});
+		
 		loaders.add(new Runnable() { @Override public final void run() {
 			crowns = ImtilX.loadStrip(RES + "chr/Crowns.png", 14, false);
 			Img.setTemporary(false, crowns); }});
