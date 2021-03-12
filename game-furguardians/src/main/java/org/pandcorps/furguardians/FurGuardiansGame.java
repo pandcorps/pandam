@@ -1620,18 +1620,22 @@ public class FurGuardiansGame extends BaseGame {
                 	if (enemy.v > 0) {
                 		return true;
                 	}
-                	final float newV = -enemy.v * 0.9f;
+                	float oldV = enemy.v - Enemy.g;
+                	if (oldV > 0) {
+                	    oldV = enemy.v;
+                	}
+                	final float newV = -oldV * 0.9f;
+                    if (newV < 1) {
+                        new ArmorBall(enemy);
+                        return true;
+                    }
                     enemy.v = newV;
+                    soundArmor.startSound();
                     final int oldSpeed = Math.abs(enemy.hv);
                     if (oldSpeed > 0) {
                         final int newSpeed = Math.min(oldSpeed, Math.round(newV * bounceBall.hv / Player.VEL_BOUNCE));
                         final int oldDir = enemy.hv / oldSpeed;
                         enemy.hv = newSpeed * oldDir;
-                    }
-                    if (enemy.v >= 1) {
-                    	soundArmor.startSound();
-                    } else {
-                        new ArmorBall(enemy);
                     }
                     return true;
                 }};
