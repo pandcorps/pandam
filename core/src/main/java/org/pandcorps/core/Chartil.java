@@ -100,6 +100,36 @@ public final class Chartil {
         return (c >= 'a') && (c <= 'z');
     }
     
+    public final static boolean isMixedCase(final CharSequence s) {
+        final int size = s.length();
+        boolean upper = false, lower = false;
+        for (int i = 0; i < size; i++) {
+            final char c = s.charAt(i);
+            if (isUpperCase(c)) {
+                if (lower) {
+                    return true;
+                }
+                upper = true;
+            } else if (isLowerCase(c)) {
+                if (upper) {
+                    return true;
+                }
+                lower = true;
+            }
+        }
+        return false;
+    }
+    
+    public final static String toProperName(final String s) {
+        final int size = s.length();
+        final StringBuilder b = new StringBuilder(size);
+        b.append(toUpperCase(s.charAt(0)));
+        for (int i = 1; i < size; i++) {
+            b.append(toLowerCase(s.charAt(i)));
+        }
+        return b.toString();
+    }
+    
     public final static String unnull(final String s) {
     	return s == null ? "" : s;
     }
@@ -144,6 +174,10 @@ public final class Chartil {
             }
         }
         return true;
+    }
+    
+    public final static boolean equalsIgnoreCase(final String s1, final String s2) {
+        return (s1 == null) ? (s2 == null) : s1.equalsIgnoreCase(s2);
     }
     
     public final static boolean startsWith(final String s, final String sub) {
