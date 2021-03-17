@@ -22,8 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.core;
 
+import java.io.*;
 import java.nio.*;
 //import java.rmi.dgc.*;
+import java.util.*;
 
 // Pandcorps Utility
 public final class Pantil {
@@ -92,6 +94,66 @@ public final class Pantil {
 			root = next;
 		}
 		return root;
+	}
+	
+	public final static String getStackTrace(final Throwable e) {
+	    final StringWriter sw = new StringWriter();
+	    final PrintWriter pw = new PrintWriter(sw);
+	    e.printStackTrace(pw);
+	    pw.flush();
+	    pw.close();
+	    return sw.toString();
+	}
+	
+	public final static String getAbbreviatedStackTrace(Throwable e) {
+	    final StringBuilder b = new StringBuilder();
+	    Set<StackTraceElement> set = new HashSet<StackTraceElement>();
+	    do {
+	        if (b.length() > 0) {
+	            b.append("\nby ");
+	        }
+	        b.append(abbreviateException(e)).append(' ').append(e.getMessage()).append(" at");
+            for (final StackTraceElement elem : e.getStackTrace()) {
+                if (!set.add(elem)) {
+                    continue;
+                }
+                b.append('\n');
+                abbreviateClassName(b, elem.getClassName());
+                b.append('.').append(elem.getMethodName()).append(':').append(elem.getLineNumber());
+            }
+            e = e.getCause();
+	    } while (e != null);
+        return b.toString();
+    }
+	
+	private final static String abbreviateException(final Throwable e) {
+	    if (e instanceof NullPointerException) {
+	        return "NPE";
+	    }
+	    final String name = e.getClass().getSimpleName();
+	    final int size = name.length(), exSize = 9;
+	    if ((size > exSize) && name.endsWith("Exception")) {
+	        return name.substring(0, size - exSize);
+	    }
+	    return name;
+	}
+	
+	private final static void abbreviateClassName(final StringBuilder b, final String className) {
+	    int i = 0;
+	    int next = className.indexOf('.', i);
+	    if (next < 0) {
+	        b.append(className);
+	        return;
+	    }
+	    while (true) {
+    	    b.append(className.charAt(i)).append('.');
+    	    i = next + 1;
+    	    next = className.indexOf('.', i);
+    	    if (next < 0) {
+    	        b.append(className, i, className.length());
+    	        return;
+    	    }
+	    }
 	}
 
 	public final static boolean equals(final Object o1, final Object o2) {
