@@ -105,7 +105,7 @@ public final class Pantil {
 	    return sw.toString();
 	}
 	
-	public final static String getAbbreviatedStackTrace(Throwable e) {
+	public final static CharSequence getAbbreviatedStackTrace(Throwable e) {
 	    final StringBuilder b = new StringBuilder();
 	    Set<StackTraceElement> set = new HashSet<StackTraceElement>();
 	    do {
@@ -123,7 +123,7 @@ public final class Pantil {
             }
             e = e.getCause();
 	    } while (e != null);
-        return b.toString();
+        return b;
     }
 	
 	private final static String abbreviateException(final Throwable e) {

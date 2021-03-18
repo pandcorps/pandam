@@ -26,12 +26,16 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.img.process.*;
 import org.pandcorps.core.img.scale.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
+import org.pandcorps.pandax.Pandy.*;
 import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandam.Panput.*;
+import org.pandcorps.pandam.event.*;
+import org.pandcorps.pandam.event.action.*;
 
 public abstract class BaseGame extends Pangame {
     /*
@@ -306,4 +310,299 @@ public abstract class BaseGame extends Pangame {
 		b.append("ail.c");
 		return "pandcor" + b + "om";
 	}
+	
+	private final static void startScreenSaver(final ScreenSaver screenSaver) {
+	    final Pangine engine = Pangine.getEngine();
+	    final Panroom room = Pangame.getGame().getCurrentRoom();
+	    final ScreenSaverIteration iteration = new ScreenSaverIteration();
+	    Panlayer.iterateLayers(iteration);
+	    final List<Panlayer> layersToActivate = iteration.layersToActivate;
+        final Panlayer top = iteration.top;
+	    final Mover mover = screenSaver.mover;
+	    final Panlayer layer = engine.createLayer(Pantil.vmid(), engine.getEffectiveWidth(), engine.getEffectiveHeight(), room.getSize().getZ(), room);
+	    top.addAbove(layer);
+	    final ScreenSaverBackground bg = new ScreenSaverBackground(screenSaver);
+        layer.addActor(bg);
+	    layer.addActor(mover);
+	    mover.unregisterListeners();
+	    mover.register(new ActionEndListener() {
+            @Override public final void onActionEnd(final ActionEndEvent event) {
+                for (final Panlayer layerToActivate : layersToActivate) {
+                    layerToActivate.setActive(true);
+                }
+                mover.detach();
+                layer.destroy();
+                event.getInput().inactivate();
+            }});
+	}
+	
+	public final static class ScreenSaver {
+	    private final Mover mover;
+	    private final Panmage black;
+	    private final float z;
+	    
+	    public ScreenSaver(final Mover mover, final Panmage black, final float z) {
+	        this.mover = mover;
+	        this.black = black;
+	        this.z = z;
+	    }
+	    
+	    public ScreenSaver(final Panctor moverSubject, final Panmage black, final float z) {
+	        this(new Mover(moverSubject), black, z);
+	        mover.getVelocity().set(1, 1);
+	    }
+	    
+	    public final void start() {
+	        startScreenSaver(this);
+	    }
+	    
+	    public final void register() {
+	        final ScreenSaverStarter starter = new ScreenSaverStarter(this);
+	        Pangame.getGame().getCurrentRoom().addActor(starter);
+	        starter.register(new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    starter.onInput();
+                }});
+	    }
+	}
+	
+	private final static class ScreenSaverStarter extends Panctor implements StepListener {
+	    //private final static int threshold = 30 * 60 * 5;
+	    private final static int threshold = 60;
+	    private final ScreenSaver screenSaver;
+	    private long timer = 0;
+	    
+	    private ScreenSaverStarter(final ScreenSaver screenSaver) {
+	        this.screenSaver = screenSaver;
+	        setVisible(false);
+	    }
+	    
+	    private final void onInput() {
+	        timer = 0;
+	    }
+
+        @Override
+        public final void onStep(final StepEvent event) {
+            timer++;
+            if (timer > threshold) {
+                final long cursorInactiveTimer = Cursor.getInactiveTimer();
+                if (cursorInactiveTimer > threshold) {
+                    timer = 0;
+                    screenSaver.start();
+                } else {
+                    timer = cursorInactiveTimer;
+                }
+            }
+        }
+	}
+	
+	private final static class ScreenSaverBackground extends Panctor {
+	    private final ScreenSaver screenSaver;
+	    
+	    private ScreenSaverBackground(final ScreenSaver screenSaver) {
+	        this.screenSaver = screenSaver;
+	    }
+	    
+	    @Override
+	    protected final void renderView(final Panderer renderer) {
+	        final Pangine engine = Pangine.getEngine();
+	        renderer.render(getLayer(), screenSaver.black, 0, 0, screenSaver.z, 0, 0, engine.getEffectiveWidth(), engine.getEffectiveHeight(), 0, false, false);
+	    }
+	}
+	
+	private final static class ScreenSaverIteration implements Iteration<Panlayer> {
+	    private final List<Panlayer> layersToActivate = new ArrayList<Panlayer>();
+	    private Panlayer top = null;
+        
+	    @Override
+	    public final boolean step(final Panlayer elem) {
+            if (elem.getAbove() == null) {
+                top = elem;
+            }
+            if (elem.isActive()) {
+                elem.setActive(false);
+                layersToActivate.add(elem);
+            }
+            return true;
+        }
+	}
+	
+	public final static ButtonImages newCircleImages(final int white, final int grey, final int darkGrey, final int black, final PixelFilter clearFilter, final int d) {
+    	final Img circle = newButtonImg(d);
+        Imtil.drawCircle(circle, black, black, darkGrey, true);
+        ImtilX.highlight(circle, new int[] { white }, true);
+        ImtilX.highlight(circle, new int[] { darkGrey, grey, grey, grey, white, black, darkGrey }, false);
+        return newButtonImages(circle, clearFilter, d, black, null);
+	}
+	
+	public final static ButtonImages newRightImages(final int white, final int grey, final int darkGrey, final int black, final PixelFilter clearFilter, final int d) {
+        final int d1 = d - 1, d3 = d1 - 2;
+        final Img img = newButtonImg(d);
+        for (int y = 3; y < d3; y++) {
+            img.setRGB(0, y, black);
+        }
+        for (int x = 1; x < d1; x++) {
+            final int y;
+            if (x == 1) {
+                y = 2;
+            } else if (x < 4) {
+                y = 1;
+            } else if (x < 8) {
+                y = 0;
+            } else {
+                y = (x - 6) / 2;
+            }
+            img.setRGB(x, y, black);
+            img.setRGB(x, d1 - y, black);
+            final int d1y1 = d1 - y - 1;
+            for (int j = y + 2; j < d1y1; j++) {
+                img.setRGB(x, j, grey);
+            }
+            img.setRGB(x, d1y1, darkGrey);
+            img.setRGB(x, d1y1 - 4, white);
+            img.setRGB(x, d1y1 - 5, black);
+            if (x < d3) {
+                img.setRGB(x, y + 1, white);
+                img.setRGB(x, d1y1 - 6, darkGrey);
+            } else {
+                img.setRGB(x, y + 1, grey);
+            }
+        }
+        final int y = (d1 - 6) / 2;
+        for (int j = 0; j < 7; j++) {
+            img.setRGB(d1, y + j, black);
+        }
+        return newButtonImages(img, clearFilter, d, black, null);
+    }
+	
+	public final static ButtonImages newUpImages(final int white, final int grey, final int darkGrey, final int black) {
+        final Img img = newButtonImg(32);
+        for (int x = 3; x < 28; x++) {
+            img.setRGB(x, 31, black);
+            img.setRGB(x, 30, darkGrey);
+            img.setRGB(x, 26, white);
+            img.setRGB(x, 25, black);
+            img.setRGB(x, 24, darkGrey);
+        }
+        for (int x = 3; x < 16; x++) {
+            img.setRGB(x, 16 - x, black);
+            img.setRGB(x, 17 - x, white);
+        }
+        for (int x = 16; x < 28; x++) {
+            img.setRGB(x, x - 14, black);
+            img.setRGB(x, x - 13, white);
+        }
+        for (int y = 18; y < 28; y++) {
+            img.setRGB(0, y, black);
+            img.setRGB(30, y, black);
+        }
+        for (int i = 0; i < 2; i++) {
+            final int x = (i == 0) ? 1 : 29;
+            for (int j = 0; j < 2; j++) {
+                final int y = (j == 0) ? 16 : 22;
+                img.setRGB(x, y, black);
+                img.setRGB(x, y + 1, black);
+                img.setRGB(x, y + 2, white);
+                img.setRGB(x, y + 5, darkGrey);
+            }
+            img.setRGB(x, 28, black);
+            img.setRGB(x, 29, black);
+            final int x1 = (i == 0) ? 2 : 28;
+            img.setRGB(x1, 14, black);
+            img.setRGB(x1, 15, black);
+            img.setRGB(x1, 16, white);
+            img.setRGB(x1, 23, darkGrey);
+            img.setRGB(x1, 24, black);
+            img.setRGB(x1, 25, white);
+            img.setRGB(x1, 29, darkGrey);
+            img.setRGB(x1, 30, black);
+        }
+        return newButtonImages(img, null, 31, black, null);
+    }
+	
+	public final static ButtonImages newDownImages(final int white, final int grey, final int darkGrey, final int black) {
+        final Img img = newButtonImg(32);
+        for (int x = 3; x < 28; x++) {
+            img.setRGB(x, 1, black);
+            img.setRGB(x, 2, white);
+            final int y = (x < 16) ? (x + 9) : (39 - x);
+            img.setRGB(x, y, darkGrey);
+            img.setRGB(x, y + 1, black);
+            img.setRGB(x, y + 2, white);
+            img.setRGB(x, y + 6, darkGrey);
+            img.setRGB(x, y + 7, black);
+        }
+        for (int y = 26; y < 31; y++) {
+            img.setRGB(15, y, black);
+        }
+        for (int y = 5; y < 15; y++) {
+            img.setRGB(0, y, black);
+            img.setRGB(30, y, black);
+        }
+        for (int i = 0; i < 2; i++) {
+            final int x = (i == 0) ? 1 : 29;
+            for (int j = 0; j < 2; j++) {
+                final int y = (j == 0) ? 3 : 9;
+                img.setRGB(x, y, black);
+                img.setRGB(x, y + 1, black);
+                img.setRGB(x, y + 2, white);
+                img.setRGB(x, y + 5, darkGrey);
+            }
+            img.setRGB(x, 15, black);
+            img.setRGB(x, 16, black);
+            final int x1 = (i == 0) ? 2 : 28;
+            img.setRGB(x1, 2, black);
+            img.setRGB(x1, 3, white);
+            img.setRGB(x1, 10, darkGrey);
+            img.setRGB(x1, 11, black);
+            img.setRGB(x1, 12, black);
+            img.setRGB(x1, 13, white);
+            img.setRGB(x1, 16, darkGrey);
+            img.setRGB(x1, 17, black);
+            img.setRGB(x1, 18, black);
+        }
+        return newButtonImages(img, null, 31, black, new ImgProcessor() {
+            @Override public final void process(final Img img) {
+                final int c = PixelTool.getRgba(Pancolor.CLEAR);
+                for (int y = 25; y < 28; y++) {
+                    img.setRGB(15, y, c);
+                }
+                img.setRGB(15, 28, darkGrey);
+            }});
+    }
+	
+	public final static Img newButtonImg(final int d) {
+        final Img img = Imtil.newImage(d, d);
+        img.setTemporary(false);
+        return img;
+    }
+	
+	public final static ButtonImages newButtonImages(final Img img, final PixelFilter clearFilter, final int w, final int black, final ImgProcessor postIndentProcessor) {
+        final Pangine engine = Pangine.getEngine();
+        final Panmage full = engine.createImage(Pantil.vmid(), img);
+        final Panmage base;
+        if (clearFilter == null) {
+            base = full;
+        } else {
+            Imtil.filterImg(img, clearFilter);
+            base = engine.createImage(Pantil.vmid(), img);
+        }
+        ImtilX.indent2(img, 4, w, black);
+        ImgProcessor.process(postIndentProcessor, img);
+        final Panmage pressed = engine.createImage(Pantil.vmid(), img);
+        img.close();
+        return new ButtonImages(full, base, pressed);
+    }
+	
+	public final static class ButtonImages {
+	    public final Panmage full;
+	    public final Panmage base;
+	    public final Panmage pressed;
+        
+        public ButtonImages(final Panmage full, final Panmage base, final Panmage pressed) {
+            this.full = full;
+            this.base = base;
+            this.pressed = pressed;
+        }
+    }
 }

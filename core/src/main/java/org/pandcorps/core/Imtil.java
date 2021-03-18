@@ -544,6 +544,12 @@ public final class Imtil {
     
     public final static Img drawCircle(final Img in,
             final Pancolor top, final Pancolor bottom, final Pancolor fill) {
+        final int t = getDataElement(top), b = getDataElement(bottom), f = fill == null ? 0 : getDataElement(fill);
+        return drawCircle(in, t, b, f, fill != null);
+    }
+    
+    public final static Img drawCircle(final Img in,
+            final int t, final int b, final int f, final boolean fill) {
         // x ^ 2 + y ^ 2 = r ^ 2
         // y = sqrt(r ^ 2 - x ^ 2)
         final int d = in.getHeight();
@@ -553,7 +559,7 @@ public final class Imtil {
         final int cmax = d / 2, cmin = (d % 2) == 0 ? (cmax - 1) : cmax, r2 = cmin * cmin;
         // If diameter is 99, center is 49, radius of 49 puts top at 49 + 49 = 98 (top pixel, since they run 0-98)
         // If d is 100, r is 49, cmax runs 50-99, cmin runs 0-49
-        final int t = getDataElement(top), b = getDataElement(bottom), f = fill == null ? 0 : getDataElement(fill);
+        
         for (int i = 0; ; i++) {
             final int j = (int) Math.round(Math.sqrt(r2 - (i * i)));
             final int cmaxi = cmax + i, cmini = cmin - i;
@@ -561,7 +567,7 @@ public final class Imtil {
             if (i > j) {
                 break;
             }
-            if (fill != null) {
+            if (fill) {
                 for (int j2 = i; j2 < j; j2++) {
                     drawCircle8(in, cmaxi, cmini, cmax + j2, cmin - j2, f, f);
                 }

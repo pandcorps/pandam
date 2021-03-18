@@ -58,4 +58,51 @@ public class Pandy extends Panctor implements StepListener {
 	public final Panple getAcceleration() {
 		return acc;
 	}
+	
+	public final static class Mover extends Panctor implements StepListener, RoomAddListener {
+	    private final Panple vel = new ImplPanple();
+	    private final Panctor subject;
+	    
+	    public Mover(final Panctor subject) {
+	        this.subject = subject;
+	    }
+	    
+	    @Override
+        public final void onRoomAdd(final RoomAddEvent event) {
+            if (subject.getLayer() == null) {
+                getLayer().addActor(subject);
+            }
+        }
+	    
+	    @Override
+	    public void onStep(final StepEvent event) {
+	        final Panlayer layer = getLayer();
+	        if (layer == null) {
+	            return;
+	        }
+	        subject.getPosition().add(vel);
+	        final float vx = vel.getX(), vy = vel.getY();
+	        final Panple smin = subject.getBoundingMinimum(), smax = subject.getBoundingMaximum();
+	        final Panple vmin = layer.getViewMinimum(), vmax = layer.getViewMaximum();
+	        if ((vx < 0) && (smin.getX() < vmin.getX())) {
+	            vel.setX(-vx);
+	        } else if ((vx > 0) && (smax.getX() > vmax.getX())) {
+	            vel.setX(-vx);
+	        }
+	        if ((vy < 0) && (smin.getY() < vmin.getY())) {
+                vel.setY(-vy);
+            } else if ((vy > 0) && (smax.getY() > vmax.getY())) {
+                vel.setY(-vy);
+            }
+	    }
+	    
+	    @Override
+	    public final void onDetach() {
+	        subject.detach();
+	    }
+	    
+	    public final Panple getVelocity() {
+	        return vel;
+	    }
+	}
 }

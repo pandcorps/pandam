@@ -35,7 +35,7 @@ public class Cursor extends Panctor implements StepListener {
 	private static int lastMouseX = -1, lastMouseY = -1;
 	private boolean hiddenWhenUnused = false;
 	private List<Panctor> actorsToHide = null;
-	private int inactiveTimer = 0;
+	private long inactiveTimer = 0;
 	
 	public final static Cursor addCursor(final Panlayer layer, final Panmage img) {
 		Panctor.destroy(active);
@@ -113,22 +113,24 @@ public class Cursor extends Panctor implements StepListener {
 		final Panlayer layer = getLayer();
 		final Panple o = (layer == null) ? FinPanple.ORIGIN : layer.getOrigin();
 		final int mouseX = engine.getMouseX(), mouseY = engine.getMouseY();
-		if (hiddenWhenUnused) {
-    		if ((mouseX != lastMouseX) || (mouseY != lastMouseY)) {
-    		    if (lastMouseX != -1) {
-    		        show();
-    		    }
-    		    lastMouseX = mouseX;
-    		    lastMouseY = mouseY;
-    		    inactiveTimer = 0;
-    		} else if (inactiveTimer < INACTIVE_THRESHOLD) {
-    		    inactiveTimer++;
-    		    if (inactiveTimer >= INACTIVE_THRESHOLD) {
-    		        hide();
-    		    }
-    		}
+		if ((mouseX != lastMouseX) || (mouseY != lastMouseY)) {
+		    if (hiddenWhenUnused && (lastMouseX != -1)) {
+		        show();
+		    }
+		    lastMouseX = mouseX;
+		    lastMouseY = mouseY;
+		    inactiveTimer = 0;
+		} else if (inactiveTimer < INACTIVE_THRESHOLD) {
+		    inactiveTimer++;
+		    if (hiddenWhenUnused && (inactiveTimer >= INACTIVE_THRESHOLD)) {
+		        hide();
+		    }
 		}
 		getPosition().set(o.getX() + mouseX, o.getY() + mouseY);
+	}
+	
+	public final static long getInactiveTimer() {
+	    return Panctor.isDestroyed(active) ? Long.MAX_VALUE : active.inactiveTimer;
 	}
 	
 	@Override

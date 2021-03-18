@@ -22,10 +22,12 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
+import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.chr.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.impl.*;
 
@@ -656,6 +658,26 @@ public class Pantext extends Panctor {
         }
         return list;
     }
+	
+	public final static Pantext newClock(final Font font) {
+	    return new Pantext(Pantil.vmid(), font, new ClockSequence());
+	}
+	
+	public final static class ClockSequence extends CallSequence {
+	    private final SimpleDateFormat format;
+	    
+	    public ClockSequence() {
+	        this("h:mm:ss a");
+	    }
+	    
+	    public ClockSequence(final String pattern) {
+	        format = new SimpleDateFormat(pattern);
+	    }
+	    
+	    @Override protected final CharSequence call() {
+            return format.format(new Date());
+        }
+	}
 	
 	///*package*/ final void setItem(final TextItem item) {
 	//	this.item = item;
