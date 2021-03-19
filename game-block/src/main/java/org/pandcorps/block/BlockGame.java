@@ -40,7 +40,10 @@ import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 
 public class BlockGame extends BaseGame {
-    protected final static String TITLE = "Mana Stones";
+    protected final static String TITLE1 = "Moon Stones";
+    protected final static String TITLE2 = "and";
+    protected final static String TITLE3 = "Luna Wisps";
+    protected final static String TITLE = TITLE1 + " " + TITLE2 + " " + TITLE3;
     protected final static String VERSION = "0.0.1";
     protected final static String YEAR = "2021";
     protected final static String AUTHOR = "Andrew M. Martin";
@@ -73,7 +76,10 @@ public class BlockGame extends BaseGame {
     protected final static int Z_FALLING_2 = 6;
     protected final static int Z_BURST = 8;
     protected final static int Z_PUFF = 10;
-    protected final static int Z_CURSOR = 12;
+    protected final static int Z_HUD = 12;
+    protected final static int Z_CURSOR = 14;
+    protected final static int Z_SCREEN_SAVER_BG = 16;
+    protected final static int Z_SCREEN_SAVER_SUBJECT = 18;
     private final static int[] Z_FALLINGS = { Z_FALLING_1, Z_FALLING_2 };
     
     protected final static int FALL_TIME = 30;
@@ -103,13 +109,17 @@ public class BlockGame extends BaseGame {
     protected final static int LEVEL_MAX = 64;
     
     protected final static int DIM_TEXT = 8;
+    protected final static int DIM_BUTTON = 59;
     
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Panmage block = null;
     protected static Panmage black = null;
     protected static Panimation anmPuff = null;
     protected static Font font = null;
+    protected static Panmage pause = null;
     protected static Panmage cursorImg = null;
+    protected static ButtonImages rightImages = null;
+    protected static ButtonImages leftImages = null;
     protected static Pansound fxMove = null; // Left/right, not down
     protected static Pansound fxRotate = null;
     protected static Pansound fxThud = null;
@@ -126,6 +136,14 @@ public class BlockGame extends BaseGame {
     protected static Background background = null;
     protected static Grid grid = null;
     private static Cursor cursor = null;
+    private static Panctor buttonLeft = null;
+    private static Panctor buttonRight = null;
+    private static Panctor buttonClockwise = null;
+    private static Panctor buttonCounterclockwise = null;
+    private static TouchButton touchButtonLeft = null;
+    private static TouchButton touchButtonRight = null;
+    private static TouchButton touchButtonClockwise = null;
+    private static TouchButton touchButtonCounterclockwise = null;
     protected final static List<ControlScheme> controlSchemes = new ArrayList<ControlScheme>(MAX_PLAYERS);
     protected static ControlScheme inactiveControlScheme = null;
     protected static ControlScheme defaultKeyboard = null;
@@ -172,20 +190,45 @@ public class BlockGame extends BaseGame {
     }
     
     private final static void loadImages() {
-        block = Pangine.getEngine().createImage("block", RES_IMG + "Block.png");
+        final Pangine engine = Pangine.getEngine();
+        block = engine.createImage("Block", RES_IMG + "Block.png");
         final ImgFactory f = ImgFactory.getFactory();
         final Img img = f.create(1, 1);
         img.setRGB(0, 0, f.getDataElement(0, 0, 0, 255));
-        black = Pangine.getEngine().createImage("black", img);
+        black = engine.createImage("Black", img);
         initColor(0, block, 0.5f, 1.0f, 1.0f);
         initColor(1, block, 0.0f, 0.5f, 1.0f);
         initColor(2, block, 0.375f, 0.375f, 0.375f);
         anmPuff = newAnimation(3, 0.75f, 1.0f, 1.0f, 16, 16, 16, 24, 24, 24);
-        font = Fonts.getClassic(new FontRequest(FontType.Upper, DIM_TEXT), new FinPancolor(192, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE));
+        final Pancolor hudColor = new FinPancolor(192, Pancolor.MAX_VALUE, Pancolor.MAX_VALUE);
+        font = Fonts.getClassic(new FontRequest(FontType.Upper, DIM_TEXT), hudColor);
+        pause = newBright("Pause", null);
         if (isCursorNeeded()) {
-            final Panmage cursorRaw = Pangine.getEngine().createImage("cursor.raw", new FinPanple2(0, 7), null, null, RES_IMG + "Cursor.png");
-            cursorImg = new AdjustedPanmage("cursor", cursorRaw, 0.75f, 1.0f, 1.0f);
+            cursorImg = newBright("Cursor", new FinPanple2(0, 7));
         }
+        if (isTouchScreen()) {
+            final int white = PixelTool.getRgba(Pancolor.WHITE);
+            final int grey = PixelTool.getRgba(Pancolor.GREY);
+            final int darkGrey = PixelTool.getRgba(Pancolor.DARK_GREY);
+            final int black = PixelTool.getRgba(64, 64, 64, Pancolor.MAX_VALUE);
+            final PixelFilter clearFilter = new ReplacePixelFilter(Pancolor.GREY, Pancolor.CLEAR);
+            final ButtonImages rawRightImages = newRightImages(white, grey, darkGrey, black, clearFilter, DIM_BUTTON);
+            rightImages = newBrightImages(rawRightImages, false);
+            leftImages = newBrightImages(rawRightImages, true);
+        }
+    }
+    
+    private final static Panmage newBright(final String name, final Panple o) {
+        final Panmage raw = Pangine.getEngine().createImage(name, o, null, null, RES_IMG + name + ".png");
+        return newBright(raw, false);
+    }
+    
+    private final static Panmage newBright(final Panmage raw, final boolean mirror) {
+        return new AdjustedPanmage(Pantil.vmid(), raw, 0, mirror, false, 0.75f, 1.0f, 1.0f);
+    }
+    
+    private final static ButtonImages newBrightImages(final ButtonImages raw, final boolean mirror) {
+        return new ButtonImages(newBright(raw.full, mirror), newBright(raw.base, mirror), newBright(raw.pressed, mirror));
     }
     
     private final static void loadAudio() {
@@ -239,17 +282,21 @@ public class BlockGame extends BaseGame {
         return Pangine.getEngine().isMouseSupported();
     }
     
-    private final static Cursor addCursor() {
+    private final static Cursor addCursor(final Panctor... actorsToHide) {
         if (!isCursorNeeded()) {
             return null;
         }
-        cursor = Cursor.addCursorIfNeeded(room, cursorImg).setHiddenWhenUnused(true);
+        cursor = Cursor.addCursorIfNeeded(room, cursorImg).setHiddenWhenUnused(actorsToHide);
         cursor.getPosition().setZ(Z_CURSOR);
         return cursor;
     }
     
     private final static void hideCursor() {
         Cursor.hide(cursor);
+    }
+    
+    private final static boolean isTouchScreen() {
+        return true; //TODO
     }
     
     protected final static boolean isKeyboardRegistered() {
@@ -295,13 +342,45 @@ public class BlockGame extends BaseGame {
         }
     }
     
+    protected final static void registerBack(final Panctor actor, final ActionEndListener listener) {
+        actor.register(Pangine.getEngine().getInteraction().BACK, listener);
+    }
+    
+    protected final static Panctor newHudActor(final Panmage image, final int x, final int y) {
+        final Panctor actor = new Panctor();
+        actor.setView(image);
+        actor.getPosition().set(x, y, Z_HUD);
+        room.addActor(actor);
+        return actor;
+    }
+    
+    protected final static TouchButton newTouchButton(final Panctor actor) {
+        return newTouchButton(actor, null);
+    }
+    
+    protected final static TouchButton newTouchButton(final Panctor actor, final ActionEndListener listener) {
+        final Panple pos = actor.getPosition();
+        final Panple size = ((Panmage) actor.getView()).getSize();
+        return newTouchButton(actor, Math.round(pos.getX()), Math.round(pos.getY()), Math.round(size.getX()), Math.round(size.getY()), listener);
+    }
+    
+    private static boolean touchButtonPadding = true;
+    
     protected final static TouchButton newTouchButton(final Panctor actor, final int x, final int y, final int w, final int h, final ActionEndListener listener) {
         final TouchButton button;
         final Pangine engine = Pangine.getEngine();
         final Panteraction in = engine.getInteraction();
-        button = new TouchButton(in, Pantil.vmid(), x - 2, y - 2, w + 4, h + 4, true);
+        final int minPad, maxPad;
+        if (touchButtonPadding) {
+            minPad = 2; maxPad = 4;
+        } else {
+            minPad = 0; maxPad = 0;
+        }
+        button = new TouchButton(in, Pantil.vmid(), x - minPad, y - minPad, w + maxPad, h + maxPad, false);
         engine.registerTouchButton(button);
-        actor.register(button, listener);
+        if (listener != null) {
+            actor.register(button, listener);
+        }
         return button;
     }
     
@@ -372,6 +451,10 @@ public class BlockGame extends BaseGame {
             room.addBeneath(bg);
             room.setClearDepthEnabled(false);
             registerGlobal();
+            final Pantext clock = Pantext.newClock(font);
+            clock.getPosition().setZ(Z_SCREEN_SAVER_SUBJECT);
+            clock.setTitle(TITLE);
+            new ScreenSaver(clock, black, Z_SCREEN_SAVER_BG).register();
             loadBlock();
         }
         
@@ -410,6 +493,11 @@ public class BlockGame extends BaseGame {
         protected final void loadBlock() {
             grid = new Grid();
             players.clear();
+            final ControlScheme ctrlTouch = addTouchButtons();
+            if (ctrlTouch != null) {
+                controlSchemes.clear();
+                controlSchemes.add(ctrlTouch);
+            }
             final int numPlayers = getNumPlayers();
             for (final ControlScheme ctrl : controlSchemes) {
                 final int startX;
@@ -420,8 +508,35 @@ public class BlockGame extends BaseGame {
                 }
                 new Player(startX).register(ctrl);
             }
-            addCursor(); // Can be used to click pause button and click options on pause menu
+            final Panctor pauseActor = newHudActor(pause, GAME_W - 17, GAME_H - 17);
+            newTouchButton(pauseActor, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    grid.togglePause(0);
+                }});
+            addCursor(pauseActor); // Can be used to click pause button and click options on pause menu
             music.startMusic();
+        }
+        
+        private final ControlScheme addTouchButtons() {
+            if (!isTouchScreen()) {
+                return null;
+            }
+            final int right = GAME_W - DIM_BUTTON;
+            buttonLeft = newHudActor(leftImages.full, 0, 0);
+            buttonRight = newHudActor(rightImages.full, right, 0);
+            buttonClockwise = newHudActor(rightImages.full, right, DIM_BUTTON);
+            buttonCounterclockwise = newHudActor(leftImages.full, 0, DIM_BUTTON);
+            touchButtonPadding = false;
+            final ControlScheme ctrl = new ControlScheme(
+                    newTouchButton(buttonLeft, X, 0, GAME_W - (X * 2), DIM_BUTTON, null),
+                    null,
+                    touchButtonLeft = newTouchButton(buttonLeft),
+                    touchButtonRight = newTouchButton(buttonRight),
+                    touchButtonClockwise = newTouchButton(buttonClockwise),
+                    touchButtonCounterclockwise = newTouchButton(buttonCounterclockwise),
+                    null, null);
+            touchButtonPadding = true;
+            return ctrl;
         }
         
         @Override
@@ -661,6 +776,10 @@ public class BlockGame extends BaseGame {
                 @Override protected final void onAction() {
                     Pangine.getEngine().exit();
                 }});
+            registerBack(cursor, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    Pangine.getEngine().exit();
+                }});
         }
         
         protected final void addOption(final String msg, final boolean needed, final Option option) {
@@ -765,6 +884,7 @@ public class BlockGame extends BaseGame {
                 fxRotate.startSound();
             }
             
+            @Override
             protected final void init() {
                 valueSequence = new StringBuilder();
                 setValueSequence();
@@ -979,6 +1099,10 @@ public class BlockGame extends BaseGame {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     togglePause(0);
                 }});
+            registerBack(this, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    pauseIfNeeded(0);
+                }});
         }
         
         protected final void initEnemies() {
@@ -1070,7 +1194,7 @@ public class BlockGame extends BaseGame {
                 return;
             }
             ENEMY_BEHAVIOR.ix = Pangine.getEngine().isOn(15) ? 8.0f : 16.0f;
-            if (enemyCount <= 0) {
+            if (isVictory()) {
                 onVictory();
                 return;
             }
@@ -1249,6 +1373,12 @@ public class BlockGame extends BaseGame {
             return (matchVertical(index, false) >= matchThreshold) || (matchHorizontal(index, false) >= matchThreshold);
         }
         
+        protected final void pauseIfNeeded(final int playerIndex) {
+            if (!paused) {
+                togglePause(playerIndex);
+            }
+        }
+        
         protected final void togglePause(final int playerIndex) {
             if (paused) {
                 if (pauser == playerIndex) {
@@ -1263,6 +1393,8 @@ public class BlockGame extends BaseGame {
                 Pangine.getEngine().getAudio().pauseMusic();
                 pauser = playerIndex;
                 new PauseMenu(playerIndex);
+                //setButtonsVisible(false);
+                detachButtons();
             } else {
                 hideCursor();
                 try {
@@ -1270,7 +1402,37 @@ public class BlockGame extends BaseGame {
                 } catch (final Exception e) {
                     throw Panception.get(e);
                 }
+                reatttachButtons();
             }
+        }
+        
+        private final void detachButtons() {
+            if (buttonLeft == null) {
+                return;
+            }
+            buttonLeft.detach();
+            buttonRight.detach();
+            buttonClockwise.detach();
+            buttonCounterclockwise.detach();
+            touchButtonLeft.detach();
+            touchButtonRight.detach();
+            touchButtonClockwise.detach();
+            touchButtonCounterclockwise.detach();
+        }
+        
+        private final void reatttachButtons() {
+            if (buttonLeft == null) {
+                return;
+            }
+            room.addActor(buttonLeft);
+            room.addActor(buttonRight);
+            room.addActor(buttonClockwise);
+            room.addActor(buttonCounterclockwise);
+            buttonCounterclockwise.detach();
+            touchButtonLeft.reattach();
+            touchButtonRight.reattach();
+            touchButtonClockwise.reattach();
+            touchButtonCounterclockwise.reattach();
         }
         
         protected final boolean isFree() {
@@ -1317,6 +1479,26 @@ public class BlockGame extends BaseGame {
                 }
             }
             return true;
+        }
+        
+        private final int countEnemies() {
+            int n = 0;
+            for (int i = 0; i < GRID_SIZE; i++) {
+                final CellType cellType = cells[i];
+                if ((cellType != null) && (cellType.behavior.b == TILE_ENEMY)) {
+                    n++;
+                }
+            }
+            return n;
+        }
+        
+        private final boolean isVictory() {
+            if (enemyCount > 0) {
+                return false;
+            }
+            // Had a bug where enemyCount could reach 0 when there were still enemies; do a sanity check
+            enemyCount = countEnemies();
+            return enemyCount <= 0;
         }
         
         protected final void onVictory() {
@@ -1408,6 +1590,8 @@ public class BlockGame extends BaseGame {
         private int nextDir = 0;
         private int nextRot = 0;
         private int moveTimer = 0;
+        private boolean receivedAnyInput = false;
+        private ControlScheme ctrl = null;
         
         protected Player(final int startX) {
             playerIndex = players.size();
@@ -1419,6 +1603,7 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void register(final ControlScheme scheme) {
+            ctrl = scheme;
             register(scheme.get1(), new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) { onClockwise(); }});
             register(scheme.get2(), new ActionStartListener() {
@@ -1581,6 +1766,18 @@ public class BlockGame extends BaseGame {
         }
         
         private final void stepControl() {
+            if (buttonLeft != null) {
+                final Panmage leftImage = receivedAnyInput ? leftImages.base : leftImages.full;
+                final Panmage rightImage = receivedAnyInput ? rightImages.base : rightImages.full;
+                buttonLeft.setView(leftImage);
+                buttonRight.setView(rightImage);
+                buttonClockwise.setView(rightImage);
+                buttonCounterclockwise.setView(leftImage);
+                checkInput(ctrl.getLeft(), buttonLeft, leftImages.pressed);
+                checkInput(ctrl.getRight(), buttonRight, rightImages.pressed);
+                checkInput(ctrl.get1(), buttonClockwise, rightImages.pressed);
+                checkInput(ctrl.get2(), buttonCounterclockwise, leftImages.pressed);
+            }
             if (nextDir < 0) {
                 left();
             } else if (nextDir > 0) {
@@ -1592,6 +1789,14 @@ public class BlockGame extends BaseGame {
                 counterclockwise();
             }
             clearNextMove();
+        }
+        
+        private final void checkInput(final Panput input, final Panctor actor, final Panmage image) {
+            if (!input.isActive()) {
+                return;
+            }
+            actor.setView(image);
+            receivedAnyInput = true;
         }
         
         private final void stepDrop() {
@@ -1722,9 +1927,9 @@ public class BlockGame extends BaseGame {
             getPosition().set(x, DIM, Z_GRID);
             final float xText = x + OFF_TEXT;
             texts.add(BackgroundScreen.addText(getTitle(), xText, 96));
-            addOption(get0(), 80, new ActionEndListener() {
+            addOption(get0(), 80, false, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { on0(); }});
-            addOption(get1(), 64, new ActionEndListener() {
+            addOption(get1(), 64, true, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) { on1(); }});
             cursor = BackgroundScreen.addText(getCursorCharacter(), x + 4, -DIM); // Next line will set y
             setCursorPosition();
@@ -1734,10 +1939,13 @@ public class BlockGame extends BaseGame {
             grid.pauseMenu = this;
         }
         
-        private final void addOption(final CharSequence msg, final int y, final ActionEndListener listener) {
+        private final void addOption(final CharSequence msg, final int y, final boolean back, final ActionEndListener listener) {
             final float x = getPosition().getX();
             texts.add(BackgroundScreen.addText(msg, x + OFF_TEXT, y));
             buttons.add(newTouchButton(this, Math.round(x), y, PAUSE_MENU_W, DIM_TEXT, listener));
+            if (back) {
+                registerBack(this, listener);
+            }
         }
         
         protected final void register(final ControlScheme scheme) {
