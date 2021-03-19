@@ -25,6 +25,9 @@ package org.pandcorps.core;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
+import java.util.zip.*;
+
+import org.pandcorps.pandam.*;
 
 // Input/Output Utility
 public final class Iotil {
@@ -32,6 +35,9 @@ public final class Iotil {
 	
 	private final static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	private final static int BUFFER_SIZE = 1024;
+	private final static String CURRENT_DIR = ".";
+	
+	private static OutputStreamFactory outputStreamFactory = new FileOutputStreamFactory();
 	
 	private static WriterFactory writerFactory = new FileWriterFactory();
 	
@@ -42,6 +48,12 @@ public final class Iotil {
 	private static ResourceDeleter resourceDeleter = new FileResourceDeleter();
 	
 	private static ResourceLister resourceLister = new FileResourceLister();
+	
+	private static FileGetter fileGetter = new FileFileGetter();
+	
+	private static DirectoryGetter directoryGetter = new FileDirectoryGetter();
+	
+	private static DirectoryMaker directoryMaker = new FileDirectoryMaker();
 	
 	private Iotil() {
 		throw new Error();
@@ -184,6 +196,64 @@ public final class Iotil {
 		return resourceLister.list();
 	}
 	
+	public final static String listTree() {
+	    return listTree(CURRENT_DIR);
+	}
+	
+	public final static String listTree(final String loc) {
+	    return listTree(loc, false);
+	}
+	
+	public final static String listTree(final String loc, final boolean indent) {
+	    final File dir = getDir(loc);
+	    final StringBuilder b = new StringBuilder();
+	    listTree(dir, b, indent ? 0 : -100000);
+	    return b.toString();
+	}
+	
+	private final static void listTree(final File dir, final StringBuilder b, final int indent) {
+	    for (final File child : dir.listFiles()) {
+	        if (indent < 0) {
+	            b.append(child.getAbsolutePath());
+	        } else {
+	            for (int i = 0; i < indent; i++) {
+                    b.append(' ');
+                }
+                b.append(child.getName());
+	        }
+	        b.append('\n');
+	        if (child.isDirectory()) {
+	            listTree(child, b, indent + 1);
+	        }
+	    }
+	}
+	
+	public final static File getFile(final String location) {
+        return fileGetter.getFile(location);
+    }
+	
+	public final static File getDir() {
+	    return getDir(CURRENT_DIR);
+	}
+	
+	public final static File getDir(final String location) {
+        return directoryGetter.getDir(location);
+    }
+	
+	public final static boolean mkdirs(final String location) {
+	    if (CURRENT_DIR.equals(location)) {
+	        return false;
+	    }
+        return directoryMaker.mkdirs(location);
+    }
+	
+	private final static void mkdirsForFile(final String location) {
+	    final int index = location.lastIndexOf(File.separatorChar);
+	    if (index > 0) {
+	        mkdirs(location.substring(0, index));
+	    }
+	}
+	
 	public final static boolean isFileContentIdentical(final String location1, final String location2) {
 	    InputStream in1 = null, in2 = null;
 	    try {
@@ -215,7 +285,17 @@ public final class Iotil {
 		return new InputStreamReader(getInputStream(location), Charset.forName("ISO-8859-1"));
 	}
 	
+	public final static OutputStream getOutputStream(final String location) {
+	    mkdirsForFile(location);
+        try {
+            return outputStreamFactory.newOutputStream(location);
+        } catch (final Exception e) {
+            throw Pantil.toRuntimeException(e);
+        }
+    }
+	
 	public final static Writer getWriter(final String location) {
+	    mkdirsForFile(location);
 		try {
 			return writerFactory.newWriter(location);
 		} catch (final Exception e) {
@@ -309,16 +389,21 @@ public final class Iotil {
 	    }
 	}
 	
-	public final static void copy(final InputStream in, final OutputStream out) throws IOException {
-		final int size = BUFFER_SIZE;
-		final byte[] buf = new byte[size];
+	public final static long copy(final InputStream in, final OutputStream out) throws IOException {
+		return copy(in, out, new byte[BUFFER_SIZE]);
+	}
+	
+	public final static long copy(final InputStream in, final OutputStream out, final byte[] buf) throws IOException {
+	    long size = 0;
 		while (true) {
 			final int len = in.read(buf);
 			if (len < 0) {
 				break;
 			}
+			size += len;
 			out.write(buf, 0, len);
 		}
+		return size;
 	}
 	
 	public final static void println(final Writer w) {
@@ -344,6 +429,82 @@ public final class Iotil {
 	    return loc + File.separatorChar;
 	}
 	
+	public final static void unzip(final InputStream in, final String loc, final StringBuilder log) {
+	    final byte[] buf = new byte[BUFFER_SIZE];
+	    final ZipInputStream zip = new ZipInputStream(in);
+	    final String dir = formatDirectory(loc);
+        try {
+            ZipEntry entry = null;
+            while ((entry = zip.getNextEntry()) != null) {
+                unzipEntry(zip, dir + entry.getName(), buf, log);
+                zip.closeEntry();
+            }
+        } catch (final IOException e) {
+            throw new Panception(e);
+        }
+	}
+	
+	private final static void unzipEntry(final ZipInputStream zip, String loc, final byte[] buf, final StringBuilder log) throws IOException {
+	    OutputStream out = null;
+	    try {
+	        if (File.separatorChar != '\\') { // Zip can entries use \ as separator (maybe not standard, but seems to be possible)
+	            loc = loc.replace('\\', File.separatorChar);
+	        }
+	        final File file = getFile(loc);
+	        final boolean existed = file.exists();
+	        out = new FileOutputStream(file);
+	        final long size = copy(zip, out, buf);
+	        if (log != null) {
+	            if (log.length() > 0) {
+	                log.append('\n');
+	            }
+	            log.append(file.getAbsolutePath()).append(' ').append(size).append(existed ? " updated" : " created");
+	        }
+	    } finally {
+	        close(out);
+	    }
+	}
+	
+	public final static void zipDir(final String loc, final OutputStream out, final String zipEntryBase) {
+	    try {
+    	    final File dir = getDir(loc);
+    	    final ZipOutputStream zip = new ZipOutputStream(out);
+    	    final byte[] buf = new byte[BUFFER_SIZE];
+    	    zipDir(dir, zip, zipEntryBase, buf);
+    	    zip.close();
+	    } catch (final IOException e) {
+            throw new Panception(e);
+        }
+	}
+	
+	private final static void zipDir(final File dir, final ZipOutputStream zip, final String zipEntryBase, final byte[] buf) throws IOException {
+	    for (final File child : dir.listFiles()) {
+	        final String childName = zipEntryBase + '/' + child.getName(); // '/' is the zip separator; don't use the system's separator
+	        if (child.isDirectory()) {
+	            zipDir(child, zip, childName, buf);
+	        } else {
+	            zipFile(child, zip, childName, buf);
+	        }
+	    }
+	}
+	
+	private final static void zipFile(final File file, final ZipOutputStream zip, final String zipEntryName, final byte[] buf) throws IOException {
+	    final ZipEntry entry = new ZipEntry(zipEntryName);
+	    zip.putNextEntry(entry);
+	    InputStream in = null;
+	    try {
+	        in = new FileInputStream(file);
+	        copy(in, zip, buf);
+	    } finally {
+	        close(in);
+	    }
+	    zip.closeEntry();
+	}
+	
+	public final static void setOutputStreamFactory(final OutputStreamFactory outputStreamFactory) {
+        Iotil.outputStreamFactory = outputStreamFactory;
+    }
+	
 	public final static void setWriterFactory(final WriterFactory writerFactory) {
 		Iotil.writerFactory = writerFactory;
 	}
@@ -363,6 +524,22 @@ public final class Iotil {
 	public final static void setResourceLister(final ResourceLister resourceLister) {
 		Iotil.resourceLister = resourceLister;
 	}
+	
+	public final static void setFileGetter(final FileGetter fileGetter) {
+        Iotil.fileGetter = fileGetter;
+    }
+	
+	public final static void setDirectoryGetter(final DirectoryGetter directoryGetter) {
+        Iotil.directoryGetter = directoryGetter;
+    }
+	
+	public final static void setDirectoryMaker(final DirectoryMaker directoryMaker) {
+        Iotil.directoryMaker = directoryMaker;
+    }
+	
+	public static interface OutputStreamFactory {
+        public OutputStream newOutputStream(final String location) throws Exception;
+    }
 	
 	public static interface WriterFactory {
 		public Writer newWriter(final String location) throws Exception;
@@ -384,9 +561,27 @@ public final class Iotil {
 		public String[] list();
 	}
 	
+	public static interface FileGetter {
+        public File getFile(final String location);
+    }
+	
+	public static interface DirectoryGetter {
+        public File getDir(final String location);
+    }
+	
+	public static interface DirectoryMaker {
+        public boolean mkdirs(final String location);
+    }
+	
+	private final static class FileOutputStreamFactory implements OutputStreamFactory {
+        @Override
+        public final OutputStream newOutputStream(final String location) throws Exception {
+            return new FileOutputStream(FileWriterFactory.getFileForWrite(location));
+        }
+    }
+	
 	private final static class FileWriterFactory implements WriterFactory {
-		@Override
-		public final Writer newWriter(final String location) throws Exception {
+	    private final static File getFileForWrite(final String location) throws Exception {
 			final File f = new File(location);
 			if (!f.exists()) {
 				f.createNewFile();
@@ -394,7 +589,12 @@ public final class Iotil {
 			if (!f.canWrite()) {
 				f.setWritable(true);
 			}
-			return new FileWriter(f);
+			return f;
+	    }
+	    
+	    @Override
+        public final Writer newWriter(final String location) throws Exception {
+			return new FileWriter(getFileForWrite(location));
 		}
 	}
 	
@@ -430,9 +630,31 @@ public final class Iotil {
 	private final static class FileResourceLister implements ResourceLister {
 		@Override
 		public final String[] list() {
-			return new File(".").list();
+			return new File(CURRENT_DIR).list();
 		}
 	}
+	
+	private final static class FileFileGetter implements FileGetter {
+        @Override
+        public final File getFile(final String location) {
+            return new File(location);
+        }
+    }
+	
+	private final static class FileDirectoryGetter implements DirectoryGetter {
+        @Override
+        public final File getDir(final String location) {
+            mkdirs(location);
+            return new File(location);
+        }
+    }
+	
+	private final static class FileDirectoryMaker implements DirectoryMaker {
+        @Override
+        public final boolean mkdirs(final String location) {
+            return new File(location).mkdirs();
+        }
+    }
 	
 	/*public final static void main(final String[] args) {
 	    try {
