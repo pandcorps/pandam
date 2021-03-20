@@ -40,9 +40,13 @@ import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 
 public class BlockGame extends BaseGame {
-    protected final static String TITLE1 = "Moon Stones";
+    protected final static String TITLE1A = "Moon";
+    protected final static String TITLE1B = "Stones";
+    protected final static String TITLE1 = TITLE1A + " " + TITLE1B;
     protected final static String TITLE2 = "and";
-    protected final static String TITLE3 = "Luna Wisps";
+    protected final static String TITLE3A = "Luna";
+    protected final static String TITLE3B = "Wisps";
+    protected final static String TITLE3 = TITLE3A + " " + TITLE3B;
     protected final static String TITLE = TITLE1 + " " + TITLE2 + " " + TITLE3;
     protected final static String VERSION = "0.0.1";
     protected final static String YEAR = "2021";
@@ -61,8 +65,10 @@ public class BlockGame extends BaseGame {
     protected final static int GAME_HALF = GAME_W / 2;
     protected final static int GRID_W = 16;
     protected final static int GRID_H = 16;
+    protected final static int GRID_H_FULL = GRID_H + 4;
     protected final static int GRID_AND_NEXT_H = GRID_H + 2;
     protected final static int GRID_SIZE = GRID_W * GRID_H;
+    protected final static int GRID_SIZE_FULL = GRID_W * GRID_H_FULL;
     protected final static int GRID_HALF = GRID_W / 2;
     
     protected final static int X = (GAME_W - (GRID_W * DIM)) / 2;
@@ -76,6 +82,7 @@ public class BlockGame extends BaseGame {
     protected final static int Z_FALLING_2 = 6;
     protected final static int Z_BURST = 8;
     protected final static int Z_PUFF = 10;
+    protected final static int Z_TEXT = Z_PUFF;
     protected final static int Z_HUD = 12;
     protected final static int Z_CURSOR = 14;
     protected final static int Z_SCREEN_SAVER_BG = 16;
@@ -100,6 +107,10 @@ public class BlockGame extends BaseGame {
     protected final static int ROT_NORTH = 3;
     protected final static int ROT_MIN = 0;
     protected final static int ROT_MAX = 3;
+    
+    protected final static int FALL_NORMAL = 0;
+    protected final static int FALL_WAIT_FOR_DROP = 1;
+    protected final static int FALL_FINISH = 2;
     
     protected final static int NUM_COLORS = 3;
     
@@ -296,7 +307,8 @@ public class BlockGame extends BaseGame {
     }
     
     private final static boolean isTouchScreen() {
-        return true; //TODO
+        final Pangine engine = Pangine.getEngine();
+        return engine.isTouchSupported() && !engine.isMouseSupported();
     }
     
     protected final static boolean isKeyboardRegistered() {
@@ -451,10 +463,11 @@ public class BlockGame extends BaseGame {
             room.addBeneath(bg);
             room.setClearDepthEnabled(false);
             registerGlobal();
-            final Pantext clock = Pantext.newClock(font);
-            clock.getPosition().setZ(Z_SCREEN_SAVER_SUBJECT);
-            clock.setTitle(TITLE);
-            new ScreenSaver(clock, black, Z_SCREEN_SAVER_BG).register();
+            new ScreenSaver(black, Z_SCREEN_SAVER_BG)
+                .addMover(Pantext.newClock(font), 32, 32, Z_SCREEN_SAVER_SUBJECT, 2, 2)
+                .addMover(newText(TITLE1), GAME_W - 32, 64, Z_SCREEN_SAVER_SUBJECT, -3, 1)
+                .addMover(newText(TITLE3), GAME_HALF - 32, GAME_H - 32, Z_SCREEN_SAVER_SUBJECT, 1, -3)
+                .register();
             loadBlock();
         }
         
@@ -478,13 +491,17 @@ public class BlockGame extends BaseGame {
         }
         
         protected final static Pantext addText(final CharSequence msg, final float x, final float y, final boolean center) {
-            final Pantext text = new Pantext(Pantil.vmid(), font, msg);
-            text.getPosition().set(x, y, Z_PUFF);
+            final Pantext text = newText(msg);
+            text.getPosition().set(x, y, Z_TEXT);
             if (center) {
                 text.centerX();
             }
             room.addActor(text);
             return text;
+        }
+        
+        protected final static Pantext newText(final CharSequence msg) {
+            return new Pantext(Pantil.vmid(), font, msg);
         }
     }
     
@@ -549,12 +566,25 @@ public class BlockGame extends BaseGame {
         @Override
         protected final void loadBlock() {
             int y = GAME_H - 32;
-            addText(TITLE, GAME_HALF, y, true);
+            addText(TITLE1A, 104, y, true);
+            addText(TITLE3A, 184, y, true);
+            y -= 8;
+            addText(TITLE1B, 104, y, true);
+            addText(TITLE2, GAME_HALF, y + 4, true);
+            addText(TITLE3B, 184, y, true);
             y -= 8;
             addText(COPYRIGHT_SHORT, GAME_HALF, y, true);
             y -= 8;
             addText(AUTHOR, GAME_HALF, y, true);
+            addClock(168, DIM);
             loadExtra();
+        }
+        
+        protected final static Pantext addClock(final float x, final float y) {
+            final Pantext clock = Pantext.newClock(font);
+            clock.getPosition().set(x, y, Z_TEXT);
+            room.addActor(clock);
+            return clock;
         }
         
         protected abstract void loadExtra();
@@ -642,7 +672,7 @@ public class BlockGame extends BaseGame {
         private final static String[] INPUT_NAMES = { "Up", "Down", "Left", "Right", "Clockwise", "Counterclockwise", "Start" };
         private final int playerIndex;
         private final List<Panput> inputs = new ArrayList<Panput>();
-        private int y = 100;
+        private int y = 92;
         
         protected MapInputScreen(final int playerIndex) {
             this.playerIndex = playerIndex;
@@ -712,7 +742,7 @@ public class BlockGame extends BaseGame {
         }
         
         protected int getTopY() {
-            return 96;
+            return 88;
         }
         
         protected void loadMenu() {
@@ -1066,7 +1096,7 @@ public class BlockGame extends BaseGame {
     }
     
     protected final static class Grid extends Panctor implements StepListener {
-        protected final CellType[] cells = new CellType[GRID_SIZE];
+        protected final CellType[] cells = new CellType[GRID_SIZE_FULL];
         private Set<Integer> indicesToDrop = new TreeSet<Integer>();
         private Set<Integer> indicesToDropBack = new TreeSet<Integer>();
         private Set<Integer> indicesDropped = new HashSet<Integer>();
@@ -1219,7 +1249,7 @@ public class BlockGame extends BaseGame {
             indicesDropped.clear();
             for (final Integer key : indicesToDrop) {
                 final int baseIndex = key.intValue();
-                if (baseIndex >= GRID_SIZE) {
+                if (baseIndex >= GRID_SIZE_FULL) {
                     continue;
                 }
                 int index = baseIndex;
@@ -1231,7 +1261,7 @@ public class BlockGame extends BaseGame {
                 } else if (indicesDropped.contains(key)) {
                     continue;
                 }
-                while (index < GRID_SIZE) {
+                while (index < GRID_SIZE_FULL) {
                     final CellType cellType = cells[index];
                     if ((cellType == null) || (cellType.behavior.b != TILE_STONE)) {
                         break;
@@ -1253,7 +1283,7 @@ public class BlockGame extends BaseGame {
         
         private final void queueColumnForMatching(int index) {
             while (true) {
-                if (index >= GRID_SIZE) {
+                if (index >= GRID_SIZE_FULL) {
                     break;
                 }
                 final CellType cellType = cells[index];
@@ -1291,7 +1321,7 @@ public class BlockGame extends BaseGame {
                 }
                 cells[index] = null;
                 final int indexAbove = index + GRID_W;
-                if (indexAbove < GRID_SIZE) {
+                if (indexAbove < GRID_SIZE_FULL) {
                     final CellType cellAbove = cells[indexAbove];
                     if (cellAbove != null && cellAbove.behavior.b == TILE_STONE) {
                         indicesToDrop.add(Integer.valueOf(indexAbove));
@@ -1299,6 +1329,11 @@ public class BlockGame extends BaseGame {
                 }
                 burst(index, cellType);
                 fxMatch.startSound();
+            }
+            for (int index = GRID_SIZE; index < GRID_SIZE_FULL; index++) {
+                if (cells[index] != null) {
+                    onDefeated();
+                }
             }
             indicesToClear.clear();
         }
@@ -1319,7 +1354,7 @@ public class BlockGame extends BaseGame {
             current = index;
             while (true) {
                 current += GRID_W;
-                if (current >= GRID_SIZE) {
+                if (current >= GRID_SIZE_FULL) {
                     break;
                 } else if (matchCell(baseType, current, clear)) {
                     size++;
@@ -1393,7 +1428,6 @@ public class BlockGame extends BaseGame {
                 Pangine.getEngine().getAudio().pauseMusic();
                 pauser = playerIndex;
                 new PauseMenu(playerIndex);
-                //setButtonsVisible(false);
                 detachButtons();
             } else {
                 hideCursor();
@@ -1474,11 +1508,22 @@ public class BlockGame extends BaseGame {
         protected final boolean placeStone(final int x, int y, final CellType type) {
             while (setCell(x, y, type) != null) {
                 y++;
-                if (y >= GRID_H) {
+                if (y >= GRID_H_FULL) { // Sanity check, shouldn't be possible
                     return false;
                 }
             }
             return true;
+        }
+        
+        protected final boolean isDangerous() {
+            final int rowStart = GRID_SIZE - (GRID_W * 4);
+            final int rowEnd = rowStart + GRID_W;
+            for (int i = rowStart; i < rowEnd; i++) {
+                if (cells[i] != null) {
+                    return true;
+                }
+            }
+            return false;
         }
         
         private final int countEnemies() {
@@ -1521,7 +1566,7 @@ public class BlockGame extends BaseGame {
         @Override
         protected final void renderView(final Panderer renderer) {
             int x = 0, y = 0;
-            for (int i = 0; i < GRID_SIZE; i++) {
+            for (int i = 0; i < GRID_SIZE_FULL; i++) {
                 final CellType type = cells[i];
                 if (type != null) {
                     render(renderer, x, y, Z_GRID, type);
@@ -1769,14 +1814,10 @@ public class BlockGame extends BaseGame {
             if (buttonLeft != null) {
                 final Panmage leftImage = receivedAnyInput ? leftImages.base : leftImages.full;
                 final Panmage rightImage = receivedAnyInput ? rightImages.base : rightImages.full;
-                buttonLeft.setView(leftImage);
-                buttonRight.setView(rightImage);
-                buttonClockwise.setView(rightImage);
-                buttonCounterclockwise.setView(leftImage);
-                checkInput(ctrl.getLeft(), buttonLeft, leftImages.pressed);
-                checkInput(ctrl.getRight(), buttonRight, rightImages.pressed);
-                checkInput(ctrl.get1(), buttonClockwise, rightImages.pressed);
-                checkInput(ctrl.get2(), buttonCounterclockwise, leftImages.pressed);
+                checkInput(ctrl.getLeft(), buttonLeft, leftImage, leftImages.pressed);
+                checkInput(ctrl.getRight(), buttonRight, rightImage, rightImages.pressed);
+                checkInput(ctrl.get1(), buttonClockwise, rightImage, rightImages.pressed);
+                checkInput(ctrl.get2(), buttonCounterclockwise, leftImage, leftImages.pressed);
             }
             if (nextDir < 0) {
                 left();
@@ -1791,11 +1832,12 @@ public class BlockGame extends BaseGame {
             clearNextMove();
         }
         
-        private final void checkInput(final Panput input, final Panctor actor, final Panmage image) {
+        private final void checkInput(final Panput input, final Panctor actor, final Panmage base, final Panmage pressed) {
             if (!input.isActive()) {
+                actor.setView(base);
                 return;
             }
-            actor.setView(image);
+            actor.setView(pressed);
             receivedAnyInput = true;
         }
         
@@ -1808,25 +1850,37 @@ public class BlockGame extends BaseGame {
         }
         
         protected final void decrementFallingStones() {
-            if (isFallFinished(stoneX, stoneY) || isFallFinished(getOtherStoneX(), getOtherStoneY())) {
+            final int fallStatus = Math.max(checkFallFinished(stoneX, stoneY), checkFallFinished(getOtherStoneX(), getOtherStoneY()));
+            if (fallStatus == FALL_WAIT_FOR_DROP) {
+                timer = 1;
+                return;
+            } else if (fallStatus == FALL_FINISH) {
                 finishFall();
                 return;
             }
             stoneY--;
         }
         
-        protected final boolean isFallFinished(final int x, final int y) {
-            return isOccupied(x, y) || isOccupied(x, y - 1);
+        protected final int checkFallFinished(final int x, final int y) {
+            return Math.max(checkFallFinishedCell(x, y), checkFallFinishedCell(x, y - 1));
+        }
+        
+        protected final int checkFallFinishedCell(final int x, final int y) {
+            if (!isOccupied(x, y)) {
+                return FALL_NORMAL;
+            } else if (grid.indicesToDrop.contains(Integer.valueOf(grid.getIndex(x, y)))) {
+                return FALL_WAIT_FOR_DROP;
+            } else {
+                return FALL_FINISH;
+            }
         }
         
         protected final void finishFall() {
-            if (stoneY >= GRID_H) {
-                grid.onDefeated();
+            if (stoneType == null) {
+                return;
             }
             final int otherY = getOtherStoneY();
-            if (otherY >= GRID_H) {
-                grid.onDefeated();
-            } else if (!(grid.placeStone(stoneX, stoneY, stoneType) && grid.placeStone(getOtherStoneX(), otherY, otherStoneType))) {
+            if (!(grid.placeStone(stoneX, stoneY, stoneType) && grid.placeStone(getOtherStoneX(), otherY, otherStoneType))) {
                 grid.onDefeated();
             }
             stoneType = null;
@@ -1861,7 +1915,7 @@ public class BlockGame extends BaseGame {
         }
         
         private final boolean isOtherStoneTooHigh() {
-            return (stoneRot == ROT_NORTH) && (stoneY >= GRID_H - 1) && (grid.enemyCount <= 72);
+            return (stoneRot == ROT_NORTH) && (stoneY >= GRID_H - 1) && ((grid.enemyCount + level) <= 96) && !grid.isDangerous();
         }
         
         protected final int getOtherStoneX() {
@@ -1913,6 +1967,7 @@ public class BlockGame extends BaseGame {
     }
     
     protected abstract static class BasePauseMenu extends Panctor {
+        private final static int PAUSE_MENU_Y = DIM;
         private final static int PAUSE_MENU_W = 64;
         private final static int OFF_TEXT = 12;
         protected final int playerIndex;
@@ -1923,8 +1978,8 @@ public class BlockGame extends BaseGame {
         
         protected BasePauseMenu(final int playerIndex) {
             this.playerIndex = playerIndex;
-            final float x = (playerIndex == 0) ? DIM : (GAME_W - 72);
-            getPosition().set(x, DIM, Z_GRID);
+            final float x = getX(playerIndex);
+            getPosition().set(x, PAUSE_MENU_Y, Z_GRID);
             final float xText = x + OFF_TEXT;
             texts.add(BackgroundScreen.addText(getTitle(), xText, 96));
             addOption(get0(), 80, false, new ActionEndListener() {
@@ -1934,9 +1989,16 @@ public class BlockGame extends BaseGame {
             cursor = BackgroundScreen.addText(getCursorCharacter(), x + 4, -DIM); // Next line will set y
             setCursorPosition();
             texts.add(cursor);
+            final Pantext clock = TitledScreen.addClock(x + (PAUSE_MENU_W / 2), 16);
+            clock.centerX();
+            texts.add(clock);
             register(controlSchemes.get(playerIndex));
             room.addActor(this);
             grid.pauseMenu = this;
+        }
+        
+        private final static float getX(final int playerIndex) {
+            return (playerIndex == 0) ? DIM : (GAME_W - 72);
         }
         
         private final void addOption(final CharSequence msg, final int y, final boolean back, final ActionEndListener listener) {
