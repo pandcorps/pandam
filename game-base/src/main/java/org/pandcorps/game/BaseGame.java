@@ -318,39 +318,49 @@ public abstract class BaseGame extends Pangame {
 	    Panlayer.iterateLayers(iteration);
 	    final List<Panlayer> layersToActivate = iteration.layersToActivate;
         final Panlayer top = iteration.top;
-	    final Mover mover = screenSaver.mover;
+	    final List<Mover> movers = screenSaver.movers;
 	    final Panlayer layer = engine.createLayer(Pantil.vmid(), engine.getEffectiveWidth(), engine.getEffectiveHeight(), room.getSize().getZ(), room);
 	    top.addAbove(layer);
 	    final ScreenSaverBackground bg = new ScreenSaverBackground(screenSaver);
         layer.addActor(bg);
-	    layer.addActor(mover);
-	    mover.unregisterListeners();
-	    mover.register(new ActionEndListener() {
+        for (final Mover mover : movers) {
+    	    layer.addActor(mover);
+    	    mover.unregisterListeners();
+        }
+	    movers.get(0).register(new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
                 for (final Panlayer layerToActivate : layersToActivate) {
                     layerToActivate.setActive(true);
                 }
-                mover.detach();
+                for (final Mover mover : movers) {
+                    mover.detach();
+                }
                 layer.destroy();
                 event.getInput().inactivate();
             }});
 	}
 	
 	public final static class ScreenSaver {
-	    private final Mover mover;
+	    private final List<Mover> movers = new ArrayList<Mover>();
 	    private final Panmage black;
 	    private final float z;
 	    
-	    public ScreenSaver(final Mover mover, final Panmage black, final float z) {
-	        this.mover = mover;
+	    public ScreenSaver(final Panmage black, final float z) {
 	        this.black = black;
 	        this.z = z;
 	    }
 	    
-	    public ScreenSaver(final Panctor moverSubject, final Panmage black, final float z) {
-	        this(new Mover(moverSubject), black, z);
-	        mover.getVelocity().set(1, 1);
+	    public ScreenSaver addMover(final Mover mover) {
+	        movers.add(mover);
+	        return this;
 	    }
+	    
+	    public ScreenSaver addMover(final Panctor subject, final float x, final float y, final float z, final float vx, final float vy) {
+	        final Mover mover = new Mover(subject);
+	        subject.getPosition().set(x, y, z);
+	        mover.getVelocity().set(vx, vy);
+            return addMover(mover);
+        }
 	    
 	    public final void start() {
 	        startScreenSaver(this);
@@ -367,8 +377,7 @@ public abstract class BaseGame extends Pangame {
 	}
 	
 	private final static class ScreenSaverStarter extends Panctor implements StepListener {
-	    //private final static int threshold = 30 * 60 * 5;
-	    private final static int threshold = 60;
+	    private final static int threshold = 30 * 60 * 5;
 	    private final ScreenSaver screenSaver;
 	    private long timer = 0;
 	    

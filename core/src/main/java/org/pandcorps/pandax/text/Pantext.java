@@ -667,7 +667,7 @@ public class Pantext extends Panctor {
 	    private final SimpleDateFormat format;
 	    
 	    public ClockSequence() {
-	        this("h:mm:ss a");
+	        this("hh:mm"); // hh:mm:ss a
 	    }
 	    
 	    public ClockSequence(final String pattern) {
