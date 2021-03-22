@@ -80,7 +80,7 @@ public class Profile extends PlayerData implements Segmented, Savable {
     private Avatar getAvatar(String name) {
     	for (int i = 0; i < 2; i++) {
 	    	for (final Avatar avatar : avatars) {
-	    		if (Pantil.equals(avatar.getName(), name)) {
+	    		if (Chartil.equalsIgnoreCase(avatar.getName(), name)) {
 	    			if (Chartil.isEmpty(name)) {
 	    				avatar.setName(Menu.getNewName(this));
 	    			}
@@ -112,6 +112,23 @@ public class Profile extends PlayerData implements Segmented, Savable {
     public void replaceAvatar(final Avatar avt) {
 		avatars.set(avatars.indexOf(currentAvatar), avt);
 		currentAvatar = avt;
+    }
+    
+    public final void installModChr(final String modChr) {
+        if (getAvatar(modChr) != null) {
+            return;
+        }
+        final Avatar avatar = new Avatar();
+        avatar.randomize(); // Initializes required values
+        avatar.mod = modChr;
+        avatar.setName(Chartil.isMixedCase(modChr) ? modChr : Chartil.toProperName(modChr));
+        avatars.add(avatar);
+    }
+    
+    public final void installModChrs() {
+        for (final String modChr : Iotil.getDir(FurGuardiansGame.MOD_CHR).list()) {
+            installModChr(modChr);
+        }
     }
     
     public void load(final Segment seg) {
