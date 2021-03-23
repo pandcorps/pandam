@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -109,10 +110,6 @@ public class FurGuardiansGame extends BaseGame {
 	DoubleOrb looks like an invincibility effect; maybe slow down spark frequency would look less like that
 	Creating a new profile should maybe check for a delete map file matching the new name
 	Level end doesn't clear blobs
-	
-	Remove System.out/err/printStackTrace/etc.
-	Screen shots.
-	Version #
 	*/
 	
 	protected final static byte TILE_BREAK = 2;
@@ -163,6 +160,10 @@ public class FurGuardiansGame extends BaseGame {
 	protected final static int MAX_NAME_AVATAR = 8;
 	
 	protected final static String RES = "org/pandcorps/furguardians/";
+	protected final static char SEP = File.separatorChar; // Needed for files in file system, not resources in jar
+	protected final static String MOD = "mod";
+	protected final static String CHR = "chr";
+	protected final static String MOD_CHR = MOD + SEP + CHR;
 	
 	protected final static String FILE_CFG = "Config.txt";
 	protected final static String EXT_PRF = ".prf.txt";
@@ -240,6 +241,8 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Notifications notifications = null;
 	private final static FinPanple2 ng = Character.getMin(Player.PLAYER_X);
 	private final static FinPanple2 xg = Character.getMax(Player.PLAYER_X, Player.PLAYER_H);
+	private final static FinPanple2 xDuck = Character.getMax(Player.PLAYER_X, Player.PLAYER_H_DUCK);
+	private final static FinPanple2 xSlide = Character.getMax(Player.PLAYER_X, Player.PLAYER_H_SLIDE);
 	protected final static FinPanple2 og = new FinPanple2(17, 1);
 	protected final static FinPanple2 oc = new FinPanple2(16, 1);
 	protected final static FinPanple2 ow = new FinPanple2(18, 1);
@@ -417,6 +420,7 @@ public class FurGuardiansGame extends BaseGame {
 	protected static Panmage greenDown = null;
 	protected static Panmage key = null;
 	protected static Panmage keyIn = null;
+	protected static Panmage editorCursor = null;
 	private final static HashMap<String, Panmage> menuMap = new HashMap<String, Panmage>();
 	protected static Pansound musicMenu = null;
 	protected static Pansound musicHappy = null;
@@ -474,6 +478,7 @@ public class FurGuardiansGame extends BaseGame {
 	    tips = initTips();
 	    engine.setTitle(TITLE);
 	    engine.setEntityMapEnabled(false);
+	    engine.enableColorArray();
 	    Imtil.onlyResources = true;
 		FurGuardiansGame.room = room;
 		initTileBehaviors();
@@ -1262,7 +1267,7 @@ public class FurGuardiansGame extends BaseGame {
 	private final static void reloadAnimalModImages(final PlayerContext pc, final String name) {
 	    final Pangine engine = Pangine.getEngine();
 	    currO = og; currMin = ng; currMax = xg;
-        currLoc = "mod/chr/" + name + "/"; currPre = "mod.chr." + name + "."; currPreImg = PRE_IMG + "." + currPre;
+        currLoc = MOD_CHR + SEP + name + SEP; currPre = "mod.chr." + name + "."; currPreImg = PRE_IMG + "." + currPre;
         final String preAnm = PRE_ANM + "." + currPre, preFrm = PRE_FRM + "." + currPre;
         Imtil.onlyResources = false;
         final List<Panmage> walks = loadImages("walk");
@@ -1301,8 +1306,10 @@ public class FurGuardiansGame extends BaseGame {
         pc.guyLadder1 = loadImage("ladder0", null);
         pc.guyLadder2 = loadImage("ladder1", null); //TODO mirror ladder0 if not available
         currO = og;
-	    pc.guyDuck = loadImage("duck", null); //TODO max
-        pc.guySlide = loadImage("slide", pc.guyDuck); //TODO max
+        currMax = xDuck;
+	    pc.guyDuck = loadImage("duck", null);
+	    currMax = xSlide;
+        pc.guySlide = loadImage("slide", pc.guyDuck);
 	    final Panmage prjDefault = projectile1.getImage();
 	    currO = prjDefault.getOrigin(); currMin = prjDefault.getBoundingMinimum(); currMax = prjDefault.getBoundingMaximum();
 	    final Panmage fireball = loadImage("fireball", prjDefault); //TODO recolor default projectile
@@ -1426,6 +1433,7 @@ public class FurGuardiansGame extends BaseGame {
         	profile.avatars.add(avatar);
         }
         plist.close();
+        profile.installModChrs();
         /*avatar.setName("Balue");
         avatar.anm = "Bear";
         avatar.eye = 1;
@@ -2031,6 +2039,7 @@ public class FurGuardiansGame extends BaseGame {
 			    final int keyW = TouchKeyboard.getMaxKeyWidth();
 			    key = engine.createImage(Pantil.vmid(), ImtilX.newButton(keyW, keyW, clrBtn));
 			    keyIn = engine.createImage(Pantil.vmid(), ImtilX.newButton(keyW, keyW, clrIn));
+			    editorCursor = createMenuImg("EditorCursor");
 //info("loadConstants end " + System.currentTimeMillis());
 			    }});
 		}
