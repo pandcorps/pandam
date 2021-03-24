@@ -45,6 +45,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected final static byte Y_FLOOR = 4;
     protected final static byte Y_FELL = 5;
     protected final static byte Y_WALL = 6;
+    public final static int SLOPE_UP = -1;
+    public final static int SLOPE_NONE = 0;
+    public final static int SLOPE_DOWN = 1;
     public static byte TILE_UPSLOPE = -1;
     public static byte TILE_DOWNSLOPE = -1;
     public static byte TILE_UPSLOPE_FLOOR = -1;
@@ -372,6 +375,28 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return v == 0 && isSolid(OFF_GROUNDED);
     }
     
+    // Should only be called when isGrounded
+    public int getCurrentSlope() {
+        final Panple pos = getPosition();
+        final float x = pos.getX(), y = pos.getY();
+        final int slope = getSlope(x, y);
+        if (slope != SLOPE_NONE) {
+            return slope;
+        }
+        return getSlope(x, y - 8);
+    }
+    
+    private final int getSlope(final float x, final float y) {
+        final TileMap tm = getTileMap();
+        final byte b = Tile.getBehavior(tm.getTile(tm.getContainer(x, y)));
+        if (isAnyUpslope(b)) {
+            return SLOPE_UP;
+        } else if (isAnyDownslope(b)) {
+            return SLOPE_DOWN;
+        }
+        return SLOPE_NONE;
+    }
+    
     private boolean isSolid(final int off) {
         return getSolid(off) != -1;
     }
@@ -472,8 +497,16 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         if (tile == null) {
             return false;
         }
-        final int b = tile.getBehavior();
-        return (b == TILE_UPSLOPE || b == TILE_DOWNSLOPE || b == TILE_UPSLOPE_FLOOR || b == TILE_DOWNSLOPE_FLOOR) && isSolid(index, left, right, y);
+        final byte b = tile.getBehavior();
+        return (isAnyUpslope(b) || isAnyDownslope(b)) && isSolid(index, left, right, y);
+    }
+    
+    protected boolean isAnyUpslope(final byte b) {
+        return (b == TILE_UPSLOPE) || (b == TILE_UPSLOPE_FLOOR);
+    }
+    
+    protected boolean isAnyDownslope(final byte b) {
+        return (b == TILE_DOWNSLOPE) || (b == TILE_DOWNSLOPE_FLOOR);
     }
     
     protected boolean isSolid(final int index, final float left, final float right, final float y) {
