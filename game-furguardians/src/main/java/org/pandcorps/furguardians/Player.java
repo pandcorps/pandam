@@ -43,6 +43,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	protected final static int PLAYER_X = 6;
 	protected final static int PLAYER_H = 23; // 15
 	protected final static int PLAYER_H_DUCK = 14;
+	protected final static int PLAYER_H_SLIDE = 20;
     private final static int _VEL_WALK = 3;
     private final static int VEL_MINECART = _VEL_WALK + 1;
     private final static int VEL_RUN = 6;
@@ -478,6 +479,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	private int activeTimer = 0;
 	private int attackTimer = 0;
 	private int kickTimer = 0;
+	private boolean sliding = false;
 	private final Set<PlayerProjectile> projectiles = new HashSet<PlayerProjectile>();
 	private final Bubble bubble = new Bubble();
 	private final PowerOverlay powerOverlay;
@@ -658,6 +660,10 @@ public class Player extends Character implements CollisionListener, StepEndListe
 		return mode == MODE_DISABLED || mode == MODE_FROZEN;
 	}
 	
+	private final boolean isInputActive(final Panput input) {
+	    return !isInputDisabled() && Panput.isActive(input);
+	}
+	
 	private final boolean isAutoRunEnabled() {
 	    return pc.isAutoRunEnabled();
 	}
@@ -741,38 +747,42 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	}
 	
 	private final void right() {
-		if (isInputDisabled()) {
+		if (isInputDisabled() || isDucking()) {
 			return;
 		}
 		hv = getVelWalk();
 	}
 	
 	protected final boolean isRighting() {
-        return Panput.isActive(getRightInput());
+        return isInputActive(getRightInput());
     }
 	
 	private final void left() {
-		if (isInputDisabled()) {
+		if (isInputDisabled() || isDucking()) {
 			return;
 		}
 		hv = -getVelWalk();
 	}
 	
 	protected final boolean isLefting() {
-        return Panput.isActive(getLeftInput());
+        return isInputActive(getLeftInput());
     }
 	
 	protected final int getVelWalk() {
 		if (Level.theme == Theme.Minecart) {
 		    return VEL_MINECART;
 		} else if (isRunning()) {
-		    return VEL_RUN;
+		    if (isGrounded()) {
+		        return VEL_RUN;
+		    } else {
+		        return Math.max(Math.abs(hv), Math.max((int) Math.round(Math.ceil(Math.abs(chv))), _VEL_WALK));
+		    }
 		}
 		return _VEL_WALK;
 	}
 	
 	protected final boolean isRunning() {
-	    return Panput.isActive(getRunInput());
+	    return isInputActive(getRunInput());
 	}
 	
 	@Override
@@ -800,7 +810,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	}
 	
 	private final boolean isDucking() {
-	    return Panput.isActive(getDownInput());
+	    return isInputActive(getDownInput());
 	}
 	
 	private final void up() {
@@ -811,7 +821,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
     }
 	
 	private final boolean isLookingUp() {
-        return Panput.isActive(getUpInput());
+        return isInputActive(getUpInput());
     }
 	
 	private final void togglePause() {
@@ -1081,8 +1091,26 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	}
 	
 	private final void onStepDuck() {
-	    if (isDucking() && isGrounded()) {
-	        hv = 0;
+	    if (isDucking()) {
+	        if (isGrounded()) {
+    	        final int slope = getCurrentSlope();
+    	        if (slope == SLOPE_UP) {
+    	            hv = -VEL_RUN;
+    	            sliding = true;
+    	        } else if (slope == SLOPE_DOWN) {
+    	            hv = VEL_RUN;
+    	            sliding = true;
+    	        } else {
+    	            hv = 0;
+    	            if (sliding && (Math.abs(chv) < 0.1)) {
+    	                sliding = false;
+    	            }
+    	        }
+	        } /*else { // If entered the air sliding, probably should continue to use sliding image
+	            sliding = false;
+	        }*/
+	    } else {
+	        sliding = false;
 	    }
 	}
 
@@ -1172,7 +1200,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 				if (backPos != null) {
 					backPos.setZ(depthBack);
 				}
-			} else if (belowLeft == FurGuardiansGame.TILE_ICE || belowRight == FurGuardiansGame.TILE_ICE) {
+			} else if ((belowLeft == FurGuardiansGame.TILE_ICE || belowRight == FurGuardiansGame.TILE_ICE) && isGrounded()) {
 			    thv = initCurrentHorizontalVelocityIce();
 			} else if (isDucking() && isGrounded()) {
 			    thv = initCurrentHorizontalVelocitySlide(0.25f);
@@ -1188,6 +1216,11 @@ public class Player extends Character implements CollisionListener, StepEndListe
 		}
 		return thv;
 	}
+	
+	/*@Override
+	protected final boolean isMirrorable() {
+	    return !sliding; // Would look nice, but this stops acceleration
+	}*/
 	
 	@Override
 	protected final void onStepping() {
@@ -1282,8 +1315,17 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	
 	private final boolean onDucking() {
 	    if (isDucking()) {
-            changeView(isHolding() ? pc.guyHoldingDuck : pc.guyDuck);
-            setH(PLAYER_H_DUCK);
+	        if (isHolding()) {
+	            changeView(pc.guyHoldingDuck);
+	            setH(PLAYER_H_DUCK);
+	        } else if (sliding) {
+	            final Panmage guySlide = pc.guySlide;
+	            changeView(guySlide);
+                setH(Math.round(guySlide.getSize().getY()));
+	        } else {
+	            changeView(pc.guyDuck);
+	            setH(PLAYER_H_DUCK);
+	        }
             return true;
         }
 	    return false;
