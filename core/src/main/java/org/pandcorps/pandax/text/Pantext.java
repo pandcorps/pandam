@@ -659,6 +659,22 @@ public class Pantext extends Panctor {
         return list;
     }
 	
+	public final static String CLOCK_FORMAT_HH_MM = "hh:mm";
+	public final static String CLOCK_FORMAT_HH_MM_SS_A = "hh:mm:ss a";
+	
+	private static SimpleDateFormat defaultClockFormat = null;
+	
+	private final static SimpleDateFormat getDefaultClockFormat() {
+	    if (defaultClockFormat == null) {
+	        defaultClockFormat = new SimpleDateFormat(CLOCK_FORMAT_HH_MM);
+	    }
+	    return defaultClockFormat;
+	}
+	
+	public final static void setDefaultClockFormat(final String pattern) {
+	    defaultClockFormat = new SimpleDateFormat(pattern);
+	}
+	
 	public final static Pantext newClock(final Font font) {
 	    return new Pantext(Pantil.vmid(), font, new ClockSequence());
 	}
@@ -667,11 +683,15 @@ public class Pantext extends Panctor {
 	    private final SimpleDateFormat format;
 	    
 	    public ClockSequence() {
-	        this("hh:mm"); // hh:mm:ss a
+	        this(getDefaultClockFormat());
 	    }
 	    
 	    public ClockSequence(final String pattern) {
-	        format = new SimpleDateFormat(pattern);
+	       this(new SimpleDateFormat(pattern));
+	    }
+	    
+	    public ClockSequence(final SimpleDateFormat format) {
+	        this.format = format;
 	    }
 	    
 	    @Override protected final CharSequence call() {
