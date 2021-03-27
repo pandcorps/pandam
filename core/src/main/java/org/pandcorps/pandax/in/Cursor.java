@@ -120,7 +120,7 @@ public class Cursor extends Panctor implements StepListener {
 		    lastMouseX = mouseX;
 		    lastMouseY = mouseY;
 		    inactiveTimer = 0;
-		} else if (inactiveTimer < INACTIVE_THRESHOLD) {
+		} else {
 		    inactiveTimer++;
 		    if (hiddenWhenUnused && (inactiveTimer >= INACTIVE_THRESHOLD)) {
 		        hide();
