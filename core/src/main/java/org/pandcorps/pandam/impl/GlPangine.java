@@ -902,7 +902,13 @@ public abstract class GlPangine extends Pangine {
 	        return;
 	    }
 	    final Camera c = cams.get(room);
+	    if (GlPanmage.colorArrayEnabled) {
+	        gl.glDisableClientState(gl.GL_COLOR_ARRAY);
+	    }
 	    quad(color, c.xi, c.xa, c.yi, c.ya, c.za);
+	    if (GlPanmage.colorArrayEnabled) {
+            gl.glEnableClientState(gl.GL_COLOR_ARRAY);
+        }
 	}
 	
 	private final void quad(final Pancolor color, final float minx, final float maxx, final float miny, final float maxy, final float z) {
