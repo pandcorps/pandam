@@ -22,7 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.pandax.text;
 
+import org.pandcorps.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.*;
 
 public abstract class BaseFont implements Font {
     private final Panmage image;
@@ -31,6 +33,16 @@ public abstract class BaseFont implements Font {
     
     protected BaseFont(final Panmage image) {
         this.image = image;
+    }
+    
+    @Override
+    public final Font recolor(final float r, final float g, final float b) {
+        final Panmage recoloredImage = new AdjustedPanmage(Pantil.vmid(), image, r, g, b);
+        try {
+            return getClass().getDeclaredConstructor(Panmage.class).newInstance(recoloredImage);
+        } catch (final Exception e) {
+            throw Pantil.toRuntimeException(e);
+        }
     }
     
     @Override
