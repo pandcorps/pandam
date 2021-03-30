@@ -29,6 +29,8 @@ public interface Font {
     
     public final static int INDEX_ILLEGAL = -2;
     
+    public Font recolor(final float r, final float g, final float b);
+    
     public Panmage getImage();
     
     // The number of characters in a row or column of the font

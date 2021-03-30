@@ -33,6 +33,16 @@ public final class MultiFont implements Font {
 	}
 	
 	@Override
+    public final Font recolor(final float r, final float g, final float b) {
+	    final int size = layers.length;
+	    final FontLayer[] recoloredLayers = new FontLayer[size];
+	    for (int i = 0; i < size; i++) {
+	        recoloredLayers[i] = layers[i].recolor(r, g, b);
+	    }
+	    return new MultiFont(recoloredLayers);
+	}
+	
+	@Override
 	public final int getWidth() {
 		// Doesn't handle Fonts with different widths or negative offsets
 		int maxWidth = 0, maxOff = 0;

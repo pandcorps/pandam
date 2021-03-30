@@ -32,4 +32,8 @@ public final class FontLayer {
 		this.font = font;
 		this.off = off;
 	}
+	
+	public final FontLayer recolor(final float r, final float g, final float b) {
+	    return new FontLayer(font.recolor(r, g, b), off);
+	}
 }
