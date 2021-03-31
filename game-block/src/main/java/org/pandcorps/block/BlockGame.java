@@ -183,6 +183,7 @@ public class BlockGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         engine.setTitle(TITLE);
         engine.setEntityMapEnabled(false);
+        Pantext.setDefaultClockFormat(Pantext.CLOCK_FORMAT_HH_MM);
         Imtil.onlyResources = true;
         if (loaders != null) {
             loaders.add(new Runnable() {
@@ -1110,6 +1111,7 @@ public class BlockGame extends BaseGame {
         private int pauser = -1;
         private BasePauseMenu pauseMenu = null;
         private int startTimer = 60;
+        private boolean defeatedCheckNeeded = false;
         
         protected Grid() {
             this(true);
@@ -1231,11 +1233,13 @@ public class BlockGame extends BaseGame {
             for (final Player player : players) {
                 player.onStep();
             }
-            if (indicesToDrop.isEmpty()) {
+            if (!indicesToDrop.isEmpty()) {
+                stepDrop();
+            } else if (!indicesToCheckForMatches.isEmpty()) {
                 dropTimer = 0;
                 stepMatch();
             } else {
-                stepDrop();
+                stepDefeatedCheck();
             }
         }
         
@@ -1330,12 +1334,16 @@ public class BlockGame extends BaseGame {
                 burst(index, cellType);
                 fxMatch.startSound();
             }
+            indicesToClear.clear();
+        }
+        
+        private final void stepDefeatedCheck() {
             for (int index = GRID_SIZE; index < GRID_SIZE_FULL; index++) {
                 if (cells[index] != null) {
                     onDefeated();
                 }
             }
-            indicesToClear.clear();
+            defeatedCheckNeeded = false;
         }
         
         private final int matchVertical(final int index, final boolean clear) {
@@ -1470,7 +1478,7 @@ public class BlockGame extends BaseGame {
         }
         
         protected final boolean isFree() {
-            return !paused && (startTimer <= 0) && indicesToDrop.isEmpty() && indicesToCheckForMatches.isEmpty();
+            return !paused && !defeatedCheckNeeded && (startTimer <= 0) && indicesToDrop.isEmpty() && indicesToCheckForMatches.isEmpty();
         }
         
         protected final int getX(final int index) {
@@ -1512,6 +1520,7 @@ public class BlockGame extends BaseGame {
                     return false;
                 }
             }
+            defeatedCheckNeeded = true;
             return true;
         }
         
