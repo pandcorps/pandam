@@ -33,6 +33,7 @@ import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
+import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.furguardians.Enemy.*;
 import org.pandcorps.furguardians.Gem.*;
@@ -255,6 +256,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	    protected Panimation backFall = null;
 	    protected Panimation bird = null;
 	    protected Panimation fireball = null;
+	    protected Font font = null;
 	    
 	    public PlayerContext(final Profile profile, final ControlScheme ctrl, final int index) {
 	        this.profile = profile;
@@ -747,7 +749,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	}
 	
 	private final void right() {
-		if (isInputDisabled() || isDucking()) {
+		if (isInputDisabled() || isDuckingOnGround()) {
 			return;
 		}
 		hv = getVelWalk();
@@ -758,7 +760,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
     }
 	
 	private final void left() {
-		if (isInputDisabled() || isDucking()) {
+		if (isInputDisabled() || isDuckingOnGround()) {
 			return;
 		}
 		hv = -getVelWalk();
@@ -813,11 +815,15 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	    return isInputActive(getDownInput());
 	}
 	
+	private final boolean isDuckingOnGround() {
+	    return isDucking() && isGrounded();
+	}
+	
 	private final void up() {
         if (isInputDisabled()) {
             return;
         }
-        //TODO ladder, tubes
+        //TODO ladder
     }
 	
 	private final boolean isLookingUp() {
@@ -1087,7 +1093,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 	
 	@Override
     protected final boolean isHoldable() {
-	    return (chv == 0) && isDucking() && isGrounded();
+	    return (chv == 0) && isDuckingOnGround();
 	}
 	
 	private final void onStepDuck() {
@@ -1202,7 +1208,7 @@ public class Player extends Character implements CollisionListener, StepEndListe
 				}
 			} else if ((belowLeft == FurGuardiansGame.TILE_ICE || belowRight == FurGuardiansGame.TILE_ICE) && isGrounded()) {
 			    thv = initCurrentHorizontalVelocityIce();
-			} else if (isDucking() && isGrounded()) {
+			} else if (isDuckingOnGround()) {
 			    thv = initCurrentHorizontalVelocitySlide(0.25f);
 			} else if (hv != 0 && isGrounded()) {
 			    thv = initCurrentHorizontalVelocityAccelerating();
@@ -1295,7 +1301,9 @@ public class Player extends Character implements CollisionListener, StepEndListe
 		    } else if (attackMode.setGroundView(this)) {
 		        // Nothing else to do
 		    } else if (kickTimer > 0) {
-		        changeView(pc.guyKick);
+		        if (pc.guyKick != null) {
+		            changeView(pc.guyKick);
+		        }
 		    } else if (hv != 0 && isAnimated()) {
 				changeView(isHolding() ? pc.guyHoldingRun : pc.guyRun);
 			} else if (isHolding()) {
