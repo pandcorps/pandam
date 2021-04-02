@@ -28,6 +28,7 @@ import java.util.Map;
 import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.furguardians.Player.*;
+import org.pandcorps.pandax.text.*;
 
 public class Avatar extends EyeData implements Segmented {
 	protected final static Map<String, Animal> SPECIAL_ANIMALS = new HashMap<String, Animal>();
@@ -511,6 +512,15 @@ public class Avatar extends EyeData implements Segmented {
     protected final String getTailAnm() {
         final Animal animal = getAnimal();
         return animal == null ? anm : animal.tail;
+    }
+    
+    protected final SimpleColor getTextColor() {
+        return col;
+    }
+    
+    protected final Font newFont() {
+        final SimpleColor col = getTextColor();
+        return FurGuardiansGame.font.recolor(col.r, col.g, col.b);
     }
     
     protected final static BirdKind getBird(final String brd) {
