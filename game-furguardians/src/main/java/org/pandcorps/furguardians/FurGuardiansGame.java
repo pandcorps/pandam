@@ -1005,6 +1005,8 @@ public class FurGuardiansGame extends BaseGame {
 		
 		pc.bird = getBirdAnm(pre, avatar.bird.kind, avatar.bird.eye);
 		
+		pc.font = avatar.newFont();
+		
 		if (full) {
 		    ImtilX.validateDefault = false;
 			Img[] faceMapRaw = faceMapsAll.get(anm);
@@ -1286,7 +1288,7 @@ public class FurGuardiansGame extends BaseGame {
 	    //TODO add guyFast; use guyRun if fast images not available
 	    pc.guyJump = jump;
 	    pc.guyFall = fall;
-	    pc.guyKick = loadImage("kick", null);
+	    pc.guyKick = loadImage("kick", null); // No default; Player won't change image if null, which is fine
 	    pc.guyAttack = loadImage("attack", null);
 	    pc.guyAttackJump = loadImage("attack_jump", null);
 	    pc.guyHolding = holdStill;
@@ -1297,9 +1299,9 @@ public class FurGuardiansGame extends BaseGame {
 	    pc.guyHoldingDuck = loadImage("hold_duck", null);
 	    pc.mapSouth = loadAnm("map_south", DUR_MAP, pc.guyRun); //TODO Change origin if using guyRun
 	    pc.mapNorth = loadAnm("map_north", DUR_MAP, pc.guyRun);
-	    pc.mapEast = loadAnm("map_east", DUR_MAP, pc.guyRun);;
-	    pc.mapWest = loadAnm("map_west", DUR_MAP, pc.guyRun);;
-	    pc.mapLadder = loadAnm("map_ladder", DUR_MAP, pc.guyRun);;
+	    pc.mapEast = loadAnm("map_east", DUR_MAP, pc.guyRun);
+	    pc.mapWest = loadAnm("map_west", DUR_MAP, pc.guyRun);
+	    pc.mapLadder = loadAnm("map_ladder", DUR_MAP, pc.guyRun);
 	    pc.mapPose = loadImage("map_pose", jump);
 	    currO = oc;
 	    pc.guyFront = loadImage("front", still);
@@ -1315,6 +1317,7 @@ public class FurGuardiansGame extends BaseGame {
 	    final Panmage fireball = loadImage("fireball", prjDefault); //TODO recolor default projectile
         pc.fireball = createRotateAnimation(currPre + "fireball", fireball);
 	    Imtil.onlyResources = true;
+	    pc.font = null;
 	}
 	
 	private static Panple currO = null, currMin = null, currMax = null;
@@ -2247,7 +2250,7 @@ public class FurGuardiansGame extends BaseGame {
         final int i = pc.index;
         final String name = pc.getName();
         if (!Menu.NAME_NEW.equals(name)) {
-	        final Pantext hudName = new Pantext("hud.name." + i, font, name);
+	        final Pantext hudName = new Pantext("hud.name." + i, pc.font == null ? font : pc.font, name);
 	        hudName.getPosition().set(x, y + 8);
 	        hud.addActor(hudName);
         }
