@@ -1027,12 +1027,23 @@ public class Level {
         Coltil.clear(collectedLetters);
         farthestColumn = 0;
         goalLocked = false;
+        Character.clearTubes();
     }
     
     protected final static void loadLevel() {
+        initSeeds();
+        initLevel();
+        addPlayers(); // Add Players while floor has initial value before build() changes it
+        buildLevel();
+    }
+    
+    protected final static void initSeeds() {
         Mathtil.setSeed(seed);
         Spawner.setSeed(seed + 1);
         GemBumped.setSeed(seed + 2);
+    }
+    
+    protected final static void initLevel() {
         clear();
         victory = false;
     	floorMode = FLOOR_GRASSY;
@@ -1050,16 +1061,14 @@ public class Level {
     	floor = builder.getFloor();
     	floatOffset = builder.getFloatOffset();
     	loadLayers();
-    	addPlayers(); // Add Players while floor has initial value before build() changes it
     	if (theme == Theme.Minecart) {
     		tileTrackTop = tm.getTile(null, imgMap[1][2], Tile.BEHAVIOR_OPEN);
             tileTrackBase = tm.getTile(null, imgMap[2][2], Tile.BEHAVIOR_SOLID);
         }
+    }
+    
+    protected final static void buildLevel() {
     	builder.build();
-    	/*tm.info();
-    	bgtm1.info();
-    	bgtm2.info();
-    	bgtm3.info();*/
     }
     
     protected static abstract class Builder {
