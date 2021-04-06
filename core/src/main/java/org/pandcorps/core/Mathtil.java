@@ -54,8 +54,12 @@ public final class Mathtil {
 	}
 	
 	public final static boolean rand(final int percentage) {
-	    return randi(0, 99) < percentage;
+	    return rand(rand, percentage);
 	}
+	
+	public final static boolean rand(final Random rand, final int percentage) {
+        return randi(rand, 0, 99) < percentage;
+    }
 	
 	public final static byte randb(final byte min, final byte max) {
 		return (byte) randi(min, max);
