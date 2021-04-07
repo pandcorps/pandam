@@ -49,8 +49,10 @@ public class Text {
     /*package*/ final static String INFO = get("Info");
     /*package*/ final static String KIND = get("Kind");
     /*package*/ final static String LEFT = get("Left");
+    /*package*/ final static String LOAD = get("Load");
     /*package*/ final static String MAIN = get("Main");
     /*package*/ final static String MENU = get("Menu");
+    /*package*/ final static String MODS = get("Mods");
     /*package*/ final static String MUSIC = get("Music");
     /*package*/ final static String NAME = get("Name");
     /*package*/ final static String NEW = get("New");
