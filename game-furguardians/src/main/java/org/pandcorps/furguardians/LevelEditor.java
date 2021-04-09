@@ -728,7 +728,7 @@ public class LevelEditor {
     
     protected final static class GridMode extends EditorMode {
         protected final static List<EditorOperation> GRID_OPERATIONS = Arrays.asList(
-                new AddCellOperation());
+                new AddCellOperation(), new RectangleCellOperation());
         
         @Override
         protected List<EditorOperation> getOperations() {
