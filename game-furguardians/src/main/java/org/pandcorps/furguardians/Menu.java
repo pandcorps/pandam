@@ -3265,6 +3265,7 @@ public class Menu {
             newTab(FurGuardiansGame.menuQuestion, Text.PERKS, new Runnable() {@Override public final void run() {goPerks();}});
             newTab(FurGuardiansGame.menuWorld, Text.WORLD, new Runnable() {@Override public final void run() {goPreferredTheme();}});
             newTab(FurGuardiansGame.menuDifficulty, Text.EASY, new Runnable() {@Override public final void run() {goDifficulty();}});
+            newTab(FurGuardiansGame.menuPlus, Text.MODS, new Runnable() {@Override public final void run() {goMods();}});
             if (pc.profile.consoleEnabled) {
             	newTab(FurGuardiansGame.menuKeyboard, Text.DEBUG, new Runnable() {@Override public final void run() {goConsole();}});
             }
@@ -3278,6 +3279,10 @@ public class Menu {
         
         private final void goDifficulty() {
             FurGuardiansGame.setScreen(new DifficultyScreen(pc));
+        }
+        
+        private final void goMods() {
+            FurGuardiansGame.setScreen(new ModsScreen(pc));
         }
         
         private final void goConsole() {
@@ -3520,6 +3525,48 @@ public class Menu {
         	goOptions();
         }
 	}
+	
+	protected final static class ModsScreen extends BaseOptionsScreen {
+	    private Pantext text = null;
+	    
+        protected ModsScreen(final PlayerContext pc) {
+            super(pc);
+        }
+        
+        @Override
+        protected final void menuTouch() {
+            setStatus(Iotil.listTree() + '\n' + Iotil.listTree(FurGuardiansGame.MOD_CHR));
+            newTab(FurGuardiansGame.menuCheck, Text.DONE, new Runnable() {@Override public final void run() {exit();}});
+            newTab(FurGuardiansGame.menuExclaim, Text.LOAD, new Runnable() {@Override public final void run() {install();}});
+            newTab(FurGuardiansGame.menuQuestion, Text.EDIT, new Runnable() {@Override public final void run() {edit();}});
+            newTabs();
+            registerBackExit();
+        }
+        
+        private final void install() {
+            Mod.installFromClipboard(new Handler<CharSequence>() {
+                @Override public final void handle(final CharSequence event) {
+                    setStatus(event);
+                }});
+        }
+        
+        private final void edit() {
+            LevelEditor.goEditor();
+        }
+        
+        private final void setStatus(final CharSequence status) {
+            Panctor.destroy(text);
+            final int h = Pangine.getEngine().getEffectiveTop() - FurGuardiansGame.MENU_H - 8;
+            text = new Pantext(Pantil.vmid(), FurGuardiansGame.fontTiny, status);
+            addActor(text, 0, h);
+        }
+        
+        @Override
+        protected void onExit() {
+            save();
+            goOptions();
+        }
+    }
 	
 	protected final static class MiniGamesScreen extends PlayerScreen {
 	    private final boolean quitNeeded;
