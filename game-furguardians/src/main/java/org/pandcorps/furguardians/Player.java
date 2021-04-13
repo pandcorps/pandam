@@ -1300,10 +1300,8 @@ public class Player extends Character implements CollisionListener, StepEndListe
 		        // Nothing else to do
 		    } else if (attackMode.setGroundView(this)) {
 		        // Nothing else to do
-		    } else if (kickTimer > 0) {
-		        if (pc.guyKick != null) {
-		            changeView(pc.guyKick);
-		        }
+		    } else if ((kickTimer > 0) && (pc.guyKick != null)) {
+		        changeView(pc.guyKick);
 		    } else if (hv != 0 && isAnimated()) {
 				changeView(isHolding() ? pc.guyHoldingRun : pc.guyRun);
 			} else if (isHolding()) {
