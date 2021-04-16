@@ -263,6 +263,31 @@ public final class Coltil {
 	    throw new RuntimeException("Found " + size + " elements where no more than 1 was expected");
 	}
 	
+	public final static <E> E getNext(final Iterable<E> list, final E curr) {
+	    boolean found = false;
+	    E first = null;
+	    for (final E elem : list) {
+	        if (first == null) {
+	            first = elem;
+	        } else if (found) {
+	            return elem;
+	        }
+	        found = elem.equals(curr);
+	    }
+	    return first;
+	}
+	
+	public final static <E> E getPrevious(final Iterable<E> list, final E curr) {
+	    E prev = null;
+        for (final E elem : list) {
+            if (elem.equals(curr) && (prev != null)) {
+                return prev;
+            }
+            prev = elem;
+        }
+        return prev;
+    }
+	
 	public final static <E, T extends E> void set(final List<E> list, final int i, final T elem) {
 	    final int size = list.size();
 	    for (int j = size; j <= i; j++) {
