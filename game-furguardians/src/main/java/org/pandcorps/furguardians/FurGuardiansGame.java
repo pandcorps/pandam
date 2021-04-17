@@ -2146,7 +2146,7 @@ public class FurGuardiansGame extends BaseGame {
 	    enemyPos.destroy();
 	}
 	
-	private final static Panmage createMenuImg(final String name) {
+	protected final static Panmage createMenuImg(final String name) {
 		final Img icn = ImtilX.loadImage(RES + "menu/" + name + ".png", false);
 		final Panmage img = Pangine.getEngine().createImage(Pantil.vmid(), icn);
 		icn.close();
@@ -2286,7 +2286,11 @@ public class FurGuardiansGame extends BaseGame {
 	}
 	
 	protected final static void setDepth(final SpecPanctor act, final float depth) {
-		act.getPosition().setZ(Level.tm.getForegroundDepth() + depth);
+		act.getPosition().setZ(getDepth(depth));
+	}
+	
+	protected final static float getDepth(final float depth) {
+	    return Level.tm.getForegroundDepth() + depth;
 	}
 	
 	protected final static void setPosition(final Player player, final float x, final float y) {
