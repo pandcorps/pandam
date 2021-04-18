@@ -28,6 +28,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.furguardians.Character.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.in.*;
@@ -51,10 +52,18 @@ public class LevelEditor {
     private static Tile groundTopLeftConcave = null;
     private static Tile groundDecorated = null;
     private static Tile groundTopRightConcave = null;
+    private static Tile groundUpSlope = null;
+    private static Tile groundDownSlope = null;
     private final static Random currentRandom = new Random();
     private static RoomDefinition roomDef;
     private static GridDefinition grid;
     private static int cx, cy, currentIndex;
+    private static Panmage iconTubeDown = null;
+    private static Panmage iconTubeUp = null;
+    private static Panmage iconTubeRight = null;
+    private static Panmage iconTubeLeft = null;
+    private static Panmage iconRock = null;
+    private static Panmage selectedTile = null;
     
     protected final static void loadCommonTiles() {
         if (edgeLeft != null) {
@@ -77,16 +86,40 @@ public class LevelEditor {
         groundTopLeftConcave = tm.getTile(null, Level.imgMap[3][0], Tile.BEHAVIOR_SOLID);
         groundDecorated = tm.getTile(null, Level.imgMap[3][1], Tile.BEHAVIOR_OPEN);
         groundTopRightConcave = tm.getTile(null, Level.imgMap[3][2], Tile.BEHAVIOR_SOLID);
+        groundUpSlope = tm.getTile(null, Level.imgMap[3][3], FurGuardiansGame.TILE_UPSLOPE_FLOOR);
+        groundDownSlope = tm.getTile(null, Level.imgMap[3][4], FurGuardiansGame.TILE_DOWNSLOPE_FLOOR);
+    }
+    
+    protected final static void loadUi() {
+        if (iconTubeDown != null) {
+            return;
+        }
+        iconTubeDown = newCommon(0, 24, 1f, 1f, 1f);
+        iconTubeUp = newCommon(0, 24, 0, false, true, 1f, 1f, 1f);
+        iconTubeLeft = newCommon(0, 24, 3, true, false, 1f, 1f, 1f);
+        iconTubeRight = newCommon(0, 24, 1, true, false, 1f, 1f, 1f);
+        iconRock = newCommon(64f, 16f, 0, false, false, 1f, 1f, 1f);
+        selectedTile = FurGuardiansGame.createMenuImg("EditorSelection");
     }
     
     protected final static void goEditor() {
+        loadUi();
         Level.initLevel();
         roomDef = new RoomDefinition();
         roomDef.features.add(new GridDefinition());
         roomDef.build();
+        Editor first = null;
         for (final PlayerContext pc : FurGuardiansGame.pcs) {
-            new Editor(pc);
+            final Editor editor = new Editor(pc);
+            if (first == null) {
+                first = editor;
+            }
         }
+        first.registerKeyboard();
+    }
+    
+    protected final static Panmage getForegroundImage(final Tile tile) {
+        return (Panmage) DynamicTileMap.getRawForeground(tile);
     }
     
     protected final static Panmage newCommon(final float subX, final float subY, final float r, final float g, final float b) {
@@ -174,6 +207,12 @@ public class LevelEditor {
             this.h = getH();
         }
         
+        protected final boolean contains(final int x, final int y) {
+            return (x >= this.x) && (y >= this.y) && (x < (this.x + getW())) && (y < (this.y + getH()));
+        }
+        
+        protected abstract FeatureMode getMode();
+        
         protected abstract void build();
         
         protected void destroy() {
@@ -189,6 +228,20 @@ public class LevelEditor {
         protected void save() { } //TODO
         
         protected void load() { }
+        
+        private final void renderSelection(final Panderer renderer, final Editor editor) {
+            final Panlayer layer = editor.getLayer();
+            final Panmage image = editor.getSelectedTileImage();
+            final int w = getW(), h = getH();
+            final float z = FurGuardiansGame.getDepth(FurGuardiansGame.DEPTH_SHATTER);
+            for (int j = 0; j < h; j++) {
+                final float yj = (y + j) * 16;
+                for (int i = 0; i < w; i++) {
+                    final float xi = (x + i) * 16;
+                    renderer.render(layer, image, xi, yj, z);
+                }
+            }
+        }
     }
     
     protected final static class GridDefinition extends FeatureDefinition {
@@ -230,6 +283,24 @@ public class LevelEditor {
             build(x - 1, y - 1, w + 2, h + 2);
         }
         
+        protected final void clear(final int x, final int y) {
+            final int index = getIndex(x, y);
+            cells[index] = null;
+            Level.tm.setTile(index, null);
+        }
+        
+        protected final void toggle(final int x, final int y, final CellType cellType) {
+            if (get(x, y) == cellType) {
+                clear(x, y);
+            } else {
+                set(x, y, cellType);
+            }
+        }
+        
+        @Override protected final FeatureMode getMode() {
+            throw new UnsupportedOperationException();
+        }
+        
         @Override
         protected final void build() {
             grid = this;
@@ -253,6 +324,7 @@ public class LevelEditor {
                     currentIndex = yw + cx;
                     final CellType cell = cells[currentIndex];
                     if (cell == null) {
+                        //Level.tm.setTile(currentIndex, null); // Could be neighbor occupied by another feature, so don't clear here
                         continue;
                     }
                     cell.build();
@@ -347,12 +419,16 @@ public class LevelEditor {
         }
     }
     
+    protected final static BlockType blockType = new BlockType();
+    
     protected final static class BlockType extends CellType {
         @Override
         protected final void build() {
             setTile(currentIndex, blockSolid);
         }
     }
+    
+    protected final static BlockUpSlopeType blockUpSlopeType = new BlockUpSlopeType();
     
     protected final static class BlockUpSlopeType extends CellType {
         @Override
@@ -366,6 +442,8 @@ public class LevelEditor {
             setTile(currentIndex, tile);
         }
     }
+    
+    protected final static BlockDownSlopeType blockDownSlopeType = new BlockDownSlopeType();
     
     protected final static class BlockDownSlopeType extends CellType {
         @Override
@@ -394,11 +472,6 @@ public class LevelEditor {
             Level.tm.setTile(currentIndex, newCommon(64f, 16f, rot, mirror, false, r, g, b), null, FurGuardiansGame.TILE_BREAK);
         }
     }
-    
-    protected final static List<CellType> CELL_TYPES = Arrays.asList(
-            groundType, groundUpSlopeType, groundDownSlopeType,
-            new BlockType(), new BlockUpSlopeType(), new BlockDownSlopeType(),
-            rockType);
     
     protected abstract static class ColorfulFeatureDefinition extends FeatureDefinition {
         // inherit from room/level/map/game, define defaults for various types (tube/block/etc.)
@@ -504,6 +577,9 @@ public class LevelEditor {
         @Override protected final VerticalTubeManager getTubeManager() {
             return Character.downTubeManager;
         }
+        @Override protected final FeatureMode getMode() {
+            return downTubeMode;
+        }
     }
     
     protected final static class UpTubeDefinition extends VerticalTubeDefinition {
@@ -515,6 +591,9 @@ public class LevelEditor {
         }
         @Override protected final VerticalTubeManager getTubeManager() {
             return Character.upTubeManager;
+        }
+        @Override protected final FeatureMode getMode() {
+            return upTubeMode;
         }
     }
     
@@ -571,6 +650,9 @@ public class LevelEditor {
         @Override protected final HorizontalTubeManager getTubeManager() {
             return Character.rightTubeManager;
         }
+        @Override protected final FeatureMode getMode() {
+            return rightTubeMode;
+        }
     }
     
     protected final static class LeftTubeDefinition extends HorizontalTubeDefinition {
@@ -582,6 +664,30 @@ public class LevelEditor {
         }
         @Override protected final HorizontalTubeManager getTubeManager() {
             return Character.leftTubeManager;
+        }
+        @Override protected final FeatureMode getMode() {
+            return leftTubeMode;
+        }
+    }
+    
+    protected final static FeatureDefinition pickFeatureDefinition(final int x, final int y, final boolean remove) {
+        final List<FeatureDefinition> features = roomDef.features;
+        for (int i = features.size() - 1; i >= 0; i--) {
+            final FeatureDefinition feature = features.get(i);
+            if (feature.contains(x, y) && !(feature instanceof GridDefinition)) {
+                if (remove) {
+                    features.remove(i);
+                }
+                return feature;
+            }
+        }
+        return null;
+    }
+    
+    protected final static void deleteFeatureDefinition(final int x, final int y) {
+        final FeatureDefinition feature = pickFeatureDefinition(x, y, true);
+        if (feature != null) {
+            feature.destroy();
         }
     }
     
@@ -598,7 +704,6 @@ public class LevelEditor {
         protected Editor(final PlayerContext pc) {
             setView(FurGuardiansGame.editorCursor);
             setMode(EDITOR_MODES.get(0));
-            cellType = CELL_TYPES.get(0);
             FurGuardiansGame.setDepth(this, FurGuardiansGame.DEPTH_SPARK);
             Level.room.addActor(this);
             register(pc.ctrl);
@@ -626,6 +731,56 @@ public class LevelEditor {
                     on1();
                 }});
             // How should touch-screen work? Clicking any cell calls update position and on1?
+            final Device device = ctrl.getDevice();
+            if (device instanceof Controller) {
+                registerController((Controller) device);
+            }
+        }
+        
+        private final void registerController(final Controller controller) {
+            reg(controller.BUTTON_SHOULDER_LEFT1, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    decMode();
+                }});
+            reg(controller.BUTTON_SHOULDER_RIGHT1, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    incMode();
+                }});
+            reg(controller.BUTTON_SHOULDER_LEFT2, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    decOperation();
+                }});
+            reg(controller.BUTTON_SHOULDER_RIGHT2, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    incOperation();
+                }});
+        }
+        
+        private final void registerKeyboard() {
+            final Panteraction interaction = Pangine.getEngine().getInteraction();
+            register(interaction.KEY_TAB, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    if (interaction.isAltActive()) {
+                        if (interaction.isShiftActive()) {
+                            decOperation();
+                        } else {
+                            incOperation();
+                        }
+                    } else {
+                        if (interaction.isShiftActive()) {
+                            decOperation();
+                        } else {
+                            incMode();
+                        }
+                    }
+                }});
+        }
+        
+        private final void reg(final Panput input, final ActionEndListener listener) {
+            if (input == null) {
+                return;
+            }
+            register(input, listener);
         }
         
         private final void left() {
@@ -683,14 +838,48 @@ public class LevelEditor {
         
         private final void setMode(final EditorMode mode) {
             this.mode = mode;
-            //TODO Keep current operation if it's not null and available for new mode?
-            setOperation(mode.getOperations().get(0)); // Also clears context
+            if ((featureDefinition != null) && !featureDefinition.getMode().equals(mode)) {
+                featureDefinition = null;
+            }
+            final List<EditorOperation> operations = mode.getOperations();
+            final boolean newOperationRequiredWithoutFeature = (featureDefinition == null) && (operation != null) && operation.isPickedFeatureRequired();
+            final boolean operationNotSupportedForNewMode = !operations.contains(operation);
+            if (newOperationRequiredWithoutFeature || operationNotSupportedForNewMode) {
+                setOperation(operations.get(0)); // Also clears context
+            } else {
+                clearContext();
+            }
+            mode.onSelectMode(this);
+        }
+        
+        private final void incMode() {
+            setMode(Coltil.getNext(EDITOR_MODES, mode));
+        }
+        
+        private final void decMode() {
+            setMode(Coltil.getPrevious(EDITOR_MODES, mode));
         }
         
         private final void setOperation(final EditorOperation operation) {
             this.operation = operation;
             clearContext();
         }
+        
+        private final void incOperation() {
+            setOperation(Coltil.getNext(mode.getOperations(), operation));
+        }
+        
+        private final void decOperation() {
+            setOperation(Coltil.getPrevious(mode.getOperations(), operation));
+        }
+        
+        private final void setCellType(final CellType cellType) {
+            this.cellType = cellType;
+        }
+        
+        /*private final void incCellType() {
+            setCellType(Coltil.getNext(CELL_TYPES, cellType));
+        }*/
         
         private final void clearContext() {
             rectangleX = rectangleY = -1;
@@ -716,17 +905,41 @@ public class LevelEditor {
         private final int getRectangleH() {
             return Math.abs(y - rectangleY) + 1;
         }
+        
+        protected final Panmage getSelectedTileImage() {
+            return selectedTile;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            if (featureDefinition != null) {
+                featureDefinition.renderSelection(renderer, this);
+            }
+        }
     }
     
+    protected final static DownTubeMode downTubeMode = new DownTubeMode();
+    protected final static UpTubeMode upTubeMode = new UpTubeMode();
+    protected final static RightTubeMode rightTubeMode = new RightTubeMode();
+    protected final static LeftTubeMode leftTubeMode = new LeftTubeMode();
+    
     protected final static List<EditorMode> EDITOR_MODES = Arrays.asList(
-            new GridMode(),
-            new DownTubeMode(), new UpTubeMode(), new LeftTubeMode(), new RightTubeMode());
+            new GroundMode(), new GroundUpSlopeMode(), new GroundDownSlopeMode(),
+            new BlockMode(), new BlockUpSlopeMode(), new BlockDownSlopeMode(),
+            new RockMode(),
+            downTubeMode, upTubeMode, rightTubeMode, leftTubeMode);
     
     protected abstract static class EditorMode {
         protected abstract List<EditorOperation> getOperations();
+        
+        protected void onSelectMode(final Editor editor) {
+        }
+        
+        protected abstract Panmage getIcon();
     }
     
-    protected final static class GridMode extends EditorMode {
+    protected abstract static class GridMode extends EditorMode {
         protected final static List<EditorOperation> GRID_OPERATIONS = Arrays.asList(
                 new AddCellOperation(), new RectangleCellOperation());
         
@@ -734,11 +947,102 @@ public class LevelEditor {
         protected List<EditorOperation> getOperations() {
             return GRID_OPERATIONS;
         }
+        
+        @Override
+        protected final void onSelectMode(final Editor editor) {
+            editor.setCellType(getCellType());
+        }
+        
+        protected abstract CellType getCellType();
+    }
+    
+    protected final static class GroundMode extends GridMode {
+        @Override
+        protected final CellType getCellType() {
+            return groundType;
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return getForegroundImage(groundTop);
+        }
+    }
+    
+    protected final static class GroundUpSlopeMode extends GridMode {
+        @Override
+        protected final CellType getCellType() {
+            return groundUpSlopeType;
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return getForegroundImage(groundUpSlope);
+        }
+    }
+    
+    protected final static class GroundDownSlopeMode extends GridMode {
+        @Override
+        protected final CellType getCellType() {
+            return groundDownSlopeType;
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return getForegroundImage(groundDownSlope);
+        }
+    }
+    
+    protected final static class BlockMode extends GridMode {
+        @Override
+        protected final CellType getCellType() {
+            return blockType;
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return getForegroundImage(blockSolid);
+        }
+    }
+    
+    protected final static class BlockUpSlopeMode extends GridMode {
+        @Override
+        protected final CellType getCellType() {
+            return blockUpSlopeType;
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return getForegroundImage(blockUpSlope);
+        }
+    }
+    
+    protected final static class BlockDownSlopeMode extends GridMode {
+        @Override
+        protected final CellType getCellType() {
+            return blockDownSlopeType;
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return getForegroundImage(blockDownSlope);
+        }
+    }
+    
+    protected final static class RockMode extends GridMode {
+        @Override
+        protected final CellType getCellType() {
+            return rockType;
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return iconRock;
+        }
     }
     
     protected abstract static class FeatureMode extends EditorMode {
         protected final static List<EditorOperation> FEATURE_OPERATIONS = Arrays.asList(
-                new AddFeatureOperation(), new MoveFeatureOperation(), new ResizeFeatureOperation());
+                new AddFeatureOperation(), new PickFeatureOperation(), new MoveFeatureOperation(), new ResizeFeatureOperation(), new DeleteFeatureOperation());
         
         @Override
         protected List<EditorOperation> getOperations() {
@@ -762,13 +1066,18 @@ public class LevelEditor {
     }
     
     protected abstract static class TubeMode extends ColorfulFeatureMode {
-        // getOperations() adds destination operation, maybe opens window as soon as selected, new featuremode method for onSelectMode
+        // getOperations() adds destination operation, maybe opens window in onSelectMode
     }
     
     protected final static class DownTubeMode extends TubeMode {
         @Override
         protected final FeatureDefinition newFeature() {
             return new DownTubeDefinition();
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return iconTubeDown;
         }
     }
     
@@ -777,12 +1086,22 @@ public class LevelEditor {
         protected final FeatureDefinition newFeature() {
             return new UpTubeDefinition();
         }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return iconTubeUp;
+        }
     }
     
     protected final static class RightTubeMode extends TubeMode {
         @Override
         protected final FeatureDefinition newFeature() {
             return new RightTubeDefinition();
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return iconTubeRight;
         }
     }
     
@@ -791,14 +1110,25 @@ public class LevelEditor {
         protected final FeatureDefinition newFeature() {
             return new LeftTubeDefinition();
         }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return iconTubeLeft;
+        }
     }
     
     protected abstract static class EditorOperation {
+        protected boolean isPickedFeatureRequired() {
+            return false;
+        }
+        
         protected void onEditorMove(final Editor editor) {
         }
         
         protected void on1(final Editor editor) {
         }
+        
+        protected abstract Panmage getIcon();
     }
     
     protected final static class AddFeatureOperation extends EditorOperation {
@@ -809,37 +1139,113 @@ public class LevelEditor {
             featureDefinition.y = editor.y;
             roomDef.features.add(featureDefinition);
             editor.featureDefinition = featureDefinition;
-            editor.setOperation(null); //TODO
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuPlus;
+        }
+    }
+    
+    protected final static class PickFeatureOperation extends EditorOperation {
+        @Override
+        protected final void on1(final Editor editor) {
+            final FeatureDefinition picked = pickFeatureDefinition(editor.x, editor.y, false);
+            if (picked != null) {
+                editor.featureDefinition = picked;
+                editor.setMode(picked.getMode());
+            }
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuQuestion;
         }
     }
     
     protected final static class MoveFeatureOperation extends EditorOperation {
         @Override
+        protected final boolean isPickedFeatureRequired() {
+            return true;
+        }
+        
+        @Override
         protected final void onEditorMove(final Editor editor) {
             editor.featureDefinition.x = editor.x;
             editor.featureDefinition.y = editor.y;
         }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuCursor;
+        }
     }
     
     protected final static class ResizeFeatureOperation extends EditorOperation {
+        @Override
+        protected final boolean isPickedFeatureRequired() {
+            return true;
+        }
+        
         @Override
         protected final void onEditorMove(final Editor editor) {
             final FeatureDefinition featureDefinition = editor.featureDefinition;
             featureDefinition.setW(Math.max(1, editor.x - featureDefinition.x + 1));
             featureDefinition.setH(Math.max(1, editor.y - featureDefinition.y + 1));
         }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuGraph;
+        }
     }
     
-    // Delete feature operation, select feature operation
+    protected final static class DeleteFeatureOperation extends EditorOperation {
+        @Override
+        protected final void on1(final Editor editor) {
+            deleteFeatureDefinition(editor.x, editor.y);
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuMinus;
+        }
+    }
     
     protected final static class RecolorFeatureOperation extends EditorOperation {
         //TODO
+        @Override
+        protected final boolean isPickedFeatureRequired() {
+            return true;
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuRgb;
+        }
     }
+    
+    /*protected final static class PickCellTypeOperation extends EditorOperation {
+        @Override
+        protected final void on1(final Editor editor) {
+            editor.incCellType();
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuQuestion;
+        }
+    }*/
     
     protected final static class AddCellOperation extends EditorOperation {
         @Override
         protected final void on1(final Editor editor) {
-            grid.set(editor.x, editor.y, editor.cellType);
+            grid.toggle(editor.x, editor.y, editor.cellType);
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuPlus;
         }
     }
     
@@ -851,6 +1257,11 @@ public class LevelEditor {
             } else {
                 grid.set(editor.getRectangleX(), editor.getRectangleY(), editor.getRectangleW(), editor.getRectangleH(), editor.cellType);
             }
+        }
+        
+        @Override
+        protected final Panmage getIcon() {
+            return FurGuardiansGame.menuGraph;
         }
     }
 }
