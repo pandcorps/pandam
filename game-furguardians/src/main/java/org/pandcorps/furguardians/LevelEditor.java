@@ -25,6 +25,7 @@ package org.pandcorps.furguardians;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.furguardians.Character.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
@@ -183,7 +184,7 @@ public class LevelEditor {
         }
     }
     
-    protected abstract static class FeatureDefinition {
+    protected abstract static class FeatureDefinition implements Segmented {
         protected int x;
         protected int y;
         protected int w = 1;
@@ -225,9 +226,18 @@ public class LevelEditor {
             }
         }
         
-        protected void save() { } //TODO
+        @Override
+        public void save(final Segment seg) {
+            seg.setName("FTR");
+            seg.setInt(0, x);
+            seg.setInt(1, y);
+            seg.setInt(2, getW());
+            seg.setInt(3, getH());
+        }
         
-        protected void load() { }
+        protected void load() {
+            //TODO
+        }
         
         private final void renderSelection(final Panderer renderer, final Editor editor) {
             final Panlayer layer = editor.getLayer();
