@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 // Reflect Util
 public final class Reftil {
@@ -84,5 +85,38 @@ public final class Reftil {
 
 	public final static String getClassName(final Object o) {
 		return o == null ? null : o.getClass().getName();
+	}
+	
+	public final static Class<?> getDeclaredClass(final Class<?> declaringClass, final String simpleClassName) {
+        for (final Class<?> c : declaringClass.getDeclaredClasses()) {
+            final String name = c.getName();
+            if (name.endsWith(simpleClassName) && name.charAt(name.length() - simpleClassName.length() - 1) == '$') {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException("Unrecognized class " + simpleClassName);
+    }
+	
+	@SuppressWarnings("unchecked")
+    public final static <T> Constructor<? extends T> getDeclaredClassConstructor(
+            final Map<String, Constructor<? extends T>> cache, final Class<?> declaringClass,
+            final String simpleClassName, final Class<?>[] parameterTypes) {
+        Constructor<? extends T> constructor = cache.get(simpleClassName);
+        if (constructor != null) {
+            return constructor;
+        }
+        final Class<?> c = getDeclaredClass(declaringClass, simpleClassName);
+        try {
+            constructor = (Constructor<? extends T>) c.getDeclaredConstructor(parameterTypes);
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
+        }
+        cache.put(simpleClassName, constructor);
+        return constructor;
+    }
+	
+	public final static <T> T getDeclaredClassInstance(
+            final Map<String, Constructor<? extends T>> cache, final Class<?> declaringClass, final String simpleClassName) {
+	    return newInstance(getDeclaredClassConstructor(cache, declaringClass, simpleClassName, EMPTY_ARRAY_CLASS));
 	}
 }
