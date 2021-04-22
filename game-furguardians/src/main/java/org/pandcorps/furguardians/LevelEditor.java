@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.furguardians;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.pandcorps.core.*;
@@ -229,14 +230,27 @@ public class LevelEditor {
         @Override
         public void save(final Segment seg) {
             seg.setName("FTR");
-            seg.setInt(0, x);
-            seg.setInt(1, y);
-            seg.setInt(2, getW());
-            seg.setInt(3, getH());
+            seg.setValue(0, getClass().getSimpleName());
+            seg.setInt(1, x);
+            seg.setInt(2, y);
+            seg.setInt(3, getW());
+            seg.setInt(4, getH());
         }
         
-        protected void load() {
-            //TODO
+        private final static HashMap<String, Constructor<? extends FeatureDefinition>> featureDefinitionTypes = new HashMap<String, Constructor<? extends FeatureDefinition>>();
+        
+        protected final static FeatureDefinition newFeatureDefinition(final Segment seg) {
+            final String className = seg.getValue(0);
+            final FeatureDefinition def = Reftil.getDeclaredClassInstance(featureDefinitionTypes, LevelEditor.class, className);
+            def.load(seg);
+            return def;
+        }
+        
+        protected void load(final Segment seg) {
+            x = seg.intValue(1);
+            y = seg.intValue(2);
+            setW(seg.intValue(3));
+            setH(seg.intValue(4));
         }
         
         private final void renderSelection(final Panderer renderer, final Editor editor) {
@@ -512,6 +526,18 @@ public class LevelEditor {
         }
         
         protected abstract void buildColorful();
+        
+        @Override
+        public void save(final Segment seg) {
+            super.save(seg);
+            //TODO
+        }
+        
+        @Override
+        public void load(final Segment seg) {
+            super.load(seg);
+            //TODO
+        }
     }
     
     protected abstract static class NaturulRiseDefinition extends FeatureDefinition {
