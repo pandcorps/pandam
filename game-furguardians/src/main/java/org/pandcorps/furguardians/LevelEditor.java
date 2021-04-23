@@ -360,6 +360,16 @@ public class LevelEditor {
         protected final void destroy() {
             //TODO Only clear TileMap cells covered by this grid's occupied cells, or will this only be needed if clearing the whole room?
         }
+        
+        @Override
+        public void save(final Segment seg) {
+            //TODO
+        }
+        
+        @Override
+        public void load(final Segment seg) {
+            //TODO
+        }
     }
     
     private final static void initRandomForCurrentTile() {
@@ -511,9 +521,13 @@ public class LevelEditor {
             return newCommon(subX, subY, rot, mirror, flip, r, g, b);
         }
         
+        protected final boolean isDefaultColor() {
+            return r < 0;
+        }
+        
         @Override
         protected final void build() {
-            boolean defaultColor = r < 0;
+            boolean defaultColor = isDefaultColor();
             if (defaultColor) {
                 r = 0f;
                 g = 1f;
@@ -530,13 +544,20 @@ public class LevelEditor {
         @Override
         public void save(final Segment seg) {
             super.save(seg);
-            //TODO
+            if (isDefaultColor()) {
+                return;
+            }
+            seg.setFloat(5, r);
+            seg.setFloat(6, g);
+            seg.setFloat(7, b);
         }
         
         @Override
         public void load(final Segment seg) {
             super.load(seg);
-            //TODO
+            r = seg.getFloat(5, -1);
+            g = seg.getFloat(6, -1);
+            b = seg.getFloat(7, -1);
         }
     }
     
