@@ -56,6 +56,7 @@ public class LevelEditor {
     private static Tile groundTopRightConcave = null;
     private static Tile groundUpSlope = null;
     private static Tile groundDownSlope = null;
+    private final static HashMap<java.lang.Character, CellType> cellTypeMap = new HashMap<java.lang.Character, CellType>();
     private final static Random currentRandom = new Random();
     private static RoomDefinition roomDef;
     private static GridDefinition grid;
@@ -90,6 +91,13 @@ public class LevelEditor {
         groundTopRightConcave = tm.getTile(null, Level.imgMap[3][2], Tile.BEHAVIOR_SOLID);
         groundUpSlope = tm.getTile(null, Level.imgMap[3][3], FurGuardiansGame.TILE_UPSLOPE_FLOOR);
         groundDownSlope = tm.getTile(null, Level.imgMap[3][4], FurGuardiansGame.TILE_DOWNSLOPE_FLOOR);
+        for (final EditorMode mode : EDITOR_MODES) {
+            if (mode instanceof GridMode) {
+                final CellType cellType = ((GridMode) mode).getCellType();
+                cellTypeMap.put(java.lang.Character.valueOf(cellType.getKey()), cellType);
+            }
+        }
+        cellTypeMap.put(java.lang.Character.valueOf(' '), null);
     }
     
     protected final static void loadUi() {
@@ -118,6 +126,7 @@ public class LevelEditor {
             }
         }
         first.registerKeyboard();
+        Menu.PlayerScreen.addCursor(FurGuardiansGame.room);
     }
     
     protected final static Panmage getForegroundImage(final Tile tile) {
@@ -363,12 +372,22 @@ public class LevelEditor {
         
         @Override
         public void save(final Segment seg) {
-            //TODO
+            super.save(seg);
+            final StringBuilder b = new StringBuilder();
+            for (final CellType cell : cells) {
+                b.append((cell == null) ? ' ' : cell.getKey());
+            }
+            seg.setValue(5, b.toString());
         }
         
         @Override
         public void load(final Segment seg) {
-            //TODO
+            final String m = seg.getValue(5);
+            //TODO Replace cells array if size is different
+            final int size = m.length();
+            for (int i = 0; i < size; i++) {
+                cells[i] = cellTypeMap.get(java.lang.Character.valueOf(m.charAt(i)));
+            }
         }
     }
     
@@ -392,6 +411,8 @@ public class LevelEditor {
     
     protected abstract static class CellType {
         protected abstract void build();
+        
+        protected abstract char getKey();
     }
     
     protected final static GroundType groundType = new GroundType();
@@ -433,6 +454,11 @@ public class LevelEditor {
             //TODO Add art for bottom edge
             Level.tm.setTile(currentIndex, tile);
         }
+        
+        @Override
+        protected final char getKey() {
+            return '.';
+        }
     }
     
     protected final static GroundUpSlopeType groundUpSlopeType = new GroundUpSlopeType();
@@ -441,6 +467,11 @@ public class LevelEditor {
         @Override
         protected final void build() {
             //TODO
+        }
+        
+        @Override
+        protected final char getKey() {
+            return '/';
         }
     }
     
@@ -451,6 +482,11 @@ public class LevelEditor {
         protected final void build() {
             //TODO
         }
+        
+        @Override
+        protected final char getKey() {
+            return '\\';
+        }
     }
     
     protected final static BlockType blockType = new BlockType();
@@ -459,6 +495,11 @@ public class LevelEditor {
         @Override
         protected final void build() {
             setTile(currentIndex, blockSolid);
+        }
+        
+        @Override
+        protected final char getKey() {
+            return 'b';
         }
     }
     
@@ -475,6 +516,11 @@ public class LevelEditor {
             }
             setTile(currentIndex, tile);
         }
+        
+        @Override
+        protected final char getKey() {
+            return 'u';
+        }
     }
     
     protected final static BlockDownSlopeType blockDownSlopeType = new BlockDownSlopeType();
@@ -490,6 +536,11 @@ public class LevelEditor {
             }
             setTile(currentIndex, tile);
         }
+        
+        @Override
+        protected final char getKey() {
+            return 'd';
+        }
     }
     
     protected final static RockType rockType = new RockType();
@@ -504,6 +555,11 @@ public class LevelEditor {
             final float g = Mathtil.randf(currentRandom, 0f, b);
             final float r = Mathtil.randf(currentRandom, 0f, Math.min(0.65f, g));
             Level.tm.setTile(currentIndex, newCommon(64f, 16f, rot, mirror, false, r, g, b), null, FurGuardiansGame.TILE_BREAK);
+        }
+        
+        @Override
+        protected final char getKey() {
+            return '#';
         }
     }
     
