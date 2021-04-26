@@ -1029,6 +1029,12 @@ public class LevelEditor {
             if (featureDefinition != null) {
                 featureDefinition.renderSelection(renderer, this);
             }
+            final Panlayer layer = getLayer();
+            final float cursorZ = getPosition().getZ();
+            final float iconY = Pangine.getEngine().getEffectiveHeight() - 16;
+            final float iconZ = cursorZ - 1;
+            renderer.render(layer, mode.getIcon(), 0, iconY, iconZ);
+            renderer.render(layer, operation.getIcon(), 16, iconY, iconZ);
         }
     }
     
