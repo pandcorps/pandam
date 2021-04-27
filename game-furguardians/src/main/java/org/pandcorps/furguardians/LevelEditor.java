@@ -30,6 +30,7 @@ import org.pandcorps.core.seg.*;
 import org.pandcorps.furguardians.Character.*;
 import org.pandcorps.furguardians.Player.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.action.*;
 import org.pandcorps.pandam.impl.*;
@@ -126,6 +127,7 @@ public class LevelEditor {
             }
         }
         first.registerKeyboard();
+        first.registerTouch();
         Menu.PlayerScreen.addCursor(FurGuardiansGame.room);
     }
     
@@ -886,6 +888,19 @@ public class LevelEditor {
                             incMode();
                         }
                     }
+                }});
+        }
+        
+        private final void registerTouch() {
+            final Pangine engine = Pangine.getEngine();
+            final Panteraction interaction = engine.getInteraction();
+            final Touch touch = interaction.TOUCH;
+            register(touch, new ActionStartListener() {
+                @Override public final void onActionStart(final ActionStartEvent event) {
+                    //getIndex(touch);
+                }});
+            register(touch, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
                 }});
         }
         
