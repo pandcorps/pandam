@@ -593,7 +593,7 @@ public class TileMap extends Panctor implements Savable {
         Coltil.clear(renderedExtensions);
     }
     
-    protected final void render(final Panderer renderer, final Panlayer layer, final Object img, final float xitw, final float yjth, final float z) {
+    public final void render(final Panderer renderer, final Panlayer layer, final Object img, final float xitw, final float yjth, final float z) {
     	if (img == null) {
     		return;
     	}
