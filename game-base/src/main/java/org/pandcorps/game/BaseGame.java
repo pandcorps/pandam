@@ -302,6 +302,22 @@ public abstract class BaseGame extends Pangame {
 	    return btn;
 	}
 	
+	public final static int getX(final Cursor cursor, final Touch touch) {
+	    if (cursor == null) {
+            return touch.getX();
+        } else {
+            return Math.round(cursor.getPosition().getX());
+        }
+	}
+	
+	public final static int getY(final Cursor cursor, final Touch touch) {
+        if (cursor == null) {
+            return touch.getY();
+        } else {
+            return Math.round(cursor.getPosition().getY());
+        }
+    }
+	
 	public final static String getEmail() {
 		final StringBuilder b = new StringBuilder();
 		b.append("ps");
