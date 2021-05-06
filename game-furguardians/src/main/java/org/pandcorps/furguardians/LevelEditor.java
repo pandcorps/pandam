@@ -68,6 +68,10 @@ public class LevelEditor {
     private static Panmage iconTubeLeft = null;
     private static Panmage iconRock = null;
     private static Panmage selectedTile = null;
+    private static Cursor cursor = null;
+    private static int touchStartTileX = -1;
+    private static int touchStartTileY = -1;
+    private final static List<Editor> editors = new ArrayList<Editor>();
     
     protected final static void loadCommonTiles() {
         if (edgeLeft != null) {
@@ -115,24 +119,31 @@ public class LevelEditor {
     
     protected final static void goEditor() {
         loadUi();
-        Level.initLevel();
+        Level.initLevel(); // Current level could use block images instead of normal; force to normal or let editor pick (and support block images)
         roomDef = new RoomDefinition();
         roomDef.features.add(new GridDefinition());
         roomDef.build();
+        editors.clear();
         Editor first = null;
         for (final PlayerContext pc : FurGuardiansGame.pcs) {
             final Editor editor = new Editor(pc);
             if (first == null) {
                 first = editor;
             }
+            editors.add(editor);
         }
         first.registerKeyboard();
         first.registerTouch();
-        Menu.PlayerScreen.addCursor(FurGuardiansGame.room);
+        cursor = Menu.PlayerScreen.addCursor(FurGuardiansGame.room);
+        clearTouch();
     }
     
-    protected final static Panmage getForegroundImage(final Tile tile) {
-        return (Panmage) DynamicTileMap.getRawForeground(tile);
+    private static void clearTouch() {
+        touchStartTileX = touchStartTileY = -1;
+    }
+    
+    protected final static Object getForegroundImage(final Tile tile) {
+        return DynamicTileMap.getRawForeground(tile);
     }
     
     protected final static Panmage newCommon(final float subX, final float subY, final float r, final float g, final float b) {
@@ -297,11 +308,11 @@ public class LevelEditor {
         }
         
         protected final CellType get(final int x, final int y) {
-            return cells[getIndex(x, y)];
+            return get(x, y, null);
         }
         
         protected final CellType get(final int x, final int y, final CellType oob) {
-            return ((x < 0) || (y < 0) || (x >= getW()) || (y >= getH())) ? oob : get(x, y);
+            return ((x < 0) || (y < 0) || (x >= getW()) || (y >= getH())) ? oob : cells[getIndex(x, y)];
         }
         
         protected final void set(final int x, final int y, final CellType cellType) {
@@ -322,6 +333,7 @@ public class LevelEditor {
             final int index = getIndex(x, y);
             cells[index] = null;
             Level.tm.setTile(index, null);
+            build(x - 1, y - 1, 3, 3);
         }
         
         protected final void toggle(final int x, final int y, final CellType cellType) {
@@ -420,18 +432,28 @@ public class LevelEditor {
     protected final static GroundType groundType = new GroundType();
     
     protected final static class GroundType extends CellType {
+        private final CellType get(final int x, final int y) {
+            final CellType type = grid.get(x, y, groundType);
+            if ((type == groundUpSlopeType) && isUpSlopeObstructed(x, y)) {
+                return groundType;
+            } else if ((type == groundDownSlopeType) && isDownSlopeObstructed(x, y)) {
+                return groundType;
+            }
+            return type;
+        }
+        
         @Override
         protected final void build() {
             final int nx = cx - 1, px = cx + 1, py = cy + 1; // ny = cy - 1
-            //final CellType c1 = grid.get(nx, ny, groundType);
-            //final CellType c2 = grid.get(cx, ny, groundType);
-            //final CellType c3 = grid.get(px, ny, groundType);
-            final CellType c4 = grid.get(nx, cy, groundType);
-            //final CellType c5 = grid.get(cx, cy, groundType);
-            final CellType c6 = grid.get(px, cy, groundType);
-            final CellType c7 = grid.get(nx, py, groundType);
-            final CellType c8 = grid.get(cx, py, groundType);
-            final CellType c9 = grid.get(px, py, groundType);
+            //final CellType c1 = get(nx, ny);
+            //final CellType c2 = get(cx, ny);
+            //final CellType c3 = get(px, ny);
+            final CellType c4 = get(nx, cy);
+            //final CellType c5 = get(cx, cy);
+            final CellType c6 = get(px, cy);
+            final CellType c7 = get(nx, py);
+            final CellType c8 = get(cx, py);
+            final CellType c9 = get(px, py);
             final Tile tile;
             if ((c8 != groundType) && (c8 != groundUpSlopeType) && (c8 != groundDownSlopeType)) {
                 if ((c4 != groundType) && (c4 != groundUpSlopeType)) {
@@ -468,7 +490,11 @@ public class LevelEditor {
     protected final static class GroundUpSlopeType extends CellType {
         @Override
         protected final void build() {
-            //TODO
+            if (isUpSlopeObstructed()) {
+                groundType.build();
+            } else {
+                Level.tm.setTile(currentIndex, groundUpSlope);
+            }
         }
         
         @Override
@@ -482,7 +508,11 @@ public class LevelEditor {
     protected final static class GroundDownSlopeType extends CellType {
         @Override
         protected final void build() {
-            //TODO
+            if (isDownSlopeObstructed()) {
+                groundType.build();
+            } else {
+                Level.tm.setTile(currentIndex, groundDownSlope);
+            }
         }
         
         @Override
@@ -511,7 +541,7 @@ public class LevelEditor {
         @Override
         protected final void build() {
             final Tile tile;
-            if ((grid.get(cx, cy + 1) != null) || (grid.get(cx - 1, cy) != null)) {
+            if (isUpSlopeObstructed()) {
                 tile = blockSolid;
             } else {
                 tile = blockUpSlope;
@@ -525,13 +555,21 @@ public class LevelEditor {
         }
     }
     
+    protected final static boolean isUpSlopeObstructed() {
+        return isUpSlopeObstructed(cx, cy);
+    }
+    
+    protected final static boolean isUpSlopeObstructed(final int cx, final int cy) {
+        return (grid.get(cx, cy + 1) != null) || (grid.get(cx - 1, cy) != null);
+    }
+    
     protected final static BlockDownSlopeType blockDownSlopeType = new BlockDownSlopeType();
     
     protected final static class BlockDownSlopeType extends CellType {
         @Override
         protected final void build() {
             final Tile tile;
-            if ((grid.get(cx, cy + 1) != null) || (grid.get(cx + 1, cy) != null)) {
+            if (isDownSlopeObstructed()) {
                 tile = blockSolid;
             } else {
                 tile = blockDownSlope;
@@ -543,6 +581,14 @@ public class LevelEditor {
         protected final char getKey() {
             return 'd';
         }
+    }
+    
+    protected final static boolean isDownSlopeObstructed() {
+        return isDownSlopeObstructed(cx, cy);
+    }
+    
+    protected final static boolean isDownSlopeObstructed(final int cx, final int cy) {
+        return (grid.get(cx, cy + 1) != null) || (grid.get(cx + 1, cy) != null);
     }
     
     protected final static RockType rockType = new RockType();
@@ -815,6 +861,8 @@ public class LevelEditor {
         private int y = 0;
         private int rectangleX = -1;
         private int rectangleY = -1;
+        private int iconX = -1;
+        private int iconY = -1;
         
         protected Editor(final PlayerContext pc) {
             setView(FurGuardiansGame.editorCursor);
@@ -822,6 +870,9 @@ public class LevelEditor {
             FurGuardiansGame.setDepth(this, FurGuardiansGame.DEPTH_SPARK);
             Level.room.addActor(this);
             register(pc.ctrl);
+            final Pangine engine = Pangine.getEngine();
+            iconX = engine.getEffectiveWidth() / 2 - 16;
+            iconY = engine.getEffectiveTop() - 24;
         }
         
         protected final void register(final ControlScheme ctrl) {
@@ -875,6 +926,7 @@ public class LevelEditor {
             final Panteraction interaction = Pangine.getEngine().getInteraction();
             register(interaction.KEY_TAB, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
+                    // Alt+Tab can change from game window to another window on the device, so this won't always work
                     if (interaction.isAltActive()) {
                         if (interaction.isShiftActive()) {
                             decOperation();
@@ -883,11 +935,43 @@ public class LevelEditor {
                         }
                     } else {
                         if (interaction.isShiftActive()) {
-                            decOperation();
+                            decMode();
                         } else {
                             incMode();
                         }
                     }
+                }});
+            register(interaction.KEY_GRAVE, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    if (interaction.isShiftActive()) {
+                        decOperation();
+                    } else {
+                        incOperation();
+                    }
+                }});
+            register(interaction.KEY_BRACKET_LEFT, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    if (interaction.isShiftActive()) {
+                        decOperation();
+                    } else {
+                        decMode();
+                    }
+                }});
+            register(interaction.KEY_BRACKET_RIGHT, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    if (interaction.isShiftActive()) {
+                        incOperation();
+                    } else {
+                        incMode();
+                    }
+                }});
+            register(interaction.KEY_MINUS, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    decOperation();
+                }});
+            register(interaction.KEY_EQUALS, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    incOperation();
                 }});
         }
         
@@ -897,10 +981,25 @@ public class LevelEditor {
             final Touch touch = interaction.TOUCH;
             register(touch, new ActionStartListener() {
                 @Override public final void onActionStart(final ActionStartEvent event) {
-                    //getIndex(touch);
+                    touchStartTileX = FurGuardiansGame.getX(cursor, touch) / 16;
+                    touchStartTileY = FurGuardiansGame.getY(cursor, touch) / 16;
                 }});
             register(touch, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
+                    final int touchX = FurGuardiansGame.getX(cursor, touch);
+                    final int touchY = FurGuardiansGame.getY(cursor, touch);
+                    final int tileX = touchX / 16, tileY = touchY / 16;
+                    final boolean sameTile = (touchStartTileX == tileX) && (touchStartTileY == tileY);
+                    clearTouch();
+                    if (!sameTile) {
+                        return;
+                    }
+                    for (final Editor editor : editors) {
+                        if (editor.handleTouch(touchX, touchY)) {
+                            return;
+                        }
+                    }
+                    //TODO process touch
                 }});
         }
         
@@ -1038,6 +1137,21 @@ public class LevelEditor {
             return selectedTile;
         }
         
+        protected final boolean handleTouch(final int touchX, final int touchY) {
+            if ((touchY < iconY) || (touchY >= (iconY + 16))) {
+                return false;
+            } else if (touchX < iconX) {
+                return false;
+            } else if (touchX < (iconX + 16)) {
+                incMode();
+                return true;
+            } else if (touchX < (iconX + 32)) {
+                incOperation();
+                return true;
+            }
+            return false;
+        }
+        
         @Override
         protected final void renderView(final Panderer renderer) {
             super.renderView(renderer);
@@ -1046,10 +1160,9 @@ public class LevelEditor {
             }
             final Panlayer layer = getLayer();
             final float cursorZ = getPosition().getZ();
-            final float iconY = Pangine.getEngine().getEffectiveHeight() - 16;
             final float iconZ = cursorZ - 1;
-            renderer.render(layer, mode.getIcon(), 0, iconY, iconZ);
-            renderer.render(layer, operation.getIcon(), 16, iconY, iconZ);
+            Level.tm.render(renderer, layer, mode.getIcon(), iconX, iconY, iconZ);
+            Level.tm.render(renderer, layer, operation.getIcon(), iconX + 16, iconY, iconZ);
         }
     }
     
@@ -1070,7 +1183,7 @@ public class LevelEditor {
         protected void onSelectMode(final Editor editor) {
         }
         
-        protected abstract Panmage getIcon();
+        protected abstract Object getIcon();
     }
     
     protected abstract static class GridMode extends EditorMode {
@@ -1097,7 +1210,7 @@ public class LevelEditor {
         }
         
         @Override
-        protected final Panmage getIcon() {
+        protected final Object getIcon() {
             return getForegroundImage(groundTop);
         }
     }
@@ -1109,7 +1222,7 @@ public class LevelEditor {
         }
         
         @Override
-        protected final Panmage getIcon() {
+        protected final Object getIcon() {
             return getForegroundImage(groundUpSlope);
         }
     }
@@ -1121,7 +1234,7 @@ public class LevelEditor {
         }
         
         @Override
-        protected final Panmage getIcon() {
+        protected final Object getIcon() {
             return getForegroundImage(groundDownSlope);
         }
     }
@@ -1133,7 +1246,7 @@ public class LevelEditor {
         }
         
         @Override
-        protected final Panmage getIcon() {
+        protected final Object getIcon() {
             return getForegroundImage(blockSolid);
         }
     }
@@ -1145,7 +1258,7 @@ public class LevelEditor {
         }
         
         @Override
-        protected final Panmage getIcon() {
+        protected final Object getIcon() {
             return getForegroundImage(blockUpSlope);
         }
     }
@@ -1157,7 +1270,7 @@ public class LevelEditor {
         }
         
         @Override
-        protected final Panmage getIcon() {
+        protected final Object getIcon() {
             return getForegroundImage(blockDownSlope);
         }
     }
