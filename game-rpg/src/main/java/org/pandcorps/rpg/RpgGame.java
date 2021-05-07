@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020, Andrew M. Martin
+Copyright (c) 2009-2021, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -22,17 +22,18 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import java.util.*;
+
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
-import org.pandcorps.game.actor.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.pandax.tile.Tile.*;
-import org.pandcorps.rpg.Character.*;
+import org.pandcorps.rpg.Chr.*;
 
 public class RpgGame extends BaseGame {
     /*
@@ -45,18 +46,43 @@ public class RpgGame extends BaseGame {
     License comment years.
     */
     
-	private static Panroom room = null;
+    protected final static int DIM = 16;
+    protected final static int GAME_COLUMNS = 24;
+    protected final static int GAME_ROWS = 14;
+    protected final static int GAME_W = GAME_COLUMNS * DIM; // 384
+    protected final static int GAME_H = GAME_ROWS * DIM; // 224;
+    
+	protected static Panroom room = null;
 	protected static Panmage chrImage = null;
 	protected static Panmage eyesImage = null;
 	protected static Panmage hairImage = null;
 	private static Panmage empty = null;
-	private static Font hudFont = null;
+	protected static Panmage cursorImage = null;
+	protected final static int fontSize = 8;
+	protected static Font hudFont = null;
 	/*package*/ static Pantext hudInteract = null;
 	/*package*/ final static StringBuilder hudInteractText = new StringBuilder();
 	private static TileMap tm = null;
 	private static TileMapImage[][] animTiles = null;
 	private static Panmage[] containers = null;
 	/*package*/ static Player player = null;
+	/*package*/ final static int maxPartySize = 4;
+	/*package*/ final static List<ChrDefinition> party = new ArrayList<ChrDefinition>(maxPartySize);
+	
+	@Override
+    protected final boolean isFullScreen() {
+        return true;
+    }
+    
+    @Override
+    protected final int getGameWidth() {
+        return GAME_W; // 24 tiles
+    }
+    
+    @Override
+    protected final int getGameHeight() {
+        return GAME_H; // 14 tiles
+    }
 	
 	@Override
 	protected void init(final Panroom room) throws Exception {
@@ -72,11 +98,12 @@ public class RpgGame extends BaseGame {
 	private final static void loadConstants() {
 	    final Pangine engine = Pangine.getEngine();
 		empty = engine.createEmptyImage("img.empty", null, null, null);
-		hudFont = Fonts.getClassic(new FontRequest(8), Pancolor.WHITE);
+		hudFont = Fonts.getClassic(new FontRequest(fontSize), Pancolor.WHITE);
 		containers = createSheet("container", "org/pandcorps/rpg/misc/Container01.png", ImtilX.DIM, Container.o);
 		chrImage = engine.createImage("img.chr", "org/pandcorps/rpg/chr/Chr.png");
 		eyesImage = engine.createImage("img.eyes", "org/pandcorps/rpg/chr/Eyes.png");
 		hairImage = engine.createImage("img.hair", "org/pandcorps/rpg/chr/Hair.png");
+		cursorImage = containers[0]; //TODO
 	}
 	
 	/*package*/ final static void loadArea(final Area area, final int i, final int j) {
@@ -190,6 +217,7 @@ public class RpgGame extends BaseGame {
 		new Door("STORE", doors[0], doors[1], new Store(), 10, 1).init(tm, 10, 7);
 		new Container("BARREL", containers[2], null).init(tm, 6, 4);
 		new Container("CHEST", containers[0], containers[1]).init(tm, 8, 4);
+		/*
 		if (player == null || player.getPosition().getX() < 100) {
 			final CharacterLayer face = new CharacterLayer(0, 180, 130, 90, 200, 150, 110, 220, 170, 130, 240, 190, 150);
 			final CharacterLayer hair = new CharacterLayer(0, 128, 64, 0, 160, 80, 0, 192, 96, 0, 224, 112, 0);
@@ -199,6 +227,7 @@ public class RpgGame extends BaseGame {
 			final CharacterDefinition def = new CharacterDefinition(face, 0, hair, legs, feet, torso);
 			new Npc("act.npc", def, Guy4Controller.RANDOM).init(tm, 10, 5);
 		}
+		*/
 	}
 	
 	/*package*/ abstract static class Area {
@@ -271,7 +300,9 @@ public class RpgGame extends BaseGame {
 			final CharacterLayer feet = new CharacterLayer(0, 72, 72, 72, 104, 104, 104, 136, 136, 136, 168, 168, 168);
 			final CharacterLayer torso = new CharacterLayer(0, 128, 128, 128, 160, 160, 160, 192, 192, 192, 224, 224, 224);
 			final CharacterDefinition def = new CharacterDefinition(face, 4, hair, legs, feet, torso);*/
-			player = new Player(Chr.newSampleDefinition());
+		    final ChrDefinition def = Chr.newSampleDefinition();
+		    party.add(def);
+			player = new Player(def);
 			player.init(tm, 0, 0);
 		}
 		player.active = true;
