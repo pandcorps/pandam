@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020, Andrew M. Martin
+Copyright (c) 2009-2021, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -68,6 +68,10 @@ public class Chr extends Guy4 {
         return def;
     }
     
+    public final void setDirection(final Direction dir) {
+        face(dir);
+    }
+    
     @Override
     protected final void renderView(final Panderer renderer) {
         final Panlayer layer = getLayer();
@@ -107,6 +111,73 @@ public class Chr extends Guy4 {
         private Eye eyeRight;
         private ChrComponent hair;
         private ChrComponent armor;
+        protected final ChrStats stats = new ChrStats();
+    }
+    
+    protected final static int STAT_MAX_HEALTH = 0;
+    protected final static int STAT_MAX_MAGIC = 1;
+    protected final static int STAT_ATTACK = 2;
+    protected final static int STAT_DEFENSE = 3;
+    protected final static String[] STAT_NAMES = { "Max Health", "Max Magic", "Attack", "Defense" };
+    protected final static int STATS_SIZE = STAT_NAMES.length;
+    
+    protected abstract static class BaseStats {
+        private String name;
+        private final int[] values = new int[STATS_SIZE];
+        
+        public final String getName() {
+            return name;
+        }
+        
+        public final void setName(final String name) {
+            this.name = name;
+        }
+        
+        public final int get(final int statType) {
+            return values[statType];
+        }
+        
+        public final void set(final int statType, final int value) {
+            values[statType] = value;
+        }
+    }
+    
+    protected final static int GEAR_SLOT_ARMOR = 0;
+    protected final static int GEAR_SLOT_HAND1 = 1;
+    protected final static int GEAR_SLOT_HAND2 = 2;
+    protected final static String[] GEAR_SLOT_NAMES = { "Armor", "Hand 1", "Hand 2" };
+    protected final static int GEAR_SLOTS_SIZE = GEAR_SLOT_NAMES.length;
+    
+    protected final static class ChrStats extends BaseStats {
+        private int health;
+        //TODO race, element
+        private final Gear[] gears = new Gear[GEAR_SLOTS_SIZE];
+        
+        public final int getEffective(final int statType) {
+            int total = get(statType);
+            for (final Gear gear : gears) {
+                if (gear != null) {
+                    total += gear.get(statType);
+                }
+            }
+            return total;
+        }
+    }
+    
+    protected final static int GEAR_TYPE_ARMOR = 1;
+    protected final static int GEAR_TYPE_WEAPON = 2;
+    protected final static int GEAR_TYPE_SHIELD = 3;
+    
+    protected static class Gear extends BaseStats {
+        private int type;
+        
+        public int getType() {
+            return type;
+        }
+        
+        public void setType(final int type) {
+            this.type = type;
+        }
     }
     
     protected final static class ChrComponent {
