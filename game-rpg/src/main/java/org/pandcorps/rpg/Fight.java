@@ -42,8 +42,8 @@ public class Fight {
     protected static OptionText menuTitle = null;
     protected final static List<OptionText> optionTexts = new ArrayList<OptionText>(pageSize);
     protected static Panlayer layer = null;
-    protected final static List<PlayerFighter> playerParty = new ArrayList<>(RpgGame.maxPartySize);
-    protected final static List<Enemy> enemyParty = new ArrayList<Enemy>();
+    protected final static List<PlayerFighter> playerParty = new ArrayList<PlayerFighter>(RpgGame.maxPartySize);
+    protected final static List<EnemyFighter> enemyParty = new ArrayList<EnemyFighter>();
     protected static boolean playerTurn = true;
     protected static int partyMemberIndex = 0;
     protected static ChrDefinition currentPlayerDef = null;
@@ -54,7 +54,6 @@ public class Fight {
     protected static Cursor cursor = null;
     
     protected final static void goFight() {
-        //TODO save/remove layers... or disable... can that be done with the room layer?
         final Panroom room = RpgGame.room;
         layer = Pangine.getEngine().createLayer("fight.layer", RpgGame.GAME_W, RpgGame.GAME_H, room.getSize().getZ(), room);
         room.addAbove(layer);
@@ -114,6 +113,7 @@ public class Fight {
         final Panroom room = RpgGame.room;
         room.setVisible(true);
         room.setActive(true);
+        layer.destroy();
     }
     
     protected final static void startTurn() {
@@ -199,7 +199,7 @@ public class Fight {
         }
     };
     
-    protected final static void attack(final Enemy enemy) {
+    protected final static void attack(final EnemyFighter enemy) {
         //TODO
         incrementTurn();
     }
@@ -212,16 +212,16 @@ public class Fight {
     }
     
     protected final static class EnemyTargetOption extends FightOption {
-        private final Enemy enemy;
+        private final EnemyFighter enemy;
         
-        protected EnemyTargetOption(final Enemy enemy) {
+        protected EnemyTargetOption(final EnemyFighter enemy) {
             super((enemy == null) ? "All" : enemy.name);
             this.enemy = enemy;
         }
         
         @Override protected final void onSelect() {
             if (enemy == null) {
-                for (final Enemy enemy : enemyParty) {
+                for (final EnemyFighter enemy : enemyParty) {
                     targetedEnemyHandler.handle(enemy);
                 }
                 return;
@@ -234,7 +234,7 @@ public class Fight {
     
     protected final static List<FightOption> getEnemyTargetOptions(final boolean allAllowed) {
         enemyTargetOptions.clear();
-        for (final Enemy enemy : enemyParty) {
+        for (final EnemyFighter enemy : enemyParty) {
             enemyTargetOptions.add(enemy.targetOption);
         }
         if (allAllowed) {
@@ -245,11 +245,11 @@ public class Fight {
     }
     
     protected abstract static class TargetedEnemyHandler {
-        protected abstract void handle(final Enemy enemy);
+        protected abstract void handle(final EnemyFighter enemy);
     }
     
     protected final static TargetedEnemyHandler attackTargetedEnemyHandler = new TargetedEnemyHandler() {
-        @Override protected final void handle(final Enemy enemy) {
+        @Override protected final void handle(final EnemyFighter enemy) {
             attack(enemy);
         }
     };
@@ -296,13 +296,13 @@ public class Fight {
         }
     }
     
-    protected final static class Enemy {
+    protected final static class EnemyFighter {
         private final String name; // Can be enemy type + index if party contains more than 1 of given type
         private final ChrStats stats = new ChrStats();
         private final EnemyTargetOption targetOption;
         private final Panctor avatar; // Will be Chr for humanoid enemies
         
-        protected Enemy(final String name) {
+        protected EnemyFighter(final String name) {
             this.name = name;
             targetOption = new EnemyTargetOption(this);
             avatar = null;
