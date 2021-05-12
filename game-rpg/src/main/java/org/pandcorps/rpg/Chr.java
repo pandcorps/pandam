@@ -22,6 +22,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import java.util.List;
+
+import org.pandcorps.core.seg.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
@@ -36,7 +39,7 @@ public class Chr extends Guy4 {
     }
     
     protected final static ChrDefinition newSampleDefinition() {
-        final ChrDefinition def = new ChrDefinition();
+        final ChrDefinition def = new ChrDefinition(null);
         /*def.bodyTypeX = 0;
         def.bodyTypeY = 0;
         def.armorX = 0;
@@ -111,7 +114,11 @@ public class Chr extends Guy4 {
         private Eye eyeRight;
         private ChrComponent hair;
         private ChrComponent armor;
-        protected final ChrStats stats = new ChrStats();
+        protected final ChrStats stats;
+        
+        protected ChrDefinition(final ChrStats stats) {
+            this.stats = stats;
+        }
     }
     
     protected final static int STAT_MAX_HEALTH = 0;
@@ -124,6 +131,14 @@ public class Chr extends Guy4 {
     protected abstract static class BaseStats {
         private String name;
         private final int[] values = new int[STATS_SIZE];
+        
+        protected BaseStats(final Segment seg) {
+            name = seg.getValue(0);
+            final List<Field> valueFields = seg.getRepetitions(1);
+            for (int i = 0; i < STATS_SIZE; i++) {
+                set(i, valueFields.get(i).intValue());
+            }
+        }
         
         public final String getName() {
             return name;
@@ -140,6 +155,10 @@ public class Chr extends Guy4 {
         public final void set(final int statType, final int value) {
             values[statType] = value;
         }
+        
+        public int getEffective(final int statType) {
+            return get(statType);
+        }
     }
     
     protected final static int GEAR_SLOT_ARMOR = 0;
@@ -153,6 +172,13 @@ public class Chr extends Guy4 {
         //TODO race, element
         private final Gear[] gears = new Gear[GEAR_SLOTS_SIZE];
         
+        protected ChrStats(final Segment seg) {
+            super(seg);
+            seg.getField(2); //TODO health/attributes
+            seg.getRepetitions(3); //TODO gear
+        }
+        
+        @Override
         public final int getEffective(final int statType) {
             int total = get(statType);
             for (final Gear gear : gears) {
@@ -170,6 +196,11 @@ public class Chr extends Guy4 {
     
     protected static class Gear extends BaseStats {
         private int type;
+        
+        protected Gear(final Segment seg) {
+            super(seg);
+            type = seg.intValue(2);
+        }
         
         public int getType() {
             return type;
