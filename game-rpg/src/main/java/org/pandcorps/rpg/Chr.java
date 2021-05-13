@@ -22,7 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
-import java.util.List;
+import java.util.*;
 
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.actor.*;
@@ -115,9 +115,23 @@ public class Chr extends Guy4 {
         private ChrComponent hair;
         private ChrComponent armor;
         protected final ChrStats stats;
+        private int health;
+        private int magic;
+        private int experience; // Money/inventory tied to party, not a specific character
         
         protected ChrDefinition(final ChrStats stats) {
             this.stats = stats;
+        }
+        
+        public final int getEffective(final int statType) {
+            int total = stats.get(statType);
+            for (final Gear gear : stats.gears) {
+                if (gear != null) {
+                    total += gear.get(statType);
+                }
+            }
+            //TODO temporary status effects
+            return total;
         }
     }
     
@@ -155,10 +169,6 @@ public class Chr extends Guy4 {
         public final void set(final int statType, final int value) {
             values[statType] = value;
         }
-        
-        public int getEffective(final int statType) {
-            return get(statType);
-        }
     }
     
     protected final static int GEAR_SLOT_ARMOR = 0;
@@ -168,25 +178,13 @@ public class Chr extends Guy4 {
     protected final static int GEAR_SLOTS_SIZE = GEAR_SLOT_NAMES.length;
     
     protected final static class ChrStats extends BaseStats {
-        private int health;
         //TODO race, element
         private final Gear[] gears = new Gear[GEAR_SLOTS_SIZE];
         
         protected ChrStats(final Segment seg) {
             super(seg);
-            seg.getField(2); //TODO health/attributes
+            seg.getField(2); //TODO attributes
             seg.getRepetitions(3); //TODO gear
-        }
-        
-        @Override
-        public final int getEffective(final int statType) {
-            int total = get(statType);
-            for (final Gear gear : gears) {
-                if (gear != null) {
-                    total += gear.get(statType);
-                }
-            }
-            return total;
         }
     }
     
