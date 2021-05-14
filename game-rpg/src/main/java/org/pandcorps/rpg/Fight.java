@@ -298,14 +298,15 @@ public class Fight {
     
     protected final static class EnemyFighter {
         private final String name; // Can be enemy type + index if party contains more than 1 of given type
-        private final ChrStats stats = new ChrStats();
+        private final ChrDefinition def;
         private final EnemyTargetOption targetOption;
         private final Panctor avatar; // Will be Chr for humanoid enemies
         
-        protected EnemyFighter(final String name) {
+        protected EnemyFighter(final String name, final ChrDefinition def, final Panctor avatar) {
             this.name = name;
+            this.def = def;
             targetOption = new EnemyTargetOption(this);
-            avatar = null;
+            this.avatar = avatar;
         }
     }
     
