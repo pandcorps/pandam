@@ -52,6 +52,8 @@ public class RpgGame extends BaseGame {
     protected final static int GAME_W = GAME_COLUMNS * DIM; // 384
     protected final static int GAME_H = GAME_ROWS * DIM; // 224;
     
+    protected final static String RES = "org/pandcorps/rpg/";
+    
 	protected static Panroom room = null;
 	protected static Panmage chrImage = null;
 	protected static Panmage eyesImage = null;
@@ -99,10 +101,10 @@ public class RpgGame extends BaseGame {
 	    final Pangine engine = Pangine.getEngine();
 		empty = engine.createEmptyImage("img.empty", null, null, null);
 		hudFont = Fonts.getClassic(new FontRequest(fontSize), Pancolor.WHITE);
-		containers = createSheet("container", "org/pandcorps/rpg/misc/Container01.png", ImtilX.DIM, Container.o);
-		chrImage = engine.createImage("img.chr", "org/pandcorps/rpg/chr/Chr.png");
-		eyesImage = engine.createImage("img.eyes", "org/pandcorps/rpg/chr/Eyes.png");
-		hairImage = engine.createImage("img.hair", "org/pandcorps/rpg/chr/Hair.png");
+		containers = createSheet("container", RES + "misc/Container01.png", ImtilX.DIM, Container.o);
+		chrImage = engine.createImage("img.chr", RES + "chr/Chr.png");
+		eyesImage = engine.createImage("img.eyes", RES + "chr/Eyes.png");
+		hairImage = engine.createImage("img.hair", RES + "chr/Hair.png");
 		cursorImage = containers[0]; //TODO
 	}
 	
@@ -144,8 +146,8 @@ public class RpgGame extends BaseGame {
 	}
 	
 	private final static void loadTown() {
-		final Panmage[] doors = createSheet("door", "org/pandcorps/rpg/misc/DoorQuaint.png");
-		tm.setImageMap(createImage("tile.quaint", "org/pandcorps/rpg/bg/TileQuaint.png", 128));
+		final Panmage[] doors = createSheet("door", RES + "misc/DoorQuaint.png");
+		tm.setImageMap(createImage("tile.quaint", RES + "bg/TileQuaint.png", 128));
 		final TileMapImage[][] imgMap = tm.splitImageMap();
 		animTiles = new TileMapImage[5][];
 		for (int x = 1; x <= 5; x++) {
@@ -260,8 +262,8 @@ public class RpgGame extends BaseGame {
 	/*package*/ final static class Store extends Area {
 		@Override
 		protected final void init() {
-			final Panmage[] counters = createSheet("counter", "org/pandcorps/rpg/misc/Counter01.png");
-			tm.setImageMap(createImage("tile.inside", "org/pandcorps/rpg/bg/TileInside.png", 128));
+			final Panmage[] counters = createSheet("counter", RES + "misc/Counter01.png");
+			tm.setImageMap(createImage("tile.inside", RES + "bg/TileInside.png", 128));
 			final TileMapImage[][] imgMap = tm.splitImageMap();
 			tm.fillBackground(imgMap[2][3]);
 			tm.setBackground(0, 0, null, Tile.BEHAVIOR_SOLID);
