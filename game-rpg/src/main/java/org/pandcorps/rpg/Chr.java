@@ -22,8 +22,10 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import java.io.*;
 import java.util.*;
 
+import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -48,7 +50,7 @@ public class Chr extends Guy4 {
         def.eyeLeft = new Eye();
         def.eyeRight = new Eye();
         def.hair = new ChrComponent();
-        def.armor = new ChrComponent();
+        def.clothing = new ChrComponent();
         def.body.x = 0;
         def.body.y = 0;
         def.body.r = 0;
@@ -63,11 +65,11 @@ public class Chr extends Guy4 {
         def.hair.r = 0;
         def.hair.g = 0;
         def.hair.b = 1;
-        def.armor.x = 0;
-        def.armor.y = 32;
-        def.armor.r = 0.5f;
-        def.armor.g = 0.5f;
-        def.armor.b = 0.5f;
+        def.clothing.x = 0;
+        def.clothing.y = 32;
+        def.clothing.r = 0.5f;
+        def.clothing.g = 0.5f;
+        def.clothing.b = 0.5f;
         return def;
     }
     
@@ -100,7 +102,12 @@ public class Chr extends Guy4 {
             renderer.render(layer, RpgGame.eyesImage, x + lxo, y + 15, z, def.eyeLeft.x, def.eyeLeft.y, 4, 4, 0, m, false, 1, 1, 1);
             renderer.render(layer, RpgGame.eyesImage, x + rxo, y + 15, z, def.eyeRight.x, def.eyeRight.y, 4, 4, 0, !m, false, 1, 1, 1);
         }
-        def.armor.render(renderer, this);
+        final Armor armor = def.stats.getArmor();
+        if (armor == null) {
+            def.clothing.render(renderer, this); // Might make sense to render this under armor if armor present
+        } else {
+            armor.renderData.render(renderer, this);
+        }
         def.body.render(renderer, this);
     }
     
@@ -113,7 +120,7 @@ public class Chr extends Guy4 {
         private Eye eyeLeft;
         private Eye eyeRight;
         private ChrComponent hair;
-        private ChrComponent armor;
+        private ChrComponent clothing;
         protected final ChrStats stats;
         private int health;
         private int magic;
@@ -137,12 +144,12 @@ public class Chr extends Guy4 {
     
     protected final static int STAT_MAX_HEALTH = 0;
     protected final static int STAT_MAX_MAGIC = 1;
-    protected final static int STAT_ATTACK = 2;
-    protected final static int STAT_DEFENSE = 3;
+    protected final static int STAT_STRENGTH = 2; // Base attack, independent of weapon quality
+    protected final static int STAT_ENDURANCE = 3; // Base defense, independent of armor quality 
     protected final static String[] STAT_NAMES = { "Max Health", "Max Magic", "Attack", "Defense" };
     protected final static int STATS_SIZE = STAT_NAMES.length;
     
-    protected abstract static class BaseStats {
+    protected abstract static class BaseStats implements Named {
         private String name;
         private final int[] values = new int[STATS_SIZE];
         
@@ -154,6 +161,7 @@ public class Chr extends Guy4 {
             }
         }
         
+        @Override
         public final String getName() {
             return name;
         }
@@ -186,26 +194,161 @@ public class Chr extends Guy4 {
             seg.getField(2); //TODO attributes
             seg.getRepetitions(3); //TODO gear
         }
+        
+        protected final Armor getArmor() {
+            return (Armor) gears[GEAR_SLOT_ARMOR];
+        }
     }
     
     protected final static int GEAR_TYPE_ARMOR = 1;
     protected final static int GEAR_TYPE_WEAPON = 2;
     protected final static int GEAR_TYPE_SHIELD = 3;
     
-    protected static class Gear extends BaseStats {
-        private int type;
+    protected abstract static class Gear extends BaseStats {
+        /*
+        Gear might augment base stats, but attack power isn't just added to base strength when equipped.
+        Otherwise, a character that does consecutive attacks with 2 weapons would combine attack power of each weapon with each strike.
+        Keeping them separate, the strike with the first weapon can incorporate the character's strength with only the first weapon's quality.
+        Then the strike with the second weapon incorporates the base strength with only the second weapon's quality.
+        */
+        private final int type;
+        private final SmithingQuality quality;
+        private final Material material;
+        private final GearSubtype subtype;
         
-        protected Gear(final Segment seg) {
+        protected Gear(final Segment seg, final int type) {
             super(seg);
-            type = seg.intValue(2);
+            this.type = type;
+            this.quality = getSmithingQuality(seg.getValue(2)); // 0 - name, 1 - stats
+            this.material = getMaterial(seg.getValue(3));
+            this.subtype = getGearSubtype(seg.getValue(4));
         }
         
-        public int getType() {
+        public final int getType() {
             return type;
         }
         
-        public void setType(final int type) {
-            this.type = type;
+        public final int getQuality() {
+            return quality.getMultiplier() * material.getMultiplier() * subtype.getMultiplier();
+        }
+    }
+    
+    protected final static class Armor extends Gear {
+        private final ChrComponent renderData;
+        
+        protected Armor(final Segment seg) {
+            super(seg, GEAR_TYPE_ARMOR);
+            renderData = new ChrComponent(seg, 3);
+        }
+    }
+    
+    protected final static class Weapon extends Gear {
+        protected Weapon(final Segment seg) {
+            super(seg, GEAR_TYPE_WEAPON);
+        }
+    }
+    
+    protected final static class Shield extends Gear {
+        protected Shield(final Segment seg) {
+            super(seg, GEAR_TYPE_SHIELD);
+        }
+    }
+    
+    protected final static Gear getGear(final String name) {
+        throw new UnsupportedOperationException(); //TODO
+    }
+    
+    protected abstract static class GearAttribute implements Named {
+        private final String name;
+        private final int multiplier;
+        
+        protected GearAttribute(final Segment seg) {
+            name = seg.getValue(0);
+            multiplier = seg.intValue(1);
+        }
+        
+        @Override
+        public final String getName() {
+            return name;
+        }
+        
+        public final int getMultiplier() {
+            return multiplier;
+        }
+    }
+    
+    // Poor/fair/superior/flawless/etc.
+    protected final static class SmithingQuality extends GearAttribute {
+        
+        protected SmithingQuality(final Segment seg) {
+            super(seg);
+        }
+    }
+    
+    private final static Map<String, SmithingQuality> smithingQualityMap = new HashMap<String, SmithingQuality>();
+    
+    protected final static SmithingQuality getSmithingQuality(final String name) {
+        return smithingQualityMap.get(name);
+    }
+    
+    // Copper/iron/etc.
+    protected final static class Material extends GearAttribute {
+        protected Material(final Segment seg) {
+            super(seg);
+        }
+    }
+    
+    private final static Map<String, Material> materialMap = new HashMap<String, Material>();
+    
+    protected final static Material getMaterial(final String name) {
+        return materialMap.get(name);
+    }
+    
+    // Weapon sub-types like dagger/sword/spear/bow/etc.
+    protected static class GearSubtype extends GearAttribute {
+        //TODO stats/restrictions, dagger increases evade ability but can't be used with heavy armor
+        
+        protected GearSubtype(final Segment seg) {
+            super(seg);
+        }
+    }
+    
+    private final static Map<String, GearSubtype> gearSubtypeMap = new HashMap<String, GearSubtype>();
+    
+    protected final static GearSubtype getGearSubtype(final String name) {
+        return gearSubtypeMap.get(name);
+    }
+    
+    protected static interface Named {
+        public String getName();
+    }
+    
+    protected final static void loadGearData() {
+        SegmentStream in = null;
+        try {
+            in = SegmentStream.openLocation(RpgGame.RES + "Gear.txt");
+            Segment seg = null;
+            while ((seg = in.read()) != null) {
+                final String name = seg.getName();
+                if ("QTY".equals(name)) {
+                    put(smithingQualityMap, new SmithingQuality(seg));
+                } else if ("MAT".equals(name)) {
+                    put(materialMap, new Material(seg));
+                } else if ("SUB".equals(name)) {
+                    put(gearSubtypeMap, new GearSubtype(seg));
+                }
+            }
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            Iotil.close(in);
+        }
+    }
+    
+    protected final static <V extends Named> void put(final Map<String, V> map, final V value) {
+        final V old = map.put(value.getName(), value);
+        if (old != null) {
+            throw new IllegalStateException("Found multiple " + value.getClass().getSimpleName() + " instances for " + value.getName());
         }
     }
     
@@ -215,6 +358,17 @@ public class Chr extends Guy4 {
         private float r;
         private float g;
         private float b;
+        
+        protected ChrComponent() {
+        }
+        
+        protected ChrComponent(final Segment seg, final int i) {
+            this.x = seg.floatValue(i);
+            this.y = seg.floatValue(i + 1);
+            this.r = seg.floatValue(i + 2);
+            this.g = seg.floatValue(i + 3);
+            this.b = seg.floatValue(i + 4);
+        }
         
         private final void render(final Panderer renderer, final Chr chr) {
             //render(renderer, RpgGame.chrImage, chr, -8.0f, -4.0f, 64.0f, 160.0f, 32.0f);
