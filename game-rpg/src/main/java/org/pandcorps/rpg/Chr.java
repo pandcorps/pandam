@@ -153,6 +153,10 @@ public class Chr extends Guy4 {
         private String name;
         private final int[] values = new int[STATS_SIZE];
         
+        protected BaseStats(final String name) {
+            this.name = name;
+        }
+        
         protected BaseStats(final Segment seg) {
             name = seg.getValue(0);
             final List<Field> valueFields = seg.getRepetitions(1);
@@ -192,7 +196,11 @@ public class Chr extends Guy4 {
         protected ChrStats(final Segment seg) {
             super(seg);
             seg.getField(2); //TODO attributes
-            seg.getRepetitions(3); //TODO gear
+            final List<Field> gearFields = seg.getRepetitions(3);
+            final int gearSize = gearFields.size();
+            for (int i = 0; i < gearSize; i++) {
+                gears[i] = getGear(gearFields.get(i).getValue());
+            }
         }
         
         protected final Armor getArmor() {
@@ -216,6 +224,14 @@ public class Chr extends Guy4 {
         private final Material material;
         private final GearSubtype subtype;
         
+        protected Gear(final String name, final int type, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
+            super(name);
+            this.type = type;
+            this.quality = quality;
+            this.material = material;
+            this.subtype = subtype;
+        }
+        
         protected Gear(final Segment seg, final int type) {
             super(seg);
             this.type = type;
@@ -228,6 +244,10 @@ public class Chr extends Guy4 {
             return type;
         }
         
+        public final GearSubtype getSubtype() {
+            return subtype;
+        }
+        
         public final int getQuality() {
             return quality.getMultiplier() * material.getMultiplier() * subtype.getMultiplier();
         }
@@ -236,26 +256,41 @@ public class Chr extends Guy4 {
     protected final static class Armor extends Gear {
         private final ChrComponent renderData;
         
+        protected Armor(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype, final ChrComponent renderData) {
+            super(name, GEAR_TYPE_ARMOR, quality, material, subtype);
+            this.renderData = renderData;
+        }
+        
         protected Armor(final Segment seg) {
             super(seg, GEAR_TYPE_ARMOR);
-            renderData = new ChrComponent(seg, 3);
+            this.renderData = new ChrComponent(seg, 5);
         }
     }
     
     protected final static class Weapon extends Gear {
+        protected Weapon(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
+            super(name, GEAR_TYPE_WEAPON, quality, material, subtype);
+        }
+        
         protected Weapon(final Segment seg) {
             super(seg, GEAR_TYPE_WEAPON);
         }
     }
     
     protected final static class Shield extends Gear {
+        protected Shield(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
+            super(name, GEAR_TYPE_SHIELD, quality, material, subtype);
+        }
+        
         protected Shield(final Segment seg) {
             super(seg, GEAR_TYPE_SHIELD);
         }
     }
     
+    private final static Map<String, Gear> gearMap = new LinkedHashMap<String, Gear>();
+    
     protected final static Gear getGear(final String name) {
-        throw new UnsupportedOperationException(); //TODO
+        return gearMap.get(name);
     }
     
     protected abstract static class GearAttribute implements Named {
@@ -285,7 +320,7 @@ public class Chr extends Guy4 {
         }
     }
     
-    private final static Map<String, SmithingQuality> smithingQualityMap = new HashMap<String, SmithingQuality>();
+    private final static Map<String, SmithingQuality> smithingQualityMap = new LinkedHashMap<String, SmithingQuality>();
     
     protected final static SmithingQuality getSmithingQuality(final String name) {
         return smithingQualityMap.get(name);
@@ -293,12 +328,19 @@ public class Chr extends Guy4 {
     
     // Copper/iron/etc.
     protected final static class Material extends GearAttribute {
+        private final float r;
+        private final float g;
+        private final float b;
+        
         protected Material(final Segment seg) {
             super(seg);
+            r = seg.floatValue(2);
+            g = seg.floatValue(3);
+            b = seg.floatValue(4);
         }
     }
     
-    private final static Map<String, Material> materialMap = new HashMap<String, Material>();
+    private final static Map<String, Material> materialMap = new LinkedHashMap<String, Material>();
     
     protected final static Material getMaterial(final String name) {
         return materialMap.get(name);
@@ -306,14 +348,20 @@ public class Chr extends Guy4 {
     
     // Weapon sub-types like dagger/sword/spear/bow/etc.
     protected static class GearSubtype extends GearAttribute {
+        private final int type;
+        private final float renderX;
+        private final float renderY;
         //TODO stats/restrictions, dagger increases evade ability but can't be used with heavy armor
         
         protected GearSubtype(final Segment seg) {
             super(seg);
+            type = seg.intValue(2); // 0 - name, 1 - multiplier
+            renderX = seg.getFloat(3, -1);
+            renderY = seg.getFloat(4, -1);
         }
     }
     
-    private final static Map<String, GearSubtype> gearSubtypeMap = new HashMap<String, GearSubtype>();
+    private final static Map<String, GearSubtype> gearSubtypeMap = new LinkedHashMap<String, GearSubtype>();
     
     protected final static GearSubtype getGearSubtype(final String name) {
         return gearSubtypeMap.get(name);
@@ -343,6 +391,36 @@ public class Chr extends Guy4 {
         } finally {
             Iotil.close(in);
         }
+        generateGear();
+    }
+    
+    protected final static void generateGear() {
+        for (final Material material : materialMap.values()) {
+            for (final GearSubtype subtype : gearSubtypeMap.values()) {
+                final ChrComponent renderData;
+                if (subtype.renderX < 0) {
+                    renderData = null;
+                } else {
+                    renderData = new ChrComponent(subtype.renderX, subtype.renderY, material.r, material.g, material.b);
+                }
+                for (final SmithingQuality quality : smithingQualityMap.values()) {
+                    put(gearMap, newGear(quality, material, subtype, renderData));
+                }
+            }
+        }
+    }
+    
+    protected final static Gear newGear(final SmithingQuality quality, final Material material, final GearSubtype subtype, final ChrComponent renderData) {
+        final String name = quality.getName() + " " + material.getName() + " " + subtype.getName();
+        switch (subtype.type) {
+            case GEAR_TYPE_ARMOR:
+                return new Armor(name, quality, material, subtype, renderData);
+            case GEAR_TYPE_WEAPON:
+                return new Weapon(name, quality, material, subtype);
+            case GEAR_TYPE_SHIELD:
+                return new Shield(name, quality, material, subtype);
+        }
+        throw new IllegalStateException("Unexpected Gear type " + subtype.type + " for " + name);
     }
     
     protected final static <V extends Named> void put(final Map<String, V> map, final V value) {
@@ -360,6 +438,14 @@ public class Chr extends Guy4 {
         private float b;
         
         protected ChrComponent() {
+        }
+        
+        protected ChrComponent(final float x, final float y, final float r, final float g, final float b) {
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.g = g;
+            this.b = b;
         }
         
         protected ChrComponent(final Segment seg, final int i) {
@@ -438,6 +524,10 @@ public class Chr extends Guy4 {
             }
             renderer.render(chr.getLayer(), image, pos.getX() + xo, pos.getY() + yo, pos.getZ(), x + io, y, d, d, 0, dir == Direction.West, false, r, g, b);
         }*/
+    }
+    
+    protected final static ChrComponent newChrComponent(final Segment seg, final int i) {
+        return Chartil.isEmpty(seg.getValue(i)) ? null : new ChrComponent(seg, i);
     }
     
     protected final static class Eye {
