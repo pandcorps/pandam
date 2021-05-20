@@ -36,41 +36,9 @@ public class Chr extends Guy4 {
     
     protected Chr(final ChrDefinition def) {
         this.def = def;
+        setView(RpgGame.chrBox);
         setSpeed(1);
         face(Direction.South);
-    }
-    
-    protected final static ChrDefinition newSampleDefinition() {
-        final ChrDefinition def = new ChrDefinition(null);
-        /*def.bodyTypeX = 0;
-        def.bodyTypeY = 0;
-        def.armorX = 0;
-        def.armorY = 32;*/
-        def.body = new ChrComponent();
-        def.eyeLeft = new Eye();
-        def.eyeRight = new Eye();
-        def.hair = new ChrComponent();
-        def.clothing = new ChrComponent();
-        def.body.x = 0;
-        def.body.y = 0;
-        def.body.r = 0;
-        def.body.g = 1;
-        def.body.b = 1;
-        def.eyeLeft.x = 0;
-        def.eyeLeft.y = 0;
-        def.eyeRight.x = 0;
-        def.eyeRight.y = 0;
-        def.hair.x = 0;
-        def.hair.y = 16;
-        def.hair.r = 0;
-        def.hair.g = 0;
-        def.hair.b = 1;
-        def.clothing.x = 0;
-        def.clothing.y = 32;
-        def.clothing.r = 0.5f;
-        def.clothing.g = 0.5f;
-        def.clothing.b = 0.5f;
-        return def;
     }
     
     public final void setDirection(final Direction dir) {
@@ -116,11 +84,11 @@ public class Chr extends Guy4 {
         //private int bodyTypeY;
         //private int armorX;
         //private int armorY;
-        private ChrComponent body;
-        private Eye eyeLeft;
-        private Eye eyeRight;
-        private ChrComponent hair;
-        private ChrComponent clothing;
+        protected final ChrComponent body = new ChrComponent();
+        protected final Eye eyeLeft = new Eye();
+        protected final Eye eyeRight = new Eye();
+        protected final ChrComponent hair = new ChrComponent();
+        protected final ChrComponent clothing = new ChrComponent();
         protected final ChrStats stats;
         private int health;
         private int magic;
@@ -128,6 +96,19 @@ public class Chr extends Guy4 {
         
         protected ChrDefinition(final ChrStats stats) {
             this.stats = stats;
+        }
+        
+        protected void load(final Segment seg) {
+            body.load(seg, 0);
+            eyeLeft.x = seg.floatValue(5);
+            eyeLeft.y = seg.floatValue(6);
+            eyeRight.x = seg.floatValue(7);
+            eyeRight.y = seg.floatValue(8);
+            hair.load(seg, 9);
+            clothing.load(seg, 14);
+            health = seg.intValue(19);
+            magic = seg.intValue(20);
+            experience = seg.intValue(21);
         }
         
         public final int getEffective(final int statType) {
@@ -139,6 +120,28 @@ public class Chr extends Guy4 {
             }
             //TODO temporary status effects
             return total;
+        }
+        
+        protected final void randomizeAppearance() {
+            body.x = 0; //TODO Pick from available types
+            body.y = 0;
+            body.r = 0.8f; //TODO Use thresholds from race/sub-race
+            body.g = 0.6f;
+            body.b = 0.4f;
+            eyeLeft.x = 0; //TODO Pick from available eye types
+            eyeLeft.y = 0;
+            eyeRight.x = 0;
+            eyeRight.y = 0;
+            hair.x = 0; //TODO Pick from available hair styles
+            hair.y = 16;
+            hair.r = 0.5f;
+            hair.g = 0.25f;
+            hair.b = 0.125f;
+            clothing.x = 0; //TODO Pick from available clothing styles
+            clothing.y = 32;
+            clothing.r = 0.25f;
+            clothing.g = 0.75f;
+            clothing.b = 0.5f;
         }
     }
     
@@ -194,7 +197,7 @@ public class Chr extends Guy4 {
         private final Gear[] gears = new Gear[GEAR_SLOTS_SIZE];
         
         protected ChrStats(final Segment seg) {
-            super(seg);
+            super(seg); // 0 - name, 1 - stats
             seg.getField(2); //TODO attributes
             final List<Field> gearFields = seg.getRepetitions(3);
             final int gearSize = gearFields.size();
@@ -371,27 +374,27 @@ public class Chr extends Guy4 {
         public String getName();
     }
     
-    protected final static void loadGearData() {
+    protected final static void loadData() {
         SegmentStream in = null;
         try {
-            in = SegmentStream.openLocation(RpgGame.RES + "Gear.txt");
+            in = SegmentStream.openLocation(RpgGame.RES + "Data.txt");
             Segment seg = null;
-            while ((seg = in.read()) != null) {
-                final String name = seg.getName();
-                if ("QTY".equals(name)) {
-                    put(smithingQualityMap, new SmithingQuality(seg));
-                } else if ("MAT".equals(name)) {
-                    put(materialMap, new Material(seg));
-                } else if ("SUB".equals(name)) {
-                    put(gearSubtypeMap, new GearSubtype(seg));
-                }
+            while ((seg = in.readIf("QTY")) != null) {
+                put(smithingQualityMap, new SmithingQuality(seg));
             }
+            while ((seg = in.readIf("MAT")) != null) {
+                put(materialMap, new Material(seg));
+            }
+            while ((seg = in.readIf("SUB")) != null) {
+                put(gearSubtypeMap, new GearSubtype(seg));
+            }
+            generateGear();
+            Enemy.loadEnemyData(in);
         } catch (final IOException e) {
             throw new IllegalStateException(e);
         } finally {
             Iotil.close(in);
         }
-        generateGear();
     }
     
     protected final static void generateGear() {
@@ -449,6 +452,10 @@ public class Chr extends Guy4 {
         }
         
         protected ChrComponent(final Segment seg, final int i) {
+            load(seg, i);
+        }
+        
+        protected void load(final Segment seg, final int i) {
             this.x = seg.floatValue(i);
             this.y = seg.floatValue(i + 1);
             this.r = seg.floatValue(i + 2);
