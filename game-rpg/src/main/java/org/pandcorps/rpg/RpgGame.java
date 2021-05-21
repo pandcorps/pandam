@@ -22,13 +22,16 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.img.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.core.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.text.Fonts.*;
 import org.pandcorps.pandax.tile.*;
@@ -54,11 +57,13 @@ public class RpgGame extends BaseGame {
     
     protected final static String RES = "org/pandcorps/rpg/";
     
+    protected final static Panple chrSize = new FinPanple2(16, 24);
 	protected static Panroom room = null;
 	protected static Panmage chrImage = null;
 	protected static Panmage eyesImage = null;
 	protected static Panmage hairImage = null;
 	private static Panmage empty = null;
+	protected static Panmage chrBox = null;
 	protected static Panmage cursorImage = null;
 	protected final static int fontSize = 8;
 	protected static Font hudFont = null;
@@ -93,19 +98,39 @@ public class RpgGame extends BaseGame {
 		engine.setEntityMapEnabled(false);
 		Imtil.onlyResources = true;
 		RpgGame.room = room;
-		loadConstants();
+		loadResources();
+		Chr.loadData();
+		loadSaveFile();
 		loadArea(new Town(), 5, 5);
 	}
 	
-	private final static void loadConstants() {
+	private final static void loadResources() {
 	    final Pangine engine = Pangine.getEngine();
 		empty = engine.createEmptyImage("img.empty", null, null, null);
+		chrBox = engine.createEmptyImage("img.chr.box", null, null, chrSize);
 		hudFont = Fonts.getClassic(new FontRequest(fontSize), Pancolor.WHITE);
 		containers = createSheet("container", RES + "misc/Container01.png", ImtilX.DIM, Container.o);
 		chrImage = engine.createImage("img.chr", RES + "chr/Chr.png");
 		eyesImage = engine.createImage("img.eyes", RES + "chr/Eyes.png");
 		hairImage = engine.createImage("img.hair", RES + "chr/Hair.png");
 		cursorImage = containers[0]; //TODO
+	}
+	
+	private final static void loadSaveFile() {
+	    SegmentStream in = null;
+	    try {
+            in = SegmentStream.openLocation("Save.txt"); //TODO Start new game if not found
+            Segment seg = null;
+            while ((seg = in.readIf("CHR")) != null) {
+                final ChrDefinition def = new ChrDefinition(new ChrStats(seg));
+                def.load(in.readRequire("CH2"));
+                party.add(def);
+            }
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            Iotil.close(in);
+        }
 	}
 	
 	/*package*/ final static void loadArea(final Area area, final int i, final int j) {
@@ -302,9 +327,7 @@ public class RpgGame extends BaseGame {
 			final CharacterLayer feet = new CharacterLayer(0, 72, 72, 72, 104, 104, 104, 136, 136, 136, 168, 168, 168);
 			final CharacterLayer torso = new CharacterLayer(0, 128, 128, 128, 160, 160, 160, 192, 192, 192, 224, 224, 224);
 			final CharacterDefinition def = new CharacterDefinition(face, 4, hair, legs, feet, torso);*/
-		    final ChrDefinition def = Chr.newSampleDefinition();
-		    party.add(def);
-			player = new Player(def);
+			player = new Player(party.get(0));
 			player.init(tm, 0, 0);
 		}
 		player.active = true;
