@@ -26,10 +26,10 @@ import java.io.*;
 import java.util.*;
 import java.util.Map.*;
 
-import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandax.tile.*;
 import org.pandcorps.rpg.Chr.*;
 import org.pandcorps.rpg.Fight.*;
 
@@ -37,46 +37,26 @@ public class Enemy {
     protected final static Map<String, EnemyAction> actionMap = new HashMap<String, EnemyAction>();
     protected final static Map<String, EnemyDefinition> enemyMap = new HashMap<String, EnemyDefinition>();
     
-    protected final static void loadEnemyData() {
-        loadEnemyActions();
-        loadEnemyDefinitions();
-    }
-    
-    private final static void loadEnemyActions() {
-        
-    }
-    
-    private final static void loadEnemyDefinitions() {
-        SegmentStream in = null;
-        try {
-            in = SegmentStream.openLocation(RpgGame.RES + "Enemy.txt");
-            Segment seg = null;
-            while ((seg = in.read()) != null) {
-                final EnemyDefinition def = newEnemyDefinition(seg);
-                final EnemyDefinition old = enemyMap.put(def.getName(), def);
-                if (old != null) {
-                    throw new IllegalStateException("Found multiple EnemyDefinitions for " + def.getName());
-                }
-            }
-        } catch (final IOException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            Iotil.close(in);
+    protected final static void loadEnemyData(final SegmentStream in) throws IOException {
+        Segment seg = null;
+        while ((seg = in.readIf("ENM")) != null) {
+            final Segment extraSeg = in.read();
+            final EnemyDefinition def = newEnemyDefinition(seg, extraSeg);
+            Chr.put(enemyMap, def);
         }
     }
     
-    protected final static EnemyDefinition newEnemyDefinition(final Segment seg) {
-        final String name = seg.getName();
+    protected final static EnemyDefinition newEnemyDefinition(final Segment statsSeg, final Segment extraSeg) {
+        final String name = extraSeg.getName();
         if ("ENS".equals(name)) {
-            return new SimpleEnemyDefinition(seg);
+            return new SimpleEnemyDefinition(statsSeg, extraSeg);
         } else if ("ENC".equals(name)) {
-            return new ChrEnemyDefinition(seg);
+            return new ChrEnemyDefinition(statsSeg, extraSeg);
         }
         throw new IllegalArgumentException("Unrecognized EnemyDefinition type " + name);
     }
     
-    protected final static List<EnemyFighter> newEnemyParty(final CountMap<EnemyDefinition> defs) {
-        final List<EnemyFighter> party = new ArrayList<EnemyFighter>(defs.size());
+    protected final static void initEnemyParty(final List<EnemyFighter> party, final CountMap<EnemyDefinition> defs) {
         for (final Entry<EnemyDefinition, Long> entry : defs.entrySet()) {
             final EnemyDefinition def = entry.getKey();
             String baseName = def.getName();
@@ -90,24 +70,24 @@ public class Enemy {
                 party.add(def.spawn(name));
             }
         }
-        return party;
     }
     
-    protected abstract static class EnemyDefinition {
+    protected abstract static class EnemyDefinition implements Named {
         // Might have more than needed for simple enemies, but BaseStats doesn't have enough (like health); makes things easy to use this for all enemies
         protected final ChrStats stats;
         protected final List<EnemyAction> actions;
         
-        protected EnemyDefinition(final Segment seg) {
-            stats = new ChrStats(seg);
-            final List<Field> actionFields = seg.getRepetitions(4);
+        protected EnemyDefinition(final Segment statsSeg, final Segment extraSeg) {
+            stats = new ChrStats(statsSeg);
+            final List<Field> actionFields = extraSeg.getRepetitions(0);
             actions = new ArrayList<EnemyAction>(actionFields.size());
             for (final Field field : actionFields) {
                 actions.add(actionMap.get(field.getValue()));
             }
         }
         
-        protected final String getName() {
+        @Override
+        public final String getName() {
             return getStats().getName();
         }
         
@@ -132,8 +112,8 @@ public class Enemy {
         // simple animal/monster enemies
         protected final Panmage image;
         
-        protected SimpleEnemyDefinition(final Segment seg) {
-            super(seg);
+        protected SimpleEnemyDefinition(final Segment statsSeg, final Segment extraSeg) {
+            super(statsSeg, extraSeg);
             final String name = getName();
             image = Pangine.getEngine().createImage("enemy." + name, RpgGame.RES + "enemy/" + name + ".png");
         }
@@ -150,14 +130,16 @@ public class Enemy {
         // Probably have similar definitions with different adjectives for different skill levels; look similar but better stats/gear
         // If can't think of anything else to add here, just use ChrStats instead of this wrapper?
         
-        protected ChrEnemyDefinition(final Segment seg) {
-            super(seg);
+        protected ChrEnemyDefinition(final Segment statsSeg, final Segment extraSeg) {
+            super(statsSeg, extraSeg);
         }
         
         @Override
         protected final EnemyFighter spawn(final String name) {
             final ChrDefinition def = new ChrDefinition(stats);
+            def.randomizeAppearance();
             final Chr chr = new Chr(def);
+            chr.setDirection(Direction.East);
             return new EnemyFighter(name, def, chr); // Name could be type plus index if party has more than one of same type
         }
     }
