@@ -145,6 +145,120 @@ public class Chr extends Guy4 {
         }
     }
     
+    // Water/Fire/etc.
+    protected final static class Element implements Named {
+        private final String name;
+        private final Map<String, String> advantages = new HashMap<String, String>();
+        
+        protected Element(final Segment seg) {
+            name = seg.getValue(0);
+            final List<Field> advantageFields = seg.getRepetitions(1);
+            for (final Field field : Coltil.unnull(advantageFields)) {
+                final String verb = field.getValue(0);
+                final String targetElement = field.getValue(1);
+                advantages.put(targetElement, verb);
+            }
+        }
+        
+        @Override
+        public final String getName() {
+            return name;
+        }
+    }
+    
+    private final static Map<String, Element> elementMap = new LinkedHashMap<String, Element>();
+    
+    protected final static Element getElement(final String name) {
+        return get(elementMap, name);
+    }
+    
+    protected final static class Race implements Named {
+        private final Names names;
+        private final Names elementalNames; // If a different name should be used for individuals with an elemental type
+        private final boolean elementalSubracePossible;
+        private final List<Subrace> subraces = new ArrayList<Subrace>();
+        
+        protected Race(final Segment seg) {
+            names = new Names(seg.getField(0));
+            final Field elementalField = seg.getField(1);
+            elementalNames = (elementalField == null) ? names : new Names(elementalField);
+            elementalSubracePossible = seg.booleanValue(2);
+        }
+        
+        @Override
+        public final String getName() {
+            return names.getName();
+        }
+        
+        public final Names getNames() {
+            return names;
+        }
+        
+        public final Names getElementalNames() {
+            return elementalNames;
+        }
+        
+        public final List<Subrace> getSubraces() {
+            return subraces;
+        }
+        
+        public final List<Subrace> getElementalSubraces() {
+            return elementalSubracePossible ? elementalSubraces : null;
+        }
+    }
+    
+    private final static Map<String, Race> raceMap = new LinkedHashMap<String, Race>();
+    
+    protected final static Race getRace(final String name) {
+        return get(raceMap, name);
+    }
+    
+    protected final static class Subrace implements Named {
+        private final String name; // Term for an individual member of subrace
+        private final boolean prefix;
+        private final Element element;
+        private final Race race;
+        private final String groupName; // Term for the subrace as a group
+        
+        protected Subrace(final Segment seg) {
+            name = seg.getValue(0);
+            prefix = seg.booleanValue(1);
+            element = getElement(seg.getValue(2));
+            if (element != null) {
+                elementalSubraces.add(this);
+            }
+            race = getRace(seg.getValue(3));
+            if (race != null) {
+                race.subraces.add(this);
+            }
+            groupName = seg.getValue(4);
+            /*r =*/ seg.floatValue(5); //TODO FloatColor baseColor; instances will combine with a multiplier
+            /*g =*/ seg.floatValue(6);
+            /*b =*/ seg.floatValue(7);
+        }
+        
+        @Override
+        public final String getName() {
+            return name;
+        }
+        
+        public final String getName(final Race race) {
+            if (prefix) {
+                final String raceName = (element == null) ? race.getName() : race.getElementalNames().getName();
+                return (name + " " + raceName);
+            }
+            return name;
+        }
+    }
+    
+    private final static Map<String, Subrace> subraceMap = new LinkedHashMap<String, Subrace>();
+    
+    protected final static Subrace getSubrace(final String name) {
+        return get(subraceMap, name);
+    }
+    
+    private final static List<Subrace> elementalSubraces = new ArrayList<Subrace>();
+    
     protected final static int STAT_MAX_HEALTH = 0;
     protected final static int STAT_MAX_MAGIC = 1;
     protected final static int STAT_STRENGTH = 2; // Base attack, independent of weapon quality
@@ -293,7 +407,7 @@ public class Chr extends Guy4 {
     private final static Map<String, Gear> gearMap = new LinkedHashMap<String, Gear>();
     
     protected final static Gear getGear(final String name) {
-        return gearMap.get(name);
+        return get(gearMap, name);
     }
     
     protected abstract static class GearAttribute implements Named {
@@ -326,7 +440,7 @@ public class Chr extends Guy4 {
     private final static Map<String, SmithingQuality> smithingQualityMap = new LinkedHashMap<String, SmithingQuality>();
     
     protected final static SmithingQuality getSmithingQuality(final String name) {
-        return smithingQualityMap.get(name);
+        return get(smithingQualityMap, name);
     }
     
     // Copper/iron/etc.
@@ -346,7 +460,7 @@ public class Chr extends Guy4 {
     private final static Map<String, Material> materialMap = new LinkedHashMap<String, Material>();
     
     protected final static Material getMaterial(final String name) {
-        return materialMap.get(name);
+        return get(materialMap, name);
     }
     
     // Weapon sub-types like dagger/sword/spear/bow/etc.
@@ -367,11 +481,30 @@ public class Chr extends Guy4 {
     private final static Map<String, GearSubtype> gearSubtypeMap = new LinkedHashMap<String, GearSubtype>();
     
     protected final static GearSubtype getGearSubtype(final String name) {
-        return gearSubtypeMap.get(name);
+        return get(gearSubtypeMap, name);
     }
     
     protected static interface Named {
         public String getName();
+    }
+    
+    protected final static class Names implements Named {
+        private final String name;
+        private final String plural;
+        
+        protected Names(final Field field) {
+            name = field.getValue(0);
+            plural = Chartil.nvl(field.getValue(1), name + "s");
+        }
+        
+        @Override
+        public final String getName() {
+            return name;
+        }
+        
+        public final String getPlural() {
+            return plural;
+        }
     }
     
     protected final static void loadData() {
@@ -379,6 +512,15 @@ public class Chr extends Guy4 {
         try {
             in = SegmentStream.openLocation(RpgGame.RES + "Data.txt");
             Segment seg = null;
+            while ((seg = in.readIf("ELE")) != null) {
+                put(elementMap, new Element(seg));
+            }
+            while ((seg = in.readIf("RAC")) != null) {
+                put(raceMap, new Race(seg));
+            }
+            while ((seg = in.readIf("RA2")) != null) {
+                put(subraceMap, new Subrace(seg));
+            }
             while ((seg = in.readIf("QTY")) != null) {
                 put(smithingQualityMap, new SmithingQuality(seg));
             }
@@ -424,6 +566,17 @@ public class Chr extends Guy4 {
                 return new Shield(name, quality, material, subtype);
         }
         throw new IllegalStateException("Unexpected Gear type " + subtype.type + " for " + name);
+    }
+    
+    protected final static <V extends Named> V get(final Map<String, V> map, final String key) {
+        if (key == null) {
+            return null;
+        }
+        final V value = map.get(key);
+        if (value == null) {
+            throw new IllegalStateException(key + " not found in " + map.values().iterator().next().getClass().getSimpleName() + " map");
+        }
+        return value;
     }
     
     protected final static <V extends Named> void put(final Map<String, V> map, final V value) {
