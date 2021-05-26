@@ -28,8 +28,20 @@ import java.util.Map.*;
 import org.pandcorps.core.*;
 
 public class WeightedSet<E> {
-    private final Map<E, Integer> weights = new HashMap<E, Integer>();
+    private final Map<E, Integer> weights;
     private int sum = 0;
+    
+    public WeightedSet() {
+        weights = new HashMap<E, Integer>();
+    }
+    
+    public WeightedSet(final int initialCapacity) {
+        weights = new HashMap<E, Integer>(initialCapacity);
+    }
+    
+    public WeightedSet(final Map<E, Integer> weights) {
+        this.weights = weights;
+    }
     
     public final void add(final E element, final int weight) {
         final Integer old = weights.put(element, Integer.valueOf(weight));
