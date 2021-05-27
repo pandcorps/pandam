@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -93,6 +94,8 @@ public class Chr extends Guy4 {
         private int health;
         private int magic;
         private int experience; // Money/inventory tied to party, not a specific character
+        private Race race;
+        private Subrace subrace;
         
         protected ChrDefinition(final ChrStats stats) {
             this.stats = stats;
@@ -109,6 +112,8 @@ public class Chr extends Guy4 {
             health = seg.intValue(19);
             magic = seg.intValue(20);
             experience = seg.intValue(21);
+            race = getRace(seg.getValue(22));
+            subrace = getSubrace(seg.getValue(23));
         }
         
         public final int getEffective(final int statType) {
@@ -122,9 +127,17 @@ public class Chr extends Guy4 {
             return total;
         }
         
+        protected final void setRace(final Race race, final Subrace subrace) {
+            this.race = race;
+            this.subrace = subrace;
+        }
+        
         protected final void randomizeAppearance() {
             body.x = 0; //TODO Pick from available types
             body.y = 0;
+            final FloatColor baseBodyColor = subrace.baseColor;
+            //body.color.set(subrace.baseColor);
+            //body.color.addAll(Mathtil.randi(0, 4) * 0.03125f); // 8.0f / 256.0f
             body.r = 0.8f; //TODO Use thresholds from race/sub-race
             body.g = 0.6f;
             body.b = 0.4f;
@@ -219,6 +232,7 @@ public class Chr extends Guy4 {
         private final Element element;
         private final Race race;
         private final String groupName; // Term for the subrace as a group
+        private final FloatColor baseColor = new FloatColor();
         
         protected Subrace(final Segment seg) {
             name = seg.getValue(0);
@@ -232,9 +246,7 @@ public class Chr extends Guy4 {
                 race.subraces.add(this);
             }
             groupName = seg.getValue(4);
-            /*r =*/ seg.floatValue(5); //TODO FloatColor baseColor; instances will combine with a multiplier
-            /*g =*/ seg.floatValue(6);
-            /*b =*/ seg.floatValue(7);
+            baseColor.set(seg, 5);
         }
         
         @Override
@@ -248,6 +260,10 @@ public class Chr extends Guy4 {
                 return (name + " " + raceName);
             }
             return name;
+        }
+        
+        public final Race getRace() {
+            return race;
         }
     }
     
@@ -307,7 +323,6 @@ public class Chr extends Guy4 {
     protected final static int GEAR_SLOTS_SIZE = GEAR_SLOT_NAMES.length;
     
     protected final static class ChrStats extends BaseStats {
-        //TODO race, element
         private final Gear[] gears = new Gear[GEAR_SLOTS_SIZE];
         
         protected ChrStats(final Segment seg) {
