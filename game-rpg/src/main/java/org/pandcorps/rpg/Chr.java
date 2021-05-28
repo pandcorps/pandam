@@ -241,7 +241,7 @@ public class Chr extends Guy4 {
             if (element != null) {
                 elementalSubraces.add(this);
             }
-            race = getRace(seg.getValue(3));
+            race = Chr.getRace(seg.getValue(3));
             if (race != null) {
                 race.subraces.add(this);
             }
