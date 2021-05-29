@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.*;
 import java.util.Map.*;
 
+import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
@@ -40,18 +41,19 @@ public class Enemy {
     protected final static void loadEnemyData(final SegmentStream in) throws IOException {
         Segment seg = null;
         while ((seg = in.readIf("ENM")) != null) {
+            final Segment secondSeg = in.readRequire("EN2");
             final Segment extraSeg = in.read();
-            final EnemyDefinition def = newEnemyDefinition(seg, extraSeg);
+            final EnemyDefinition def = newEnemyDefinition(seg, secondSeg, extraSeg);
             Chr.put(enemyMap, def);
         }
     }
     
-    protected final static EnemyDefinition newEnemyDefinition(final Segment statsSeg, final Segment extraSeg) {
+    protected final static EnemyDefinition newEnemyDefinition(final Segment statsSeg, final Segment secondSeg, final Segment extraSeg) {
         final String name = extraSeg.getName();
         if ("ENS".equals(name)) {
-            return new SimpleEnemyDefinition(statsSeg, extraSeg);
+            return new SimpleEnemyDefinition(statsSeg, secondSeg, extraSeg);
         } else if ("ENC".equals(name)) {
-            return new ChrEnemyDefinition(statsSeg, extraSeg);
+            return new ChrEnemyDefinition(statsSeg, secondSeg, extraSeg);
         }
         throw new IllegalArgumentException("Unrecognized EnemyDefinition type " + name);
     }
@@ -112,8 +114,8 @@ public class Enemy {
         // simple animal/monster enemies
         protected final Panmage image;
         
-        protected SimpleEnemyDefinition(final Segment statsSeg, final Segment extraSeg) {
-            super(statsSeg, extraSeg);
+        protected SimpleEnemyDefinition(final Segment statsSeg, final Segment secondSeg, final Segment extraSeg) {
+            super(statsSeg, secondSeg);
             final String name = getName();
             image = Pangine.getEngine().createImage("enemy." + name, RpgGame.RES + "enemy/" + name + ".png");
         }
@@ -129,14 +131,32 @@ public class Enemy {
         // Might want to customize gear, so maybe ChrStats doens't work well; or maybe just allow overrides
         // Probably have similar definitions with different adjectives for different skill levels; look similar but better stats/gear
         // If can't think of anything else to add here, just use ChrStats instead of this wrapper?
+        private final List<Race> possibleRaces;
+        private final List<Subrace> possibleSubraces;
         
-        protected ChrEnemyDefinition(final Segment statsSeg, final Segment extraSeg) {
-            super(statsSeg, extraSeg);
+        protected ChrEnemyDefinition(final Segment statsSeg, final Segment secondSeg, final Segment extraSeg) {
+            super(statsSeg, secondSeg);
+            final List<Field> raceFields = extraSeg.getRepetitions(0);
+            possibleRaces = new ArrayList<Race>(raceFields.size());
+            for (final Field field : raceFields) {
+                possibleRaces.add(Chr.getRace(field.getValue()));
+            }
+            final List<Field> subraceFields = extraSeg.getRepetitions(1);
+            possibleSubraces = new ArrayList<Subrace>(subraceFields.size());
+            for (final Field field : subraceFields) {
+                possibleSubraces.add(Chr.getSubrace(field.getValue()));
+            }
         }
         
         @Override
         protected final EnemyFighter spawn(final String name) {
             final ChrDefinition def = new ChrDefinition(stats);
+            final Subrace subrace = Mathtil.rand(possibleSubraces);
+            Race race = subrace.getRace();
+            if (race == null) {
+                race = Mathtil.rand(possibleRaces);
+            }
+            def.setRace(race, subrace);
             def.randomizeAppearance();
             final Chr chr = new Chr(def);
             chr.setDirection(Direction.East);
