@@ -340,10 +340,6 @@ public class Chr extends Guy4 {
         }
     }
     
-    protected final static int GEAR_TYPE_ARMOR = 1;
-    protected final static int GEAR_TYPE_WEAPON = 2;
-    protected final static int GEAR_TYPE_SHIELD = 3;
-    
     protected abstract static class Gear extends BaseStats {
         /*
         Gear might augment base stats, but attack power isn't just added to base strength when equipped.
@@ -351,29 +347,22 @@ public class Chr extends Guy4 {
         Keeping them separate, the strike with the first weapon can incorporate the character's strength with only the first weapon's quality.
         Then the strike with the second weapon incorporates the base strength with only the second weapon's quality.
         */
-        private final int type;
         private final SmithingQuality quality;
         private final Material material;
         private final GearSubtype subtype;
         
-        protected Gear(final String name, final int type, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
+        protected Gear(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
             super(name);
-            this.type = type;
             this.quality = quality;
             this.material = material;
             this.subtype = subtype;
         }
         
-        protected Gear(final Segment seg, final int type) {
+        protected Gear(final Segment seg) {
             super(seg);
-            this.type = type;
             this.quality = getSmithingQuality(seg.getValue(2)); // 0 - name, 1 - stats
             this.material = getMaterial(seg.getValue(3));
             this.subtype = getGearSubtype(seg.getValue(4));
-        }
-        
-        public final int getType() {
-            return type;
         }
         
         public final GearSubtype getSubtype() {
@@ -381,7 +370,7 @@ public class Chr extends Guy4 {
         }
         
         public final int getQuality() {
-            return quality.getMultiplier() * material.getMultiplier() * subtype.getMultiplier();
+            return quality.getMultiplier() * material.getMultiplier();
         }
     }
     
@@ -389,33 +378,33 @@ public class Chr extends Guy4 {
         private final ChrComponent renderData;
         
         protected Armor(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype, final ChrComponent renderData) {
-            super(name, GEAR_TYPE_ARMOR, quality, material, subtype);
+            super(name, quality, material, subtype);
             this.renderData = renderData;
         }
         
         protected Armor(final Segment seg) {
-            super(seg, GEAR_TYPE_ARMOR);
+            super(seg);
             this.renderData = new ChrComponent(seg, 5);
         }
     }
     
     protected final static class Weapon extends Gear {
         protected Weapon(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
-            super(name, GEAR_TYPE_WEAPON, quality, material, subtype);
+            super(name, quality, material, subtype);
         }
         
         protected Weapon(final Segment seg) {
-            super(seg, GEAR_TYPE_WEAPON);
+            super(seg);
         }
     }
     
     protected final static class Shield extends Gear {
         protected Shield(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
-            super(name, GEAR_TYPE_SHIELD, quality, material, subtype);
+            super(name, quality, material, subtype);
         }
         
         protected Shield(final Segment seg) {
-            super(seg, GEAR_TYPE_SHIELD);
+            super(seg);
         }
     }
     
@@ -430,8 +419,12 @@ public class Chr extends Guy4 {
         private final int multiplier;
         
         protected GearAttribute(final Segment seg) {
-            name = seg.getValue(0);
-            multiplier = seg.intValue(1);
+            this(seg.getValue(0), seg.intValue(1));
+        }
+        
+        protected GearAttribute(final String name, final int multiplier) {
+            this.name = name;
+            this.multiplier = multiplier;
         }
         
         @Override
@@ -442,6 +435,25 @@ public class Chr extends Guy4 {
         public final int getMultiplier() {
             return multiplier;
         }
+    }
+    
+    protected final static class GearType extends GearAttribute {
+        // Multiplier specifies importance of body armor vs. shield
+        // Also determines price and amount of material required to craft
+        protected GearType(final String name, final int multiplier) {
+            super(name, multiplier);
+            put(gearTypeMap, this);
+        }
+    }
+    
+    protected final static GearType GEAR_TYPE_ARMOR = new GearType("Armor", 2);
+    protected final static GearType GEAR_TYPE_WEAPON = new GearType("Weapon", 1);
+    protected final static GearType GEAR_TYPE_SHIELD = new GearType("Shield", 1);
+    
+    private final static Map<String, GearType> gearTypeMap = new LinkedHashMap<String, GearType>();
+    
+    protected final static GearType getGearType(final String name) {
+        return get(gearTypeMap, name);
     }
     
     // Poor/fair/superior/flawless/etc.
@@ -479,17 +491,28 @@ public class Chr extends Guy4 {
     }
     
     // Weapon sub-types like dagger/sword/spear/bow/etc.
-    protected static class GearSubtype extends GearAttribute {
-        private final int type;
+    protected static class GearSubtype implements Named {
+        private final String name;
+        private final GearType type;
+        private final float attackDamageMultiplier; // These multipliers applied after base calculation (which use GearType.multiplier)
+        private final float receivedDamageMultiplier;
+        private final float chanceOfBeingHitMultiplier;
         private final float renderX;
         private final float renderY;
-        //TODO stats/restrictions, dagger increases evade ability but can't be used with heavy armor
         
         protected GearSubtype(final Segment seg) {
-            super(seg);
-            type = seg.intValue(2); // 0 - name, 1 - multiplier
-            renderX = seg.getFloat(3, -1);
-            renderY = seg.getFloat(4, -1);
+            name = seg.getValue(0);
+            type = getGearType(seg.getValue(1));
+            attackDamageMultiplier = seg.getFloat(2, 1.0f);
+            receivedDamageMultiplier = seg.getFloat(3, 1.0f);
+            chanceOfBeingHitMultiplier = seg.getFloat(4, 1.0f);
+            renderX = seg.getFloat(5, -1.0f);
+            renderY = seg.getFloat(6, -1.0f);
+        }
+        
+        @Override
+        public final String getName() {
+            return name;
         }
     }
     
@@ -572,13 +595,13 @@ public class Chr extends Guy4 {
     
     protected final static Gear newGear(final SmithingQuality quality, final Material material, final GearSubtype subtype, final ChrComponent renderData) {
         final String name = quality.getName() + " " + material.getName() + " " + subtype.getName();
-        switch (subtype.type) {
-            case GEAR_TYPE_ARMOR:
-                return new Armor(name, quality, material, subtype, renderData);
-            case GEAR_TYPE_WEAPON:
-                return new Weapon(name, quality, material, subtype);
-            case GEAR_TYPE_SHIELD:
-                return new Shield(name, quality, material, subtype);
+        final GearType type = subtype.type;
+        if (type == GEAR_TYPE_ARMOR) {
+            return new Armor(name, quality, material, subtype, renderData);
+        } else if (type == GEAR_TYPE_WEAPON) {
+            return new Weapon(name, quality, material, subtype);
+        } else if (type == GEAR_TYPE_SHIELD) {
+            return new Shield(name, quality, material, subtype);
         }
         throw new IllegalStateException("Unexpected Gear type " + subtype.type + " for " + name);
     }
