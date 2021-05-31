@@ -25,6 +25,7 @@ package org.pandcorps.rpg;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.event.action.*;
@@ -32,6 +33,7 @@ import org.pandcorps.pandax.in.*;
 import org.pandcorps.pandax.text.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.rpg.Chr.*;
+import org.pandcorps.rpg.Enemy.*;
 
 public class Fight {
     protected final static int optionWidth = 8;
@@ -39,6 +41,13 @@ public class Fight {
     protected final static int fontSize = RpgGame.fontSize;
     protected final static int fontMargin = 2;
     protected final static int optionHeight = fontSize + (fontMargin * 2);
+    protected final static int enemyMinX = 32;
+    protected final static int enemyMaxX = 224;
+    protected final static int partyMaxY = 160;
+    protected final static int partyOffY = 32;
+    protected final static int partyMinY = partyMaxY - (partyOffY * (RpgGame.maxPartySize - 1));
+    protected final static int partyH = partyMaxY - partyMinY;
+    protected final static int partyMinZ = 10;
     protected static OptionText menuTitle = null;
     protected final static List<OptionText> optionTexts = new ArrayList<OptionText>(pageSize);
     protected static Panlayer layer = null;
@@ -62,6 +71,7 @@ public class Fight {
         cursor = Cursor.addCursorIfNeeded(layer, RpgGame.cursorImage);
         initOptionTexts();
         initPlayerParty();
+        initEnemyParty();
         initFight();
         startTurn();
     }
@@ -97,6 +107,18 @@ public class Fight {
         playerParty.clear();
         for (final ChrDefinition def : RpgGame.party) {
             playerParty.add(new PlayerFighter(def));
+        }
+    }
+    
+    protected final static void initEnemyParty() {
+        final CountMap<EnemyDefinition> defs = new CountMap<EnemyDefinition>();
+        defs.inc(Enemy.enemyMap.values().iterator().next()); //TODO Pick based on location
+        Enemy.initEnemyParty(enemyParty, defs);
+        Collections.sort(enemyParty);
+        final int size = enemyParty.size();
+        final int offY = partyH / (size + 1);
+        for (int i = 0; i < size; i++) {
+            enemyParty.get(i).avatar.getPosition().set(Mathtil.randi(enemyMinX, enemyMaxX), partyMaxY - (offY * (i + 1)), partyMinZ + (i * 2));
         }
     }
     
@@ -296,7 +318,7 @@ public class Fight {
         }
     }
     
-    protected final static class EnemyFighter {
+    protected final static class EnemyFighter implements Comparable<EnemyFighter> {
         private final String name; // Can be enemy type + index if party contains more than 1 of given type
         private final ChrDefinition def;
         private final EnemyTargetOption targetOption;
@@ -307,6 +329,22 @@ public class Fight {
             this.def = def;
             targetOption = new EnemyTargetOption(this);
             this.avatar = avatar;
+            layer.addActor(avatar);
+        }
+
+        @Override
+        public final int compareTo(final EnemyFighter o) {
+            final float h = getHeight(), oh = o.getHeight();
+            if (h > oh) {
+                return -1;
+            } else if (h < oh) {
+                return 1;
+            }
+            return name.compareTo(o.name);
+        }
+        
+        protected final float getHeight() {
+            return avatar.getCurrentDisplay().getBoundingMaximum().getY();
         }
     }
     
@@ -317,7 +355,8 @@ public class Fight {
         protected PlayerFighter(final ChrDefinition def) {
             this.def = def;
             avatar = new Chr(def);
-            avatar.getPosition().set(RpgGame.GAME_W - 32, 160 - (playerParty.size() * 32));
+            final int partySize = playerParty.size();
+            avatar.getPosition().set(RpgGame.GAME_W - 32, partyMaxY - (partySize * partyOffY), partyMinZ + (partySize * 2));
             avatar.setDirection(Direction.West);
             layer.addActor(avatar);
         }
