@@ -1098,13 +1098,7 @@ public class BoardGame extends BaseGame {
         }
         
         protected final int getIndex(final Touch touch) {
-            final int tx, ty;
-            if (cursor == null) {
-                tx = touch.getX(); ty = touch.getY();
-            } else {
-                final Panple pos = cursor.getPosition();
-                tx = Math.round(pos.getX()); ty = Math.round(pos.getY());
-            }
+            final int tx = BoardGame.getX(cursor, touch), ty = BoardGame.getY(cursor, touch);
             final int x = convertScreenToGrid(tx), y = convertScreenToGrid(ty);
             final int index = getIndexOptional(x, y);
             if (isValid(index)) {
