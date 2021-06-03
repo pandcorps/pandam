@@ -285,7 +285,7 @@ public abstract class RoomLoader {
     private final static void visitRoom() {
         revisiting = !visitedRooms.add(room);
         BotsnBoltsGame.runPlayers(new PlayerRunnable() {
-            public final void run(final Player player) {
+            @Override public final void run(final Player player) {
                 visitRoom(player);
             }
         });
@@ -323,7 +323,7 @@ public abstract class RoomLoader {
     
     private final static void setStartRoomNeeded(final boolean startRoomNeeded) {
         BotsnBoltsGame.runPlayers(new PlayerRunnable() {
-            public final void run(final Player p) {
+            @Override public final void run(final Player p) {
                 p.startRoomNeeded = startRoomNeeded;
             }
         });
@@ -756,7 +756,7 @@ public abstract class RoomLoader {
     }
     
     private final static void ext(final Segment seg) throws Exception {
-        final Extra extra = (Extra) getActorConstructor(Extra.class.getDeclaredClasses(), seg.getValue(2)).newInstance(seg);
+        final Extra extra = (Extra) getActorConstructor(Extra.class, seg.getValue(2)).newInstance(seg);
         if (!extra.isAllowed()) {
             return;
         } else if (extra.isVisibleWhileRoomChanging()) {
@@ -776,35 +776,17 @@ public abstract class RoomLoader {
     
     private final static Map<String, Constructor<? extends Panctor>> actorTypes = new HashMap<String, Constructor<? extends Panctor>>();
     
-    private final static Constructor<? extends Enemy> getEnemyConstructor(final String enemyType) throws Exception {
-        return getEnemyConstructor(Enemy.class.getDeclaredClasses(), enemyType);
+    private final static Constructor<? extends Enemy> getEnemyConstructor(final String enemyType) {
+        return getEnemyConstructor(Enemy.class, enemyType);
     }
     
     @SuppressWarnings("unchecked")
-    private final static Constructor<? extends Enemy> getEnemyConstructor(final Class<?>[] classes, final String enemyType) throws Exception {
-        return (Constructor<? extends Enemy>) getActorConstructor(classes, enemyType);
+    private final static Constructor<? extends Enemy> getEnemyConstructor(final Class<?> declaringClass, final String enemyType) {
+        return (Constructor<? extends Enemy>) getActorConstructor(declaringClass, enemyType);
     }
     
-    @SuppressWarnings("unchecked")
-    private final static Constructor<? extends Panctor> getActorConstructor(final Class<?>[] classes, final String actorType) throws Exception {
-        Constructor<? extends Panctor> constructor = actorTypes.get(actorType);
-        if (constructor != null) {
-            return constructor;
-        }
-        final Class<?> c = getDeclaredClass(classes, actorType);
-        constructor = (Constructor<? extends Panctor>) c.getDeclaredConstructor(SEGMENT_TYPES);
-        actorTypes.put(actorType, constructor);
-        return constructor;
-    }
-    
-    private final static Class<?> getDeclaredClass(final Class<?>[] classes, final String actorType) {
-        for (final Class<?> c : classes) {
-            final String name = c.getName();
-            if (name.endsWith(actorType) && name.charAt(name.length() - actorType.length() - 1) == '$') {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException("Unrecognized actorType " + actorType);
+    private final static Constructor<? extends Panctor> getActorConstructor(final Class<?> declaringClass, final String actorType) {
+        return Reftil.getDeclaredClassConstructor(actorTypes, declaringClass, actorType, SEGMENT_TYPES);
     }
     
     private final static void bos(final Segment seg) throws Exception {
@@ -824,8 +806,8 @@ public abstract class RoomLoader {
         return newBoss(seg);
     }
     
-    private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) throws Exception {
-        return getEnemyConstructor(Boss.class.getDeclaredClasses(), enemyType);
+    private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) {
+        return getEnemyConstructor(Boss.class, enemyType);
     }
     
     private final static Map<String, RoomFunction> functionTypes = new HashMap<String, RoomFunction>();
@@ -840,7 +822,7 @@ public abstract class RoomLoader {
         if (roomFunction != null) {
             return roomFunction;
         }
-        roomFunction = (T) getDeclaredClass(RoomFunction.class.getDeclaredClasses(), functionType).newInstance();
+        roomFunction = (T) Reftil.getDeclaredClass(RoomFunction.class, functionType).newInstance();
         functionTypes.put(functionType, roomFunction);
         return roomFunction;
     }
