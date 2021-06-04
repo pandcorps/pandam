@@ -470,17 +470,39 @@ public class Chr extends Guy4 {
         return get(smithingQualityMap, name);
     }
     
+    // Metal/wood/etc.
+    protected final static class MaterialCategory implements Named {
+        private final String name;
+        
+        protected MaterialCategory(final Segment seg) {
+            name = seg.getValue(0);
+        }
+        
+        @Override
+        public final String getName() {
+            return name;
+        }
+    }
+    
+    private final static Map<String, MaterialCategory> materialCategoryMap = new LinkedHashMap<String, MaterialCategory>();
+    
+    protected final static MaterialCategory getMaterialCategory(final String name) {
+        return get(materialCategoryMap, name);
+    }
+    
     // Copper/iron/etc.
     protected final static class Material extends GearAttribute {
+        private final MaterialCategory category;
         private final float r;
         private final float g;
         private final float b;
         
         protected Material(final Segment seg) {
             super(seg);
-            r = seg.floatValue(2);
-            g = seg.floatValue(3);
-            b = seg.floatValue(4);
+            category = getMaterialCategory(seg.getValue(2));
+            r = seg.floatValue(3);
+            g = seg.floatValue(4);
+            b = seg.floatValue(5);
         }
     }
     
@@ -561,6 +583,9 @@ public class Chr extends Guy4 {
             }
             while ((seg = in.readIf("QTY")) != null) {
                 put(smithingQualityMap, new SmithingQuality(seg));
+            }
+            while ((seg = in.readIf("MAC")) != null) {
+                put(materialCategoryMap, new MaterialCategory(seg));
             }
             while ((seg = in.readIf("MAT")) != null) {
                 put(materialMap, new Material(seg));
