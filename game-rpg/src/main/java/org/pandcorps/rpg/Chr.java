@@ -473,6 +473,7 @@ public class Chr extends Guy4 {
     // Metal/wood/etc.
     protected final static class MaterialCategory implements Named {
         private final String name;
+        private final List<Material> materials = new ArrayList<Material>();
         
         protected MaterialCategory(final Segment seg) {
             name = seg.getValue(0);
@@ -500,6 +501,7 @@ public class Chr extends Guy4 {
         protected Material(final Segment seg) {
             super(seg);
             category = getMaterialCategory(seg.getValue(2));
+            category.materials.add(this);
             r = seg.floatValue(3);
             g = seg.floatValue(4);
             b = seg.floatValue(5);
@@ -516,6 +518,7 @@ public class Chr extends Guy4 {
     protected static class GearSubtype implements Named {
         private final String name;
         private final GearType type;
+        private final MaterialCategory materialCategory;
         private final float attackDamageMultiplier; // These multipliers applied after base calculation (which use GearType.multiplier)
         private final float receivedDamageMultiplier;
         private final float chanceOfBeingHitMultiplier;
@@ -525,11 +528,12 @@ public class Chr extends Guy4 {
         protected GearSubtype(final Segment seg) {
             name = seg.getValue(0);
             type = getGearType(seg.getValue(1));
-            attackDamageMultiplier = seg.getFloat(2, 1.0f);
-            receivedDamageMultiplier = seg.getFloat(3, 1.0f);
-            chanceOfBeingHitMultiplier = seg.getFloat(4, 1.0f);
-            renderX = seg.getFloat(5, -1.0f);
-            renderY = seg.getFloat(6, -1.0f);
+            materialCategory = getMaterialCategory(seg.getValue(2));
+            attackDamageMultiplier = seg.getFloat(3, 1.0f);
+            receivedDamageMultiplier = seg.getFloat(4, 1.0f);
+            chanceOfBeingHitMultiplier = seg.getFloat(5, 1.0f);
+            renderX = seg.getFloat(6, -1.0f);
+            renderY = seg.getFloat(7, -1.0f);
         }
         
         @Override
@@ -603,8 +607,8 @@ public class Chr extends Guy4 {
     }
     
     protected final static void generateGear() {
-        for (final Material material : materialMap.values()) {
-            for (final GearSubtype subtype : gearSubtypeMap.values()) {
+        for (final GearSubtype subtype : gearSubtypeMap.values()) {
+            for (final Material material : subtype.materialCategory.materials) {
                 final ChrComponent renderData;
                 if (subtype.renderX < 0) {
                     renderData = null;
