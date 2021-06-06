@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020, Andrew M. Martin
+Copyright (c) 2009-2021, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -27,10 +27,40 @@ import org.pandcorps.game.actor.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Player extends Chr {
+    private int worldX = 0; // Will be different than TileMap coordinates if current TileMap is a town or cave
+    private int worldY = 0;
+    
     /*package*/ boolean active = true;
     
 	protected Player(final ChrDefinition def) {
 		super(def);
+	}
+	
+	@Override
+    protected void onWalked() {
+	    if (!active) {
+            return;
+        }
+	    handleCoordinates();
+	    handleRandomEncounters();
+    }
+	
+	protected void handleCoordinates() {
+	    if (!isInWorldMap()) {
+	        return;
+	    }
+	    final TileMap tm = getTileMap();
+	    final int index = getIndex();
+	    worldX = tm.getColumn(index);
+	    worldY = tm.getRow(index);
+	}
+	
+	protected boolean isInWorldMap() {
+	    return true; //TODO
+	}
+	
+	protected void handleRandomEncounters() {
+	    Fight.goFight(); //TODO Randomness, allowed by area
 	}
 
 	@Override
@@ -38,6 +68,7 @@ public class Player extends Chr {
 		if (!active) {
 			return;
 		}
+Fight.goFight(); //TODO REMOVE, Totally temporary
         Guy4Controller.onStillPlayer(this);
         final String label = TileOccupant.getInteractLabel(getFacing());
         if (label == null) {
@@ -50,4 +81,12 @@ public class Player extends Chr {
         	RpgGame.hudInteract.centerX();
         }
 	}
+	
+	public final int getWorldX() {
+	    return worldX;
+	}
+	
+	public final int getWorldY() {
+        return worldY;
+    }
 }
