@@ -32,7 +32,7 @@ import org.pandcorps.core.seg.*;
 import org.pandcorps.rpg.Chr.*;
 
 public class World {
-    private final static InverseDistanceWeightedSets interpolator = new InverseDistanceWeightedSets(2);
+    private final static InverseDistanceWeightedSets interpolator = new InverseDistanceWeightedSets(1); // Will pass distance squared when interpolating, don't need to square again
     
     protected final static void loadWorldData(final SegmentStream in) throws IOException {
         Segment seg = null;
@@ -74,11 +74,21 @@ public class World {
     
     private final static List<City> cities = new ArrayList<City>();
     
+    private static int interpX = -1;
+    private static int interpY = -1;
+    
     protected final static City getInterpolatedCity() {
+        final Player player = RpgGame.player;
+        final int playerX = player.getWorldX(), playerY = player.getWorldY();
+        if ((playerX == interpX) && (playerY == interpY)) {
+            return interpolator.interpolatedCity;
+        }
         interpolator.clear();
         for (final City city : cities) {
-            //interpolator.add(city, distance); //TODO
+            final int diffX = city.x - playerX, diffY = city.y - playerY;
+            interpolator.add(city, (diffX * diffX) + (diffY * diffY)); // Distance squared
         }
+        interpX = playerX; interpY = playerY;
         return interpolator.getInterpolatedCity();
     }
     
