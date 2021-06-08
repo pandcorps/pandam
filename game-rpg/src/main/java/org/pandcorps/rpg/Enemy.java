@@ -151,7 +151,13 @@ public class Enemy {
         @Override
         protected final EnemyFighter spawn(final String name) {
             final ChrDefinition def = new ChrDefinition(stats);
-            final Subrace subrace = Mathtil.rand(possibleSubraces);
+            final Subrace subrace;
+            if (Coltil.isEmpty(possibleSubraces)) {
+                subrace = World.getInterpolatedCity().subraceDistribution.rnd();
+            } else {
+                subrace = Mathtil.rand(possibleSubraces);
+            }
+            //TODO interpolated city race
             Race race = subrace.getRace();
             if (race == null) {
                 race = Mathtil.rand(possibleRaces);
