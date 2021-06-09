@@ -340,7 +340,13 @@ public class Chr extends Guy4 {
         }
     }
     
-    protected abstract static class Gear extends BaseStats {
+    protected static interface Item extends Named {
+        public boolean isUsable();
+        
+        public boolean isEquippable();
+    }
+    
+    protected abstract static class Gear extends BaseStats implements Item {
         /*
         Gear might augment base stats, but attack power isn't just added to base strength when equipped.
         Otherwise, a character that does consecutive attacks with 2 weapons would combine attack power of each weapon with each strike.
@@ -371,6 +377,16 @@ public class Chr extends Guy4 {
         
         public final int getQuality() {
             return quality.getMultiplier() * material.getMultiplier();
+        }
+        
+        @Override
+        public final boolean isUsable() {
+            return false;
+        }
+        
+        @Override
+        public final boolean isEquippable() {
+            return true;
         }
     }
     
@@ -439,7 +455,6 @@ public class Chr extends Guy4 {
     
     protected final static class GearType extends GearAttribute {
         // Multiplier specifies importance of body armor vs. shield
-        // Also determines price and amount of material required to craft
         protected GearType(final String name, final int multiplier) {
             super(name, multiplier);
             put(gearTypeMap, this);
@@ -519,6 +534,7 @@ public class Chr extends Guy4 {
         private final String name;
         private final GearType type;
         private final MaterialCategory materialCategory;
+        private final int materialRequiredToCraft; // Also determines price
         private final float attackDamageMultiplier; // These multipliers applied after base calculation (which use GearType.multiplier)
         private final float receivedDamageMultiplier;
         private final float chanceOfBeingHitMultiplier;
@@ -529,11 +545,12 @@ public class Chr extends Guy4 {
             name = seg.getValue(0);
             type = getGearType(seg.getValue(1));
             materialCategory = getMaterialCategory(seg.getValue(2));
-            attackDamageMultiplier = seg.getFloat(3, 1.0f);
-            receivedDamageMultiplier = seg.getFloat(4, 1.0f);
-            chanceOfBeingHitMultiplier = seg.getFloat(5, 1.0f);
-            renderX = seg.getFloat(6, -1.0f);
-            renderY = seg.getFloat(7, -1.0f);
+            materialRequiredToCraft = seg.intValue(3);
+            attackDamageMultiplier = seg.getFloat(4, 1.0f);
+            receivedDamageMultiplier = seg.getFloat(5, 1.0f);
+            chanceOfBeingHitMultiplier = seg.getFloat(6, 1.0f);
+            renderX = seg.getFloat(7, -1.0f);
+            renderY = seg.getFloat(8, -1.0f);
         }
         
         @Override
