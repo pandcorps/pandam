@@ -338,6 +338,23 @@ public class Chr extends Guy4 {
         protected final Armor getArmor() {
             return (Armor) gears[GEAR_SLOT_ARMOR];
         }
+        
+        protected void equip(final Player player, final Gear gear, final int slot) {
+            final boolean hand = (slot == GEAR_SLOT_HAND1) || (slot == GEAR_SLOT_HAND2);
+            if (hand && (isTwoHanded(gear) || isTwoHanded(gears[GEAR_SLOT_HAND1]) || isTwoHanded(gears[GEAR_SLOT_HAND2]))) {
+                unequip(player, GEAR_SLOT_HAND1);
+                unequip(player, GEAR_SLOT_HAND2);
+            } else {
+                unequip(player, slot);
+            }
+            player.removeInventory(gear, 1);
+            gears[slot] = gear;
+        }
+        
+        protected void unequip(final Player player, final int slot) {
+            player.addInventory(gears[slot], 1);
+            gears[slot] = null;
+        }
     }
     
     protected static interface Item extends Named {
@@ -388,6 +405,10 @@ public class Chr extends Guy4 {
         public final boolean isEquippable() {
             return true;
         }
+    }
+    
+    protected final static boolean isTwoHanded(final Gear gear) {
+        return (gear != null) && gear.subtype.twoHanded;
     }
     
     protected final static class Armor extends Gear {
@@ -455,15 +476,10 @@ public class Chr extends Guy4 {
     
     protected final static class GearType extends GearAttribute {
         // Multiplier specifies importance of body armor vs. shield
-        protected GearType(final String name, final int multiplier) {
-            super(name, multiplier);
-            put(gearTypeMap, this);
+        protected GearType(final Segment seg) {
+            super(seg);
         }
     }
-    
-    protected final static GearType GEAR_TYPE_ARMOR = new GearType("Armor", 2);
-    protected final static GearType GEAR_TYPE_WEAPON = new GearType("Weapon", 1);
-    protected final static GearType GEAR_TYPE_SHIELD = new GearType("Shield", 1);
     
     private final static Map<String, GearType> gearTypeMap = new LinkedHashMap<String, GearType>();
     
@@ -529,6 +545,36 @@ public class Chr extends Guy4 {
         return get(materialMap, name);
     }
     
+    // Ingots, etc.
+    protected final static class MaterialItem implements Item {
+        private final Material material;
+        
+        protected MaterialItem(final Material material) {
+            this.material = material;
+        }
+        
+        @Override
+        public final String getName() {
+            return material.getName(); // + material.category.getItemName()?
+        }
+        
+        @Override
+        public final boolean isUsable() {
+            return false;
+        }
+        
+        @Override
+        public final boolean isEquippable() {
+            return false;
+        }
+    }
+    
+    private final static Map<Material, MaterialItem> materialItemMap = new LinkedHashMap<Material, MaterialItem>();
+    
+    protected final static MaterialItem getMaterialItem(final Material material) {
+        return materialItemMap.get(material);
+    }
+    
     // Weapon sub-types like dagger/sword/spear/bow/etc.
     protected static class GearSubtype implements Named {
         private final String name;
@@ -538,6 +584,7 @@ public class Chr extends Guy4 {
         private final float attackDamageMultiplier; // These multipliers applied after base calculation (which use GearType.multiplier)
         private final float receivedDamageMultiplier;
         private final float chanceOfBeingHitMultiplier;
+        private final boolean twoHanded;
         private final float renderX;
         private final float renderY;
         
@@ -549,13 +596,18 @@ public class Chr extends Guy4 {
             attackDamageMultiplier = seg.getFloat(4, 1.0f);
             receivedDamageMultiplier = seg.getFloat(5, 1.0f);
             chanceOfBeingHitMultiplier = seg.getFloat(6, 1.0f);
-            renderX = seg.getFloat(7, -1.0f);
-            renderY = seg.getFloat(8, -1.0f);
+            twoHanded = seg.getBoolean(7, false);
+            renderX = seg.getFloat(8, -1.0f);
+            renderY = seg.getFloat(9, -1.0f);
         }
         
         @Override
         public final String getName() {
             return name;
+        }
+        
+        public final int getMaterialRequiredToCraft() {
+            return materialRequiredToCraft;
         }
     }
     
@@ -611,11 +663,15 @@ public class Chr extends Guy4 {
             while ((seg = in.readIf("MAT")) != null) {
                 put(materialMap, new Material(seg));
             }
+            while ((seg = in.readIf("TYP")) != null) {
+                put(gearTypeMap, new GearType(seg));
+            }
             while ((seg = in.readIf("SUB")) != null) {
                 put(gearSubtypeMap, new GearSubtype(seg));
             }
             generateGear();
             Enemy.loadEnemyData(in);
+            World.loadWorldData(in);
         } catch (final IOException e) {
             throw new IllegalStateException(e);
         } finally {
@@ -637,16 +693,23 @@ public class Chr extends Guy4 {
                 }
             }
         }
+        for (final Material material : materialMap.values()) {
+            materialItemMap.put(material, new MaterialItem(material));
+        }
+    }
+    
+    protected final static String getGearName(final SmithingQuality quality, final Material material, final GearSubtype subtype) {
+        return quality.getName() + " " + material.getName() + " " + subtype.getName();
     }
     
     protected final static Gear newGear(final SmithingQuality quality, final Material material, final GearSubtype subtype, final ChrComponent renderData) {
-        final String name = quality.getName() + " " + material.getName() + " " + subtype.getName();
-        final GearType type = subtype.type;
-        if (type == GEAR_TYPE_ARMOR) {
+        final String name = getGearName(quality, material, subtype);
+        final char type = subtype.type.getName().charAt(0);
+        if (type == 'A') {
             return new Armor(name, quality, material, subtype, renderData);
-        } else if (type == GEAR_TYPE_WEAPON) {
+        } else if (type == 'W') {
             return new Weapon(name, quality, material, subtype);
-        } else if (type == GEAR_TYPE_SHIELD) {
+        } else if (type == 'S') {
             return new Shield(name, quality, material, subtype);
         }
         throw new IllegalStateException("Unexpected Gear type " + subtype.type + " for " + name);
