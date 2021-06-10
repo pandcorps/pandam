@@ -36,14 +36,17 @@ public final class CountMap<K> extends LinkedHashMap<K, Long> {
 		super(initialCapacity);
 	}
 
-	public final void inc(final K key) {
+	public final void add(final K key, final int amount) {
 		final Long val = get(key);
-		put(key, Long.valueOf((val == null) ? 1 : (val.longValue() + 1)));
+		put(key, Long.valueOf((val == null) ? amount : (val.longValue() + amount)));
+	}
+	
+	public final void inc(final K key) {
+	    add(key, 1);
 	}
 	
 	public final void dec(final K key) {
-        final Long val = get(key);
-        put(key, Long.valueOf((val == null) ? -1 : (val.longValue() - 1)));
+        add(key, -1);
     }
 	
 	public final boolean decIfPositive(final K key) {
