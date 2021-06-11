@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.rpg;
 
+import org.pandcorps.core.col.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandax.tile.*;
@@ -29,6 +30,7 @@ import org.pandcorps.pandax.tile.*;
 public class Player extends Chr {
     private int worldX = 0; // Will be different than TileMap coordinates if current TileMap is a town or cave
     private int worldY = 0;
+    private final CountMap<Item> inventory = new CountMap<Item>();
     
     /*package*/ boolean active = true;
     
@@ -89,4 +91,26 @@ Fight.goFight(); //TODO REMOVE, Totally temporary
 	public final int getWorldY() {
         return worldY;
     }
+	
+	public final void addInventory(final Item item, final int amount) {
+	    if (item == null) {
+	        return;
+	    }
+	    inventory.add(item, amount);
+	}
+	
+	public final void removeInventory(final Item item, final int amount) {
+	    inventory.add(item, -amount);
+	}
+	
+	// Crafting menu might be based on inventory, so might make more sense to pass MaterialItem
+	public final Gear craft(final Material material, final GearSubtype subtype) {
+	    final MaterialItem item = Chr.getMaterialItem(material);
+	    final int amount = subtype.getMaterialRequiredToCraft();
+	    final SmithingQuality quality = null; //TODO based on skill level
+	    inventory.add(item, -amount); //TODO ensure sufficient quantity
+	    final Gear gear = Chr.getGear(getGearName(quality, material, subtype));
+	    inventory.inc(gear);
+	    return gear;
+	}
 }
