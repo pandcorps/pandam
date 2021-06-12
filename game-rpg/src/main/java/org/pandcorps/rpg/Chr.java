@@ -72,7 +72,7 @@ public class Chr extends Guy4 {
             renderer.render(layer, RpgGame.eyesImage, x + rxo, y + 15, z, def.eyeRight.x, def.eyeRight.y, 4, 4, 0, !m, false, 1, 1, 1);
         }
         final Armor armor = def.stats.getArmor();
-        if (armor == null) {
+        if ((armor == null) || (armor.renderData == null)) {
             def.clothing.render(renderer, this); // Might make sense to render this under armor if armor present
         } else {
             armor.renderData.render(renderer, this);
@@ -125,6 +125,30 @@ public class Chr extends Guy4 {
             }
             //TODO temporary status effects
             return total;
+        }
+        
+        public final int getDefenseRating() {
+            final int endurance = getEffective(STAT_ENDURANCE);
+            final Armor armor = stats.getArmor();
+            final int armorQuality = armor.getQuality();
+            final int armorContribution = armorQuality * gearTypeArmor.getMultiplier();
+            final Shield shield = stats.getShield();
+            final int shieldQuality = (shield == null) ? 0 : shield.getQuality();
+            final int shieldContribution = shieldQuality * gearTypeShield.getMultiplier();
+            final int gearContribution = armorContribution + shieldContribution;
+            return endurance * gearContribution;
+        }
+        
+        public final int getAttackRating(final Weapon weapon) {
+            final int strength = getEffective(Chr.STAT_STRENGTH);
+            final int weaponQuality = weapon.getQuality();
+            final int weaponContribution = weaponQuality * gearTypeWeapon.getMultiplier();
+            return strength * weaponContribution;
+        }
+        
+        public final boolean attack(final int damage) {
+            health = Math.max(0, health - damage);
+            return health <= 0;
         }
         
         protected final void setRace(final Race race, final Subrace subrace) {
@@ -336,7 +360,37 @@ public class Chr extends Guy4 {
         }
         
         protected final Armor getArmor() {
-            return (Armor) gears[GEAR_SLOT_ARMOR];
+            final Gear gear = gears[GEAR_SLOT_ARMOR];
+            if (gear == null) {
+                return armorNone;
+            }
+            return (Armor) gear;
+        }
+        
+        protected final void getWeapons(final List<Weapon> weapons) {
+            weapons.clear();
+            getWeapon(weapons, GEAR_SLOT_HAND1);
+            getWeapon(weapons, GEAR_SLOT_HAND2);
+            if (weapons.isEmpty()) {
+                weapons.add(weaponNone);
+            }
+        }
+        
+        private final void getWeapon(final List<Weapon> weapons, final int slot) {
+            final Gear gear = gears[slot];
+            if (gear instanceof Weapon) {
+                weapons.add((Weapon) gear);
+            }
+        }
+        
+        protected final Shield getShield() {
+            for (int slot = GEAR_SLOT_HAND1; slot <= GEAR_SLOT_HAND2; slot++) {
+                final Gear gear = gears[slot];
+                if (gear instanceof Shield) {
+                    return (Shield) gear;
+                }
+            }
+            return null;
         }
         
         protected void equip(final Player player, final Gear gear, final int slot) {
@@ -393,7 +447,7 @@ public class Chr extends Guy4 {
         }
         
         public final int getQuality() {
-            return quality.getMultiplier() * material.getMultiplier();
+            return getMultiplier(quality) * getMultiplier(material);
         }
         
         @Override
@@ -425,6 +479,8 @@ public class Chr extends Guy4 {
         }
     }
     
+    private static Armor armorNone = null;
+    
     protected final static class Weapon extends Gear {
         protected Weapon(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
             super(name, quality, material, subtype);
@@ -434,6 +490,8 @@ public class Chr extends Guy4 {
             super(seg);
         }
     }
+    
+    private static Weapon weaponNone = null;
     
     protected final static class Shield extends Gear {
         protected Shield(final String name, final SmithingQuality quality, final Material material, final GearSubtype subtype) {
@@ -474,13 +532,28 @@ public class Chr extends Guy4 {
         }
     }
     
+    protected final static int getMultiplier(final GearAttribute a) {
+        return (a == null) ? 1 : a.multiplier;
+    }
+    
+    protected final static char GEAR_TYPE_ARMOR = 'A';
+    protected final static char GEAR_TYPE_WEAPON = 'W';
+    protected final static char GEAR_TYPE_SHIELD = 'C';
+    
     protected final static class GearType extends GearAttribute {
         // Multiplier specifies importance of body armor vs. shield
         protected GearType(final Segment seg) {
             super(seg);
         }
+        
+        public final char getCode() {
+            return getName().charAt(0);
+        }
     }
     
+    private static GearType gearTypeArmor = null;
+    private static GearType gearTypeWeapon = null;
+    private static GearType gearTypeShield = null;
     private final static Map<String, GearType> gearTypeMap = new LinkedHashMap<String, GearType>();
     
     protected final static GearType getGearType(final String name) {
@@ -609,7 +682,26 @@ public class Chr extends Guy4 {
         public final int getMaterialRequiredToCraft() {
             return materialRequiredToCraft;
         }
+        
+        public final float getAttackDamageMultiplier() {
+            return attackDamageMultiplier;
+        }
+        
+        public final float getReceivedDamageMultiplier() {
+            return receivedDamageMultiplier;
+        }
+        
+        public final float getChanceOfBeingHitMultiplier() {
+            return chanceOfBeingHitMultiplier;
+        }
+        
+        public final char getTypeCode() {
+            return type.getCode();
+        }
     }
+    
+    private static GearSubtype gearSubtypeArmorNone = null;
+    private static GearSubtype gearSubtypeWeaponNone = null;
     
     private final static Map<String, GearSubtype> gearSubtypeMap = new LinkedHashMap<String, GearSubtype>();
     
@@ -664,10 +756,31 @@ public class Chr extends Guy4 {
                 put(materialMap, new Material(seg));
             }
             while ((seg = in.readIf("TYP")) != null) {
-                put(gearTypeMap, new GearType(seg));
+                final GearType type = new GearType(seg);
+                final char code = type.getCode();
+                if (code == GEAR_TYPE_ARMOR) {
+                    gearTypeArmor = type;
+                } else if (code == GEAR_TYPE_WEAPON) {
+                    gearTypeWeapon = type;
+                } else if (code == GEAR_TYPE_SHIELD) {
+                    gearTypeShield = type;
+                }
+                put(gearTypeMap, type);
             }
             while ((seg = in.readIf("SUB")) != null) {
-                put(gearSubtypeMap, new GearSubtype(seg));
+                final GearSubtype subtype = new GearSubtype(seg);
+                if (subtype.materialCategory == null) {
+                    final char code = subtype.getTypeCode();
+                    if (code == GEAR_TYPE_ARMOR) {
+                        gearSubtypeArmorNone = subtype;
+                    } else if (code == GEAR_TYPE_WEAPON) {
+                        gearSubtypeWeaponNone = subtype;
+                    } else {
+                        throw new IllegalStateException("No Material found for " + seg);
+                    }
+                } else {
+                    put(gearSubtypeMap, subtype);
+                }
             }
             generateGear();
             Enemy.loadEnemyData(in);
@@ -693,6 +806,8 @@ public class Chr extends Guy4 {
                 }
             }
         }
+        armorNone = new Armor("None", null, null, gearSubtypeArmorNone, null);
+        weaponNone = new Weapon("Fists", null, null, gearSubtypeWeaponNone);
         for (final Material material : materialMap.values()) {
             materialItemMap.put(material, new MaterialItem(material));
         }
@@ -704,12 +819,12 @@ public class Chr extends Guy4 {
     
     protected final static Gear newGear(final SmithingQuality quality, final Material material, final GearSubtype subtype, final ChrComponent renderData) {
         final String name = getGearName(quality, material, subtype);
-        final char type = subtype.type.getName().charAt(0);
-        if (type == 'A') {
+        final char type = subtype.getTypeCode();
+        if (type == GEAR_TYPE_ARMOR) {
             return new Armor(name, quality, material, subtype, renderData);
-        } else if (type == 'W') {
+        } else if (type == GEAR_TYPE_WEAPON) {
             return new Weapon(name, quality, material, subtype);
-        } else if (type == 'S') {
+        } else if (type == GEAR_TYPE_SHIELD) {
             return new Shield(name, quality, material, subtype);
         }
         throw new IllegalStateException("Unexpected Gear type " + subtype.type + " for " + name);
