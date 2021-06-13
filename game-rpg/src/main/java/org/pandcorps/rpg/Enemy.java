@@ -33,6 +33,7 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 import org.pandcorps.rpg.Chr.*;
 import org.pandcorps.rpg.Fight.*;
+import org.pandcorps.rpg.World.*;
 
 public class Enemy {
     protected final static Map<String, EnemyAction> actionMap = new HashMap<String, EnemyAction>();
@@ -137,14 +138,24 @@ public class Enemy {
         protected ChrEnemyDefinition(final Segment statsSeg, final Segment secondSeg, final Segment extraSeg) {
             super(statsSeg, secondSeg);
             final List<Field> raceFields = extraSeg.getRepetitions(0);
-            possibleRaces = new ArrayList<Race>(raceFields.size());
-            for (final Field field : raceFields) {
-                possibleRaces.add(Chr.getRace(field.getValue()));
+            final int numPossibleRaces = Coltil.size(raceFields);
+            if (numPossibleRaces > 0) {
+                possibleRaces = new ArrayList<Race>(numPossibleRaces);
+                for (final Field field : raceFields) {
+                    possibleRaces.add(Chr.getRace(field.getValue()));
+                }
+            } else {
+                possibleRaces = null;
             }
             final List<Field> subraceFields = extraSeg.getRepetitions(1);
-            possibleSubraces = new ArrayList<Subrace>(subraceFields.size());
-            for (final Field field : subraceFields) {
-                possibleSubraces.add(Chr.getSubrace(field.getValue()));
+            final int numPossibleSubraces = Coltil.size(subraceFields);
+            if (numPossibleSubraces > 0) {
+                possibleSubraces = new ArrayList<Subrace>(numPossibleSubraces);
+                for (final Field field : subraceFields) {
+                    possibleSubraces.add(Chr.getSubrace(field.getValue()));
+                }
+            } else {
+                possibleSubraces = null;
             }
         }
         
@@ -152,15 +163,23 @@ public class Enemy {
         protected final EnemyFighter spawn(final String name) {
             final ChrDefinition def = new ChrDefinition(stats);
             final Subrace subrace;
+            City interpolatedCity = null;
             if (Coltil.isEmpty(possibleSubraces)) {
-                subrace = World.getInterpolatedCity().subraceDistribution.rnd();
+                interpolatedCity = World.getInterpolatedCity();
+                subrace = interpolatedCity.subraceDistribution.rnd();
             } else {
                 subrace = Mathtil.rand(possibleSubraces);
             }
-            //TODO interpolated city race
             Race race = subrace.getRace();
             if (race == null) {
-                race = Mathtil.rand(possibleRaces);
+                if (Coltil.isEmpty(possibleRaces)) {
+                    if (interpolatedCity == null) {
+                        interpolatedCity = World.getInterpolatedCity();
+                    }
+                    race = interpolatedCity.raceDistribution.rnd();
+                } else {
+                    race = Mathtil.rand(possibleRaces);
+                }
             }
             def.setRace(race, subrace);
             def.randomizeAppearance();
