@@ -56,6 +56,8 @@ public class Fight {
     protected static boolean playerTurn = true;
     protected static int partyMemberIndex = 0;
     protected static ChrDefinition currentPlayerDef = null;
+    protected final static List<Weapon> currentWeapons = new ArrayList<Weapon>(2);
+    protected static int currentWeaponIndex = 0;
     protected final static Stack<FightMenuState> stack = new Stack<FightMenuState>();
     protected final static List<FightOption> partyMemberOptions = new ArrayList<FightOption>();
     protected final static List<FightOption> enemyTargetOptions = new ArrayList<FightOption>();
@@ -139,6 +141,7 @@ public class Fight {
     }
     
     protected final static void startTurn() {
+        currentWeaponIndex = 0;
         if (playerTurn) {
             startPlayerTurn();
         } else {
@@ -148,6 +151,8 @@ public class Fight {
     
     protected final static void startPlayerTurn() {
         currentPlayerDef = RpgGame.party.get(partyMemberIndex);
+        currentPlayerDef.stats.getWeapons(currentWeapons);
+        stack.clear();
         displayOptions(new FightMenuState(getCurrentPlayerName(), getPartyMemberOptions()));
     }
     
@@ -162,6 +167,7 @@ public class Fight {
     
     protected final static void startEnemyTurn() {
         //TODO
+        incrementTurn();
     }
     
     protected final static void incrementTurn() {
@@ -171,6 +177,7 @@ public class Fight {
             partyMemberIndex = 0;
             playerTurn = !playerTurn;
         }
+        startTurn();
     }
     
     protected final static void displayOptions(final FightMenuState state) {
@@ -185,11 +192,13 @@ public class Fight {
         final int numOptions = options.size();
         for (int i = 0; i < pageSize; i++) {
             final int optionIndex = startIndex + i;
-            if (optionIndex >= numOptions) {
-                break;
+            final StringBuilder buffer = optionTexts.get(i).buffer;
+            if (optionIndex < numOptions) {
+                final FightOption option = options.get(optionIndex);
+                Chartil.set(buffer, option.label);
+            } else {
+                Chartil.clear(buffer);
             }
-            final FightOption option = options.get(optionIndex);
-            Chartil.set(optionTexts.get(i).buffer, option.label);
         }
     }
     
@@ -222,8 +231,23 @@ public class Fight {
     };
     
     protected final static void attack(final EnemyFighter enemy) {
-        //TODO
-        incrementTurn();
+        final Weapon weapon = currentWeapons.get(currentWeaponIndex);
+        final int attackRating = currentPlayerDef.getAttackRating(weapon);
+        final int attackScore = Math.round(attackRating * Mathtil.randf(1.0f, 1.05f));
+        final int defenseRating = enemy.def.getDefenseRating();
+        //TODO When enemy attacks player, check player's receivedDamageMultiplier and chanceOfBeingHitMultiplier for all gear (only one weapon though)
+        if (attackScore > defenseRating) {
+            final int baseDamage = attackScore - defenseRating;
+            final int damage = Math.max(1, Math.round(baseDamage * weapon.getSubtype().getAttackDamageMultiplier()));
+            final boolean defeated = enemy.def.attack(damage);
+        }
+        //TODO attack
+        if (currentWeaponIndex < (currentWeapons.size() - 1)) {
+            currentWeaponIndex++;
+            attack(enemy); //TODO If target defeated, pick new enemy or stop attacking if none remaining
+        } else {
+            incrementTurn();
+        }
     }
     
     protected final static List<FightOption> getPartyMemberOptions() {
