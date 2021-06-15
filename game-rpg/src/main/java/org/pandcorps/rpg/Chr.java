@@ -348,6 +348,7 @@ public class Chr extends Guy4 {
     
     protected final static class ChrStats extends BaseStats {
         private final Gear[] gears = new Gear[GEAR_SLOTS_SIZE];
+        private final Map<String, Skill> skills = new LinkedHashMap<String, Skill>();
         
         protected ChrStats(final Segment seg) {
             super(seg); // 0 - name, 1 - stats
@@ -357,6 +358,7 @@ public class Chr extends Guy4 {
             for (int i = 0; i < gearSize; i++) {
                 gears[i] = getGear(gearFields.get(i).getValue());
             }
+            //TODO skills
         }
         
         protected final Armor getArmor() {
@@ -408,6 +410,38 @@ public class Chr extends Guy4 {
         protected void unequip(final Player player, final int slot) {
             player.addInventory(gears[slot], 1);
             gears[slot] = null;
+        }
+    }
+    
+    protected final static class SkillCategory implements Named {
+        private final String name;
+        
+        protected SkillCategory(final String name) {
+            this.name = name;
+        }
+        
+        @Override
+        public final String getName() {
+            return name;
+        }
+    }
+    
+    private final static Map<String, SkillCategory> skillCategoryMap = new LinkedHashMap<String, SkillCategory>();
+    
+    protected final static SkillCategory getSkillCategory(final String name) {
+        return get(skillCategoryMap, name);
+    }
+    
+    protected final static class Skill {
+        private int level;
+        private int experience;
+        
+        protected final int getLevel() {
+            return level;
+        }
+        
+        protected final int getExperience() {
+            return experience;
         }
     }
     
@@ -769,8 +803,8 @@ public class Chr extends Guy4 {
             }
             while ((seg = in.readIf("SUB")) != null) {
                 final GearSubtype subtype = new GearSubtype(seg);
+                final char code = subtype.getTypeCode();
                 if (subtype.materialCategory == null) {
-                    final char code = subtype.getTypeCode();
                     if (code == GEAR_TYPE_ARMOR) {
                         gearSubtypeArmorNone = subtype;
                     } else if (code == GEAR_TYPE_WEAPON) {
@@ -780,6 +814,9 @@ public class Chr extends Guy4 {
                     }
                 } else {
                     put(gearSubtypeMap, subtype);
+                    if (code == GEAR_TYPE_WEAPON) {
+                        put(skillCategoryMap, new SkillCategory(subtype.getName()));
+                    }
                 }
             }
             generateGear();
