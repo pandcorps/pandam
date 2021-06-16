@@ -24,6 +24,7 @@ package org.pandcorps.championsofslam;
 
 import org.pandcorps.pandam.*;
 import org.pandcorps.championsofslam.Champion.*;
+import org.pandcorps.core.img.*;
 
 public class Arena extends Panctor {
     private final ArenaDefinition def;
@@ -37,11 +38,11 @@ public class Arena extends Panctor {
         final Panlayer layer = getLayer();
         final Panmage img = ChampionsOfSlamGame.imgArena;
         final FloatColor ringColor = def.ringColor, turnbuckleColor = def.turnbuckleColor, apronColor = def.apronColor, ropeColor = def.ropeColor;
-        final float ringR = ringColor.r, ringG = ringColor.g, ringB = ringColor.b;
+        final float ringR = ringColor.getR(), ringG = ringColor.getG(), ringB = ringColor.getB();
         final float shadowR = 0.75f * ringR, shadowG = 0.75f * ringG, shadowB = 0.75f * ringB;
-        final float turnbuckleR = turnbuckleColor.r, turnbuckleG = turnbuckleColor.g, turnbuckleB = turnbuckleColor.b;
-        final float apronR = apronColor.r, apronG = apronColor.g, apronB = apronColor.b;
-        final float ropeR = ropeColor.r, ropeG = ropeColor.g, ropeB = ropeColor.b;
+        final float turnbuckleR = turnbuckleColor.getR(), turnbuckleG = turnbuckleColor.getG(), turnbuckleB = turnbuckleColor.getB();
+        final float apronR = apronColor.getR(), apronG = apronColor.getG(), apronB = apronColor.getB();
+        final float ropeR = ropeColor.getR(), ropeG = ropeColor.getG(), ropeB = ropeColor.getB();
         for (int h = 0; h < 2; h++) {
             final boolean mirror = h > 0;
             final int screenEdge, mirrorMultiplier, crowdOffX, floorX, ringX, centerX, ropeX, ropeY, ropeZ, ropeSouthZ = 1520;
