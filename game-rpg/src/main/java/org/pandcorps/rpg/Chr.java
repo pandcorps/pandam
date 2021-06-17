@@ -33,6 +33,8 @@ import org.pandcorps.pandam.*;
 import org.pandcorps.pandax.tile.*;
 
 public class Chr extends Guy4 {
+    protected final static int INITIAL_LEVEL = 1;
+    
     private ChrDefinition def = null;
     
     protected Chr(final ChrDefinition def) {
@@ -129,6 +131,7 @@ public class Chr extends Guy4 {
         
         public final int getDefenseRating() {
             final int endurance = getEffective(STAT_ENDURANCE);
+            final int abilityContribution = endurance * 2; // No armor skill equivalent of weapon skills, so double it
             final Armor armor = stats.getArmor();
             final int armorQuality = armor.getQuality();
             final int armorContribution = armorQuality * gearTypeArmor.getMultiplier();
@@ -136,14 +139,41 @@ public class Chr extends Guy4 {
             final int shieldQuality = (shield == null) ? 0 : shield.getQuality();
             final int shieldContribution = shieldQuality * gearTypeShield.getMultiplier();
             final int gearContribution = armorContribution + shieldContribution;
-            return endurance * gearContribution;
+            return abilityContribution * gearContribution;
         }
         
         public final int getAttackRating(final Weapon weapon) {
             final int strength = getEffective(Chr.STAT_STRENGTH);
+            final int skill = getLevel(weapon.getSubtype());
+            final int abilityContribution = strength + skill;
             final int weaponQuality = weapon.getQuality();
             final int weaponContribution = weaponQuality * gearTypeWeapon.getMultiplier();
-            return strength * weaponContribution;
+            return abilityContribution * weaponContribution;
+        }
+        
+        protected final int getLevel(final Named skillType) {
+            return getLevel(getName(skillType));
+        }
+        
+        protected final int getLevel(final String skillName) {
+            return Chr.getLevel(stats.skills.get(skillName));
+        }
+        
+        protected final void addExperience(final Named skillType, final int experience) {
+            addExperience(getName(skillType), experience);
+        }
+        
+        protected final void addExperience(final String skillName, final int experience) {
+            addExperience(stats.skills.get(skillName), experience);
+        }
+        
+        protected final void addExperience(final Skill skill, final int experience) {
+            if (skill == null) {
+                // Could attack while unarmed; might not be an unarmed skill; just ignore if no Skill to increase
+                return;
+            }
+            skill.experience += experience;
+            //TODO Increase level if needed; queue notification; method not static so chr name available for that
         }
         
         public final boolean attack(final int damage) {
@@ -433,8 +463,8 @@ public class Chr extends Guy4 {
     }
     
     protected final static class Skill {
-        private int level;
-        private int experience;
+        private int level = INITIAL_LEVEL;
+        private int experience = 0;
         
         protected final int getLevel() {
             return level;
@@ -443,6 +473,10 @@ public class Chr extends Guy4 {
         protected final int getExperience() {
             return experience;
         }
+    }
+    
+    protected final static int getLevel(final Skill skill) {
+        return (skill == null) ? INITIAL_LEVEL : skill.getLevel();
     }
     
     protected static interface Item extends Named {
@@ -745,6 +779,10 @@ public class Chr extends Guy4 {
     
     protected static interface Named {
         public String getName();
+    }
+    
+    protected final static String getName(final Named named) {
+        return (named == null) ? null : named.getName();
     }
     
     protected final static class Names implements Named {
