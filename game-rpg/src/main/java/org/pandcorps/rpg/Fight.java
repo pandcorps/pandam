@@ -233,21 +233,53 @@ public class Fight {
     protected final static void attack(final EnemyFighter enemy) {
         final Weapon weapon = currentWeapons.get(currentWeaponIndex);
         final int attackRating = currentPlayerDef.getAttackRating(weapon);
-        final int attackScore = Math.round(attackRating * Mathtil.randf(1.0f, 1.05f));
+        final int attackScore = Math.round(attackRating * Mathtil.randf(1.1f, 1.2f));
+        currentPlayerDef.addExperience(weapon.getSubtype(), attackScore);
         final int defenseRating = enemy.def.getDefenseRating();
         //TODO When enemy attacks player, check player's receivedDamageMultiplier and chanceOfBeingHitMultiplier for all gear (only one weapon though)
+        boolean defeated = false;
         if (attackScore > defenseRating) {
             final int baseDamage = attackScore - defenseRating;
             final int damage = Math.max(1, Math.round(baseDamage * weapon.getSubtype().getAttackDamageMultiplier()));
-            final boolean defeated = enemy.def.attack(damage);
+            defeated = enemy.def.attack(damage);
         }
-        //TODO attack
+        if (defeated) {
+            enemyParty.remove(enemy);
+            if (enemyParty.isEmpty()) {
+                victory();
+                return;
+            }
+        }
         if (currentWeaponIndex < (currentWeapons.size() - 1)) {
             currentWeaponIndex++;
-            attack(enemy); //TODO If target defeated, pick new enemy or stop attacking if none remaining
+            EnemyFighter nextTarget = enemy;
+            if (defeated) {
+                nextTarget = pickNextTarget(enemy);
+            }
+            attack(nextTarget);
         } else {
             incrementTurn();
         }
+    }
+    
+    protected final static EnemyFighter pickNextTarget(final EnemyFighter previousTarget) {
+        // If there's another enemy of the same specific type, pick that enemy
+        for (final EnemyFighter fighter : enemyParty) {
+            if (fighter.enemyDef.equals(previousTarget.enemyDef)) {
+                return fighter;
+            }
+        }
+        // If there's another enemy of the same broader category (humanoid or monster), pick that enemy
+        for (final EnemyFighter fighter : enemyParty) {
+            if (fighter.enemyDef.getClass().equals(previousTarget.enemyDef.getClass())) {
+                return fighter;
+            }
+        }
+        return enemyParty.get(0);
+    }
+    
+    protected final static void victory() {
+        //TODO
     }
     
     protected final static List<FightOption> getPartyMemberOptions() {
@@ -344,12 +376,14 @@ public class Fight {
     
     protected final static class EnemyFighter implements Comparable<EnemyFighter> {
         private final String name; // Can be enemy type + index if party contains more than 1 of given type
+        private final EnemyDefinition enemyDef;
         private final ChrDefinition def;
         private final EnemyTargetOption targetOption;
         private final Panctor avatar; // Will be Chr for humanoid enemies
         
-        protected EnemyFighter(final String name, final ChrDefinition def, final Panctor avatar) {
+        protected EnemyFighter(final String name, final EnemyDefinition enemyDef, final ChrDefinition def, final Panctor avatar) {
             this.name = name;
+            this.enemyDef = enemyDef;
             this.def = def;
             targetOption = new EnemyTargetOption(this);
             this.avatar = avatar;
