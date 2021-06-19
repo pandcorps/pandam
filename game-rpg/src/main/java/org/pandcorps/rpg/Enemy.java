@@ -185,7 +185,7 @@ public class Enemy {
             def.randomizeAppearance();
             final Chr chr = new Chr(def);
             chr.setDirection(Direction.East);
-            return new EnemyFighter(name, def, chr); // Name could be type plus index if party has more than one of same type
+            return new EnemyFighter(name, this, def, chr); // Name could be type plus index if party has more than one of same type
         }
     }
     
