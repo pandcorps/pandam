@@ -26,6 +26,7 @@ import java.util.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
+import org.pandcorps.core.img.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -345,7 +346,7 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
     }
     
     private final void renderFrameComponent(final Panderer renderer, final ChampionFrameComponent cmp, final float x, final float y, final float z, final FloatColor color) {
-        renderer.render(getLayer(), ChampionsOfSlamGame.imgChampion, x, y, z, cmp.ix, cmp.iy, iw, ih, 0, isMirror(), false, color.r, color.g, color.b);
+        renderer.render(getLayer(), ChampionsOfSlamGame.imgChampion, x, y, z, cmp.ix, cmp.iy, iw, ih, 0, isMirror(), false, color.getR(), color.getG(), color.getB());
     }
     
     private final static float randomColorComponent() {
@@ -366,20 +367,20 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         final Clothing shirt = def.shirt, pants = def.pants, boots = def.boots;
         final FloatColor bodyColor = def.bodyColor, hairColor = def.hairColor, shirtColor = shirt.color, pantsColor = pants.color, bootsColor = boots.color;
         final int bodyColorR = Mathtil.randi(4, 8), bodyColorG = Mathtil.randi(bodyColorR / 2, bodyColorR - 1);
-        bodyColor.r = INC_COLOR * bodyColorR;
-        bodyColor.g = INC_COLOR * bodyColorG;
-        bodyColor.b = INC_COLOR * Mathtil.randi(bodyColorG / 2, bodyColorG - 1);
+        bodyColor.setR(INC_COLOR * bodyColorR);
+        bodyColor.setG(INC_COLOR * bodyColorG);
+        bodyColor.setB(INC_COLOR * Mathtil.randi(bodyColorG / 2, bodyColorG - 1));
         final int hairColorR = Mathtil.randi(1, 8), hairColorG = Mathtil.randi(hairColorR / 4, hairColorR);
-        hairColor.r = INC_COLOR * hairColorR;
-        hairColor.g = INC_COLOR * hairColorG;
-        hairColor.b = INC_COLOR * Mathtil.randi(hairColorG / 4, hairColorG);
+        hairColor.setR(INC_COLOR * hairColorR);
+        hairColor.setG(INC_COLOR * hairColorG);
+        hairColor.setB(INC_COLOR * Mathtil.randi(hairColorG / 4, hairColorG));
         float shirtR = randomColorComponent(), shirtG = randomColorComponent(), shirtB = randomColorComponent();
         if ((shirtR < 0.05f) && (shirtR < 0.05f) && (shirtR < 0.05f)) {
             shirtR = shirtG = shirtB = INC_COLOR;
         }
-        shirtColor.r = shirtR;
-        shirtColor.g = shirtG;
-        shirtColor.b = shirtB;
+        shirtColor.setR(shirtR);
+        shirtColor.setG(shirtG);
+        shirtColor.setB(shirtB);
         final FloatColor greyColor, copyColor;
         if (Mathtil.rand()) {
             greyColor = bootsColor;
@@ -388,11 +389,9 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
             greyColor = pantsColor;
             copyColor = bootsColor;
         }
-        copyColor.r = shirtColor.r;
-        copyColor.g = shirtColor.g;
-        copyColor.b = shirtColor.b;
+        copyColor.set(shirtColor);
         final float grey = INC_COLOR * Mathtil.randi(1, 7);
-        greyColor.r = greyColor.g = greyColor.b = grey;
+        greyColor.setGrey(grey);
         def.eyesIndex = Mathtil.randi(0, NUM_EYES - 1);
         def.hairIndex = Mathtil.randi(-1, NUM_HAIR - 1);
         //shirt.style = Mathtil.rand(ChampionsOfSlamGame.shirtStyles);
@@ -411,10 +410,10 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         
         public final void load(final String s) {
             final Segment seg = Segment.parse(s);
-            bodyColor.load(seg.getField(0));
+            Champion.load(bodyColor, seg.getField(0));
             eyesIndex = seg.intValue(1);
             hairIndex = seg.intValue(2);
-            hairColor.load(seg.getField(3));
+            Champion.load(hairColor, seg.getField(3));
             shirt.load(seg, Images.shirtStyles, 4);
             pants.load(seg, Images.pantsStyles, 6);
             boots.load(seg, Images.bootsStyles, 8);
@@ -425,10 +424,10 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         public final String toString() {
             final StringBuilder b = new StringBuilder();
             b.append("CHM").append('|');
-            bodyColor.append(b).append('|');
+            append(b, bodyColor).append('|');
             b.append(eyesIndex).append('|');
             b.append(hairIndex).append('|');
-            hairColor.append(b).append('|');
+            append(b, hairColor).append('|');
             shirt.append(b);
             pants.append(b);
             boots.append(b);
@@ -463,29 +462,23 @@ public abstract class Champion extends Panctor implements StepListener, Collidab
         
         private final void load(final Segment seg, final Map<Object, ClothingStyle> styles, final int fieldIndex) {
             style = styles.get(seg.getValue(fieldIndex));
-            color.load(seg.getField(fieldIndex + 1));
+            Champion.load(color, seg.getField(fieldIndex + 1));
         }
         
         private final void append(final StringBuilder b) {
             b.append(style.styleName).append('|');
-            color.append(b).append('|');
+            Champion.append(b, color).append('|');
         }
     }
     
-    public final static class FloatColor {
-        protected float r = 1.0f;
-        protected float g = 1.0f;
-        protected float b = 1.0f;
-        
-        public final void load(final Piped rec) {
-            r = INC_COLOR * rec.intValue(0);
-            g = INC_COLOR * rec.intValue(1);
-            b = INC_COLOR * rec.intValue(2);
-        }
-        
-        public final StringBuilder append(final StringBuilder sb) {
-            return sb.append(getColorInt(r)).append('^').append(getColorInt(g)).append('^').append(getColorInt(b));
-        }
+    public final static void load(final FloatColor color, final Piped rec) {
+        color.setR(INC_COLOR * rec.intValue(0));
+        color.setG(INC_COLOR * rec.intValue(1));
+        color.setB(INC_COLOR * rec.intValue(2));
+    }
+    
+    public final static StringBuilder append(final StringBuilder sb, final FloatColor color) {
+        return sb.append(getColorInt(color.getR())).append('^').append(getColorInt(color.getG())).append('^').append(getColorInt(color.getB()));
     }
     
     public final static FloatColor COLOR_WHITE = new FloatColor();
