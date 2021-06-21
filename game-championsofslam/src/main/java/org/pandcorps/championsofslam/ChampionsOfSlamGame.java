@@ -153,10 +153,12 @@ public final class ChampionsOfSlamGame extends BaseGame {
             final Panlayer bg = engine.createLayer("bg", GAME_W, GAME_H, 0, room);
             room.addBeneath(bg);
             final ArenaDefinition arenaDef = new ArenaDefinition();
-            arenaDef.ropeColor.r = arenaDef.ropeColor.g = 0.0f;
-            arenaDef.turnbuckleColor.r = arenaDef.turnbuckleColor.g = arenaDef.turnbuckleColor.b = 0.5f;
-            arenaDef.apronColor.r = arenaDef.apronColor.g = 0.5f;
-            engine.setBgColor(arenaDef.ringColor.r, arenaDef.ringColor.g, arenaDef.ringColor.b);
+            arenaDef.ropeColor.setR(0.0f);
+            arenaDef.ropeColor.setG(0.0f);
+            arenaDef.turnbuckleColor.setGrey(0.5f);
+            arenaDef.apronColor.setR(0.5f);
+            arenaDef.apronColor.setG(0.5f);
+            engine.setBgColor(arenaDef.ringColor.getR(), arenaDef.ringColor.getG(), arenaDef.ringColor.getB());
             arena = new Arena(arenaDef);
             bg.addActor(arena);
             bg.setConstant(true);
