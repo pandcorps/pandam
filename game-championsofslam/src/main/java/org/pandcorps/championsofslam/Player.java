@@ -43,13 +43,13 @@ public class Player extends Champion {
                     return null; }},
             new ChampionOption("BODY", "R ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.bodyColor.r); }},
+                    return getColorKey(def.bodyColor.getR()); }},
             new ChampionOption("BODY", "G ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.bodyColor.g); }},
+                    return getColorKey(def.bodyColor.getG()); }},
             new ChampionOption("BODY", "B ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.bodyColor.b); }},
+                    return getColorKey(def.bodyColor.getB()); }},
             new ChampionOption("EYES", "") {
                 @Override protected final Object getValue(ChampionDefinition def) {
                     return getIndexKey(def.eyesIndex, 0); }},
@@ -58,46 +58,46 @@ public class Player extends Champion {
                     return getIndexKey(def.hairIndex, 1); }},
             new ChampionOption("HAIR", "R ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.hairColor.r); }},
+                    return getColorKey(def.hairColor.getR()); }},
             new ChampionOption("HAIR", "G ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.hairColor.g); }},
+                    return getColorKey(def.hairColor.getG()); }},
             new ChampionOption("HAIR", "B ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.hairColor.b); }},
+                    return getColorKey(def.hairColor.getB()); }},
             new ChampionOption("SHIRT", "") {
                 @Override protected final Object getValue(ChampionDefinition def) {
                     return getIndexKey(def.shirt.style.styleIndex, 0); }},
             new ChampionOption("SHIRT", "R ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.shirt.color.r); }},
+                    return getColorKey(def.shirt.color.getR()); }},
             new ChampionOption("SHIRT", "G ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.shirt.color.g); }},
+                    return getColorKey(def.shirt.color.getG()); }},
             new ChampionOption("SHIRT", "B ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.shirt.color.b); }},
+                    return getColorKey(def.shirt.color.getB()); }},
             new ChampionOption("PANTS", "") {
                 @Override protected final Object getValue(ChampionDefinition def) {
                     return getIndexKey(def.pants.style.styleIndex, 0); }},
             new ChampionOption("PANTS", "R ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.pants.color.r); }},
+                    return getColorKey(def.pants.color.getR()); }},
             new ChampionOption("PANTS", "G ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.pants.color.g); }},
+                    return getColorKey(def.pants.color.getG()); }},
             new ChampionOption("PANTS", "B ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.pants.color.b); }},
+                    return getColorKey(def.pants.color.getB()); }},
             new ChampionOption("BOOTS", "R ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.boots.color.r); }},
+                    return getColorKey(def.boots.color.getR()); }},
             new ChampionOption("BOOTS", "G ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.boots.color.g); }},
+                    return getColorKey(def.boots.color.getG()); }},
             new ChampionOption("BOOTS", "B ") {
                 @Override protected final Object getValue(ChampionDefinition def) {
-                    return getColorKey(def.boots.color.b); }}
+                    return getColorKey(def.boots.color.getB()); }}
     };
     private static int numPlayers = 0;
     
@@ -459,13 +459,13 @@ public class Player extends Champion {
                     // Just paused
                     break;
                 case 1:
-                    def.bodyColor.r = increment(def.bodyColor.r, dir);
+                    def.bodyColor.setR(increment(def.bodyColor.getR(), dir));
                     break;
                 case 2:
-                    def.bodyColor.g = increment(def.bodyColor.g, dir);
+                    def.bodyColor.setG(increment(def.bodyColor.getG(), dir));
                     break;
                 case 3:
-                    def.bodyColor.b = increment(def.bodyColor.b, dir);
+                    def.bodyColor.setB(increment(def.bodyColor.getB(), dir));
                     break;
                 case 4:
                     def.eyesIndex = increment(def.eyesIndex, NUM_EYES, dir);
@@ -474,46 +474,46 @@ public class Player extends Champion {
                     def.hairIndex = increment(def.hairIndex, -1, NUM_HAIR, dir);
                     break;
                 case 6:
-                    def.hairColor.r = increment(def.hairColor.r, dir);
+                    def.hairColor.setR(increment(def.hairColor.getR(), dir));
                     break;
                 case 7:
-                    def.hairColor.g = increment(def.hairColor.g, dir);
+                    def.hairColor.setG(increment(def.hairColor.getG(), dir));
                     break;
                 case 8:
-                    def.hairColor.b = increment(def.hairColor.b, dir);
+                    def.hairColor.setB(increment(def.hairColor.getB(), dir));
                     break;
                 case 9:
                     increment(def.shirt, Images.shirtStyles, dir);
                     break;
                 case 10:
-                    def.shirt.color.r = increment(def.shirt.color.r, dir);
+                    def.shirt.color.setR(increment(def.shirt.color.getR(), dir));
                     break;
                 case 11:
-                    def.shirt.color.g = increment(def.shirt.color.g, dir);
+                    def.shirt.color.setG(increment(def.shirt.color.getG(), dir));
                     break;
                 case 12:
-                    def.shirt.color.b = increment(def.shirt.color.b, dir);
+                    def.shirt.color.setB(increment(def.shirt.color.getB(), dir));
                     break;
                 case 13:
                     increment(def.pants, Images.pantsStyles, dir);
                     break;
                 case 14:
-                    def.pants.color.r = increment(def.pants.color.r, dir);
+                    def.pants.color.setR(increment(def.pants.color.getR(), dir));
                     break;
                 case 15:
-                    def.pants.color.g = increment(def.pants.color.g, dir);
+                    def.pants.color.setG(increment(def.pants.color.getG(), dir));
                     break;
                 case 16:
-                    def.pants.color.b = increment(def.pants.color.b, dir);
+                    def.pants.color.setB(increment(def.pants.color.getB(), dir));
                     break;
                 case 17:
-                    def.boots.color.r = increment(def.boots.color.r, dir);
+                    def.boots.color.setR(increment(def.boots.color.getR(), dir));
                     break;
                 case 18:
-                    def.boots.color.g = increment(def.boots.color.g, dir);
+                    def.boots.color.setG(increment(def.boots.color.getG(), dir));
                     break;
                 case 19:
-                    def.boots.color.b = increment(def.boots.color.b, dir);
+                    def.boots.color.setB(increment(def.boots.color.getB(), dir));
                     break;
             }
             player.setPausedText();
