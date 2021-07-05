@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.seg.*;
 
 public final class ImgTool {
     private final static ImgFactory f = ImgFactory.getFactory();
@@ -41,8 +42,10 @@ public final class ImgTool {
     private final static float grayMultiplierRed = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierRed", 1.0f);
     private final static float grayMultiplierGreen = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierGreen", 1.0f);
     private final static float grayMultiplierBlue = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierBlue", 1.0f);
+    private final static String lightMapLoc = Pantil.getProperty("org.pandcorps.core.img.lightMapLoc");
     private final static int[] channels = new int[3];
     private static PixelFilter filter = null;
+    private static Img lightMap = null;
     
     public final static void main(final String[] args) {
         info("Starting");
@@ -50,7 +53,9 @@ public final class ImgTool {
         final String inLoc = args[0];
         final String outLoc = args[1];
         final File inFile = new File(inLoc);
-        if (inFile.isDirectory()) {
+        if (inLoc.startsWith("NOI")) {
+            processNoise(inLoc, outLoc);
+        } else if (inFile.isDirectory()) {
             processDirectory(inFile, outLoc);
         } else {
             processFile(inFile, outLoc);
@@ -62,6 +67,10 @@ public final class ImgTool {
         if (mapSrc != null) {
             final Img src = Imtil.load(mapSrc), dst = Imtil.load(mapDst);
             filter = getFilter(src, dst);
+        }
+        if (lightMapLoc != null) {
+            info("Loading light map " + lightMapLoc);
+            lightMap = Imtil.load(lightMapLoc);
         }
     }
     
@@ -75,7 +84,11 @@ public final class ImgTool {
         info("Processing from " + inFile + " into " + outLoc);
         final Img img = Imtil.load(inFile.getAbsolutePath());
         if (filter != null) {
+            info("Filtering image");
             Imtil.filterImg(img, filter);
+            info("Finished filtering image");
+        } else if (lightMap != null) {
+            applyLightMap(img, outLoc);
         } else {
             processFile(img, outLoc);
         }
@@ -97,6 +110,29 @@ public final class ImgTool {
                 //img.setRGB(x, y, min(r, g, b, a));
             }
         }
+    }
+    
+    private final static void applyLightMap(final Img img, final String outLoc) {
+        info("Applying light map");
+        final int w = img.getWidth(), h = img.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = img.getRGB(x, y);
+                final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p), a = f.getAlpha(p);
+                final int l = lightMap.getRGB(x, y);
+                final int rl = f.getRed(l), gl = f.getGreen(l), bl = f.getBlue(l);
+                final int r2 = applyLightMap(r, rl), g2 = applyLightMap(g, gl), b2 = applyLightMap(b, bl);
+                img.setRGB(x, y, f.getDataElement(r2, g2, b2, a));
+            }
+        }
+        info("Finished applying light map");
+    }
+    
+    private final static int applyLightMap(final int cRaw, int cLight) {
+        if (cLight == 255) {
+            cLight = 256;
+        }
+        return cRaw + cLight - 128;
     }
     
     protected final static boolean isRed(final int p) {
@@ -203,6 +239,36 @@ public final class ImgTool {
             }
         }
         return filter;
+    }
+    
+    private final static void processNoise(final String noiseDef, final String outLoc) {
+        final Segment seg = Segment.parse(noiseDef);
+        final int w = seg.intValue(0), h = seg.intValue(1);
+        final List<Field> colorReps = seg.getRepetitions(2);
+        final boolean preventNeighborCollisions = seg.getBoolean(3, false);
+        final int numColors = colorReps.size();
+        final int[] colors = new int[numColors];
+        for (int i = 0; i < numColors; i++) {
+            final Field color = colorReps.get(i);
+            colors[i] = f.getDataElement(color.intValue(0), color.intValue(1), color.intValue(2), Pancolor.MAX_VALUE);
+        }
+        final int nullMarker = -1; //TODO Pick something outside of colors array
+        final Img img = Imtil.newImage(w, h);
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int y1 = (y == 0) ? nullMarker : img.getRGB(x, y - 1);
+                final int x1 = (x == 0) ? nullMarker : img.getRGB(x - 1, y);
+                int rgb;
+                while (true) {
+                    rgb = Mathtil.randElemI(colors);
+                    if (!preventNeighborCollisions || ((rgb != y1) && (rgb != x1))) {
+                        break;
+                    }
+                }
+                img.setRGB(x, y, rgb);
+            }
+        }
+        Imtil.save(img, outLoc);
     }
     
     private final static void info(final Object s) {
