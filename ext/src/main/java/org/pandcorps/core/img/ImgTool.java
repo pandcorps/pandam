@@ -42,6 +42,9 @@ public final class ImgTool {
     private final static float grayMultiplierRed = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierRed", 1.0f);
     private final static float grayMultiplierGreen = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierGreen", 1.0f);
     private final static float grayMultiplierBlue = Pantil.getProperty("org.pandcorps.core.img.grayMultiplierBlue", 1.0f);
+    private final static int transparentRed = Pantil.getProperty("org.pandcorps.core.img.transparentRed", -1);
+    private final static int transparentGreen = Pantil.getProperty("org.pandcorps.core.img.transparentGreen", -1);
+    private final static int transparentBlue = Pantil.getProperty("org.pandcorps.core.img.transparentBlue", -1);
     private final static String lightMapLoc = Pantil.getProperty("org.pandcorps.core.img.lightMapLoc");
     private final static int[] channels = new int[3];
     private static PixelFilter filter = null;
@@ -55,6 +58,8 @@ public final class ImgTool {
         final File inFile = new File(inLoc);
         if (inLoc.startsWith("NOI")) {
             processNoise(inLoc, outLoc);
+        } else if (inLoc.startsWith("WIR")) {
+            processWire(inLoc, outLoc);
         } else if (inFile.isDirectory()) {
             processDirectory(inFile, outLoc);
         } else {
@@ -102,8 +107,8 @@ public final class ImgTool {
             for (int x = 0; x < w; x++) {
                 final int p = img.getRGB(x, y);
                 final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p), a = f.getAlpha(p);
-                //img.setRGB(x, y, maximizeBlue(r, g, b, a));
-                img.setRGB(x, y, greenify(r, g, b, a));
+                img.setRGB(x, y, maximizeBlue(r, g, b, a));
+                //img.setRGB(x, y, greenify(r, g, b, a));
                 //img.setRGB(x, y, toCyan(r, g, b, a));
                 //img.setRGB(x, y, toCyanGray(r, g, b, a));
                 //img.setRGB(x, y, mean(r, g, b, a));
@@ -139,13 +144,31 @@ public final class ImgTool {
         return f.getRed(p) > f.getBlue(p);
     }
     
+    protected final static boolean isGreen(final int r, final int g, final int b) {
+        return (g > r) && (g > b);
+    }
+    
+    protected final static boolean isBrown(final int r, final int g, final int b) {
+        return (r > g) && (g > b);
+    }
+    
     protected final static boolean isGray(final int r, final int g, final int b) {
         return (r == b) && (g == b);
+    }
+    
+    protected final static boolean isTransparent(final int r, final int g, final int b) {
+        return (r == transparentRed) && (g == transparentGreen) && (b == transparentBlue);
     }
     
     protected final static int maximizeBlue(int r, int g, int b, int a) {
         if (isGray(r, g, b)) {
             return handleGray(b, a);
+        } else if (isGreen(r, g, b)) {
+            return handleGreen(r, g, b, a);
+        } else if (isBrown(r, g, b)) {
+            return handleBrown(r, g, b, a);
+        } else if (isTransparent(r, g, b)) {
+            return f.getDataElement(0, 0, 0, 0);
         }
         sortChannels(r, g, b);
         r = channels[0]; g = channels[1]; b = channels[2];
@@ -209,6 +232,26 @@ public final class ImgTool {
                 handle(v, grayMultiplierBlue, grayOffsetBlue), a);
     }
     
+    protected final static int handleGreen(int r, int g, final int b, final int a) {
+        //final float g2 = g * 1.1f;
+        g = Math.round(g * 1.1f);
+        r = Math.min(r, b);
+        if (g > Pancolor.MAX_VALUE) {
+            final float m = ((float) g) / Pancolor.MAX_VALUE;
+            g = Pancolor.MAX_VALUE;
+            r = multiplyChannel(r, m);
+        }
+        //g = multiplyChannel(g, 1.1f); // Discards overflow, but the above applies it to another channel
+        return f.getDataElement(r, g, g, a);
+    }
+    
+    protected final static int handleBrown(final int r, final int g, final int b, final int a) {
+        final float darkR = 0.8f * r, darkG = 0.8f * g, darkB = 0.8f * b;
+        //final float grayR = (darkR + darkG) / 2.0f, grayB = (darkB + darkG) / 2.0f;
+        final float grayR = (0.25f * darkR) + (0.75f * darkG), grayB = (0.25f * darkB) + (0.75f * darkG);
+        return f.getDataElement(Math.round(grayR), Math.round(darkG), Math.round(grayB), a);
+    }
+    
     protected final static int handle(final int v, final float multiplier, final int offset) {
         return Math.max(0, Math.min(Pancolor.MAX_VALUE, Math.round(v * multiplier) + offset));
     }
@@ -269,6 +312,84 @@ public final class ImgTool {
             }
         }
         Imtil.save(img, outLoc);
+    }
+    
+    private final static int WIRE_BG = 24;
+    private final static int WIRE_MARGIN = 6;
+    
+    private final static void processWire(final String noiseDef, final String outLoc) {
+        final Segment seg = Segment.parse(noiseDef);
+        final int w = seg.intValue(0), h = seg.intValue(1), w1 = w - 1, h1 = h - 1;
+        final Img img = Imtil.newImage(w, h);
+        final int def = f.getDataElement(0, 0, WIRE_BG, Pancolor.MAX_VALUE);
+        final int minSize = WIRE_MARGIN * 2 + 1;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                img.setRGB(x, y, def);
+            }
+        }
+        boolean dark = true;
+        for (int j = 0; j < 4; j++) {
+            //final boolean dark = (j % 2) == 1;
+            for (int x = 0; x < w; x++) {
+                final int yStart = Mathtil.randi(0, h1);
+                final int ySize = Mathtil.randi(minSize, h1);
+                final int b = getWireBaseChannel(x);
+                dark = Mathtil.rand();
+                for (int yIndex = 0; yIndex <= ySize; yIndex++) {
+                    final int y = (yStart + yIndex) % h;
+                    setWireRgb(img, x, y, b, yIndex, ySize, def, dark);
+                }
+            }
+            for (int y = 0; y < h; y++) {
+                final int xStart = Mathtil.randi(0, w1);
+                final int xSize = Mathtil.randi(minSize, w1);
+                final int b = getWireBaseChannel(y);
+                dark = Mathtil.rand();
+                for (int xIndex = 0; xIndex <= xSize; xIndex++) {
+                    final int x = (xStart + xIndex) % w;
+                    setWireRgb(img, x, y, b, xIndex, xSize, def, dark);
+                }
+            }
+        }
+        Imtil.save(img, outLoc);
+    }
+    
+    private final static int getWireBaseChannel(final int i) {
+        //return (((i % 2) == 0) ? Mathtil.randi(8, 12) : Mathtil.randi(13, 17)) * 8; // Designed for one pass
+        return (((i % 2) == 0) ? Mathtil.randi(6, 10) : Mathtil.randi(11, 15)) * 8;
+    }
+    
+    private final static int getWireChannel(final int base, final int i, final int size) {
+        //TODO noise?
+        final int m = Math.min(i, size - i);
+        if (m < WIRE_MARGIN) {
+            final float wm = WIRE_MARGIN + 1;
+            return WIRE_BG + Math.round((base - WIRE_BG) * (m + 1) / wm);
+            //TODO palette
+        }
+        return base;
+    }
+    
+    private final static int getWireRgb(final int base, final int i, final int size) {
+        return f.getDataElement(0, 0, getWireChannel(base, i, size), Pancolor.MAX_VALUE);
+    }
+    
+    private final static void setWireRgb(final Img img, final int x, final int y, final int base, final int i, final int size, final int def, final boolean dark) {
+        final int oldRgb = img.getRGB(x, y), newRgb;
+        final int oldBlue = f.getBlue(oldRgb);
+        if (dark) {
+            newRgb = f.getDataElement(0, 0, Math.max(oldBlue - 24, 0), Pancolor.MAX_VALUE);
+        } else if (oldRgb == def) {
+            newRgb = getWireRgb(base, i, size);
+        } else {
+            final int newDiff = getWireChannel(base, i, size) - WIRE_BG;
+            final int oldDiff = oldBlue - WIRE_BG;
+            final int newBlue = Math.min(WIRE_BG + ((newDiff + oldDiff) * 3 / 4), Pancolor.MAX_VALUE);
+            //TODO Make sure newBlue is within allowed palette
+            newRgb = f.getDataElement(0, 0, newBlue, Pancolor.MAX_VALUE);
+        }
+        img.setRGB(x, y, newRgb);
     }
     
     private final static void info(final Object s) {
