@@ -55,11 +55,14 @@ public final class ImgTool {
         initFilter();
         final String inLoc = args[0];
         final String outLoc = args[1];
+        final String mode = Coltil.get(args, 2);
         final File inFile = new File(inLoc);
         if (inLoc.startsWith("NOI")) {
             processNoise(inLoc, outLoc);
         } else if (inLoc.startsWith("WIR")) {
             processWire(inLoc, outLoc);
+        } else if ("reduce".equalsIgnoreCase(mode)) {
+            reduceColors(inLoc, outLoc);
         } else if (inFile.isDirectory()) {
             processDirectory(inFile, outLoc);
         } else {
@@ -390,6 +393,27 @@ public final class ImgTool {
             newRgb = f.getDataElement(0, 0, newBlue, Pancolor.MAX_VALUE);
         }
         img.setRGB(x, y, newRgb);
+    }
+    
+    private final static void reduceColors(final String inLoc, final String outLoc) {
+        info("Reducing colors from " + inLoc + " into " + outLoc);
+        final Img img = Imtil.load(inLoc);
+        final int w = img.getWidth(), h = img.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int rgb = img.getRGB(x, y);
+                img.setRGB(x, y, f.getDataElement(reduceColor(f.getRed(rgb)), reduceColor(f.getGreen(rgb)), reduceColor(f.getBlue(rgb)), f.getAlpha(rgb)));
+            }
+        }
+        Imtil.save(img, outLoc);
+        img.close();
+    }
+    
+    private final static int reduceColor(final int channel) {
+        final float channelFloat = channel;
+        final int reduced = Math.round(channelFloat / 8.0f);
+        final int rounded = Math.min(Pancolor.MAX_VALUE, reduced * 8);
+        return rounded;
     }
     
     private final static void info(final Object s) {
