@@ -137,10 +137,13 @@ public final class ImgTool {
     }
     
     private final static int applyLightMap(final int cRaw, int cLight) {
+        if (cRaw == 0) {
+            return cRaw;
+        }
         if (cLight == 255) {
             cLight = 256;
         }
-        return cRaw + cLight - 128;
+        return Math.max(0, Math.min(Pancolor.MAX_VALUE, cRaw + cLight - 128));
     }
     
     protected final static boolean isRed(final int p) {
