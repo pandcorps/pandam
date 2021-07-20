@@ -59,6 +59,8 @@ public final class ImgTool {
         final File inFile = new File(inLoc);
         if (inLoc.startsWith("NOI")) {
             processNoise(inLoc, outLoc);
+        } else if (inLoc.startsWith("GRD")) {
+            processGradient(inLoc, outLoc);
         } else if (inLoc.startsWith("WIR")) {
             processWire(inLoc, outLoc);
         } else if ("reduce".equalsIgnoreCase(mode)) {
@@ -143,7 +145,11 @@ public final class ImgTool {
         if (cLight == 255) {
             cLight = 256;
         }
-        return Math.max(0, Math.min(Pancolor.MAX_VALUE, cRaw + cLight - 128));
+        return clamp(cRaw + cLight - 128);
+    }
+    
+    private final static int clamp(final int c) {
+        return Math.max(0, Math.min(Pancolor.MAX_VALUE, c));
     }
     
     protected final static boolean isRed(final int p) {
@@ -316,6 +322,25 @@ public final class ImgTool {
                 }
                 img.setRGB(x, y, rgb);
             }
+        }
+        Imtil.save(img, outLoc);
+    }
+    
+    private final static void processGradient(final String gradientDef, final String outLoc) {
+        final Segment seg = Segment.parse(gradientDef);
+        final int baseR = seg.intValue(0), baseG = seg.intValue(1), baseB = seg.intValue(2);
+        final int offR = seg.intValue(3), offG = seg.intValue(4), offB = seg.intValue(5);
+        final int n = seg.intValue(6);
+        int r = baseR, g = baseG, b = baseB;
+        final Img img = Imtil.newImage(n, 1);
+        int x = 0;
+        while (true) {
+            img.setRGB(x, 0, f.getDataElement(r, g, b, Pancolor.MAX_VALUE));
+            x++;
+            if (x >= n) {
+                break;
+            }
+            r = clamp(r + offR); g = clamp(g + offG); b = clamp(b + offB);
         }
         Imtil.save(img, outLoc);
     }
