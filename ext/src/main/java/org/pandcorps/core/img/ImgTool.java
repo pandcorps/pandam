@@ -29,6 +29,7 @@ import org.pandcorps.core.*;
 import org.pandcorps.core.seg.*;
 
 public final class ImgTool {
+    private final static int ALPHA_OPAQUE = Pancolor.MAX_VALUE;
     private final static ImgFactory f = ImgFactory.getFactory();
     private final static String sep = System.getProperty("file.separator");
     private final static boolean enhanceBlue = Pantil.isProperty("org.pandcorps.core.img.enhanceBlue", false);
@@ -85,6 +86,10 @@ public final class ImgTool {
     }
     
     private final static void processDirectory(final File inDir, final String outLoc) {
+        final File outDir = new File(outLoc);
+        if (!outDir.exists()) {
+            outDir.mkdirs();
+        }
         for (final File inFile : inDir.listFiles()) {
             processFile(inFile, outLoc + sep + inFile.getName());
         }
@@ -265,11 +270,11 @@ public final class ImgTool {
     }
     
     protected final static int handle(final int v, final float multiplier, final int offset) {
-        return Math.max(0, Math.min(Pancolor.MAX_VALUE, Math.round(v * multiplier) + offset));
+        return clamp(Math.round(v * multiplier) + offset);
     }
     
     protected final static int multiplyChannel(final int c, final float m) {
-        return Math.min(Pancolor.MAX_VALUE, Math.round(c * m));
+        return clamp(Math.round(c * m));
     }
     
     protected final static int mean(int r, int g, int b, int a) {
@@ -305,7 +310,7 @@ public final class ImgTool {
         final int[] colors = new int[numColors];
         for (int i = 0; i < numColors; i++) {
             final Field color = colorReps.get(i);
-            colors[i] = f.getDataElement(color.intValue(0), color.intValue(1), color.intValue(2), Pancolor.MAX_VALUE);
+            colors[i] = getOpaque(color.intValue(0), color.intValue(1), color.intValue(2));
         }
         final int nullMarker = -1; //TODO Pick something outside of colors array
         final Img img = Imtil.newImage(w, h);
@@ -335,7 +340,7 @@ public final class ImgTool {
         final Img img = Imtil.newImage(n, 1);
         int x = 0;
         while (true) {
-            img.setRGB(x, 0, f.getDataElement(r, g, b, Pancolor.MAX_VALUE));
+            img.setRGB(x, 0, getOpaque(r, g, b));
             x++;
             if (x >= n) {
                 break;
@@ -352,7 +357,7 @@ public final class ImgTool {
         final Segment seg = Segment.parse(noiseDef);
         final int w = seg.intValue(0), h = seg.intValue(1), w1 = w - 1, h1 = h - 1;
         final Img img = Imtil.newImage(w, h);
-        final int def = f.getDataElement(0, 0, WIRE_BG, Pancolor.MAX_VALUE);
+        final int def = getOpaque(0, 0, WIRE_BG);
         final int minSize = WIRE_MARGIN * 2 + 1;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
@@ -403,22 +408,22 @@ public final class ImgTool {
     }
     
     private final static int getWireRgb(final int base, final int i, final int size) {
-        return f.getDataElement(0, 0, getWireChannel(base, i, size), Pancolor.MAX_VALUE);
+        return getOpaque(0, 0, getWireChannel(base, i, size));
     }
     
     private final static void setWireRgb(final Img img, final int x, final int y, final int base, final int i, final int size, final int def, final boolean dark) {
         final int oldRgb = img.getRGB(x, y), newRgb;
         final int oldBlue = f.getBlue(oldRgb);
         if (dark) {
-            newRgb = f.getDataElement(0, 0, Math.max(oldBlue - 24, 0), Pancolor.MAX_VALUE);
+            newRgb = getOpaque(0, 0, Math.max(oldBlue - 24, 0));
         } else if (oldRgb == def) {
             newRgb = getWireRgb(base, i, size);
         } else {
             final int newDiff = getWireChannel(base, i, size) - WIRE_BG;
             final int oldDiff = oldBlue - WIRE_BG;
-            final int newBlue = Math.min(WIRE_BG + ((newDiff + oldDiff) * 3 / 4), Pancolor.MAX_VALUE);
+            final int newBlue = clamp(WIRE_BG + ((newDiff + oldDiff) * 3 / 4));
             //TODO Make sure newBlue is within allowed palette
-            newRgb = f.getDataElement(0, 0, newBlue, Pancolor.MAX_VALUE);
+            newRgb = getOpaque(0, 0, newBlue);
         }
         img.setRGB(x, y, newRgb);
     }
@@ -440,8 +445,12 @@ public final class ImgTool {
     private final static int reduceColor(final int channel) {
         final float channelFloat = channel;
         final int reduced = Math.round(channelFloat / 8.0f);
-        final int rounded = Math.min(Pancolor.MAX_VALUE, reduced * 8);
+        final int rounded = clamp(reduced * 8);
         return rounded;
+    }
+    
+    private final static int getOpaque(final int r, final int g, final int b) {
+        return f.getDataElement(r, g, b, ALPHA_OPAQUE);
     }
     
     private final static void info(final Object s) {
