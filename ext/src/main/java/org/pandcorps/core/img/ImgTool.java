@@ -66,6 +66,8 @@ public final class ImgTool {
             processWire(inLoc, outLoc);
         } else if ("reduce".equalsIgnoreCase(mode)) {
             reduceColors(inLoc, outLoc);
+        } else if ("pad".equalsIgnoreCase(mode)) {
+            pad(inLoc, outLoc);
         } else if (inFile.isDirectory()) {
             processDirectory(inFile, outLoc);
         } else {
@@ -447,6 +449,49 @@ public final class ImgTool {
         final int reduced = Math.round(channelFloat / 8.0f);
         final int rounded = clamp(reduced * 8);
         return rounded;
+    }
+    
+    private final static void pad(final String inLoc, final String outLoc) {
+        info("Padding image from " + inLoc + " into " + outLoc);
+        final Img in = Imtil.load(inLoc);
+        final Img out = Imtil.copy(in); // Don't write to original Img, or will end up padding the padding
+        final int w = in.getWidth(), h = in.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = in.getRGB(x, y);
+                if (f.getAlpha(p) != 0) {
+                    continue; // Don't need to pad if already is visible
+                } else if (pad(in, out, x, y, p, -1, 0)) { //TODO Could try all directions and average all visible returned values
+                    continue;
+                } else if (pad(in, out, x, y, p, 1, 0)) {
+                    continue;
+                } else if (pad(in, out, x, y, p, 0, 1)) {
+                    continue;
+                } else if (pad(in, out, x, y, p, 0, -1)) {
+                    continue;
+                }
+            }
+        }
+        Imtil.save(out, outLoc);
+        in.close();
+        out.close();
+    }
+    
+    private final static boolean pad(final Img in, final Img out, final int x, final int y, final int p, final int xOff, final int yOff) {
+        final int xn = x + xOff, yn = y + yOff;
+        if (!isValidCoordinates(xn, yn, in)) {
+            return false;
+        }
+        final int n = in.getRGB(xn, yn);
+        if (f.getAlpha(n) == 0) {
+            return false; // Neighbor not visible, so no need to pad this pixel
+        }
+        out.setRGB(x, y, n); //TODO Pick padding color based on local trend (if getting darker near edges, padding color should be darker than neighbor
+        return true;
+    }
+    
+    private final static boolean isValidCoordinates(final int x, final int y, final Img img) {
+        return (x >= 0) && (y >= 0) && (x < img.getWidth()) && (y < img.getHeight());
     }
     
     private final static int getOpaque(final int r, final int g, final int b) {
