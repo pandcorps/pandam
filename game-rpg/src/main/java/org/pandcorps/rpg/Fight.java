@@ -245,6 +245,7 @@ public class Fight {
         }
         if (defeated) {
             enemyParty.remove(enemy);
+            enemy.avatar.destroy();
             if (enemyParty.isEmpty()) {
                 victory();
                 return;
