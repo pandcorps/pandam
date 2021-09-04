@@ -450,6 +450,7 @@ public final class Iotil {
 	        if (File.separatorChar != '\\') { // Zip can entries use \ as separator (maybe not standard, but seems to be possible)
 	            loc = loc.replace('\\', File.separatorChar);
 	        }
+	        //TODO If unzipping a standard zip file with / onto Windows, should prob change / to \
 	        final File file = getFile(loc);
 	        final boolean existed = file.exists();
 	        out = new FileOutputStream(file);
@@ -470,6 +471,7 @@ public final class Iotil {
     	    final File dir = getDir(loc);
     	    final ZipOutputStream zip = new ZipOutputStream(out);
     	    final byte[] buf = new byte[BUFFER_SIZE];
+    	    //TODO Replace \ in zipEntryBase with / ?
     	    zipDir(dir, zip, zipEntryBase, buf);
     	    zip.close();
 	    } catch (final IOException e) {
