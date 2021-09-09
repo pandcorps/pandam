@@ -1,0 +1,82 @@
+# Elements
+# Name|Advantages
+ELE|Ice|freezes^Water~freezes^Plant
+ELE|Water|extinguishes^Fire~erodes^Mineral
+ELE|Fire|melts^Ice~burns^Plant
+ELE|Mineral|crushes^Ice~suffocates^Fire
+ELE|Plant|absorbs^Water~absorbs^Mineral
+
+# Races
+# Names|ElementalNames|ElementalSubracePossible
+RAC|Human|Elf^Elves|true
+RAC|Ursan||true
+RAC|Felan||true
+RAC|Lupan||true
+RAC|Muran||true
+RAC|Leporan||true
+RAC|Canan||true
+RAC|Orc||false
+
+# Subraces
+# Name|Prefix|Element|Race|GroupName|Red|Green|Blue
+RA2|Frost|true|Ice|||0.5|0.5|0.5
+RA2|Rain|true|Water|||0.5|0.5|0.5
+RA2|Ember|true|Fire|||0.5|0.5|0.5
+RA2|Stone|true|Mineral|||0.5|0.5|0.5
+RA2|Root|true|Plant|||0.5|0.5|0.5
+RA2|Diamond-born|false||Human|House of Diamonds|0.5|0.5|0.5
+RA2|Jade-born|false||Human|House of Jade|0.5|0.5|0.5
+RA2|Onyx-born|false||Human|House of Onyx|0.5|0.5|0.5
+RA2|Troll|false||Orc||0.5|0.5|0.5
+RA2|Ogre|false||Orc||0.5|0.5|0.5
+
+# Qualities
+# Name|Multiplier
+QTY|Fair|1
+QTY|Good|2
+
+# Material Categories
+# Name
+MAC|Metal
+MAC|Wood
+MAC|Cloth
+
+# Materials
+# Name|Multiplier|Category|Red|Green|Blue
+MAT|Copper|1|Metal|1|0.75|0.5
+MAT|Iron|2|Metal|0.75|0.75|0.75
+MAT|Onyx|3|Metal|0.5|0.5|0.5
+MAT|Elm|1|Wood|1|0.75|0.5
+MAT|Oak|2|Wood|1|0.75|0.5
+MAT|Ebony|3|Wood|0.5|0.5|0.5
+
+# Gear Types
+# Name|Multiplier
+TYP|Armor|2
+TYP|Weapon|4
+TYP|Shield|1
+
+# Gear Subtypes
+# Name|Type|MaterialCategory|MaterialRequiredToCraft|AttackDamageMultiplier|ReceivedDamageMultiplier|ChanceOfBeingHitMultiplier|TwoHanded|RenderX|RenderY
+SUB|Full Plate|Armor|Metal|4|1.0|0.5|1.0||0|32
+#SUB|Chain Mail|Armor|Metal|2|1.0|1.0|0.5||0|32
+SUB|Doublet|Cloth|Metal|2|1.0|1.0|0.5||0|32
+SUB|None|Armor|||1.0|1.0|0.25
+SUB|Sword|Weapon|Metal|2|1.0|1.0|1.0|false
+SUB|Spear|Weapon|Metal|2|0.5|0.5|1.0|true
+SUB|Knife|Weapon|Metal|1|0.5|1.0|0.5|false
+SUB|Bow|Weapon|Wood|2|0.25|0.5|0.5|true
+SUB|Fists|Weapon|||1.0|1.0|0.25
+SUB|Shield|Shield|Metal|2
+
+# Enemies
+# Name|Stats|Attributes|Gear
+# Gear Slots: 0 = Armor, 1 = Hand1, 2 = Hand2
+ENM|Marauder|10~0~5~5|TODO_ATTRIBUTES|Fair Copper Full Plate~Fair Copper Sword~Fair Copper Shield
+EN2|TODO_ACTIONS
+ENC|
+
+# Cities
+# Name|x|y|Races|Subraces
+CTY|Testburg|0|0|Human^10000|Diamond-born^1000~Jade-born^7000~Onyx-born^2000
+CTY|Testfold|16|12|Human^10000|Diamond-born^2000~Jade-born^1000~Onyx-born^7000
