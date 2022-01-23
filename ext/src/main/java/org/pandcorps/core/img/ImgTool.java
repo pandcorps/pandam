@@ -47,6 +47,9 @@ public final class ImgTool {
     private final static int transparentGreen = Pantil.getProperty("org.pandcorps.core.img.transparentGreen", -1);
     private final static int transparentBlue = Pantil.getProperty("org.pandcorps.core.img.transparentBlue", -1);
     private final static String lightMapLoc = Pantil.getProperty("org.pandcorps.core.img.lightMapLoc");
+    private final static int expectedWidth = Pantil.getProperty("org.pandcorps.core.img.expectedWidth", -1);
+    private final static int expectedHeight = Pantil.getProperty("org.pandcorps.core.img.expectedHeight", -1);
+    private final static boolean debugMode = Pantil.isProperty("org.pandcorps.core.img.debug", false);
     private final static int[] channels = new int[3];
     private static PixelFilter filter = null;
     private static Img lightMap = null;
@@ -68,6 +71,9 @@ public final class ImgTool {
             reduceColors(inLoc, outLoc);
         } else if ("pad".equalsIgnoreCase(mode)) {
             pad(inLoc, outLoc);
+        } else if ("param".equalsIgnoreCase(mode)) {
+            // a2,a2,a2 stretch brighten 0.025*x,0.25*x,x
+            processParameterized(inLoc, outLoc, args);
         } else if (inFile.isDirectory()) {
             processDirectory(inFile, outLoc);
         } else {
@@ -180,15 +186,19 @@ public final class ImgTool {
     }
     
     protected final static int maximizeBlue(int r, int g, int b, int a) {
-        if (isGray(r, g, b)) {
+        /*if (isGray(r, g, b)) {
             return handleGray(b, a);
-        } else if (isGreen(r, g, b)) {
+        }else if (isGreen(r, g, b)) {
             return handleGreen(r, g, b, a);
         } else if (isBrown(r, g, b)) {
             return handleBrown(r, g, b, a);
         } else if (isTransparent(r, g, b)) {
             return f.getDataElement(0, 0, 0, 0);
+        }*/
+        /*if ((g == 0) && (b == 0)) {
+            return f.getDataElement(0, r, r, a);
         }
+        return f.getDataElement(0, 0, 0, a);*/
         sortChannels(r, g, b);
         r = channels[0]; g = channels[1]; b = channels[2];
         if (enhanceBlue) {
@@ -200,7 +210,8 @@ public final class ImgTool {
         if (enhanceRed) {
             r = (r + g) / 2;
         }
-        return f.getDataElement(r, g, b, a);
+        //return f.getDataElement(r, g, b, a);
+        return f.getDataElement(0, 0, b, a);
     }
     
     protected final static void sortChannels(final int r, final int g, final int b) {
@@ -446,8 +457,11 @@ public final class ImgTool {
     
     private final static int reduceColor(final int channel) {
         final float channelFloat = channel;
-        final int reduced = Math.round(channelFloat / 8.0f);
-        final int rounded = clamp(reduced * 8);
+        //final int div = 4;
+        final int div = 8;
+        final float divFloat = div;
+        final int reduced = Math.round(channelFloat / divFloat);
+        final int rounded = clamp(reduced * div);
         return rounded;
     }
     
@@ -488,6 +502,202 @@ public final class ImgTool {
         }
         out.setRGB(x, y, n); //TODO Pick padding color based on local trend (if getting darker near edges, padding color should be darker than neighbor
         return true;
+    }
+    
+    private final static void processParameterized(final String inLoc, final String outLoc, final String[] xforms) {
+        final File inFile = new File(inLoc);
+        if (inFile.isDirectory()) {
+            final File outFile = new File(outLoc);
+            for (final File childFile : inFile.listFiles()) {
+                if (childFile.isDirectory()) {
+                    continue;
+                }
+                processParameterized(childFile, new File(outFile, childFile.getName()).getAbsolutePath(), xforms);
+            }
+        } else {
+            processParameterized(inFile, outLoc, xforms);
+        }
+    }
+    
+    private final static void processParameterized(final File inFile, final String outLoc, final String[] xforms) {
+        if (Iotil.exists(outLoc)) {
+            info(outLoc + " already exists, skipping");
+            return;
+        }
+        final String inLoc = inFile.getAbsolutePath();
+        if (!inLoc.endsWith(".png")) {
+            info(inLoc + " is not a png, skipping");
+            return;
+        }
+        info("Processing " + inLoc);
+        final Img img = Imtil.load(inLoc);
+        if ((expectedWidth > 0) && (expectedWidth != img.getWidth())) {
+            throw new IllegalStateException("Expected width " + expectedWidth + " but found " + img.getWidth() + " for " + inLoc);
+        } else if ((expectedHeight > 0) && (expectedHeight != img.getHeight())) {
+            throw new IllegalStateException("Expected height " + expectedHeight + " but found " + img.getHeight() + " for " + inLoc);
+        }
+        final int size = xforms.length;
+        for (int i = 3; i < size; i++) {
+            processParameterized(img, xforms[i]);
+            if (debugMode && (i < (size - 1))) {
+                Imtil.save(img, outLoc + "." + i + ".png");
+            }
+        }
+        Imtil.save(img, outLoc);
+        info("Saved " + outLoc);
+    }
+    
+    private final static void processParameterized(final Img img, final String xform) {
+        if ("brighten".equalsIgnoreCase(xform)) {
+            brighten(img);
+            return;
+        } else if ("stretch".equalsIgnoreCase(xform)) {
+            stretch(img);
+            return;
+        }
+        final String[] xformTokens = xform.split(",");
+        if (xformTokens.length != 3) {
+            throw new IllegalStateException("Expectd 3 channel transforms but found " + xform);
+        }
+        processParameterized(img, xformTokens[0], xformTokens[1], xformTokens[2]);
+    }
+    
+    private final static void brighten(final Img img) {
+        final int w = img.getWidth(), h = img.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = img.getRGB(x, y);
+                final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p);
+                final int ro = brighten(r), go = brighten(g), bo = brighten(b);
+                img.setRGB(x, y, f.getDataElement(ro, go, bo, Pancolor.MAX_VALUE));
+            }
+        }
+    }
+    
+    private final static int brighten(final int value) {
+        final float v = value;
+        final float f1 = v / Pancolor.MAX_VALUE; // 0 <= f1 <= 1
+        final float f2 = (float) Math.sqrt(f1); // 0 <= f1 <= f2 <= 1 (square root of number between 0 and 1 is greater than the original number)
+        return multiplyChannel(Pancolor.MAX_VALUE, f2);
+    }
+    
+    private static int minAnalyzedValue = -1;
+    private static int maxAnalyzedValue = -1;
+    private static int stretchMin = -1;
+    private static float stretchMultiplier = -1;
+    
+    private final static void stretch(final Img img) {
+        final int w = img.getWidth(), h = img.getHeight();
+        clearStretchValues();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int n = 0;
+                int r = 0, g = 0, b = 0;
+                // Find average of neighboring pixels so a single white pixel doesn't throw off the whole image
+                for (int yi = (Math.max(0, y - 2)); yi <= Math.min(h - 1, y + 2); yi++) {
+                    for (int xi = (Math.max(0, x - 2)); xi <= Math.min(w - 1, x + 2); xi++) {
+                        final int p = img.getRGB(xi, yi);
+                        r += f.getRed(p);
+                        g += f.getGreen(p);
+                        b += f.getBlue(p);
+                        n++;
+                    }
+                }
+                analyzeStretchValue(r, n);
+                analyzeStretchValue(g, n);
+                analyzeStretchValue(b, n);
+            }
+        }
+        stretchMin = minAnalyzedValue;
+        final float stretchDenominator = maxAnalyzedValue - minAnalyzedValue;
+        stretchMultiplier = Pancolor.MAX_VALUE / stretchDenominator;
+        clearStretchValues();
+        boolean maxFound = false;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = img.getRGB(x, y);
+                final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p);
+                final int ro = stretch(r), go = stretch(g), bo = stretch(b);
+                img.setRGB(x, y, f.getDataElement(ro, go, bo, Pancolor.MAX_VALUE));
+                if (!maxFound && ((ro == Pancolor.MAX_VALUE) || (go == Pancolor.MAX_VALUE) || (bo == Pancolor.MAX_VALUE))) {
+                    //info("Stretched to max value at " + x + ", " + y);
+                    maxFound = true;
+                }
+            }
+        }
+        if ((minAnalyzedValue != 0) || (maxAnalyzedValue != Pancolor.MAX_VALUE)) {
+            throw new IllegalStateException("Min stretched value: " + minAnalyzedValue + "; max stretched value: " + maxAnalyzedValue);
+        }
+    }
+    
+    private final static int stretch(final int value) {
+        final int stretched = multiplyChannel(value - stretchMin, stretchMultiplier);
+        analyzeStretchValue(stretched);
+        return stretched;
+    }
+    
+    private final static void clearStretchValues() {
+        minAnalyzedValue = Pancolor.MAX_VALUE;
+        maxAnalyzedValue = 0;
+    }
+    
+    private final static void analyzeStretchValue(final float sum, final float n) {
+        analyzeStretchValue(clamp(Math.round(sum / n)));
+    }
+
+    private final static void analyzeStretchValue(final int value) {
+        minAnalyzedValue = Math.min(minAnalyzedValue, value);
+        maxAnalyzedValue = Math.max(maxAnalyzedValue, value);
+    }
+    
+    private final static void processParameterized(final Img img, final String xformR, final String xformG, final String xformB) {
+        final int w = img.getWidth(), h = img.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = img.getRGB(x, y);
+                final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p);
+                final int ro = process(xformR, r, g, b);
+                final int go = process(xformG, r, g, b);
+                final int bo = process(xformB, r, g, b);
+                img.setRGB(x, y, f.getDataElement(ro, go, bo, Pancolor.MAX_VALUE));
+            }
+        }
+    }
+    
+    private final static int process(final String xform, final int r, final int g, final int b) {
+        final int indexTimes = xform.indexOf('*');
+        final float mult;
+        if (indexTimes >= 0) {
+            mult = Float.parseFloat(xform.substring(0, indexTimes));
+        } else {
+            mult = 1.0f;
+        }
+        final String srcType = xform.substring(indexTimes + 1);
+        final int src;
+        sortChannels(r, g, b);
+        if ("r".equals(srcType)) { // Red
+            src = r;
+        } else if ("g".equalsIgnoreCase(srcType)) { // Green
+            src = g;
+        } else if ("b".equalsIgnoreCase(srcType)) { // Blue
+            src = b;
+        } else if ("n".equalsIgnoreCase(srcType)) { // miN
+            src = channels[0];
+        } else if ("d".equalsIgnoreCase(srcType)) { // miD
+            src = channels[1];
+        } else if ("x".equalsIgnoreCase(srcType)) { // maX
+            src = channels[2];
+        } else if ("a3".equalsIgnoreCase(srcType)) { // Average (3 components)
+            src = (r + g + b) / 3;
+        } else if ("a2".equalsIgnoreCase(srcType)) { // Average (2 components, min an dmax)
+            src = (channels[0] + channels[2]) / 3;
+        } else if ("0".equalsIgnoreCase(srcType)) {
+            src = 0;
+        } else {
+            throw new IllegalStateException("Unexpected channel source type: " + srcType);
+        }
+        final int value = multiplyChannel(src, mult);
+        return value;
     }
     
     private final static boolean isValidCoordinates(final int x, final int y, final Img img) {
