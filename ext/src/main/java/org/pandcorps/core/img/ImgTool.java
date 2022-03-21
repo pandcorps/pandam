@@ -24,8 +24,10 @@ package org.pandcorps.core.img;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.*;
 
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.core.seg.*;
 
 public final class ImgTool {
@@ -74,6 +76,8 @@ public final class ImgTool {
         } else if ("param".equalsIgnoreCase(mode)) {
             // a2,a2,a2 stretch brighten 0.025*x,0.25*x,x
             processParameterized(inLoc, outLoc, args);
+        } else if ("map".equalsIgnoreCase(mode)) {
+            applyPaletteMap(inLoc, outLoc, args[3], args[4]);
         } else if (inFile.isDirectory()) {
             processDirectory(inFile, outLoc);
         } else {
@@ -105,7 +109,7 @@ public final class ImgTool {
     
     private final static void processFile(final File inFile, final String outLoc) {
         info("Processing from " + inFile + " into " + outLoc);
-        final Img img = Imtil.load(inFile.getAbsolutePath());
+        final Img img = Imtil.load(inFile);
         if (filter != null) {
             info("Filtering image");
             Imtil.filterImg(img, filter);
@@ -648,6 +652,109 @@ public final class ImgTool {
     private final static void analyzeStretchValue(final int value) {
         minAnalyzedValue = Math.min(minAnalyzedValue, value);
         maxAnalyzedValue = Math.max(maxAnalyzedValue, value);
+    }
+    
+    private final static void applyPaletteMap(final String xformSrc, final String xformDst, final String mapSrc, final String mapDst) {
+        final Map<Integer, Integer> map = getPaletteMap(mapSrc, mapDst);
+        info("Applying palette map for " + xformSrc + " to " + xformDst);
+        final File srcFile = new File(xformSrc);
+        final File dstFile = new File(xformDst);
+        if (srcFile.isDirectory()) {
+            dstFile.mkdirs();
+            Iotil.mkdirs(xformDst);
+            for (final File srcChild : srcFile.listFiles()) {
+                final File dstChild = new File(dstFile, srcChild.getName());
+                info("Applying palette map for " + srcChild.getAbsolutePath() + " to " + dstChild.getAbsolutePath());
+                applyPaletteMap(map, srcChild, dstChild);
+                info("Finished applying palette map for " + srcChild.getAbsolutePath() + " to " + dstChild.getAbsolutePath());
+            }
+        } else {
+            applyPaletteMap(map, srcFile, dstFile);
+        }
+        info("Finished applying palette map for " + xformSrc + " to " + xformDst);
+    }
+    
+    private final static void applyPaletteMap(final Map<Integer, Integer> map, final File srcFile, final File dstFile) {
+        final Img src = Imtil.load(srcFile);
+        final int w = src.getWidth(), h = src.getHeight();
+        final Img dst = Imtil.newImage(w, h);
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int sp = src.getRGB(x, y);
+                int dp = sp;
+                if (f.getAlpha(sp) > 0) {
+                    final Integer mapped = map.get(Integer.valueOf(sp));
+                    if (mapped != null) {
+                        dp = mapped.intValue();
+                    }
+                }
+                dst.setRGB(x, y, dp);
+            }
+        }
+        Imtil.save(dst, dstFile.getAbsolutePath());
+    }
+    
+    private final static Map<Integer, Integer> getPaletteMap(final String src, final String dst) {
+        info("Building palette map for " + src + " to " + dst);
+        final File srcFile = new File(src);
+        final File dstFile = new File(dst);
+        final Map<Integer, CountMap<Integer>> counts = new HashMap<Integer, CountMap<Integer>>();
+        if (srcFile.isDirectory()) {
+            final File[] dstChildren = dstFile.listFiles();
+            final Map<String, File> dstMap = new HashMap<String, File>(dstChildren.length);
+            for (final File dstChild : dstChildren) {
+                if (dstChild.isDirectory()) {
+                    continue;
+                }
+                dstMap.put(dstChild.getName(), dstChild);
+            }
+            for (final File srcChild : srcFile.listFiles()) {
+                if (srcChild.isDirectory()) {
+                    continue;
+                }
+                final File dstChild = dstMap.get(srcChild.getName());
+                info("Building palette map for " + srcChild.getAbsolutePath() + " to " + dstChild.getAbsolutePath());
+                updatePaletteMap(counts, srcChild, dstChild);
+                info("Finished building palette map for " + srcChild.getAbsolutePath() + " to " + dstChild.getAbsolutePath());
+            }
+        } else {
+            updatePaletteMap(counts, srcFile, dstFile);
+        }
+        final Map<Integer, Integer> map = new HashMap<Integer, Integer>(counts.size());
+        for (final Entry<Integer, CountMap<Integer>> entry : counts.entrySet()) {
+            final Integer srcKey = entry.getKey();
+            final Integer dstKey = entry.getValue().getMostFrequentKey();
+            map.put(srcKey, dstKey);
+        }
+        info("Finished building palette map for " + src + " to " + dst);
+        return map;
+    }
+    
+    private final static void updatePaletteMap(final Map<Integer, CountMap<Integer>> counts, final File srcFile, final File dstFile) {
+        final Img src = Imtil.load(srcFile);
+        final Img dst = Imtil.load(dstFile);
+        final int w = src.getWidth(), h = src.getHeight();
+        if (w != dst.getWidth()) {
+            throw new IllegalStateException("Source width: " + w + ", destination width: " + dst.getWidth());
+        } else if (h != dst.getHeight()) {
+            throw new IllegalStateException("Source height: " + h + ", destination height: " + dst.getHeight());
+        }
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int sp = src.getRGB(x, y);
+                if (f.getAlpha(sp) == 0) {
+                    continue;
+                }
+                final int dp = dst.getRGB(x, y);
+                final Integer srcKey = Integer.valueOf(sp);
+                CountMap<Integer> dsts = counts.get(srcKey);
+                if (dsts == null) {
+                    dsts = new CountMap<Integer>();
+                    counts.put(srcKey, dsts);
+                }
+                dsts.inc(Integer.valueOf(dp));
+            }
+        }
     }
     
     private final static void processParameterized(final Img img, final String xformR, final String xformG, final String xformB) {

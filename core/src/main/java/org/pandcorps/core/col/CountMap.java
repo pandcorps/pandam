@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.core.col;
 
 import java.util.*;
+import java.util.Map.*;
 
 import org.pandcorps.core.*;
 
@@ -64,5 +65,18 @@ public final class CountMap<K> extends LinkedHashMap<K, Long> {
 	
 	public final long longValue(final K key) {
 		return Mathtil.longValue(get(key));
+	}
+	
+	public final K getMostFrequentKey() {
+	    K mostFrequentKey = null;
+	    long mostFrequentCount = 0;
+	    for (final Entry<K, Long> entry : entrySet()) {
+	        final long count = entry.getValue().longValue();
+	        if (count > mostFrequentCount) {
+	            mostFrequentKey = entry.getKey();
+	            mostFrequentCount = count;
+	        }
+	    }
+	    return mostFrequentKey;
 	}
 }

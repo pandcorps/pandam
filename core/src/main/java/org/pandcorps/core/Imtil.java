@@ -38,6 +38,10 @@ public final class Imtil {
         throw new Error();
     }
     
+    public final static Img load(final File file) {
+        return load(file.getAbsolutePath());
+    }
+    
     public final static Img load(final String location) {
         InputStream in = null;
         try {
