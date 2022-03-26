@@ -52,9 +52,41 @@ public final class ImgTool {
     private final static int expectedWidth = Pantil.getProperty("org.pandcorps.core.img.expectedWidth", -1);
     private final static int expectedHeight = Pantil.getProperty("org.pandcorps.core.img.expectedHeight", -1);
     private final static boolean debugMode = Pantil.isProperty("org.pandcorps.core.img.debug", false);
+    private final static String validateMode = Pantil.getProperty("org.pandcorps.core.img.validate");
     private final static int[] channels = new int[3];
     private static PixelFilter filter = null;
     private static Img lightMap = null;
+    private final static Comparator<Integer> cmpBrightness = new Comparator<Integer>() {
+        @Override public final int compare(final Integer v1, final Integer v2) {
+            final int rgb1 = v1.intValue(), rgb2 = v2.intValue();
+            final int r1 = f.getRed(rgb1), g1 = f.getGreen(rgb1), b1 = f.getBlue(rgb1);
+            final int r2 = f.getRed(rgb2), g2 = f.getGreen(rgb2), b2 = f.getBlue(rgb2);
+            final int max1 = Mathtil.max(r1, g1, b1), max2 = Mathtil.max(r2, g2, b2);
+            if (max1 < max2) {
+                return -1;
+            } else if (max1 > max2) {
+                return 1;
+            }
+            final int sum1 = r1 + g1 + b1, sum2 = r2 + g2 + b2;
+            if (sum1 < sum2) {
+                return -1;
+            } else if (sum1 > sum2) {
+                return 1;
+            } else if (r1 < r2) {
+                return -1;
+            } else if (r1 > r2) {
+                return 1;
+            } else if (g1 < g2) {
+                return -1;
+            } else if (g1 > g2) {
+                return 1;
+            } else if (b1 < b2) {
+                return -1;
+            } else if (b1 > b2) {
+                return 1;
+            }
+            return 0;
+        }};
     
     public final static void main(final String[] args) {
         info("Starting");
@@ -78,6 +110,8 @@ public final class ImgTool {
             processParameterized(inLoc, outLoc, args);
         } else if ("map".equalsIgnoreCase(mode)) {
             applyPaletteMap(inLoc, outLoc, args[3], args[4]);
+        } else if ("fuzzyMap".equalsIgnoreCase(mode)) {
+            applyFuzzyMap(inLoc, outLoc, args[3], args[4]);
         } else if (inFile.isDirectory()) {
             processDirectory(inFile, outLoc);
         } else {
@@ -656,12 +690,16 @@ public final class ImgTool {
     
     private final static void applyPaletteMap(final String xformSrc, final String xformDst, final String mapSrc, final String mapDst) {
         final Map<Integer, Integer> map = getPaletteMap(mapSrc, mapDst);
-        info("Applying palette map for " + xformSrc + " to " + xformDst);
-        final File srcFile = new File(xformSrc);
-        final File dstFile = new File(xformDst);
+        applyPaletteMap(xformSrc, xformDst, map);
+    }
+    
+    private final static void applyPaletteMap(final String src, final String dst, final Map<Integer, Integer> map) {
+        info("Applying palette map for " + src + " to " + dst);
+        final File srcFile = new File(src);
+        final File dstFile = new File(dst);
         if (srcFile.isDirectory()) {
             dstFile.mkdirs();
-            Iotil.mkdirs(xformDst);
+            Iotil.mkdirs(dst);
             for (final File srcChild : srcFile.listFiles()) {
                 final File dstChild = new File(dstFile, srcChild.getName());
                 info("Applying palette map for " + srcChild.getAbsolutePath() + " to " + dstChild.getAbsolutePath());
@@ -671,7 +709,7 @@ public final class ImgTool {
         } else {
             applyPaletteMap(map, srcFile, dstFile);
         }
-        info("Finished applying palette map for " + xformSrc + " to " + xformDst);
+        info("Finished applying palette map for " + src + " to " + dst);
     }
     
     private final static void applyPaletteMap(final Map<Integer, Integer> map, final File srcFile, final File dstFile) {
@@ -689,6 +727,20 @@ public final class ImgTool {
                     }
                 }
                 dst.setRGB(x, y, dp);
+            }
+        }
+        if ((validateMode != null && !"false".equalsIgnoreCase(validateMode))) {
+            final int srcSize = getPalette(src).set.size();
+            final int dstSize = getPalette(dst).set.size();
+            if (srcSize != dstSize) {
+                final String msg = "Found " + srcSize + " distinct colors in " + srcFile.getAbsolutePath() + " but " + dstSize + " in " + dstFile.getAbsolutePath();
+                if ("true".equalsIgnoreCase(validateMode)) {
+                    throw new IllegalStateException(msg);
+                } else if ("warn".equalsIgnoreCase(validateMode)) {
+                    info(msg);
+                } else {
+                    throw new IllegalStateException("Unexpected validate mode " + validateMode);
+                }
             }
         }
         Imtil.save(dst, dstFile.getAbsolutePath());
@@ -757,6 +809,132 @@ public final class ImgTool {
         }
     }
     
+    private final static void applyFuzzyMap(final String xformSrc, final String xformDst, final String mapSrc, final String mapDst) {
+        final Palette palSrc = getPalette(mapSrc), palDst = getPalette(mapDst);
+        final File srcFile = new File(xformSrc);
+        final CountMap<Integer> usage = getPaletteUsage(palSrc, srcFile);
+        final Map<Integer, Integer> map = getUsageBasedPaletteMap(palSrc, palDst, usage);
+        applyPaletteMap(xformSrc, xformDst, map);
+    }
+    
+    private final static Palette getPalette(final String loc) {
+        info("Loading palette for " + loc);
+        String location = loc;
+        RgbCondition condition = null;
+        if (loc.startsWith("range-")) {
+            final int dot = loc.indexOf('.');
+            final String rangeDef = loc.substring(6, dot);
+            if ("gray".equalsIgnoreCase(rangeDef)) {
+                condition = grayCondition;
+            } else {
+                final String[] ranges = rangeDef.split(",");
+                final int minR = Integer.parseInt(ranges[0]), maxR = Integer.parseInt(ranges[3]);
+                final int minG = Integer.parseInt(ranges[1]), maxG = Integer.parseInt(ranges[4]);
+                final int minB = Integer.parseInt(ranges[2]), maxB = Integer.parseInt(ranges[5]);
+                condition = new RgbCondition() {
+                    @Override protected final boolean isMet(final int r, final int g, final int b) {
+                        return (r >= minR) && (r <= maxR) && (g >= minG) && (g <= maxG) && (b >= minB) && (b <= maxB);
+                    }};
+            }
+            location = loc.substring(dot + 1);
+        }
+        final Img img = Imtil.load(location);
+        final Palette palette = getPalette(img);
+        if (condition != null) {
+            final Iterator<Integer> iter = palette.list.iterator();
+            while (iter.hasNext()) {
+                final Integer key = iter.next();
+                final int rgb = key.intValue();
+                final int r = f.getRed(rgb), g = f.getGreen(rgb), b = f.getBlue(rgb);
+                if (condition.isMet(r, g, b)) {
+                    continue;
+                }
+                iter.remove();
+                palette.set.remove(key);
+            }
+        }
+        if (palette.set.size() == 0) {
+            throw new IllegalStateException(loc + " resulted in an empty set");
+        } else if (palette.list.size() == 0) {
+            throw new IllegalStateException(loc + " resulted in an empty list");
+        }
+        info("Finished loading palette for " + loc + ", found " + palette.set.size() + " distinct colors");
+        return palette;
+    }
+    
+    private final static Palette getPalette(final Img img) {
+        final int w = img.getWidth(), h = img.getHeight();
+        final Set<Integer> set = new HashSet<Integer>();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = img.getRGB(x, y);
+                set.add(Integer.valueOf(p));
+            }
+        }
+        final List<Integer> list = new ArrayList<Integer>(set);
+        Collections.sort(list, cmpBrightness);
+        return new Palette(set, list);
+    }
+    
+    private final static CountMap<Integer> getPaletteUsage(final Palette pal, final File src) {
+        info("Finding palette usage for " + src.getAbsolutePath());
+        final CountMap<Integer> usage = new CountMap<Integer>();
+        if (src.isDirectory()) {
+            for (final File child : src.listFiles()) {
+                updatePaletteUsage(usage, pal, child);
+            }
+        } else {
+            updatePaletteUsage(usage, pal, src);
+        }
+        info("Finished finding palette usage for " + src.getAbsolutePath() + ", " + usage.size() + " of the available " + pal.set.size() + " colors were used");
+        return usage;
+    }
+    
+    private final static void updatePaletteUsage(final CountMap<Integer> usage, final Palette pal, File file) {
+        final Img img = Imtil.load(file);
+        final int w = img.getWidth(), h = img.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = img.getRGB(x, y);
+                final Integer key = Integer.valueOf(p);
+                if (pal.set.contains(key)) {
+                    usage.inc(key);
+                }
+            }
+        }
+    }
+    
+    private final static Map<Integer, Integer> getUsageBasedPaletteMap(final Palette palSrc, final Palette palDst, final CountMap<Integer> usage) {
+        final int usageSize = usage.size(), dstSize = palDst.list.size();
+        final Map<Integer, Integer> map = new HashMap<Integer, Integer>(Math.min(usageSize, dstSize));
+        if (usageSize <= dstSize) {
+            //final int off = dstSize - usageSize; // Keeps the brightest dst values; could set to 0 for the darkest
+            final int off = 0;
+            for (final Integer srcKey : palSrc.list) {
+                if (usage.containsKey(srcKey)) {
+                    map.put(srcKey, palDst.list.get(off + map.size()));
+                }
+            }
+        } else {
+            final int extraSize = usageSize - dstSize;
+            final List<Entry<Integer, Long>> sorted = usage.sortedEntryList(true);
+            final Set<Integer> extra = new HashSet<Integer>(extraSize);
+            for (int i = 0; i < extraSize; i++) {
+                extra.add(sorted.get(i).getKey());
+            }
+            int i = 0;
+            for (final Integer srcKey : palSrc.list) {
+                if (usage.containsKey(srcKey)) {
+                    map.put(srcKey, palDst.list.get(i));
+                    if ((i < (dstSize - 1)) && !extra.contains(srcKey)) {
+                        i++;
+                    }
+                }
+            }
+        }
+        return map;
+    }
+    
     private final static void processParameterized(final Img img, final String xformR, final String xformG, final String xformB) {
         final int w = img.getWidth(), h = img.getHeight();
         for (int y = 0; y < h; y++) {
@@ -818,4 +996,23 @@ public final class ImgTool {
     private final static void info(final Object s) {
         System.out.println(s);
     }
+    
+    private final static class Palette {
+        private final Set<Integer> set;
+        private final List<Integer> list;
+        
+        private Palette(final Set<Integer> set, final List<Integer> list) {
+            this.set = set;
+            this.list = list;
+        }
+    }
+    
+    private abstract static class RgbCondition {
+        protected abstract boolean isMet(final int r, final int g, final int b);
+    }
+    
+    private final static RgbCondition grayCondition = new RgbCondition() {
+        @Override protected final boolean isMet(final int r, final int g, final int b) {
+            return (r == g) && (r == b) && (r > 0);
+        }};
 }
