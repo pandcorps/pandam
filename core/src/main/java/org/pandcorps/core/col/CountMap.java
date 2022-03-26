@@ -79,4 +79,14 @@ public final class CountMap<K> extends LinkedHashMap<K, Long> {
 	    }
 	    return mostFrequentKey;
 	}
+	
+	public List<Entry<K, Long>> sortedEntryList(final boolean asc) {
+        final List<Entry<K, Long>> list = new ArrayList<Entry<K, Long>>(entrySet());
+        final int sign = asc ? 1 : -1;
+        Collections.sort(list, new Comparator<Entry<K, Long>>() {
+            @Override public final int compare(final Entry<K, Long> o1, final Entry<K, Long> o2) {
+                return sign * o1.getValue().compareTo(o2.getValue());
+            }});
+        return list;
+    }
 }
