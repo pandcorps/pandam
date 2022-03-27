@@ -373,20 +373,28 @@ public final class Iotil {
         return readByteArrayOutputStream(location).toByteArray();
     }
 	
+	public final static byte[] readBytes(final InputStream in) {
+        return readByteArrayOutputStream(in).toByteArray();
+    }
+	
 	private final static ByteArrayOutputStream readByteArrayOutputStream(final String location) {
-	    final ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    InputStream in = null;
-	    try {
-	        in = getInputStream(location);
-	        try {
-	            copy(in, out);
-	        } catch (final IOException e) {
-	            throw new RuntimeException(e);
-	        }
-	        return out;
-	    } finally {
-	        close(in);
-	    }
+        try {
+            in = getInputStream(location);
+            return readByteArrayOutputStream(in);
+        } finally {
+            close(in);
+        }
+	}
+	
+	private final static ByteArrayOutputStream readByteArrayOutputStream(final InputStream in) {
+	    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            copy(in, out);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+        return out;
 	}
 	
 	public final static long copy(final InputStream in, final OutputStream out) throws IOException {
