@@ -35,12 +35,13 @@ public class HashMultimap<K, E> extends HashMap<K, ArrayList<E>> {
 	    super(initialCapacity);
     }
 
-	public void add(final K key, final E element) {
+	public ArrayList<E> add(final K key, final E element) {
         ArrayList<E> value = get(key);
         if (value == null) {
             value = new ArrayList<E>();
             put(key, value);
         }
         value.add(element);
+        return value;
     }
 }

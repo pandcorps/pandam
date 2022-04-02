@@ -168,10 +168,22 @@ public class Wads {
         public short flags;
         public short lineType;
         public short sectorTag;
-        public short rightSidedef = SIDEDEF_NONE;
+        public short rightSidedef = SIDEDEF_NONE; // The front is always 90 degrees to the right / clockwise from the ray you would draw starting from the first point to the second point
         public short leftSidedef = SIDEDEF_NONE;
         
         public Linedef() {
+        }
+        
+        public final boolean isFlag(final short flag) {
+            return (flags & flag) != 0;
+        }
+        
+        public final void setFlag(final short flag, final boolean value) {
+            if (isFlag(flag) == value) {
+                return;
+            } else if (value) {
+                flags = (short) (flags | flag);
+            }
         }
         
         @Override
@@ -239,7 +251,7 @@ public class Wads {
         }
     }
     
-    public final static class Vertex extends LumpType {
+    public final static class Vertex extends LumpType implements Comparable<Vertex> {
         public short x;
         public short y;
         
@@ -266,6 +278,24 @@ public class Wads {
         @Override
         protected final int getSize() {
             return 4;
+        }
+        
+        @Override
+        public final int hashCode() {
+            final int x = this.x, y = this.y;
+            return (x << 16) | y;
+        }
+        
+        @Override
+        public final boolean equals(final Object o) {
+            final Vertex v = (Vertex) o;
+            return (x == v.x) && (y == v.y);
+        }
+
+        @Override
+        public final int compareTo(final Vertex v) {
+            final int c = Short.compare(x, v.x);
+            return (c == 0) ? Short.compare(y, v.y) : c;
         }
     }
     
@@ -309,9 +339,10 @@ public class Wads {
         }
     }
     
-    public final static class Lump<T extends LumpType> {
+    public final static class Lump<T extends LumpType> extends ArrayList<T> {
+        private static final long serialVersionUID = 1L;
+        
         public String name;
-        public final List<T> elements = new ArrayList<T>();
         private final Constructor<T> constructor;
         
         public Lump(final String name, final Class<T> elementClass) {
@@ -319,13 +350,13 @@ public class Wads {
             constructor = Reftil.getConstructor(elementClass);
         }
         
-        public final Lump<T> add(final T element) {
-            elements.add(element);
+        public final Lump<T> append(final T element) {
+            add(element);
             return this;
         }
         
         private final void save(final OutputStream out) throws IOException {
-            for (final T element : elements) {
+            for (final T element : this) {
                 element.save(out);
             }
         }
@@ -335,7 +366,7 @@ public class Wads {
             while (bytesRead < numBytes) {
                 final T element = Reftil.newInstance(constructor);
                 element.load();
-                elements.add(element);
+                add(element);
                 bytesRead += element.getSize();
             }
             if (bytesRead != numBytes) {
@@ -344,10 +375,10 @@ public class Wads {
         }
         
         private final int getSizeBytes() {
-            if (Coltil.isEmpty(elements)) {
+            if (isEmpty()) {
                 return 0;
             }
-            return elements.size() * elements.get(0).getSize();
+            return size() * get(0).getSize();
         }
     }
     
@@ -383,6 +414,14 @@ public class Wads {
             }
             return null;
         }
+        
+        /*public final Level prune() {
+            final Set<Vertex> usedVertexes = new HashSet<Vertex>();
+            for (final Linedef linedef : linedefs) {
+                usedVertexes.add(linedef.beginningVertex); // Indexes, not vertexes; also, removing an unused vertex means we need to update all follow vertex references in linedefs
+            }
+            return this;
+        }*/
     }
     
     public final static class DirectoryEntry {
@@ -492,11 +531,14 @@ public class Wads {
             Iotil.close(in);
         }
         info("Found " + wad.levels.size() + " levels");
+        long minWidth = Long.MAX_VALUE, minHeight = minWidth, minArea = minWidth;
+        long maxWidth = 0, maxHeight = 0, maxArea = 0;
+        long totalWidth = 0, totalHeight = 0, totalArea = 0;
         for (final Level level : wad.levels) {
             info("Level name " + level.name.name);
-            info("THINGS size " + level.things.elements.size());
+            info("THINGS size " + level.things.size());
             int minV = Short.MAX_VALUE, maxV = Short.MIN_VALUE;
-            for (final Linedef line : level.linedefs.elements) {
+            for (final Linedef line : level.linedefs) {
                 final short b = line.beginningVertex, e = line.endingVertex;
                 if (b < minV) {
                     minV = b;
@@ -509,26 +551,57 @@ public class Wads {
                     maxV = e;
                 }
             }
-            info("LINEDEFS size " + level.linedefs.elements.size() + ", vertices " + minV + " - " + maxV);
-            info("SIDEDEFS size " + level.sidedefs.elements.size());
+            info("LINEDEFS size " + level.linedefs.size() + ", vertices " + minV + " - " + maxV);
+            info("SIDEDEFS size " + level.sidedefs.size());
             short minX = Short.MAX_VALUE, minY = minX, maxX = Short.MIN_VALUE, maxY = maxX;
-            for (final Vertex v : level.vertexes.elements) {
+            for (final Vertex v : level.vertexes) {
                 final short x = v.x, y = v.y;
                 if (x < minX) {
                     minX = x;
-                } else if (x > maxX) {
+                }
+                if (x > maxX) {
                     maxX = x;
                 }
                 if (y < minY) {
                     minY = y;
-                } else if (y > maxY) {
+                }
+                if (y > maxY) {
                     maxY = y;
                 }
             }
-            info("VERTEXES size " + level.vertexes.elements.size() + " (" + minX + ", " + minY + ") - (" + maxX + ", " + maxY + ")");
-            info("SECTORS size " + level.sectors.elements.size());
+            info("VERTEXES size " + level.vertexes.size() + " (" + minX + ", " + minY + ") - (" + maxX + ", " + maxY + ")");
+            final int width = maxX - minX, height = maxY - minY, area = width * height;
+            if (width < minWidth) {
+                minWidth = width;
+            }
+            if (width > maxWidth) {
+                maxWidth = width;
+            }
+            if (height < minHeight) {
+                minHeight = height;
+            }
+            if (height > maxHeight) {
+                maxHeight = height;
+            }
+            if (area < minArea) {
+                minArea = area;
+            }
+            if (area > maxArea) {
+                maxArea = area;
+            }
+            totalWidth += width;
+            totalHeight += height;
+            totalArea += area;
+            info("SECTORS size " + level.sectors.size());
             //TODO Validate references
         }
+        final int numLevels = wad.levels.size();
+        long meanWidth = totalWidth / numLevels;
+        long meanHeight = totalHeight / numLevels;
+        long meanArea = totalArea / numLevels;
+        info("Min width/height/area " + minWidth + "/" + minHeight + "/" + minArea);
+        info("Mean width/height/area " + meanWidth + "/" + meanHeight + "/" + meanArea);
+        info("Max width/height/area " + maxWidth + "/" + maxHeight + "/" + maxArea);
     }
     
     private final static void info(final Object s) {
