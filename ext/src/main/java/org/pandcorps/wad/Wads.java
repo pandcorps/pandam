@@ -160,6 +160,12 @@ public class Wads {
     public final static short LINEDEF_FLAG_DONTDRAW = 0x0080;
     public final static short LINEDEF_FLAG_MAPPED = 0x0100;
     
+    public final static short LINEDEF_TYPE_DOOR_PR_SLOW_MONST_OPEN_CLOSE = 1;
+    public final static short LINEDEF_TYPE_DOOR_WR_FAST_OPEN = 106;
+    public final static short LINEDEF_TYPE_DOOR_WR_FAST_CLOSE = 107;
+    public final static short LINEDEF_TYPE_DOOR_W1_FAST_OPEN = 109;
+    public final static short LINEDEF_TYPE_DOOR_W1_FAST_CLOSE = 110;
+    
     public final static short SIDEDEF_NONE = (short) 0xffff;
     
     public final static class Linedef extends LumpType {
@@ -183,6 +189,8 @@ public class Wads {
                 return;
             } else if (value) {
                 flags = (short) (flags | flag);
+            } else {
+                flags = (short) (flags ^ flag);
             }
         }
         
@@ -309,6 +317,18 @@ public class Wads {
         public short sectorTag;
         
         public Sector() {
+        }
+        
+        public final Sector copy() {
+            final Sector s = new Sector();
+            s.floorHeight = floorHeight;
+            s.ceilingHeight = ceilingHeight;
+            s.floorTexture = floorTexture;
+            s.ceilingTexture = ceilingTexture;
+            s.lightLevel = lightLevel;
+            s.sectorSpecial = sectorSpecial;
+            s.sectorTag = sectorTag;
+            return s;
         }
         
         @Override
