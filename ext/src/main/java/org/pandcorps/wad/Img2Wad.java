@@ -73,10 +73,27 @@ public class Img2Wad {
         return getEdge(getEdgeKey(v1, v2), v1, v2, pieces);
     }
     
+    private final static Edge getEdge(final Vertex v1, final Vertex v2, final float[] ms) {
+        return getEdge(getEdgeKey(v1, v2), v1, v2, ms);
+    }
+    
     private final static Edge getEdge(final Line key, final Vertex v1, final Vertex v2, final int pieces) {
+        final float[] ms = new float[pieces];
+        final float m = 1.0f / pieces;
+        for (int i = 0; i < pieces; i++) {
+            ms[i] = m;
+        }
+        return getEdge(key, v1, v2, ms);
+    }
+    
+    private final static Edge getEdge(final Line key, final Vertex v1, final Vertex v2, final float[] ms) {
         final Edge edge = getEdge(key, v1, v2);
+        if (edge == null) {
+            return null;
+        }
         final List<Line> lines = edge.lines;
         final int existingSize = lines.size();
+        final int pieces = ms.length;
         if (existingSize >= pieces) {
             return edge;
         } else if (existingSize > 1) {
@@ -85,11 +102,12 @@ public class Img2Wad {
         final Line existingLine = lines.get(0);
         lines.clear();
         final Vertex first = existingLine.beginningVertex, last = existingLine.endingVertex;
-        final short fx = first.x, lx = last.x, dx = (short) ((lx - fx) / pieces);
-        final short fy = first.y, ly = last.y, dy = (short) ((ly - fy) / pieces);
+        final short fx = first.x, lx = last.x, dx = (short) (lx - fx);
+        final short fy = first.y, ly = last.y, dy = (short) (ly - fy);
         Vertex prev = v1;
         for (int i = 0; i < pieces; i++) {
-            final Vertex next = getVertex((short) (fx + dx * (i + 1) / pieces), (short) (fy + dy * (i + 1) / pieces));
+            final float m = ms[i];
+            final Vertex next = getVertex((short) (prev.x + Math.round(m * dx)), (short) (prev.y + Math.round(m * dy)));
             lines.add(new Line(prev, next));
             prev = next;
         }
@@ -100,24 +118,41 @@ public class Img2Wad {
         return (v1.compareTo(v2) < 0) ? new Line(v1, v2) : new Line(v2, v1);
     }
     
+    private static boolean edgeCreationAllowed = true;
+    
     private final static Edge getEdge(final Line key, final Vertex v1, final Vertex v2) {
         ArrayList<Line> edge = edges.get(key);
+        boolean existed = true;
         if (edge == null) {
+            if (!edgeCreationAllowed) {
+                return null;
+            }
             edge = edges.add(key, (key.beginningVertex == v1) ? key : new Line(v1, v2));
+            existed = false;
         }
-        return new Edge(edge, edge.get(0).beginningVertex == v1);
+        return new Edge(key, edge, edge.get(0).beginningVertex == v1, existed);
+    }
+    
+    private final static Edge getEdgeIfExists(final Vertex v1, final Vertex v2) {
+        try {
+            edgeCreationAllowed = false;
+            return getEdge(v1, v2);
+        } finally {
+            edgeCreationAllowed = true;
+        }
     }
     
     private final static void removeEdge(final Line key) {
         edges.remove(key);
     }
     
-    private final static void removeLine(final Line edgeKey, final Line line) {
-        final List<Line> edge = edges.get(edgeKey);
+    private final static void removeLine(final Edge edge, final Line line) {
+        final Line edgeKey = edge.key;
+        final List<Line> lines = edges.get(edgeKey);
         if (edges.size() == 1) { 
             removeEdge(edgeKey);
         } else {
-            final Iterator<Line> iter = edge.iterator();
+            final Iterator<Line> iter = lines.iterator();
             while (iter.hasNext()) {
                 final Line edgeLine = iter.next();
                 if (edgeLine.equals(line)) {
@@ -212,18 +247,22 @@ public class Img2Wad {
     }
     
     private final static class Edge {
+        private final Line key;
         private final List<Line> lines;
         private final boolean front;
+        private final boolean existed;
         
-        private Edge(final List<Line> lines, final boolean front) {
+        private Edge(final Line key, final List<Line> lines, final boolean front, final boolean existed) {
+            this.key = key;
             this.lines = lines;
             this.front = front;
+            this.existed = existed;
         }
         
         private final Edge sort() {
             final List<Line> copy = new ArrayList<Line>(lines);
             Collections.sort(copy);
-            return new Edge(copy, front);
+            return new Edge(key, copy, front, existed);
         }
     }
     
@@ -268,11 +307,20 @@ public class Img2Wad {
     }
     
     private final static class CellType {
-        private final Sector sector = new Sector();
-        private final Sidedef possibleTextures = new Sidedef();
-        private final Sidedef neighborOverrideTextures = new Sidedef();
+        private final Sector sector;
+        private final Sidedef possibleTextures; // Maybe allow four of these for N/E/S/W, but use first for all if no others
+        private final Sidedef neighborOverrideTextures;
+        
+        private CellType(final Sector sector, final Sidedef possibleTextures, final Sidedef neighborOverrideTextures) {
+            this.sector = sector;
+            this.possibleTextures = possibleTextures;
+            this.neighborOverrideTextures = neighborOverrideTextures;
+        }
         
         private CellType(final Segment seg) {
+            sector = new Sector();
+            possibleTextures = new Sidedef();
+            neighborOverrideTextures = new Sidedef();
             setSector(sector, seg.getField(0));
             setTextures(possibleTextures, seg.getField(1));
             setTextures(neighborOverrideTextures, seg.getField(2));
@@ -297,12 +345,30 @@ public class Img2Wad {
             possibleTextures.middleTexture = pip.getValue(4);
             // Can't assign sector, this just defines which textures to use, can end up being middle or upper or lower or upper and lower
         }
+        
+        private final CellType newSector() {
+            return new CellType(sector.copy(), possibleTextures, neighborOverrideTextures);
+        }
     }
     
+    private static int minPriority = Integer.MAX_VALUE;
+    private static int maxPriority = Integer.MIN_VALUE;
+    
     private abstract static class CellBuilder {
+        protected final int priority;
         protected int i, j;
         protected int x, y;
         protected Vertex v00, v01, v10, v11;
+        
+        protected CellBuilder(final int priority) {
+            this.priority = priority;
+            if (priority < minPriority) {
+                minPriority = priority;
+            }
+            if (priority > maxPriority) {
+                maxPriority = priority;
+            }
+        }
         
         protected void build(final int i, final int j) {
             this.i = i; this.j = j;
@@ -321,6 +387,7 @@ public class Img2Wad {
         private final CellType cellType;
         
         private SimpleCellBuilder(final CellType cellType) {
+            super(1);
             this.cellType = cellType;
         }
         
@@ -341,20 +408,18 @@ public class Img2Wad {
     }
     
     private final static void processEdge(final Vertex v1, final Vertex v2, final CellType cellType) {
-        final Line edgeKey = getEdgeKey(v1, v2);
-        final Edge edge = getEdge(edgeKey, v1, v2);
-        processEdge(edgeKey, edge, cellType);
+        final Edge edge = getEdge(v1, v2);
+        processEdge(edge, cellType);
     }
     
-    private final static void processEdge(final Line edgeKey, final Edge edge, final CellType cellType) {
-        final boolean thisFlag= edge.front;
+    private final static void processEdge(final Edge edge, final CellType cellType) {
         for (final Line line : edge.lines) {
-            processLine(edgeKey, line, cellType, thisFlag);
+            processLine(edge, line, cellType);
         }
     }
     
-    private final static void processLine(final Line edgeKey, final Line line, final CellType cellType, final boolean thisFlag) {
-        final boolean otherFlag = !thisFlag;
+    private final static void processLine(final Edge edge, final Line line, final CellType cellType) {
+        final boolean thisFlag = edge.front, otherFlag = !thisFlag;
         final Sector thisSector = cellType.sector;
         final Sidedef possibleTextures = cellType.possibleTextures, neighborOverrideTextures = cellType.neighborOverrideTextures;
         final Sidedef otherPossibleTextures = line.getPossibleTextures(otherFlag), otherNeighborOverrideTextures = line.getNeighborOverrideTextures(otherFlag);
@@ -364,7 +429,7 @@ public class Img2Wad {
                     possibleTextures.xOffset, possibleTextures.yOffset, null, null, possibleTextures.middleTexture, thisSector));
             line.linedef.setFlag(Wads.LINEDEF_FLAG_SOUNDBLOCK, true); // Could get this from the cell type's linedef
         } else if (otherSector == thisSector) {
-            removeLine(edgeKey, line);
+            removeLine(edge, line);
         } else {
             final String thisLower, otherLower;
             if (thisSector.floorHeight < otherSector.floorHeight) {
@@ -409,6 +474,7 @@ public class Img2Wad {
         private final int direction;
         
         private StairCellBuilder(final List<CellType> stepTypes, final int direction) {
+            super(1);
             this.stepTypes = stepTypes;
             this.direction = direction;
         }
@@ -425,42 +491,33 @@ public class Img2Wad {
                 verticalPieces = 1;
                 horizontalPieces = steps;
             }
-            final Line westKey = getEdgeKey(v00, v01), northKey = getEdgeKey(v01, v11);
-            final Line eastKey = getEdgeKey(v11, v10), southKey = getEdgeKey(v10, v00);
-            final Edge west = getEdge(westKey, v00, v01, verticalPieces).sort(), north = getEdge(northKey, v01, v11, horizontalPieces).sort();
-            final Edge east = getEdge(eastKey, v11, v10, verticalPieces).sort(), south = getEdge(southKey, v10, v00, horizontalPieces).sort();
-            final Line sideKey1, sideKey2, minKey, maxKey;
+            final Edge west = getEdge(v00, v01, verticalPieces).sort(), north = getEdge(v01, v11, horizontalPieces).sort();
+            final Edge east = getEdge(v11, v10, verticalPieces).sort(), south = getEdge(v10, v00, horizontalPieces).sort();
             final Edge side1, side2, min, max;
             if (vertical) {
-                sideKey1 = eastKey; sideKey2 = westKey; // min side1 to min side2 is clockwise
-                side1 = east; side2 = west;
+                side1 = east; side2 = west; // min side1 to min side2 is clockwise
                 if (direction == DIR_NORTH) {
-                    minKey = southKey; maxKey = northKey;
                     min = south; max = north;
                 } else {
-                    minKey = northKey; maxKey = southKey;
                     min = north; max = south;
                 }
             } else {
-                sideKey1 = southKey; sideKey2 = northKey; // min side1 to min side2 is clockwise
-                side1 = south; side2 = north;
+                side1 = south; side2 = north; // min side1 to min side2 is clockwise
                 if (direction == DIR_EAST) {
-                    minKey = westKey; maxKey = eastKey;
                     min = west; max = east;
                 } else {
-                    minKey = eastKey; maxKey = westKey;
                     min = east; max = west;
                 }
             }
-            processEdge(minKey, min, stepTypes.get(0));
-            processEdge(maxKey, max, stepTypes.get(last));
+            processEdge(min, stepTypes.get(0));
+            processEdge(max, stepTypes.get(last));
             final boolean positive = (direction == DIR_NORTH) || (direction == DIR_EAST);
             for (int i = 0; i < steps; i++) {
                 final int c = positive ? i : (last - i);
                 final CellType cellType = stepTypes.get(c);
                 final Line line1 = side1.lines.get(c), line2 = side2.lines.get(c);
-                processLine(sideKey1, line1, cellType, side1.front);
-                processLine(sideKey2, line2, cellType, side2.front);
+                processLine(side1, line1, cellType);
+                processLine(side2, line2, cellType);
                 if (i > 0) {
                     processEdge(line1.getMinVertex(), line2.getMinVertex(), cellType);
                 }
@@ -468,18 +525,153 @@ public class Img2Wad {
                     processEdge(line2.getMaxVertex(), line1.getMaxVertex(), cellType);
                 }
             }
-            throw new UnsupportedOperationException();
         }
     }
     
-    private final static class DoorCellBuilder extends CellBuilder {
+    private final static class BlockDoorCellBuilder extends CellBuilder {
+        private final CellType exampleCellType; // Will create a new cell type with a new sector for each door built
+        
+        private BlockDoorCellBuilder(final CellType exampleCellType) {
+            super(2);
+            this.exampleCellType = exampleCellType;
+        }
+        
         @Override
         protected final void build() {
-            throw new UnsupportedOperationException();
+            final CellType cellType = exampleCellType.newSector();
+            final Edge west = initEdge(v00, v01, cellType);
+            final Edge north = initEdge(v01, v11, cellType);
+            final Edge east = initEdge(v11, v10, cellType);
+            final Edge south = initEdge(v10, v00, cellType);
+            if (west.existed) {
+                initDoor(west, east, north, south, cellType);
+            } else {
+                initDoor(north, south, west, east, cellType);
+            }
+        }
+        
+        private final Edge initEdge(final Vertex v1, final Vertex v2, final CellType cellType) {
+            final Edge edge = getEdge(v1, v2);
+            processEdge(edge, cellType);
+            return edge;
+        }
+    }
+    
+    private static short sectorTagSequence = 1;
+    
+    private final static void initDoor(final Edge edge1, final Edge edge2, final Edge track1, final Edge track2, final CellType cellType) {
+        final short sectorTag = sectorTagSequence++;
+        initDoor(edge1, sectorTag, cellType);
+        initDoor(edge2, sectorTag, cellType);
+        initDoorTrack(track1);
+        initDoorTrack(track2);
+    }
+    
+    private final static void initDoor(final Line line1, final Line line2, final Line track1, final Line track2, final CellType cellType) {
+        final short sectorTag = sectorTagSequence++;
+        initDoor(line1, sectorTag, cellType);
+        initDoor(line2, sectorTag, cellType);
+        initDoorTrack(track1);
+        initDoorTrack(track2);
+    }
+    
+    private final static void initDoor(final Edge edge, final short sectorTag, final CellType cellType) {
+        for (final Line line : edge.lines) {
+            initDoor(line, sectorTag, cellType);
+        }
+    }
+    
+    private final static void initDoor(final Line line, final short sectorTag, final CellType cellType) {
+        line.linedef.lineType = Wads.LINEDEF_TYPE_DOOR_PR_SLOW_MONST_OPEN_CLOSE; //TODO make definable but default to this
+        line.linedef.sectorTag = sectorTag;
+        cellType.sector.sectorTag = sectorTag;
+    }
+    
+    private final static void initDoorTrack(final Edge edge) {
+        for (final Line line : edge.lines) {
+            initDoorTrack(line);
+        }
+    }
+    
+    private final static void initDoorTrack(final Line line) {
+        line.linedef.setFlag(Wads.LINEDEF_FLAG_DONTPEGBOTTOM, true);
+    }
+    
+    private final static class DoorCellBuilder extends CellBuilder {
+        private final CellType indentationCellType;
+        private final CellType exampleDoorCellType;
+        private final int doorWidth;
+        private final float[] ms = new float[3];
+        
+        private DoorCellBuilder(final CellType indentationCellType, final CellType exampleDoorCellType, final int doorWidth) {
+            super(1);
+            this.indentationCellType = indentationCellType;
+            this.exampleDoorCellType = exampleDoorCellType;
+            this.doorWidth = doorWidth;
+            if (cw != ch) {
+                throw new UnsupportedOperationException();
+            }
+            final float indentationWidth = (cw - doorWidth) / 2;
+            final float indentationMultiplier = indentationWidth / cw;
+            ms[0] = indentationMultiplier;
+            ms[1] = ((float) doorWidth) / cw;
+            ms[2] = indentationMultiplier;
+        }
+        
+        @Override
+        protected final void build() {
+            final CellType doorCellType = exampleDoorCellType.newSector();
+            final Edge trackEdge1, entryEdge1, trackEdge2, entryEdge2;
+            if (grid[i - 1][j].isVoid() && grid[i + 1][j].isVoid()) {
+                // Vertical
+                trackEdge1 = getEdge(v00, v01, ms).sort();
+                entryEdge1 = getEdge(v01, v11);
+                trackEdge2 = getEdge(v11, v10, ms).sort();
+                entryEdge2 = getEdge(v10, v00);
+            } else if (grid[i][j - 1].isVoid() && grid[i][j + 1].isVoid()) {
+                // Horizontal
+                entryEdge1 = getEdge(v00, v01);
+                trackEdge1 = getEdge(v01, v11, ms).sort();
+                entryEdge2 = getEdge(v11, v10);
+                trackEdge2 = getEdge(v10, v00, ms).sort();
+            } else {
+                throw new IllegalStateException();
+            }
+            processEdge(entryEdge1, indentationCellType);
+            processEdge(entryEdge2, indentationCellType);
+            processTrack(trackEdge1, doorCellType);
+            processTrack(trackEdge2, doorCellType);
+            final Line trackLine1 = trackEdge1.lines.get(1);
+            final Line trackLine2 = trackEdge2.lines.get(1);
+            initDoor(getDoorLine(trackLine1.getMinVertex(), trackLine2.getMinVertex(), doorCellType),
+                    getDoorLine(trackLine1.getMaxVertex(), trackLine2.getMaxVertex(), doorCellType),
+                    entryEdge1.lines.get(1), entryEdge2.lines.get(1), doorCellType);
+        }
+        
+        private final void processTrack(final Edge edge, final CellType doorCellType) {
+            processLine(edge, edge.lines.get(0), indentationCellType);
+            final Line track = edge.lines.get(1);
+            processLine(edge, track, doorCellType);
+            initDoorTrack(track);
+            processLine(edge, edge.lines.get(2), indentationCellType);
+        }
+        
+        private final static Line getDoorLine(final Vertex v1, final Vertex v2, final CellType doorCellType) {
+            final Edge edge = getEdge(v1, v2);
+            processEdge(edge, doorCellType);
+            final List<Line> lines = edge.lines;
+            if (lines.size() == 1) {
+                return lines.get(0);
+            }
+            throw new IllegalStateException();
         }
     }
     
     private final static class VoidCellBuilder extends CellBuilder {
+        private VoidCellBuilder() {
+            super(1);
+        }
+        
         @Override
         protected final void build() {
         }
@@ -536,6 +728,10 @@ public class Img2Wad {
                         stepTypes.add(cellTypes.get(rep.intValue()));
                     }
                     cellBuilder = new StairCellBuilder(stepTypes, seg.intValue(3));
+                } else if ("BlockDoor".equalsIgnoreCase(cellType)) {
+                    cellBuilder = new BlockDoorCellBuilder(cellTypes.get(seg.intValue(2)));
+                } else if ("Door".equalsIgnoreCase(cellType)) {
+                    cellBuilder = new DoorCellBuilder(cellTypes.get(seg.intValue(2)), cellTypes.get(seg.intValue(3)), seg.intValue(4));
                 } else if ("Void".equalsIgnoreCase(cellType)) {
                     cellBuilder = voidCellBuilder;
                 } else {
@@ -566,11 +762,19 @@ public class Img2Wad {
                     grid[x][y] = cellBuilder;
                 }
             }
-            for (int y = 0; y < h; y++) {
-                for (int x = 0; x < w; x++) {
-                    grid[x][y].build(x, y);
+            for (int priority = minPriority; priority <= maxPriority; priority++) {
+                for (int y = 0; y < h; y++) {
+                    for (int x = 0; x < w; x++) {
+                        if (grid[x][y].priority != priority) {
+                            continue;
+                        }
+                        grid[x][y].build(x, y);
+                    }
                 }
             }
+            //TODO Combine adjacent lines when possible, maybe sectors too if any chances missed by building code
+            // Remove unused vertexes/lines/etc.
+            // Convert to raw format
             throw new UnsupportedOperationException();
         }
     }
