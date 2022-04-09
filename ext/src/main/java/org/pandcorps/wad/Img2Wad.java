@@ -310,11 +310,13 @@ public class Img2Wad {
         private final Sector sector;
         private final Sidedef possibleTextures; // Maybe allow four of these for N/E/S/W, but use first for all if no others
         private final Sidedef neighborOverrideTextures;
+        private final Short lineType;
         
-        private CellType(final Sector sector, final Sidedef possibleTextures, final Sidedef neighborOverrideTextures) {
+        private CellType(final Sector sector, final Sidedef possibleTextures, final Sidedef neighborOverrideTextures, final Short lineType) {
             this.sector = sector;
             this.possibleTextures = possibleTextures;
             this.neighborOverrideTextures = neighborOverrideTextures;
+            this.lineType = lineType;
         }
         
         private CellType(final Segment seg) {
@@ -324,7 +326,8 @@ public class Img2Wad {
             setSector(sector, seg.getField(0));
             setTextures(possibleTextures, seg.getField(1));
             setTextures(neighborOverrideTextures, seg.getField(2));
-            // 3 - description
+            lineType = seg.toShort(3);
+            // 4 - description
         }
         
         private final static void setSector(final Sector sector, final Piped pip) {
@@ -347,7 +350,7 @@ public class Img2Wad {
         }
         
         private final CellType newSector() {
-            return new CellType(sector.copy(), possibleTextures, neighborOverrideTextures);
+            return new CellType(sector.copy(), possibleTextures, neighborOverrideTextures, lineType);
         }
     }
     
@@ -613,7 +616,8 @@ public class Img2Wad {
     }
     
     private final static void initDoor(final Line line, final short sectorTag, final CellType cellType) {
-        line.linedef.lineType = Wads.LINEDEF_TYPE_DOOR_PR_SLOW_MONST_OPEN_CLOSE; //TODO make definable but default to this
+        final Short lineType = cellType.lineType;
+        line.linedef.lineType = (lineType == null) ? Wads.LINEDEF_TYPE_DOOR_PR_SLOW_MONST_OPEN_CLOSE : lineType.shortValue();
         line.linedef.sectorTag = sectorTag;
         cellType.sector.sectorTag = sectorTag;
     }
