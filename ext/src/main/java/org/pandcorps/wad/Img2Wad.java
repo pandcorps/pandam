@@ -462,6 +462,37 @@ public class Img2Wad {
         }
     }
     
+    private final static class DiagonalCellBuilder extends CellBuilder {
+        private DiagonalCellBuilder() {
+            super(1);
+        }
+        
+        @Override
+        protected final void build() {
+            final CellType west = getType(i - 1, j), north = getType(i, j + 1);
+            final CellType east = getType(i + 1, j), south = getType(i, j - 1);
+            processEdge(v00, v01, west);
+            processEdge(v01, v11, north);
+            processEdge(v11, v10, east);
+            processEdge(v10, v00, south);
+            if ((west == north) && (east == south)) {
+                processEdge(v00, v11, west);
+                processEdge(v11, v00, east);
+            } else if ((east == north) && (west == south)) {
+                processEdge(v01, v10, west);
+                processEdge(v10, v01, east);
+            } else {
+                throw new IllegalStateException();
+            }
+        }
+        
+        private final CellType getType(final int i, final int j) {
+            return ((SimpleCellBuilder) grid[i][j]).cellType;
+        }
+    }
+    
+    private final static DiagonalCellBuilder diagonalCellBuilder = new DiagonalCellBuilder();
+    
     private final static int DIR_NORTH = 0;
     private final static int DIR_EAST = 1;
     private final static int DIR_SOUTH = 2;
@@ -721,6 +752,8 @@ public class Img2Wad {
                 final CellBuilder cellBuilder;
                 if ("Simple".equalsIgnoreCase(cellType)) {
                     cellBuilder = new SimpleCellBuilder(cellTypes.get(seg.intValue(2)));
+                } else if ("Diagonal".equalsIgnoreCase(cellType)) {
+                    cellBuilder = diagonalCellBuilder;
                 } else if ("Stair".equalsIgnoreCase(cellType)) {
                     final List<Field> reps = seg.getRepetitions(2);
                     final List<CellType> stepTypes = new ArrayList<CellType>(reps.size());
