@@ -289,6 +289,17 @@ public class Img2Wad {
             this.sector = sector;
         }
         
+        private final Sidedef toSidedef(final short sectorReference) {
+            final Sidedef sidedef = new Sidedef();
+            sidedef.xOffset = xOffset;
+            sidedef.yOffset = yOffset;
+            sidedef.upperTexture = upperTexture;
+            sidedef.lowerTexture = lowerTexture;
+            sidedef.middleTexture = middleTexture;
+            sidedef.sectorReference = sectorReference;
+            return sidedef;
+        }
+        
         @Override
         public final int hashCode() {
             return possibleTextures.hashCode() ^ neighborOverrideTextures.hashCode()
@@ -724,19 +735,22 @@ public class Img2Wad {
     private final static VoidCellBuilder voidCellBuilder = new VoidCellBuilder();
     
     private final static class LevelBuilder {
-        private short cellWidth;
-        private short cellHeight;
-        private short defaultLightLevel;
+        private final String name;
+        private final short cellWidth;
+        private final short cellHeight;
+        private final short defaultLightLevel;
         private final List<CellType> cellTypes = new ArrayList<CellType>();
         private final Map<Integer, CellBuilder> rgbs = new HashMap<Integer, CellBuilder>();
         private final Img img;
         
         private LevelBuilder(final String loc) throws IOException {
-            this(new SegmentStream(Iotil.getReader(loc)), Imtil.load(loc.substring(0, loc.lastIndexOf('.')) + ".png"));
+            this(loc, new SegmentStream(Iotil.getReader(loc)), Imtil.load(loc.substring(0, loc.lastIndexOf('.')) + ".png"));
         }
         
-        private LevelBuilder(final SegmentStream in, final Img img) throws IOException {
+        private LevelBuilder(final String loc, final SegmentStream in, final Img img) throws IOException {
             lb = this;
+            final String fileName = new File(loc).getName();
+            name = fileName.substring(0, fileName.indexOf('.'));
             this.img = img;
             Segment seg;
             
@@ -747,7 +761,8 @@ public class Img2Wad {
                 final CellType cellType = new CellType(seg);
                 seg = in.readIf("DGN");
                 if (seg != null) {
-                    // Used by DiagonalCellBuilder, could be similar wall textures adjusted size for diagonal walls, like 91 pixels instead of 64
+                    // Used by DiagonalCellBuilder, could be similar wall textures adjusted size for diagonal walls, like 91 pixels instead of 64.
+                    // If original has two 32-pixel sections, could have 3 30-31-pixel sections on diagonal.
                     cellType.diagonal = new CellType(seg);
                 }
                 cellTypes.add(cellType);
@@ -821,9 +836,78 @@ public class Img2Wad {
                 }
             }
             //TODO Combine adjacent lines when possible, maybe sectors too if any chances missed by building code
-            // Remove unused vertexes/lines/etc.
-            // Convert to raw format
-            throw new UnsupportedOperationException();
+            return convert();
+        }
+        
+        private Map<Vertex, Short> vertexMap = null;
+        private Lump<Vertex> vertexLump = null;
+        private Map<Side, Short> sideMap = null;
+        private Map<Sidedef, Short> sidedefMap = null;
+        private Lump<Sidedef> sidedefLump = null;
+        private Map<Sector, Short> sectorMap = null;
+        private Lump<Sector> sectorLump = null;
+        
+        private final Level convert() {
+            final Level level = new Level(name);
+            vertexMap = new HashMap<Vertex, Short>();
+            vertexLump = level.vertexes;
+            sideMap = new HashMap<Side, Short>();
+            sidedefMap = new HashMap<Sidedef, Short>();
+            sidedefLump = level.sidedefs;
+            sectorMap = new HashMap<Sector, Short>();
+            sectorLump = level.sectors;
+            final Lump<Linedef> linedefs = level.linedefs;
+            for (final List<Line> edge : edges.values()) {
+                for (final Line line : edge) {
+                    final Linedef linedef = line.linedef;
+                    linedef.beginningVertex = getVertexIndex(line.beginningVertex);
+                    linedef.endingVertex = getVertexIndex(line.endingVertex);
+                    linedef.rightSidedef = getSidedefIndex(line.rightSide);
+                    linedef.leftSidedef = getSidedefIndex(line.leftSide);
+                    linedefs.add(linedef);
+                }
+            }
+            // Don't need to prune Img2Wad.vertexes/sides; those are only used while processing image; conversion to raw format only uses what's found in edges
+            return level;
+        }
+        
+        private final short getVertexIndex(final Vertex vertex) {
+            return getIndex(vertexMap, vertexLump, vertex);
+        }
+        
+        private final short getSidedefIndex(final Side side) {
+            if (side == null) {
+                return Wads.SIDEDEF_NONE;
+            }
+            Short value = sideMap.get(side);
+            if (value != null) {
+                return value.shortValue();
+            }
+            final Sidedef sidedef = side.toSidedef(getSectorIndex(side.sector));
+            value = sidedefMap.get(sidedef);
+            if (value == null) {
+                sidedefLump.add(sidedef);
+                final short index = (short) (sidedefLump.size() - 1);
+                value = Short.valueOf(index);
+                sidedefMap.put(sidedef, value);
+            }
+            sideMap.put(side, value);
+            return value.shortValue();
+        }
+        
+        private final short getSectorIndex(final Sector sector) {
+            return getIndex(sectorMap, sectorLump, sector);
+        }
+        
+        private final <T extends LumpType> short getIndex(final Map<T, Short> map, final Lump<T> lump, final T key) {
+            final Short value = map.get(key);
+            if (value != null) {
+                return value.shortValue();
+            }
+            lump.add(key);
+            final short index = (short) (lump.size() - 1);
+            map.put(key, Short.valueOf(index));
+            return index;
         }
     }
 }

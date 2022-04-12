@@ -257,6 +257,20 @@ public class Wads {
         protected final int getSize() {
             return 30;
         }
+        
+        @Override
+        public final int hashCode() {
+            return xOffset ^ yOffset ^ Pantil.hashCode(upperTexture) ^ Pantil.hashCode(lowerTexture) ^ Pantil.hashCode(middleTexture)
+                    ^ sectorReference;
+        }
+        
+        @Override
+        public final boolean equals(final Object o) {
+            final Sidedef s = (Sidedef) o;
+            return (xOffset == s.xOffset) && (yOffset == s.yOffset)
+                    && Pantil.equals(upperTexture, s.upperTexture) && Pantil.equals(lowerTexture, s.lowerTexture) && Pantil.equals(middleTexture, s.middleTexture)
+                    && (sectorReference == s.sectorReference);
+        }
     }
     
     public final static class Vertex extends LumpType implements Comparable<Vertex> {
@@ -356,6 +370,21 @@ public class Wads {
         @Override
         protected final int getSize() {
             return 26;
+        }
+        
+        @Override
+        public final int hashCode() {
+            return floorHeight ^ ceilingHeight
+                    ^ Pantil.hashCode(floorTexture) ^ Pantil.hashCode(ceilingTexture)
+                    ^ lightLevel ^ sectorSpecial ^ sectorTag;
+        }
+        
+        @Override
+        public final boolean equals(final Object o) {
+            final Sector s = (Sector) o;
+            return (floorHeight == s.floorHeight) && (ceilingHeight == s.ceilingHeight)
+                    && Pantil.equals(floorTexture, s.floorTexture) && Pantil.equals(ceilingTexture, s.ceilingTexture)
+                    && (lightLevel == s.lightLevel) && (sectorSpecial == s.sectorSpecial) && (sectorTag == s.sectorTag);
         }
     }
     
