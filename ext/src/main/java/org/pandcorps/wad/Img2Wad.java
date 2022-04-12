@@ -311,6 +311,7 @@ public class Img2Wad {
         private final Sidedef possibleTextures; // Maybe allow four of these for N/E/S/W, but use first for all if no others
         private final Sidedef neighborOverrideTextures;
         private final Short lineType;
+        private CellType diagonal = null;
         
         private CellType(final Sector sector, final Sidedef possibleTextures, final Sidedef neighborOverrideTextures, final Short lineType) {
             this.sector = sector;
@@ -351,6 +352,10 @@ public class Img2Wad {
         
         private final CellType newSector() {
             return new CellType(sector.copy(), possibleTextures, neighborOverrideTextures, lineType);
+        }
+        
+        private final CellType getDiagonal() {
+            return (diagonal == null) ? this : diagonal;
         }
     }
     
@@ -490,7 +495,7 @@ public class Img2Wad {
         }
         
         private final CellType getType(final int i, final int j) {
-            return ((SimpleCellBuilder) grid[i][j]).cellType;
+            return ((SimpleCellBuilder) grid[i][j]).cellType.getDiagonal();
         }
     }
     
@@ -739,7 +744,13 @@ public class Img2Wad {
             cellWidth = seg.shortValue(0);
             cellHeight = seg.shortValue(1);
             while ((seg = in.readIf("SCT")) != null) {
-                cellTypes.add(new CellType(seg));
+                final CellType cellType = new CellType(seg);
+                seg = in.readIf("DGN");
+                if (seg != null) {
+                    // Used by DiagonalCellBuilder, could be similar wall textures adjusted size for diagonal walls, like 91 pixels instead of 64
+                    cellType.diagonal = new CellType(seg);
+                }
+                cellTypes.add(cellType);
             }
             
             seg = in.readRequire("DEF");
