@@ -106,6 +106,12 @@ public class Wads {
     }
     
     public final static short TYPE_PLAYER_START_1 = 1;
+    public final static short TYPE_BLUE_KEYCARD = 5;
+    public final static short TYPE_BLUE_SKULL_KEY = 40;
+    public final static short TYPE_RED_KEYCARD = 13;
+    public final static short TYPE_RED_SKULL_KEY = 38;
+    public final static short TYPE_YELLOW_KEYCARD = 6;
+    public final static short TYPE_YELLOW_SKULL_KEY = 39;
     
     public final static short SPAWN_FLAG_EASY = 0x0001;
     public final static short SPAWN_FLAG_MEDIUM = 0x0002;

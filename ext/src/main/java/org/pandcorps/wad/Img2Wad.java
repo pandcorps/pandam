@@ -42,6 +42,7 @@ public class Img2Wad {
     //private final static HashMultimap<Vertex, Line> lines = new HashMultimap<Vertex, Line>();
     private final static HashMultimap<Line, Line> edges = new HashMultimap<Line, Line>();
     private final static Map<Side, Side> sides = new HashMap<Side, Side>();
+    private final static List<Thing> things = new ArrayList<Thing>();
     
     private final static <T> T putIfAbsent(final Map<T, T> map, final T key) {
         T value = map.get(key);
@@ -372,6 +373,7 @@ public class Img2Wad {
     
     private static int minPriority = Integer.MAX_VALUE;
     private static int maxPriority = Integer.MIN_VALUE;
+    private final static CountMap<CellType> neighborMap = new CountMap<CellType>();
     
     private abstract static class CellBuilder {
         protected final int priority;
@@ -397,6 +399,59 @@ public class Img2Wad {
         
         protected abstract void build();
         
+        protected final void addThing(final short type) {
+            final Thing thing = new Thing();
+            thing.x = (short) (x + (cw / 2));
+            thing.y = (short) (y + (ch / 2));
+            thing.angle = 0;
+            thing.type = type;
+            thing.spawnFlags = Wads.SPAWN_FLAG_EASY | Wads.SPAWN_FLAG_MEDIUM | Wads.SPAWN_FLAG_HARD;
+        }
+        
+        protected final void buildSimple(final CellType cellType) {
+            processEdge(v00, v01, cellType);
+            processEdge(v01, v11, cellType);
+            processEdge(v11, v10, cellType);
+            processEdge(v10, v00, cellType);
+        }
+        
+        protected final CellType getCellType(final int i, final int j) {
+            if ((i < 0) || (i >= grid.length)) {
+                return null;
+            }
+            final CellBuilder[] col = grid[i];
+            if ((j < 0) || (j >= col.length)) {
+                return null;
+            }
+            final CellBuilder cellBuilder = col[j];
+            if ((cellBuilder == null) || cellBuilder.isVoid()) {
+                return null;
+            }
+            return ((SimpleCellBuilder) cellBuilder).cellType;
+        }
+        
+        protected final CellType getNeighborCellType() {
+            neighborMap.clear();
+            addNeighbor(-1, 0);
+            addNeighbor(1, 0);
+            addNeighbor(0, -1);
+            addNeighbor(0, 1);
+            //TODO Break tie by picking the one with the largest floor-to-ceiling difference
+            return neighborMap.sortedEntryList(false).get(0).getKey();
+        }
+        
+        private final void addNeighbor(final int di, final int dj) {
+            final CellType cellType = getCellType(i + di, j + dj);
+            if (cellType != null) {
+                neighborMap.inc(cellType);
+            }
+        }
+        
+        protected final void buildSimpleThing(final short thingType) {
+            buildSimple(getNeighborCellType());
+            addThing(thingType);
+        }
+        
         protected boolean isVoid() {
             return false;
         }
@@ -412,17 +467,7 @@ public class Img2Wad {
         
         @Override
         protected final void build() {
-            //final CellBuilder left = getCellBuilder(x - 1, y);
-            //final List<Line> left = getEdge(v00, v01);
-            //final Edge left = getEdge(v00, v01);
-            processEdge(v00, v01);
-            processEdge(v01, v11);
-            processEdge(v11, v10);
-            processEdge(v10, v00);
-        }
-        
-        private final void processEdge(final Vertex v1, final Vertex v2) {
-            Img2Wad.processEdge(v1, v2, cellType);
+            buildSimple(cellType);
         }
     }
     
@@ -481,6 +526,20 @@ public class Img2Wad {
         }
     }
     
+    private final static class ThingCellBuilder extends CellBuilder {
+        private final short thingType;
+        
+        private ThingCellBuilder(final short thingType) {
+            super(2);
+            this.thingType = thingType;
+        }
+        
+        @Override
+        protected final void build() {
+            buildSimpleThing(thingType);
+        }
+    }
+    
     private final static class DiagonalCellBuilder extends CellBuilder {
         private DiagonalCellBuilder() {
             super(1);
@@ -506,7 +565,8 @@ public class Img2Wad {
         }
         
         private final CellType getType(final int i, final int j) {
-            return ((SimpleCellBuilder) grid[i][j]).cellType.getDiagonal();
+            final CellType baseType = getCellType(i, j);
+            return (baseType == null) ? null : baseType.getDiagonal();
         }
     }
     
@@ -580,10 +640,12 @@ public class Img2Wad {
     
     private final static class BlockDoorCellBuilder extends CellBuilder {
         private final CellType exampleCellType; // Will create a new cell type with a new sector for each door built
+        private final Short thingType;
         
-        private BlockDoorCellBuilder(final CellType exampleCellType) {
+        private BlockDoorCellBuilder(final CellType exampleCellType, final Short thingType) {
             super(2);
             this.exampleCellType = exampleCellType;
+            this.thingType = thingType;
         }
         
         @Override
@@ -593,10 +655,12 @@ public class Img2Wad {
             final Edge north = initEdge(v01, v11, cellType);
             final Edge east = initEdge(v11, v10, cellType);
             final Edge south = initEdge(v10, v00, cellType);
-            if (west.existed) {
+            if (west.existed && east.existed && !north.existed && !south.existed) {
                 initDoor(west, east, north, south, cellType);
-            } else {
+            } else if (north.existed && south.existed && !west.existed && !east.existed) {
                 initDoor(north, south, west, east, cellType);
+            } else if (thingType != null) {
+                buildSimpleThing(thingType.shortValue());
             }
         }
         
@@ -782,6 +846,8 @@ public class Img2Wad {
                 final CellBuilder cellBuilder;
                 if ("Simple".equalsIgnoreCase(cellType)) {
                     cellBuilder = new SimpleCellBuilder(cellTypes.get(seg.intValue(2)));
+                } else if ("Thing".equalsIgnoreCase(cellType)) {
+                    cellBuilder = new ThingCellBuilder(seg.shortValue(2));
                 } else if ("Diagonal".equalsIgnoreCase(cellType)) {
                     cellBuilder = diagonalCellBuilder;
                 } else if ("Stair".equalsIgnoreCase(cellType)) {
@@ -792,7 +858,7 @@ public class Img2Wad {
                     }
                     cellBuilder = new StairCellBuilder(stepTypes, seg.intValue(3));
                 } else if ("BlockDoor".equalsIgnoreCase(cellType)) {
-                    cellBuilder = new BlockDoorCellBuilder(cellTypes.get(seg.intValue(2)));
+                    cellBuilder = new BlockDoorCellBuilder(cellTypes.get(seg.intValue(2)), seg.toShort(3));
                 } else if ("Door".equalsIgnoreCase(cellType)) {
                     cellBuilder = new DoorCellBuilder(cellTypes.get(seg.intValue(2)), cellTypes.get(seg.intValue(3)), seg.intValue(4));
                 } else if ("Void".equalsIgnoreCase(cellType)) {
@@ -835,8 +901,12 @@ public class Img2Wad {
                     }
                 }
             }
-            //TODO Combine adjacent lines when possible, maybe sectors too if any chances missed by building code
+            combine();
             return convert();
+        }
+        
+        private final void combine() {
+            //TODO Combine adjacent lines when possible, maybe sectors too if any chances missed by building code
         }
         
         private Map<Vertex, Short> vertexMap = null;
@@ -868,6 +938,7 @@ public class Img2Wad {
                 }
             }
             // Don't need to prune Img2Wad.vertexes/sides; those are only used while processing image; conversion to raw format only uses what's found in edges
+            level.things.addAll(things);
             return level;
         }
         
