@@ -598,6 +598,11 @@ public class Chr extends Guy4 {
         public final int getMultiplier() {
             return multiplier;
         }
+        
+        @Override
+        public String toString() {
+            return name;
+        }
     }
     
     protected final static int getMultiplier(final GearAttribute a) {
@@ -606,7 +611,7 @@ public class Chr extends Guy4 {
     
     protected final static char GEAR_TYPE_ARMOR = 'A';
     protected final static char GEAR_TYPE_WEAPON = 'W';
-    protected final static char GEAR_TYPE_SHIELD = 'C';
+    protected final static char GEAR_TYPE_SHIELD = 'S';
     
     protected final static class GearType extends GearAttribute {
         // Multiplier specifies importance of body armor vs. shield
@@ -902,7 +907,7 @@ public class Chr extends Guy4 {
         } else if (type == GEAR_TYPE_SHIELD) {
             return new Shield(name, quality, material, subtype);
         }
-        throw new IllegalStateException("Unexpected Gear type " + subtype.type + " for " + name);
+        throw new IllegalStateException("Unexpected Gear type " + subtype.type + " - " + type + " for " + name);
     }
     
     protected final static <V extends Named> V get(final Map<String, V> map, final String key) {

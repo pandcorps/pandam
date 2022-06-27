@@ -42,13 +42,17 @@ MAC|Wood
 MAC|Cloth
 
 # Materials
-# Name|Multiplier|Category|Red|Green|Blue
+# Name|Multiplier|Category|Red|Green|Blue|Source
 MAT|Copper|1|Metal|1|0.75|0.5
 MAT|Iron|2|Metal|0.75|0.75|0.75
 MAT|Onyx|3|Metal|0.5|0.5|0.5
 MAT|Elm|1|Wood|1|0.75|0.5
 MAT|Oak|2|Wood|1|0.75|0.5
 MAT|Ebony|3|Wood|0.5|0.5|0.5
+MAT|Linen|1|Cloth|0.875|0.875|0.625|Flax Plant
+MAT|Cotton|2|Cloth|0.875|0.875|0.875|Cotton Plant
+MAT|Canvas|3|Cloth|0.75|0.625|0.5|Canvas Plant
+MAT|Silk|4|Cloth|0.75|0.875|1.0|Lotus Plant
 
 # Gear Types
 # Name|Multiplier
@@ -60,13 +64,13 @@ TYP|Shield|1
 # Name|Type|MaterialCategory|MaterialRequiredToCraft|AttackDamageMultiplier|ReceivedDamageMultiplier|ChanceOfBeingHitMultiplier|TwoHanded|RenderX|RenderY
 SUB|Full Plate|Armor|Metal|4|1.0|0.5|1.0||0|32
 #SUB|Chain Mail|Armor|Metal|2|1.0|1.0|0.5||0|32
-SUB|Doublet|Cloth|Metal|2|1.0|1.0|0.5||0|32
-SUB|None|Armor|||1.0|1.0|0.25
+SUB|Doublet|Armor|Cloth|2|1.0|1.0|0.5||0|32
+SUB|None|Armor||0|1.0|1.0|0.25
 SUB|Sword|Weapon|Metal|2|1.0|1.0|1.0|false
 SUB|Spear|Weapon|Metal|2|0.5|0.5|1.0|true
 SUB|Knife|Weapon|Metal|1|0.5|1.0|0.5|false
 SUB|Bow|Weapon|Wood|2|0.25|0.5|0.5|true
-SUB|Fists|Weapon|||1.0|1.0|0.25
+SUB|Fists|Weapon||0|1.0|1.0|0.25
 SUB|Shield|Shield|Metal|2
 
 # Enemies
