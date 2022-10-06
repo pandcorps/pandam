@@ -173,6 +173,15 @@ public final class Mathtil {
 		return m;
 	}
 	
+	public final static int getSign(final int i) {
+	    if (i > 0) {
+	        return 1;
+	    } else if (i < 0) {
+	        return -1;
+	    }
+	    return 0;
+	}
+	
 	public final static double getX(final double mag, final double dir) {
 		return Math.cos(dir) * mag;
 	}
