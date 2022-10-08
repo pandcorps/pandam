@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2022, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -321,6 +321,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     @Override
     protected final void onLanded() {
+        onBossLandedAny();
         if (hasPendingJumps()) {
             startStill(5);
         } else if (!onBossLanded()) {
@@ -328,6 +329,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    //@OverrideMe
+    protected void onBossLandedAny() {
+    }
+    
+    //@OverrideMe
     protected boolean onBossLanded() {
         return false;
     }
@@ -495,7 +501,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final void continueJumps() {
+        onContinueJumps();
         addPendingJump(getStateJumps(), getJump(), getJumpsV(), getJumpsH());
+    }
+    
+    //@OverrideMe
+    protected void onContinueJumps() {
     }
     
     protected final int getJumpsH() {
@@ -573,6 +584,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return false;
         }
         return true;
+    }
+    
+    protected final int getY() {
+        return Math.round(getPosition().getY());
     }
     
     @Override
@@ -3964,6 +3979,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage sand = null;
         protected final static Panmage[] wraps = new Panmage[2];
         protected static Panmage hold = null;
+        protected static Panmage taunt = null;
         protected static Panmage launch = null;
         protected static Panmage jump = null;
         protected static Panmage flare = null;
@@ -3983,6 +3999,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void taunt() {
             startHold(WAIT_INDEFINITE);
+        }
+        
+        private final boolean finishDroughtTaunt() {
+            if (finishTaunt()) {
+                changeView(getTaunt());
+                return true;
+            }
+            return false;
         }
         
         @Override
@@ -4247,6 +4271,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return (hold = getDroughtImage(hold, "droughtbot/DroughtBotHold"));
         }
         
+        protected final static Panmage getTaunt() {
+            return (taunt = getDroughtImage(taunt, "droughtbot/DroughtBotTaunt"));
+        }
+        
         protected final static Panmage getLaunch() {
             return (launch = getDroughtImage(launch, "droughtbot/DroughtBotLaunch"));
         }
@@ -4340,7 +4368,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 changeView(getGrow4());
             } else if (timer == 16) {
                 changeView(getScythe1());
-            } else if ((timer == TIME_LAUNCH) && !src.finishTaunt()) {
+            } else if ((timer == TIME_LAUNCH) && !src.finishDroughtTaunt()) {
                 launch();
             }
         }
@@ -4428,6 +4456,692 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final static Panmage getScytheImage(final Panmage img, final String name, final Panple min, final Panple max) {
             return getImage(img, name, SCYTHE_O, min, max);
+        }
+    }
+    
+    protected final static int PYRO_OFF_X = 6, PYRO_H = 24;
+    protected final static Panple PYRO_O = new FinPanple2(13, 1);
+    protected final static Panple PYRO_MIN = getMin(PYRO_OFF_X);
+    protected final static Panple PYRO_MAX = getMax(PYRO_OFF_X, PYRO_H);
+    protected final static Panple PYRO_DIVE_O = new FinPanple2(16, 1);
+    protected final static Panple PYRO_FLY_O = new FinPanple2(16, 7);
+    protected final static Panple PYRO_FLY_MIN = getMin(13);
+    protected final static Panple PYRO_FLY_MAX = getMax(13, 12);
+    
+    protected final static class PyroBot extends Boss {
+        protected final static byte STATE_FIRE = 1;
+        protected final static byte STATE_JUMPS = 2;
+        protected final static byte STATE_TAUNT = 3;
+        protected final static byte STATE_DIVE = 4;
+        protected final static byte STATE_FLY = 5;
+        protected final static int WAIT_BEFORE_FIRE = 8; // 16;
+        protected final static int WAIT_FIRE = 48 + WAIT_BEFORE_FIRE;
+        protected final static Panmage[] stills = new Panmage[3];
+        protected final static Panmage[] aims = new Panmage[3];
+        protected final static Panmage[] taunts = new Panmage[3];
+        protected final static Panmage[] jumps = new Panmage[2];
+        protected final static Panmage[] falls = new Panmage[2];
+        protected static Panmage dive = null;
+        protected static Panmage fly = null;
+        private final int xRight;
+        private final int xLeft;
+        private int yStart = 0;
+        private int yFly = 0;
+        
+        protected PyroBot(final Segment seg) {
+            super(PYRO_OFF_X, PYRO_H, seg);
+            xRight = getX();
+            xLeft = getMirroredX(xRight);
+        }
+        
+        @Override
+        protected final void taunt() {
+            startFire();
+            yStart = getY();
+            yFly = yStart + 14;
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                    "TODO Pyro's line.",
+                    "Null's line.",
+                    "Pyro's line."
+                };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return new String[] { "Pyro's line." };
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            setView();
+            if (state == STATE_JUMPS) {
+                setJumpImage();
+            } else if (state == STATE_FLY) {
+                if (addBoundedX(xLeft, xRight)) {
+                    setFlip(Pangine.getEngine().isOn(3));
+                    if ((waitTimer % 10) == 0) {
+                        new PyroFlicker(this, -8, 1, 2);
+                    }
+                    return true;
+                } else {
+                    setFlip(false);
+                    turnTowardPlayer();
+                    getPosition().setY(yStart);
+                    hv = 0;
+                    startStill();
+                }
+            } else if ((state == STATE_FIRE) && (waitTimer > 16) && (waitTimer <= (WAIT_FIRE - WAIT_BEFORE_FIRE)) && ((waitTimer % 2) == 1)) {
+                new PyroFire(this);
+            }
+            return false;
+        }
+        
+        private final void setView() {
+            final Panmage[] imgs;
+            final String name;
+            if (state == STATE_STILL) {
+                imgs = stills;
+                name = "";
+            } else if (state == STATE_FIRE) {
+                imgs = aims;
+                name = "Aim";
+            } else if (state == STATE_TAUNT) {
+                imgs = taunts;
+                name = "Taunt";
+            } else {
+                return;
+            }
+            changeView(getCurrent(imgs, name));
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            final int r = rand(3);
+            if (r == 0) {
+                startFire();
+            } else if (r == 1) {
+                startDive();
+            } else { // 2 (also response to danger)
+                new PyroFlicker(this);
+                startJumps();
+            }
+            return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 2;
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            if ((state == STATE_FIRE) && finishTaunt()) {
+                startStateIndefinite(STATE_TAUNT, getCurrent(taunts, "Taunt"));
+            } else if (state == STATE_DIVE) {
+                startFly();
+            } else {
+                startStill();
+            }
+            return false;
+        }
+        
+        @Override
+        protected final boolean hasPendingJumps() {
+            if (hasPendingOrContinuedJumps()) {
+                return true;
+            }
+            return false;
+        }
+        
+        @Override
+        protected final void onContinueJumps() {
+            new PyroFlicker(this);
+        }
+        
+        @Override
+        protected final byte getStateJumps() {
+            return STATE_JUMPS;
+        }
+        
+        @Override
+        protected final float getJumpsV() {
+            return 9;
+        }
+        
+        @Override
+        protected final int getJumpsHv() {
+            return 4;
+        }
+        
+        protected final void startFire() {
+            startState(STATE_FIRE, WAIT_FIRE, getCurrent(aims, "Aim"));
+        }
+        
+        protected final void startDive() {
+            startState(STATE_DIVE, 5, getDive());
+        }
+
+        protected final void startFly() {
+            hv = getMirrorMultiplier() * 5;
+            getPosition().setY(yFly);
+            startStateIndefinite(STATE_FLY, getFly());
+        }
+        
+        private final void setJumpImage() {
+            if (v < 0) {
+                changeView(getFall());
+            } else {
+                changeView(getJump());
+            }
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return getCurrent(stills, "");
+        }
+        
+        @Override
+        protected final Panmage getJump() {
+            return getCurrentJump(jumps, "Jump");
+        }
+        
+        protected final static Panmage getFall() {
+            return getCurrentJump(falls, "Fall");
+        }
+        
+        protected final static Panmage getCurrentJump(final Panmage[] imgs, final String name) {
+            final int i = ((int) (Pangine.getEngine().getClock() % 8)) / 4;
+            Panmage img = imgs[i];
+            if (img == null) {
+                img = getPyroImage(null, "pyrobot/PyroBot" + name + (i + 1));
+                imgs[i] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getDive() {
+            return (dive = getImage(dive, "pyrobot/PyroBotDive", PYRO_DIVE_O, PYRO_MIN, PYRO_MAX));
+        }
+        
+        protected final static Panmage getFly() {
+            return (fly = getImage(fly, "pyrobot/PyroBotFly", PYRO_FLY_O, PYRO_FLY_MIN, PYRO_FLY_MAX));
+        }
+        
+        protected final Panmage getCurrent(final Panmage[] imgs, final String name) {
+            final int i = ((int) (Pangine.getEngine().getClock() % 12)) / 4;
+            Panmage img = imgs[i];
+            if (img == null) {
+                img = getPyroImage(null, "pyrobot/PyroBot" + name + (i + 1));
+                imgs[i] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getPyroImage(final Panmage img, final String name) {
+            return getImage(img, name, PYRO_O, PYRO_MIN, PYRO_MAX);
+        }
+    }
+    
+    protected final static class PyroFire extends EnemyProjectile {
+        protected final static Panmage[] fires = new Panmage[7];
+        private int age = 0;
+        
+        protected PyroFire(final PyroBot src) {
+            super(src, 18, 12, 4 * src.getMirrorMultiplier(), 0);
+            changeView(getFire(0));
+        }
+        
+        @Override
+        public void onStep(final StepEvent event) {
+            super.onStep(event);
+            age++;
+            final int h = age / 2;
+            if (h > 6) {
+                destroy();
+                return;
+            }
+            if (changeView(getFire(h))) {
+                final Panple v = getVelocity();
+                final int vx = Math.round(v.getX());
+                if (vx != 0) {
+                    v.setX((Math.abs(vx) + 2) * Mathtil.getSign(vx));
+                }
+            }
+            BotsnBoltsGame.fxWarp.startSound();
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 4;
+        }
+        
+        @Override
+        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            prj.burst();
+        }
+        
+        protected final static Panmage getFire(final int i) {
+            Panmage img = fires[i];
+            if (img == null) {
+                final Panple o, n, x;
+                if (i == 0) {
+                    o = BotsnBoltsGame.CENTER_8; n = BotsnBoltsGame.MIN_8; x = BotsnBoltsGame.MAX_8;
+                } else if (i == 1) {
+                    o = BotsnBoltsGame.CENTER_16; n = BotsnBoltsGame.MIN_8; x = BotsnBoltsGame.MAX_8;
+                } else if (i == 2) {
+                    o = BotsnBoltsGame.CENTER_16; n = BotsnBoltsGame.MIN_16; x = BotsnBoltsGame.MAX_16;
+                } else if (i == 3) {
+                    o = BotsnBoltsGame.CENTER_32; n = BotsnBoltsGame.MIN_16; x = BotsnBoltsGame.MAX_16;
+                } else {
+                    o = BotsnBoltsGame.CENTER_32; n = BotsnBoltsGame.MIN_32; x = BotsnBoltsGame.MAX_32;
+                }
+                img = getImage(null, "pyrobot/Fire" + (i + 1), o, n, x);
+                fires[i] = img;
+            }
+            return img;
+        }
+    }
+    
+    protected final static class PyroFlicker extends EnemyProjectile {
+        protected final static Panmage[] flickers = new Panmage[7];
+        private final int divisor;
+        private int age = 0;
+        
+        protected PyroFlicker(final PyroBot src) {
+            this(src, 3, 6, 4);
+        }
+        
+        protected PyroFlicker(final PyroBot src, final int ox, final int oy, final int divisor) {
+            super(src, ox, oy, 0, 0);
+            this.divisor = divisor;
+            changeView(getFlicker(0));
+        }
+        
+        @Override
+        public void onStep(final StepEvent event) {
+            super.onStep(event);
+            age++;
+            final int h = age / divisor;
+            if (h > 3) {
+                destroy();
+                return;
+            }
+            changeView(getFlicker(h));
+            BotsnBoltsGame.fxWarp.startSound();
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 4;
+        }
+        
+        protected final static Panmage getFlicker(final int i) {
+            Panmage img = flickers[i];
+            if (img == null) {
+                final Panple n, x;
+                if (i < 2) {
+                    n = BotsnBoltsGame.MIN_8; x = BotsnBoltsGame.MAX_8;
+                } else {
+                    n = BotsnBoltsGame.MIN_16; x = BotsnBoltsGame.MAX_16;
+                }
+                img = getImage(null, "pyrobot/Flicker" + (i + 1), BotsnBoltsGame.CENTER_16, n, x);
+                flickers[i] = img;
+            }
+            return img;
+        }
+    }
+    
+    protected final static int GEO_OFF_X = 11, GEO_H = 28;
+    protected final static Panple GEO_O = new FinPanple2(15, 1);
+    protected final static Panple GEO_HANG_O = new FinPanple2(18, 1);
+    protected final static Panple GEO_MIN = getMin(GEO_OFF_X);
+    protected final static Panple GEO_MAX = getMax(GEO_OFF_X, GEO_H);
+    
+    protected final static class GeoBot extends Boss {
+        protected final static byte STATE_STOMP = 1;
+        protected final static byte STATE_STOMP2 = 2;
+        protected final static byte STATE_JUMPS = 3;
+        protected final static byte STATE_JUMP_TO_WALL = 4;
+        protected final static byte STATE_HANG = 5;
+        protected final static byte STATE_DIVE = 6;
+        protected final static byte STATE_IMPACT = 7;
+        protected final static byte STATE_PRE_TAUNT = 8;
+        protected final static byte STATE_TAUNT1 = 9;
+        protected final static byte STATE_TAUNT2 = 10;
+        protected final static byte STATE_POST_TAUNT = 11;
+        protected final static Panmage[] stills = new Panmage[6];
+        protected static Panmage stomp1 = null;
+        protected static Panmage stomp2 = null;
+        protected static Panmage taunt1 = null;
+        protected static Panmage taunt2 = null;
+        protected static Panmage jump = null;
+        protected static Panmage land = null;
+        protected static Panmage hang = null;
+        protected static Panmage dive = null;
+        
+        protected GeoBot(final Segment seg) {
+            super(GEO_OFF_X, GEO_H, seg);
+        }
+        
+        @Override
+        protected final void taunt() {
+            startState(STATE_PRE_TAUNT, 30, getStill());
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                    "TODO Geo's line.",
+                    "Null's line.",
+                    "Geo's line."
+                };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return new String[] { "Geo's line." };
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            setView();
+            if ((state == STATE_STOMP2) && ((waitTimer % 6) == 0)) {
+                new GeoBurst(this, Mathtil.randi(4, 15));
+            } else if ((state == STATE_JUMPS) && (v <= 0)) {
+                changeView(getLand());
+                hv = 2 * getMirrorMultiplier();
+            } else if ((state == STATE_JUMP_TO_WALL) && (waitCounter == 19)) {
+                startHang();
+                return true;
+            } else if (state == STATE_HANG) {
+                return true;
+            } else if (state == STATE_DIVE) {
+                onDiving();
+                return true;
+            } else if ((state == STATE_IMPACT) && ((waitTimer % 8) == 0)) {
+                onImpacting();
+            }
+            return false;
+        }
+        
+        private final void setView() {
+            if ((state == STATE_STILL) || (state == STATE_POST_TAUNT) || (state == STATE_PRE_TAUNT)) {
+                changeView(getStill());
+            }
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            final int r = rand(3);
+            if (r == 0) {
+                startStomp();
+            } else if (r == 1) {
+                startJumps();
+            } else { // 2 (also response to danger)
+                startJumpToWall();
+            }
+            return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 2;
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            if (state == STATE_STOMP) {
+                finishStomp();
+            } else if (state == STATE_HANG) {
+                startDive();
+            } else if (state == STATE_PRE_TAUNT) {
+                startState(STATE_TAUNT1, 3, getTaunt1());
+            } else if (state == STATE_TAUNT1) {
+                startState(STATE_TAUNT2, 32, getTaunt2());
+            } else if (state == STATE_TAUNT2) {
+                finishTaunt();
+                startStateIndefinite(STATE_POST_TAUNT, getStill());
+            } else {
+                startStill();
+            }
+            return false;
+        }
+        
+        private final void startStomp() {
+            startState(STATE_STOMP, 8, getStomp1());
+        }
+        
+        private final void finishStomp() {
+            startState(STATE_STOMP2, 16, getStomp2());
+            BotsnBoltsGame.fxEnemyAttack.startSound();
+            new GeoSpike(this, true);
+        }
+        
+        private final void startJumpToWall() {
+            final int x = getX();
+            final int dst = (x >= 192) ? 368 - x : 16 - x;
+            startJump(STATE_JUMP_TO_WALL, getJump(), 9.5f, Math.round(dst / 15.0f));
+        }
+        
+        private final void startHang() {
+            startState(STATE_HANG, 16, getHang());
+            final boolean mirror = isMirror();
+            final int m = getMirrorMultiplier(mirror);
+            while (addX(m) == X_NORMAL);
+            addX(-m);
+            setMirror(!mirror);
+            hv = 0;
+        }
+        
+        private final void startDive() {
+            startStateIndefinite(STATE_DIVE, getDive());
+            hv = 10 * getMirrorMultiplier();
+        }
+        
+        private final void onDiving() {
+            final Panple pos = getPosition();
+            final float oldY = pos.getY();
+            addY(-5);
+            hv = Mathtil.getSign(hv) * Math.round(oldY - pos.getY()) * 2;
+            if (hv != 0) {
+                addX(hv);
+            }
+        }
+        
+        private final void startImpact() {
+            startState(STATE_IMPACT, 32, getDive());
+            onImpacting();
+        }
+        
+        private final void onImpacting() {
+            new GeoSpike(this, (waitTimer % 16) == 0);
+            new GeoBurst(this, Mathtil.randi(4, 15));
+        }
+        
+        @Override
+        protected final boolean hasPendingJumps() {
+            if (hasPendingOrContinuedJumps()) {
+                return true;
+            }
+            return false;
+        }
+        
+        @Override
+        protected final byte getStateJumps() {
+            return STATE_JUMPS;
+        }
+        
+        @Override
+        protected final float getJumpsV() {
+            return 11;
+        }
+        
+        @Override
+        protected final int getJumpsHv() {
+            return 3;
+        }
+        
+        @Override
+        protected final void onBossLandedAny() {
+            if (!isTauntFinished()) {
+                return;
+            } else if (state == STATE_DIVE) {
+                startImpact();
+                return;
+            } else if (state == STATE_IMPACT) {
+                return;
+            }
+            new GeoSpike(this, true);
+            for (int i = 0; i < 4; i++) {
+                new GeoBurst(this, Mathtil.randi(-4, 7));
+            }
+        }
+        
+        @Override
+        protected final boolean onBossLanded() {
+            if (state == STATE_IMPACT) {
+                return true;
+            }
+            return false;
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            final int i = ((int) (Pangine.getEngine().getClock() % 18)) / 3;
+            Panmage img = stills[i];
+            if (img == null) {
+                img = getGeoImage(null, "geobot/GeoBot" + (i + 1));
+                stills[i] = img;
+            }
+            return img;
+        }
+        
+        @Override
+        protected final Panmage getJump() {
+            return (jump = getGeoImage(jump, "geobot/GeoBotJump"));
+        }
+        
+        protected final static Panmage getLand() {
+            return (land = getGeoImage(land, "geobot/GeoBotLand"));
+        }
+        
+        protected final static Panmage getHang() {
+            return (hang = getGeoImage(hang, "geobot/GeoBotHang", GEO_HANG_O));
+        }
+        
+        protected final static Panmage getDive() {
+            return (dive = getGeoImage(dive, "geobot/GeoBotDive"));
+        }
+        
+        protected final static Panmage getStomp1() {
+            return (stomp1 = getGeoImage(stomp1, "geobot/GeoBotStomp1"));
+        }
+        
+        protected final static Panmage getStomp2() {
+            return (stomp2 = getGeoImage(stomp2, "geobot/GeoBotStomp2"));
+        }
+        
+        protected final static Panmage getTaunt1() {
+            return (taunt1 = getGeoImage(taunt1, "geobot/GeoBotTaunt1"));
+        }
+        
+        protected final static Panmage getTaunt2() {
+            return (taunt2 = getGeoImage(taunt2, "geobot/GeoBotTaunt2"));
+        }
+        
+        protected final static Panmage getGeoImage(final Panmage img, final String name) {
+            return getGeoImage(img, name, GEO_O);
+        }
+        
+        protected final static Panmage getGeoImage(final Panmage img, final String name, final Panple o) {
+            return getImage(img, name, o, GEO_MIN, GEO_MAX);
+        }
+    }
+    
+    private final static class GeoBurst extends Panctor implements StepListener {
+        protected static Panmage burst1 = null;
+        protected static Panmage burst2 = null;
+        private int age = 0;
+        
+        private GeoBurst(final Panctor src, final int ox) {
+            final Panple spos = src.getPosition();
+            getPosition().set(spos.getX() + (src.getMirrorMultiplier() * ox), spos.getY() + Mathtil.randi(-2, 7), BotsnBoltsGame.DEPTH_BURST);
+            setMirror(src.isMirror());
+            setView(getBurst1());
+            addActor(this);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            age++;
+            if (age >= 3) {
+                if (age >= 6) {
+                    destroy();
+                    return;
+                }
+                changeView(getBurst2());
+            }
+        }
+        
+        protected final static Panmage getBurst1() {
+            return (burst1 = getImage(burst1, "geobot/Burst1", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+        
+        protected final static Panmage getBurst2() {
+            return (burst2 = getImage(burst2, "geobot/Burst2", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
+        }
+    }
+    
+    private final static class GeoSpike extends Enemy {
+        protected static Panmage spike = null;
+        protected static Panmage shatter = null;
+        
+        protected GeoSpike(final Boss src, final boolean targeted) {
+            super(PROP_OFF_X, PROP_H, 0, 0, 1);
+            float x = -1;
+            if (targeted) {
+                final Player player = src.getNearestPlayer();
+                if (player != null) {
+                    x = player.getPosition().getX();
+                }
+            }
+            if (x < 0) {
+                x = Mathtil.randi(32, 352);
+            }
+            getPosition().set(x, 224.0f);
+            setView(getSpike());
+            addActor(this);
+            hv = 0;
+            v = 0;
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 2;
+        }
+        
+        @Override
+        protected final int getSolid(final int off) {
+            return (getPosition().getY() > 112) ? -1 : getIdentitySolid(off);
+        }
+        
+        @Override
+        protected final void onGrounded() {
+            BotsnBoltsGame.fxCrumble.startSound();
+            Player.shatter(this, getShatter());
+            destroy();
+        }
+        
+        protected final static Panmage getSpike() {
+            return (spike = Boss.getImage(spike, "geobot/Spike", BotsnBoltsGame.fireballEnemy[0]));
+        }
+        
+        protected final static Panmage getShatter() {
+            return (shatter = Boss.getImage(shatter, "geobot/Shatter", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
         }
     }
     

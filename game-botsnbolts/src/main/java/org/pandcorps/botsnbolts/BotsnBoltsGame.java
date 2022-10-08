@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2022, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -52,7 +52,7 @@ import org.pandcorps.pandax.visual.*;
 public final class BotsnBoltsGame extends BaseGame {
     protected final static String TITLE = "Bots 'n Bolts";
     protected final static String VERSION = "1.0.6";
-    protected final static String YEAR = "2016-2021";
+    protected final static String YEAR = "2016-2022";
     protected final static String AUTHOR = "Andrew M. Martin";
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
     
@@ -116,6 +116,8 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static int MAX_CAMERA_SPEED = 10;
     
+    protected final static FinPanple2 MIN_32 = new FinPanple2(-13, -13);
+    protected final static FinPanple2 MAX_32 = new FinPanple2(13, 13);
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
     protected final static FinPanple2 MAX_16 = new FinPanple2(6, 6);
     protected final static FinPanple2 MIN_8 = new FinPanple2(-3, -3);
