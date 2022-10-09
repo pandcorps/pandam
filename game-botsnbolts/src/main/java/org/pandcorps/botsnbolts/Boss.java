@@ -54,6 +54,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static byte TAUNT_WAITING = 2;
     private final static byte TAUNT_FINISHED = 3;
     private final static int WAIT_INDEFINITE = Integer.MAX_VALUE;
+    private final static Panple scratchPanple = new ImplPanple(0, 0, 0);
     
     private boolean initializationNeeded = true;
     protected int waitTimer = 0; // Will be assigned by startStillBeforeTaunt()
@@ -4905,6 +4906,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (state == STATE_TAUNT2) {
                 finishTaunt();
                 startStateIndefinite(STATE_POST_TAUNT, getStill());
+            } else if (state == STATE_IMPACT) {
+                turnTowardPlayer();
+                startStill();
             } else {
                 startStill();
             }
@@ -5003,10 +5007,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean onBossLanded() {
-            if (state == STATE_IMPACT) {
+            if ((state == STATE_DIVE) || (state == STATE_IMPACT)) {
                 return true;
             }
             return false;
+        }
+        
+        @Override
+        protected final boolean isTurnTowardPlayerNeeded() {
+            if (state == STATE_DIVE) {
+                return false;
+            } else if ((state == STATE_IMPACT) && (waitCounter < 2)) {
+                return false;
+            }
+            return true;
         }
         
         @Override
@@ -5062,14 +5076,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
-    private final static class GeoBurst extends Panctor implements StepListener {
-        protected static Panmage burst1 = null;
-        protected static Panmage burst2 = null;
+    private abstract static class BossBurst extends Panctor implements StepListener {
         private int age = 0;
         
-        private GeoBurst(final Panctor src, final int ox) {
+        private BossBurst(final Panctor src, final int ox, final int oy) {
             final Panple spos = src.getPosition();
-            getPosition().set(spos.getX() + (src.getMirrorMultiplier() * ox), spos.getY() + Mathtil.randi(-2, 7), BotsnBoltsGame.DEPTH_BURST);
+            getPosition().set(spos.getX() + (src.getMirrorMultiplier() * ox), spos.getY() + oy, BotsnBoltsGame.DEPTH_BURST);
             setMirror(src.isMirror());
             setView(getBurst1());
             addActor(this);
@@ -5087,11 +5099,26 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
         }
         
-        protected final static Panmage getBurst1() {
+        protected abstract Panmage getBurst1();
+        
+        protected abstract Panmage getBurst2();
+    }
+    
+    private final static class GeoBurst extends BossBurst {
+        protected static Panmage burst1 = null;
+        protected static Panmage burst2 = null;
+        
+        private GeoBurst(final Panctor src, final int ox) {
+            super(src, ox, Mathtil.randi(-2, 7));
+        }
+        
+        @Override
+        protected final Panmage getBurst1() {
             return (burst1 = getImage(burst1, "geobot/Burst1", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
         }
         
-        protected final static Panmage getBurst2() {
+        @Override
+        protected final Panmage getBurst2() {
             return (burst2 = getImage(burst2, "geobot/Burst2", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
         }
     }
@@ -5142,6 +5169,344 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getShatter() {
             return (shatter = Boss.getImage(shatter, "geobot/Shatter", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+    }
+    
+    protected final static int CRYO_OFF_X = 7, CRYO_H = 25;
+    protected final static Panple CRYO_O = new FinPanple2(14, 1);
+    protected final static Panple CRYO_TAUNT_O = new FinPanple2(16, 1);
+    protected final static Panple CRYO_MIN = getMin(CRYO_OFF_X);
+    protected final static Panple CRYO_MAX = getMax(CRYO_OFF_X, CRYO_H);
+    
+    protected final static class CryoBot extends Boss {
+        protected final static byte STATE_PRE_TAUNT = 1;
+        protected final static byte STATE_POST_TAUNT = 2;
+        protected final static byte STATE_AIM = 3;
+        protected final static byte STATE_PUMP = 4;
+        protected final static byte STATE_AFTER_PUMP = 5;
+        protected final static byte STATE_WAIT_FOR_PLAYER_TO_LAND = 6;
+        protected final static byte STATE_DASH = 7;
+        protected final static byte STATE_WAIT_AFTER_DASH = 8;
+        protected final static byte STATE_JAB1 = 9;
+        protected final static byte STATE_WAIT_AFTER_JAB1 = 10;
+        protected final static byte STATE_JAB2 = 11;
+        protected final static byte STATE_WAIT_AFTER_JAB2 = 12;
+        protected final static byte STATE_UPPERCUT = 13;
+        protected final static int TIME_JAB = 5;
+        protected final static int TIME_WAIT_AFTER_JAB = 2;
+        protected final static int TIME_UPPERCUT = 10;
+        protected final static int VEL_PROJECTILE = 8;
+        protected final static float VX_SPREAD;
+        protected final static float VY_SPREAD;
+        protected final static float INNER_ANGLE_LIMIT;
+        protected final static Panmage[] taunts = new Panmage[3];
+        protected static Panmage still = null;
+        protected static Panmage aim = null;
+        protected static Panmage pump = null;
+        protected static Panmage jab = null;
+        protected static Panmage uppercut = null;
+        protected final static Panmage[] dashes = new Panmage[2];
+        private Player target = null;
+        
+        static {
+            final double angleLimit = Math.PI / 24;
+            scratchPanple.setMagnitudeDirection(VEL_PROJECTILE, angleLimit);
+            VX_SPREAD = scratchPanple.getX();
+            VY_SPREAD = scratchPanple.getY();
+            INNER_ANGLE_LIMIT = (float) (angleLimit * 0.9);
+        }
+        
+        protected CryoBot(final Segment seg) {
+            super(CRYO_OFF_X, CRYO_H, seg);
+        }
+        
+        @Override
+        protected final void taunt() {
+            startState(STATE_PRE_TAUNT, 30, getTaunt());
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                    "TODO Cryo's line.",
+                    "Null's line.",
+                    "Cryo's line."
+                };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return new String[] { "Cryo's line." };
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_DASH) {
+                onDashing();
+            } else if ((state == STATE_AIM) && (waitCounter == 1)) {
+                new CryoProjectile(this, VX_SPREAD, VY_SPREAD);
+                new CryoProjectile(this, VX_SPREAD, -VY_SPREAD);
+                for (int i = 0; i < 3; i++) {
+                    scratchPanple.setMagnitudeDirection(VEL_PROJECTILE, Mathtil.randf(0, INNER_ANGLE_LIMIT));
+                    new CryoProjectile(this, scratchPanple.getX(), scratchPanple.getY() * (Mathtil.rand() ? -1 : 1));
+                }
+            } else if ((state == STATE_PUMP) && (waitCounter == 1)) {
+                //TODO sound?
+                new CryoShell(this);
+            } else if (state == STATE_WAIT_FOR_PLAYER_TO_LAND) {
+                if (target.isGrounded()) {
+                    startDash();
+                }
+            } else if ((state == STATE_PRE_TAUNT) || (state == STATE_POST_TAUNT)) {
+                changeView(getTaunt());
+            }
+            return false;
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            if (target != null) {
+                if (target.isGrounded()) {
+                    startDash();
+                } else {
+                    startStateIndefinite(STATE_WAIT_FOR_PLAYER_TO_LAND, getStill());
+                }
+                return false;
+            }
+            final int r = rand(3);
+            if (r == 0) {
+                startAim();
+            } else if (r == 1) {
+                //startJumps(); // Flipping jump?
+            } else { // 2 (also response to danger)
+                //startJumpToWall();
+            }
+            return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 2;
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            if (state == STATE_AIM) {
+                startPump();
+            } else if (state == STATE_PUMP) {
+                startAfterPump();
+            } else if (state == STATE_WAIT_AFTER_DASH) {
+                startState(STATE_JAB1, TIME_JAB, getJab());
+            } else if (state == STATE_JAB1) {
+                startState(STATE_WAIT_AFTER_JAB1, TIME_WAIT_AFTER_JAB, getStill());
+            } else if (state == STATE_WAIT_AFTER_JAB1) {
+                startState(STATE_JAB2, TIME_JAB, getJab());
+            } else if (state == STATE_JAB2) {
+                startState(STATE_WAIT_AFTER_JAB2, TIME_WAIT_AFTER_JAB, getStill());
+            } else if (state == STATE_WAIT_AFTER_JAB2) {
+                startState(STATE_UPPERCUT, TIME_UPPERCUT, getUppercut());
+            } else if (state == STATE_PRE_TAUNT) {
+                finishTaunt();
+                startStateIndefinite(STATE_POST_TAUNT, getTaunt());
+            } else {
+                startStill();
+            }
+            return false;
+        }
+        
+        private final void startAim() {
+            startState(STATE_AIM, 16, getAim());
+        }
+        
+        private final void startPump() {
+            startState(STATE_PUMP, 6, getPump());
+        }
+        
+        private final void startAfterPump() {
+            startState(STATE_AFTER_PUMP, 10, getAim());
+        }
+        
+        private final void startDash() {
+            turnTowardPlayer(target);
+            hv = Mathtil.getSign(Math.round(target.getPosition().getX() - getPosition().getX())) * 6;
+            startStateIndefinite(STATE_DASH, getDash());
+        }
+        
+        private final void onDashing() {
+            changeView(getDash());
+            addX(hv);
+            if ((waitCounter % 4) == 1) {
+                new CryoBurst(this);
+            }
+        }
+        
+        @Override
+        public final void onAttack(final Player player) {
+            if ((state == STATE_DASH) && (player == target)) {
+                final int tx = Math.round(target.getPosition().getX());
+                final int dx = tx + (22 * ((hv < 0) ? 1 : -1));
+                moveTo(dx, getY());
+                //final int mult = getMirrorMultiplier();
+                //addX(-mult * 12);
+                //addX(mult);
+                hv = 0;
+                startState(STATE_WAIT_AFTER_DASH, 3, getStill());
+                target = null;
+            } else {
+                super.onAttack(player);
+            }
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return (still = getCryoImage(still, "cryobot/CryoBot"));
+        }
+        
+        /*@Override
+        protected final Panmage getJump() {
+            return (jump = getCryoImage(jump, "cryobot/CryoBotJump"));
+        }*/
+        
+        protected final static Panmage getAim() {
+            return (aim = getCryoImage(aim, "cryobot/CryoBotAim"));
+        }
+        
+        protected final static Panmage getPump() {
+            return (pump = getCryoImage(pump, "cryobot/CryoBotPump"));
+        }
+        
+        protected final static Panmage getJab() {
+            return (jab = getCryoImage(jab, "cryobot/CryoBotJab"));
+        }
+        
+        protected final static Panmage getUppercut() {
+            return (uppercut = getCryoImage(uppercut, "cryobot/CryoBotUppercut"));
+        }
+        
+        protected final static Panmage getDash() {
+            final int i = ((int) (Pangine.getEngine().getClock() % 6)) / 3;
+            Panmage img = dashes[i];
+            if (img == null) {
+                img = getCryoImage(null, "cryobot/CryoBotDash" + (i + 1));
+                dashes[i] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getTaunt() {
+            final int i = ((int) (Pangine.getEngine().getClock() % 12)) / 4;
+            Panmage img = taunts[i];
+            if (img == null) {
+                img = getCryoImage(null, "cryobot/CryoBotTaunt" + (i + 1), CRYO_TAUNT_O);
+                taunts[i] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getCryoImage(final Panmage img, final String name) {
+            return getCryoImage(img, name, CRYO_O);
+        }
+        
+        protected final static Panmage getCryoImage(final Panmage img, final String name, final Panple o) {
+            return getImage(img, name, o, CRYO_MIN, CRYO_MAX);
+        }
+    }
+    
+    private final static class CryoShell extends Pandy {
+        protected static Panmage shell = null;
+        private int age = 0;
+        
+        private CryoShell(final Panctor src) {
+            super(gTuple);
+            final Panple spos = src.getPosition();
+            final boolean mirror = src.isMirror();
+            final int mult = getMirrorMultiplier(mirror);
+            getPosition().set(spos.getX() + (6 * mult), spos.getY() + 17, BotsnBoltsGame.DEPTH_OVERLAY);
+            getVelocity().set(2 * -mult, 4);
+            setMirror(mirror);
+            addActor(this);
+            setView(getShell());
+        }
+        
+        @Override
+        public void onStep(final StepEvent event) {
+            super.onStep(event);
+            if (!isInView()) {
+                destroy();
+                return;
+            }
+            age++;
+            if (age == 8) {
+                set(true, 3);
+            } else if (age == 16) {
+                set(false, 1);
+            } else if (age == 24) {
+                set(true, 2);
+            } else if (age == 32) {
+                set(false, 2);
+            } else if (age == 40) {
+                set(true, 1);
+            } else if (age == 48) {
+                set(false, 3);
+            } else if (age == 56) {
+                set(true, 0);
+            } else if (age == 64) {
+                set(false, 0);
+                age = 0;
+            }
+        }
+        
+        private final void set(final boolean flip, final int rot) {
+            setFlip(flip);
+            setRot(rot);
+        }
+        
+        protected final static Panmage getShell() {
+            return (shell = Boss.getImage(shell, "cryobot/shell", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+    }
+    
+    private final static class CryoProjectile extends EnemyProjectile {
+        protected static Panmage img = null;
+        private final CryoBot src;
+        
+        private CryoProjectile(final CryoBot src, final float vx, final float vy) {
+            super(getImage(), src, 15, 15, vx * src.getMirrorMultiplier(), vy);
+            getVelocity().multiply(Mathtil.randf(0.9f, 1.1f));
+            setView(getImage());
+            this.src = src;
+        }
+        
+        @Override
+        protected final boolean hurt(final Player player) {
+            if (player.freezeIndefinite()) {
+                src.target = player;
+                return true;
+            }
+            return false;
+        }
+        
+        protected final static Panmage getImage() {
+            return (img = Boss.getImage(img, "cryobot/Projectile", BotsnBoltsGame.CENTER_4, BotsnBoltsGame.MIN_4, BotsnBoltsGame.MAX_4));
+        }
+    }
+    
+    private final static class CryoBurst extends BossBurst {
+        protected static Panmage burst1 = null;
+        protected static Panmage burst2 = null;
+        
+        private CryoBurst(final Panctor src) {
+            super(src, -5, 4);
+        }
+        
+        @Override
+        protected final Panmage getBurst1() {
+            return (burst1 = getImage(burst1, "cryobot/Burst1", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+        
+        @Override
+        protected final Panmage getBurst2() {
+            return (burst2 = getImage(burst2, "cryobot/Burst2", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
         }
     }
     

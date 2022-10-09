@@ -694,6 +694,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final boolean freeze() {
+        return freeze(getClock());
+    }
+    
+    protected final boolean freezeIndefinite() {
+        return freeze(Long.MAX_VALUE);
+    }
+    
+    private final boolean freeze(final long freezeTime) {
         if (prf.stunProtection) {
             hurt(DAMAGE_FREEZE);
             return false;
@@ -701,7 +709,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return false;
         }
         stateHandler.onHurt(this);
-        lastFrozen = getClock();
+        lastFrozen = freezeTime;
         BotsnBoltsGame.fxRicochet.startSound();
         return true;
     }
