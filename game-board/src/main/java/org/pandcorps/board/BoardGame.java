@@ -40,8 +40,8 @@ import org.pandcorps.pandax.text.Fonts.*;
 
 public class BoardGame extends BaseGame {
     protected final static String TITLE = "2-Player Games For 1 Device";
-    protected final static String VERSION = "1.0.1";
-    protected final static String YEAR = "2020";
+    protected final static String VERSION = "1.0.2";
+    protected final static String YEAR = "2022";
     protected final static String AUTHOR = "Andrew M. Martin";
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
     
