@@ -5191,9 +5191,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_WAIT_AFTER_JAB1 = 10;
         protected final static byte STATE_JAB2 = 11;
         protected final static byte STATE_WAIT_AFTER_JAB2 = 12;
-        protected final static byte STATE_UPPERCUT = 13;
+        protected final static byte STATE_KICK = 13;
+        protected final static byte STATE_WAIT_AFTER_KICK = 14;
+        protected final static byte STATE_UPPERCUT = 15;
         protected final static int TIME_JAB = 5;
         protected final static int TIME_WAIT_AFTER_JAB = 2;
+        protected final static int TIME_KICK = 10;
         protected final static int TIME_UPPERCUT = 10;
         protected final static int VEL_PROJECTILE = 8;
         protected final static float VX_SPREAD;
@@ -5204,6 +5207,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage aim = null;
         protected static Panmage pump = null;
         protected static Panmage jab = null;
+        protected static Panmage kick = null;
         protected static Panmage uppercut = null;
         protected final static Panmage[] dashes = new Panmage[2];
         private Player target = null;
@@ -5222,7 +5226,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void taunt() {
-            startState(STATE_PRE_TAUNT, 30, getTaunt());
+            startJab1();
         }
         
         @Override
@@ -5257,10 +5261,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 if (target.isGrounded()) {
                     startDash();
                 }
+            } else if (((state == STATE_JAB1) || (state == STATE_JAB2)) && (waitCounter == 1)) {
+                impact(20, 18);
+            } else if ((state == STATE_KICK) && (waitCounter == 1)) {
+                impact(20, 17);
+            } else if ((state == STATE_UPPERCUT) && (waitCounter == 1)) {
+                impact(18, 25);
             } else if ((state == STATE_PRE_TAUNT) || (state == STATE_POST_TAUNT)) {
                 changeView(getTaunt());
             }
             return false;
+        }
+        
+        private final void impact(final int ox, final int oy) {
+            if (isTauntFinished()) {
+                new CryoBurst(this, ox, oy);
+            }
         }
         
         @Override
@@ -5296,22 +5312,51 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (state == STATE_PUMP) {
                 startAfterPump();
             } else if (state == STATE_WAIT_AFTER_DASH) {
-                startState(STATE_JAB1, TIME_JAB, getJab());
+                startJab1();
+                hurt(false);
             } else if (state == STATE_JAB1) {
                 startState(STATE_WAIT_AFTER_JAB1, TIME_WAIT_AFTER_JAB, getStill());
             } else if (state == STATE_WAIT_AFTER_JAB1) {
                 startState(STATE_JAB2, TIME_JAB, getJab());
+                hurt(false);
             } else if (state == STATE_JAB2) {
                 startState(STATE_WAIT_AFTER_JAB2, TIME_WAIT_AFTER_JAB, getStill());
             } else if (state == STATE_WAIT_AFTER_JAB2) {
+                startState(STATE_KICK, TIME_KICK, getKick());
+                hurt(false);
+            } else if (state == STATE_KICK) {
+                startState(STATE_WAIT_AFTER_KICK, TIME_WAIT_AFTER_JAB, getStill());
+            } else if (state == STATE_WAIT_AFTER_KICK) {
                 startState(STATE_UPPERCUT, TIME_UPPERCUT, getUppercut());
+                if (target != null) {
+                    target.unfreeze(0);
+                    hurt(true);
+                    target = null;
+                }
+            } else if (state == STATE_UPPERCUT) {
+                if (isTauntFinished()) {
+                    startStill();
+                } else {
+                    startState(STATE_PRE_TAUNT, 30, getTaunt());
+                }
             } else if (state == STATE_PRE_TAUNT) {
                 finishTaunt();
                 startStateIndefinite(STATE_POST_TAUNT, getTaunt());
             } else {
+                turnTowardPlayer();
                 startStill();
             }
             return false;
+        }
+        
+        private final void startJab1() {
+            startState(STATE_JAB1, TIME_JAB, getJab());
+        }
+        
+        private final void hurt(final boolean effectsNeeded) {
+            if (target != null) {
+                target.hurtForce(1, effectsNeeded);
+            }
         }
         
         private final void startAim() {
@@ -5336,7 +5381,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             changeView(getDash());
             addX(hv);
             if ((waitCounter % 4) == 1) {
-                new CryoBurst(this);
+                new CryoBurst(this, -5, 4);
             }
         }
         
@@ -5346,12 +5391,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 final int tx = Math.round(target.getPosition().getX());
                 final int dx = tx + (22 * ((hv < 0) ? 1 : -1));
                 moveTo(dx, getY());
-                //final int mult = getMirrorMultiplier();
-                //addX(-mult * 12);
-                //addX(mult);
                 hv = 0;
+                hurt(false);
                 startState(STATE_WAIT_AFTER_DASH, 3, getStill());
-                target = null;
             } else {
                 super.onAttack(player);
             }
@@ -5377,6 +5419,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getJab() {
             return (jab = getCryoImage(jab, "cryobot/CryoBotJab"));
+        }
+        
+        protected final static Panmage getKick() {
+            return (kick = getCryoImage(kick, "cryobot/CryoBotKick"));
         }
         
         protected final static Panmage getUppercut() {
@@ -5495,8 +5541,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage burst1 = null;
         protected static Panmage burst2 = null;
         
-        private CryoBurst(final Panctor src) {
-            super(src, -5, 4);
+        private CryoBurst(final Panctor src, final int ox, final int oy) {
+            super(src, ox, oy);
         }
         
         @Override

@@ -648,7 +648,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void hurtForce(final int damage) {
-        if (!prf.stunProtection) {
+        hurtForce(damage, true);
+    }
+    
+    protected final void hurtForce(final int damage, final boolean effectsNeeded) {
+        final boolean effectsAllowed = effectsNeeded && !prf.stunProtection;
+        if (effectsAllowed) {
             stateHandler.onHurt(this);
             lastHurt = getClock();
             isFree(); // Calls onFree(); do after setting lastHurt to avoid loop
@@ -657,7 +662,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (!prf.infiniteHealth) {
             health -= damage;
         }
-        if (!prf.stunProtection) {
+        if (effectsAllowed) {
             if ((v > 0) && !isGrounded()) {
                 v = 0;
             }
@@ -666,7 +671,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         if (health <= 0) {
             defeat();
-        } else if (!prf.stunProtection) {
+        } else if (effectsAllowed) {
             addFollower(burst(BotsnBoltsGame.flash, 0, CENTER_Y, BotsnBoltsGame.DEPTH_POWER_UP));
             puff(-12, 25);
             puff(0, 30);
@@ -905,7 +910,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void unfreeze() {
-        hurtForce(DAMAGE_FREEZE);
+        unfreeze(DAMAGE_FREEZE);
+    }
+    
+    protected final void unfreeze(final int damage) {
+        if (damage > 0) {
+            hurtForce(damage);
+        } else {
+            lastFrozen = NULL_CLOCK;
+        }
         BotsnBoltsGame.fxCrumble.startSound();
         shatter(this, BotsnBoltsGame.getIceShatter());
     }
