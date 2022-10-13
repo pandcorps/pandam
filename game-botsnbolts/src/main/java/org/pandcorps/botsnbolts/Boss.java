@@ -54,6 +54,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static byte TAUNT_WAITING = 2;
     private final static byte TAUNT_FINISHED = 3;
     private final static int WAIT_INDEFINITE = Integer.MAX_VALUE;
+    private final static int DEFAULT_STILL_MIN = 15;
+    private final static int DEFAULT_STILL_MAX = 30;
     private final static Panple scratchPanple = new ImplPanple(0, 0, 0);
     
     private boolean initializationNeeded = true;
@@ -614,7 +616,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static int initStillTimer() {
-        return initStillTimer(15, 30);
+        return initStillTimer(DEFAULT_STILL_MIN, DEFAULT_STILL_MAX);
     }
     
     protected final static int initStillTimer(int min, int max) {
@@ -5210,6 +5212,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage kick = null;
         protected static Panmage uppercut = null;
         protected final static Panmage[] dashes = new Panmage[2];
+        private final int xRight;
+        private final int xLeft;
         private Player target = null;
         
         static {
@@ -5222,6 +5226,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected CryoBot(final Segment seg) {
             super(CRYO_OFF_X, CRYO_H, seg);
+            xRight = getX();
+            xLeft = getMirroredX(xRight);
         }
         
         @Override
@@ -5274,13 +5280,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void impact(final int ox, final int oy) {
-            if (isTauntFinished()) {
+            if (isTauntFinished() && !isDestroyed(target)) {
                 new CryoBurst(this, ox, oy);
             }
         }
         
         @Override
         protected final boolean pickState() {
+            turnTowardPlayer();
             if (target != null) {
                 if (target.isGrounded()) {
                     startDash();
@@ -5293,9 +5300,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (r == 0) {
                 startAim();
             } else if (r == 1) {
-                //startJumps(); // Flipping jump?
+                startDash();
             } else { // 2 (also response to danger)
-                //startJumpToWall();
+                //startJumps(); // Flipping jump?
             }
             return false;
         }
@@ -5331,9 +5338,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 if (target != null) {
                     target.unfreeze(0);
                     hurt(true);
-                    target = null;
                 }
             } else if (state == STATE_UPPERCUT) {
+                target = null;
                 if (isTauntFinished()) {
                     startStill();
                 } else {
@@ -5360,6 +5367,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startAim() {
+            turnTowardPlayer();
             startState(STATE_AIM, 16, getAim());
         }
         
@@ -5372,14 +5380,23 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startDash() {
-            turnTowardPlayer(target);
-            hv = Mathtil.getSign(Math.round(target.getPosition().getX() - getPosition().getX())) * 6;
+            if (target != null) {
+                turnTowardPlayer(target);
+            } else {
+                turnTowardPlayer();
+            }
+            hv = getMirrorMultiplier() * 6;
             startStateIndefinite(STATE_DASH, getDash());
         }
         
         private final void onDashing() {
             changeView(getDash());
-            addX(hv);
+            if (!addBoundedX(xLeft, xRight)) {
+                hv = 0;
+                turnTowardPlayer();
+                startStill(Mathtil.randi(DEFAULT_STILL_MIN, DEFAULT_STILL_MAX));
+                return;
+            }
             if ((waitCounter % 4) == 1) {
                 new CryoBurst(this, -5, 4);
             }
