@@ -5176,6 +5176,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static int CRYO_OFF_X = 7, CRYO_H = 25;
     protected final static Panple CRYO_O = new FinPanple2(14, 1);
+    protected final static Panple CRYO_FLIP_O = new FinPanple2(15, 15);
     protected final static Panple CRYO_TAUNT_O = new FinPanple2(16, 1);
     protected final static Panple CRYO_MIN = getMin(CRYO_OFF_X);
     protected final static Panple CRYO_MAX = getMax(CRYO_OFF_X, CRYO_H);
@@ -5196,10 +5197,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_KICK = 13;
         protected final static byte STATE_WAIT_AFTER_KICK = 14;
         protected final static byte STATE_UPPERCUT = 15;
+        protected final static byte STATE_FLIP = 16;
         protected final static int TIME_JAB = 5;
         protected final static int TIME_WAIT_AFTER_JAB = 2;
-        protected final static int TIME_KICK = 10;
-        protected final static int TIME_UPPERCUT = 10;
+        protected final static int TIME_KICK = 7;
+        protected final static int TIME_UPPERCUT = 8;
         protected final static int VEL_PROJECTILE = 8;
         protected final static float VX_SPREAD;
         protected final static float VY_SPREAD;
@@ -5211,6 +5213,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage jab = null;
         protected static Panmage kick = null;
         protected static Panmage uppercut = null;
+        protected static Panmage flip = null;
         protected final static Panmage[] dashes = new Panmage[2];
         private final int xRight;
         private final int xLeft;
@@ -5253,6 +5256,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean onWaiting() {
             if (state == STATE_DASH) {
                 onDashing();
+            } else if (state == STATE_FLIP) {
+                onFlipping();
             } else if ((state == STATE_AIM) && (waitCounter == 1)) {
                 new CryoProjectile(this, VX_SPREAD, VY_SPREAD);
                 new CryoProjectile(this, VX_SPREAD, -VY_SPREAD);
@@ -5302,7 +5307,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (r == 1) {
                 startDash();
             } else { // 2 (also response to danger)
-                //startJumps(); // Flipping jump?
+                startJumps();
             }
             return false;
         }
@@ -5416,15 +5421,50 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
         }
         
+        private final void onFlipping() {
+            final int frameDuration = 4, m = frameDuration * 4;
+            setRot(4 - ((waitCounter % m) / frameDuration));
+        }
+        
+        @Override
+        protected final boolean hasPendingJumps() {
+            return hasPendingOrContinuedJumps();
+        }
+        
+        @Override
+        protected final byte getStateJumps() {
+            return STATE_FLIP;
+        }
+        
+        @Override
+        protected final float getJumpsV() {
+            return 11;
+        }
+        
+        @Override
+        protected final int getJumpsHv() {
+            return 4;
+        }
+        
+        @Override
+        protected final void onBossLandedAny() {
+            setRot(0);
+        }
+        
+        @Override
+        protected final void onJumpLanded() {
+            setRot(0);
+        }
+        
         @Override
         protected final Panmage getStill() {
             return (still = getCryoImage(still, "cryobot/CryoBot"));
         }
         
-        /*@Override
+        @Override
         protected final Panmage getJump() {
-            return (jump = getCryoImage(jump, "cryobot/CryoBotJump"));
-        }*/
+            return (flip = getCryoImage(flip, "cryobot/CryoBotFlip", CRYO_FLIP_O));
+        }
         
         protected final static Panmage getAim() {
             return (aim = getCryoImage(aim, "cryobot/CryoBotAim"));
