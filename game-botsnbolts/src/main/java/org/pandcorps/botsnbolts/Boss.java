@@ -5613,6 +5613,242 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    protected final static int ELECTRO_OFF_X = 6, ELECTRO_H = 24;
+    protected final static Panple ELECTRO_O = new FinPanple2(14, 1);
+    protected final static Panple ELECTRO_CHARGE_O = new FinPanple2(16, 1);
+    protected final static Panple ELECTRO_MIN = getMin(ELECTRO_OFF_X);
+    protected final static Panple ELECTRO_MAX = getMax(ELECTRO_OFF_X, ELECTRO_H);
+    
+    protected final static class ElectroBot extends Boss {
+        protected final static byte STATE_CHEW = 1;
+        protected final static byte STATE_BUBBLE = 2;
+        protected final static byte STATE_WAIT = 3;
+        protected final static byte STATE_AIM = 4;
+        protected final static byte STATE_CHARGE = 5;
+        protected final static byte STATE_DISCHARGE = 6;
+        protected final static int DAMAGE_FIELD = 3;
+        protected final static Panmage[] taunts = new Panmage[4];
+        protected final static Panmage[] chews = new Panmage[2];
+        protected static Panmage still = null;
+        protected static Panmage aim = null;
+        protected static Panmage charge = null;
+        protected static Panmage discharge = null;
+        private ElectroProjectile chargeBall = null;
+        private ElectroField field = null;
+        private int yStart = 0;
+        
+        protected ElectroBot(final Segment seg) {
+            super(ELECTRO_OFF_X, ELECTRO_H, seg);
+        }
+        
+        @Override
+        protected final void taunt() {
+            yStart = getY();
+            startState(STATE_CHEW, 84, getStill());
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                    "TODO Electro's line.",
+                    "Null's line.",
+                    "Electro's line."
+                };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return new String[] { "Electro's line." };
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if ((state == STATE_AIM) && (waitCounter == 1)) {
+                new ElectroProjectile(this, 17, 15, 3);
+            } else if ((state == STATE_CHARGE) && (waitCounter == 8)) {
+                destroy(chargeBall);
+                chargeBall = new ElectroProjectile(this, -11, 22, 0);
+            } else if (state == STATE_DISCHARGE) {
+                if (waitCounter == 1) {
+                    field = new ElectroField(this);
+                }
+                if (waitCounter >= 1) {
+                    for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+                        final Player player = pc.player;
+                        final Panple pos = player.getPosition();
+                        final float x = pos.getX(), y = pos.getY();
+                        if (y < (yStart + 4)) {
+                            player.hurt(DAMAGE_FIELD);
+                        } else if (x < 28) {
+                            player.hurt(DAMAGE_FIELD);
+                        } else if (x > 355) {
+                            player.hurt(DAMAGE_FIELD);
+                        } else if (y > 161) {
+                            player.hurt(DAMAGE_FIELD);
+                        }
+                    }
+                }
+            } else if (state == STATE_CHEW) {
+                changeView(getChew((waitCounter / 12) % 3));
+            } else if (state == STATE_BUBBLE) {
+                if (waitCounter >= 24) {
+                    changeView(getStill());
+                } else {
+                    changeView(getTaunt(waitCounter / 6));
+                }
+            }
+            return false;
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            final int r = rand(3);
+            if (r == 0) {
+                //startState(STATE_AIM, 24, getAim());
+            } else if (r == 1) {
+                startState(STATE_CHARGE, 48, getCharge());
+            } else { // 2 (also response to danger)
+                //startJumps();
+            }
+            return false;
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 2;
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            destroy(field);
+            if (state == STATE_CHEW) {
+                startState(STATE_BUBBLE, 24, getStill());
+            } else if (state == STATE_BUBBLE) {
+                startState(STATE_WAIT, 12, getStill());
+            } else if (state == STATE_WAIT) {
+                finishTaunt();
+                startStill();
+            } else if (state == STATE_CHARGE) {
+                destroy(chargeBall);
+                startState(STATE_DISCHARGE, 8, getDischarge());
+            } else {
+                startStill();
+            }
+            return false;
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return (still = getElectroImage(still, "electrobot/ElectroBot"));
+        }
+        
+        /*@Override
+        protected final Panmage getJump() {
+            return (jump = getElectroImage(jump, "electrobot/ElectroBotJump"));
+        }*/
+        
+        protected final static Panmage getAim() {
+            return (aim = getElectroImage(aim, "electrobot/ElectroBotAim"));
+        }
+        
+        protected final static Panmage getCharge() {
+            return (charge = getElectroImage(charge, "electrobot/ElectroBotCharge", ELECTRO_CHARGE_O));
+        }
+        
+        protected final static Panmage getDischarge() {
+            return (discharge = getElectroImage(discharge, "electrobot/ElectroBotDischarge", ELECTRO_CHARGE_O));
+        }
+        
+        protected final static Panmage getTaunt(final int i) {
+            Panmage img = taunts[i];
+            if (img == null) {
+                img = getElectroImage(null, "electrobot/ElectroBotTaunt" + (i + 1));
+                taunts[i] = img;
+            }
+            return img;
+        }
+        
+        protected final Panmage getChew(final int i) {
+            if (i == 0) {
+                return getStill();
+            }
+            Panmage img = chews[i - 1];
+            if (img == null) {
+                img = getElectroImage(null, "electrobot/ElectroBotChew" + i);
+                chews[i - 1] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getElectroImage(final Panmage img, final String name) {
+            return getElectroImage(img, name, ELECTRO_O);
+        }
+        
+        protected final static Panmage getElectroImage(final Panmage img, final String name, final Panple o) {
+            return getImage(img, name, o, ELECTRO_MIN, ELECTRO_MAX);
+        }
+    }
+    
+    private final static class ElectroProjectile extends EnemyProjectile {
+        protected static Panmage img1 = null;
+        protected static Panmage img2 = null;
+        private int timer = -5;
+        
+        private ElectroProjectile(final ElectroBot src, final int ox, final int oy, final float vx) {
+            super(getImage1(), src, ox, oy, vx * src.getMirrorMultiplier(), 0);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            timer++;
+            if (timer >= 1) {
+                timer = 0;
+                changeView(getImage2());
+                setMirror(Mathtil.rand());
+                setFlip(Mathtil.rand());
+                setRot(Mathtil.randi(0, 3));
+            }
+        }
+        
+        protected final static Panmage getImage1() {
+            return (img1 = Boss.getImage(img1, "electrobot/Ball1", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+        
+        protected final static Panmage getImage2() {
+            return (img2 = Boss.getImage(img2, "electrobot/Ball2", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
+        }
+    }
+    
+    private final static class ElectroField extends Panctor {
+        private static Panmage img = null;
+        private final ElectroBot src;
+        
+        private ElectroField(final ElectroBot src) {
+            if (img == null) {
+                img = Boss.getImage(null, "electrobot/Electricity", null, null, null);
+            }
+            addActor(this);
+            this.src = src;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final int yBottom = src.getY(), yTop = yBottom + 152;
+            final int xLeft = 16, xRight = BotsnBoltsGame.GAME_W - 24;
+            for (int x = 16; x < xRight; x += 32) {
+                renderer.render(layer, img, x, yBottom, BotsnBoltsGame.DEPTH_PROJECTILE, 0, Mathtil.rand() ? 4 : 20, 32, 8, 0, Mathtil.rand(), false);
+                renderer.render(layer, img, x, yTop, BotsnBoltsGame.DEPTH_PROJECTILE, 0, Mathtil.rand() ? 4 : 20, 32, 8, 0, Mathtil.rand(), true);
+            }
+            for (int j = 0; j < 5; j++) {
+                final int y = yBottom + (j * 32);
+                renderer.render(layer, img, xLeft, y, BotsnBoltsGame.DEPTH_PROJECTILE, 0, Mathtil.rand() ? 4 : 20, 32, 8, 3, false, Mathtil.rand());
+                renderer.render(layer, img, xRight, y, BotsnBoltsGame.DEPTH_PROJECTILE, 0, Mathtil.rand() ? 4 : 20, 32, 8, 1, false, Mathtil.rand());
+            }
+        }
+    }
+    
     protected final static PlayerContext newPlayerContext(final PlayerImages pi) {
         final Profile prf = new Profile(true);
         prf.autoCharge = true;
