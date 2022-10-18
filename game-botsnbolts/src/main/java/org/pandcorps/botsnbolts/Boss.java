@@ -5626,10 +5626,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_AIM = 4;
         protected final static byte STATE_CHARGE = 5;
         protected final static byte STATE_DISCHARGE = 6;
+        protected final static byte STATE_JUMP = 7;
         protected final static int DAMAGE_FIELD = 3;
         protected final static Panmage[] taunts = new Panmage[4];
         protected final static Panmage[] chews = new Panmage[2];
         protected static Panmage still = null;
+        protected static Panmage jump = null;
+        protected static Panmage fall = null;
         protected static Panmage aim = null;
         protected static Panmage charge = null;
         protected static Panmage discharge = null;
@@ -5688,6 +5691,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                         }
                     }
                 }
+            } else if ((state == STATE_JUMP) && (v < 0)) {
+                changeView(getFall());
             } else if (state == STATE_CHEW) {
                 changeView(getChew((waitCounter / 12) % 3));
             } else if (state == STATE_BUBBLE) {
@@ -5704,18 +5709,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean pickState() {
             final int r = rand(3);
             if (r == 0) {
-                //startState(STATE_AIM, 24, getAim());
+                startState(STATE_AIM, 24, getAim());
             } else if (r == 1) {
                 startState(STATE_CHARGE, 48, getCharge());
-            } else { // 2 (also response to danger)
-                //startJumps();
+            } else {
+                startJumps();
             }
             return false;
-        }
-        
-        @Override
-        public final int pickResponseToDanger() {
-            return 2;
         }
         
         @Override
@@ -5738,14 +5738,38 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final boolean hasPendingJumps() {
+            return hasPendingOrContinuedJumps();
+        }
+        
+        @Override
+        protected final byte getStateJumps() {
+            return STATE_JUMP;
+        }
+        
+        @Override
+        protected final float getJumpsV() {
+            return 10;
+        }
+        
+        @Override
+        protected final int getJumpsHv() {
+            return 5;
+        }
+        
+        @Override
         protected final Panmage getStill() {
             return (still = getElectroImage(still, "electrobot/ElectroBot"));
         }
         
-        /*@Override
+        @Override
         protected final Panmage getJump() {
             return (jump = getElectroImage(jump, "electrobot/ElectroBotJump"));
-        }*/
+        }
+        
+        protected final static Panmage getFall() {
+            return (fall = getElectroImage(fall, "electrobot/ElectroBotFall"));
+        }
         
         protected final static Panmage getAim() {
             return (aim = getElectroImage(aim, "electrobot/ElectroBotAim"));
@@ -5809,6 +5833,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 setFlip(Mathtil.rand());
                 setRot(Mathtil.randi(0, 3));
             }
+        }
+        
+        @Override
+        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            prj.burst();
         }
         
         protected final static Panmage getImage1() {
