@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2022, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -32,7 +32,7 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 
-public class Projectile extends Pandy implements Collidable, AllOobListener, SpecProjectile {
+public class Projectile extends Pandy implements Collidable, AllOobListener, SpecProjectile, StepEndListener {
     protected final static int POWER_MEDIUM = 3;
     protected final static int POWER_MAXIMUM = 5;
     protected final static int POWER_IMPOSSIBLE = Integer.MAX_VALUE;
@@ -44,6 +44,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     protected final PlayerImages pi;
     protected final ShootMode shootMode;
     protected int power;
+    private boolean stopped = false;
     
     protected Projectile(final Player src, final float vx, final float vy, final int power) {
         this(src, src.pi, src.prf.shootMode, src, vx, vy, power);
@@ -140,10 +141,17 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     
     @Override
     public final void onStep(final StepEvent event) {
-        super.onStep(event);
+        if (!stopped) {
+            super.onStep(event);
+        }
         if (!isInView()) { // onAllOob above checks the whole room, not just the current view
             destroy();
         }
+    }
+    
+    @Override
+    public final void onStepEnd(final StepEndEvent event) {
+        stopped = src.isStopped();
     }
     
     @Override
@@ -167,6 +175,9 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
 
         @Override
         public final void onStep(final StepEvent event) {
+            if (src.isStopped()) {
+                return;
+            }
             timer--;
             if (timer <= 0) {
                 newExplosion();

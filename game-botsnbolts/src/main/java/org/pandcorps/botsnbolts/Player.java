@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2022, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -152,6 +152,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean hidden = false;
     protected boolean active = true;
     private boolean scripted = false;
+    private boolean stopped = false;
     protected Ai ai = null;
     private Runnable scriptFinisher = null;
     
@@ -336,6 +337,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final boolean isFree() {
+        return !stopped && isFreeOrStopped();
+    }
+    
+    protected final boolean isFreeOrStopped() {
         final boolean free = active && !scripted && !(isHurt() || isFrozen() || Boss.dropping || RoomChanger.isChanging() || RoomLoader.isBossDoorClosing() || Pangine.getEngine().isPaused());
         if (free) {
             onFree();
@@ -453,7 +458,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void right() {
-        if (isFree()) {
+        if (isFreeOrStopped()) {
             stateHandler.onRight(this);
         }
     }
@@ -488,7 +493,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void left() {
-        if (isFree()) {
+        if (isFreeOrStopped()) {
             stateHandler.onLeft(this);
         }
     }
@@ -1014,8 +1019,23 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
+    protected final void stop() {
+        stopped = true;
+    }
+    
+    protected final void resume() {
+        stopped = false;
+    }
+    
+    protected final boolean isStopped() {
+        return stopped;
+    }
+    
     @Override
     protected final boolean onStepCustom() {
+        if (stopped) {
+            return true;
+        }
         updateVisibility();
         if (RoomChanger.isChanging()) {
             final RoomChanger changer = RoomChanger.getActiveChanger();
