@@ -33,6 +33,7 @@ import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.botsnbolts.RoomLoader.*;
 import org.pandcorps.botsnbolts.Story.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.col.*;
 import org.pandcorps.core.seg.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -615,6 +616,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    protected final static boolean isPlayerInvincible() {
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            final Player player = PlayerContext.getPlayer(pc);
+            if ((player != null) && player.isInvincible()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     protected final static int initStillTimer() {
         return initStillTimer(DEFAULT_STILL_MIN, DEFAULT_STILL_MAX);
     }
@@ -761,6 +772,26 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static float getPlayerX(final Player player) {
         return (player == null) ? 192 : player.getPosition().getX();
+    }
+    
+    protected final float getNearestPlayerY() {
+        return getPlayerY(getNearestPlayer());
+    }
+    
+    protected final static float getPlayerY(final Player player) {
+        return (player == null) ? 112 : player.getPosition().getY();
+    }
+    
+    protected final static void stopPlayers() {
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            pc.player.stop();
+        }
+    }
+    
+    protected final static void resumePlayers() {
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            pc.player.resume();
+        }
     }
     
     protected final static void clearPlayerExtras() {
@@ -5699,7 +5730,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 if (waitCounter >= 24) {
                     changeView(getStill());
                 } else {
-                    changeView(getTaunt(waitCounter / 6));
+                    final int tauntIndex = waitCounter / 6;
+                    final boolean changed = changeView(getTaunt(tauntIndex));
+                    if (changed && (tauntIndex == 3)) {
+                        //TODO sound
+                    }
                 }
             }
             return false;
@@ -5875,6 +5910,308 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 renderer.render(layer, img, xLeft, y, BotsnBoltsGame.DEPTH_PROJECTILE, 0, Mathtil.rand() ? 4 : 20, 32, 8, 3, false, Mathtil.rand());
                 renderer.render(layer, img, xRight, y, BotsnBoltsGame.DEPTH_PROJECTILE, 0, Mathtil.rand() ? 4 : 20, 32, 8, 1, false, Mathtil.rand());
             }
+        }
+    }
+    
+    protected final static int CHRONO_OFF_X = 6, CHRONO_H = 26;
+    protected final static Panple CHRONO_O = new FinPanple2(13, 1);
+    protected final static Panple CHRONO_JUMP_O = new FinPanple2(15, 2);
+    protected final static Panple CHRONO_FALL_O = new FinPanple2(12, 2);
+    protected final static Panple CHRONO_MIN = getMin(CHRONO_OFF_X);
+    protected final static Panple CHRONO_MAX = getMax(CHRONO_OFF_X, CHRONO_H);
+    
+    protected final static class ChronoBot extends Boss {
+        protected final static byte STATE_SNAP1 = 1;
+        protected final static byte STATE_SNAP2 = 2;
+        protected final static byte STATE_AIM = 3;
+        protected final static byte STATE_WAIT_FOR_PROJECTILE = 4;
+        protected final static byte STATE_WAIT_FOR_RESUME = 5;
+        protected final static byte STATE_JUMP_TO_TARGET_HEIGHT = 6;
+        protected final static byte STATE_JUMP_AIM = 7;
+        protected final static byte STATE_FALL = 8;
+        protected static Panmage still = null;
+        protected static Panmage jump = null;
+        protected static Panmage jumpAim = null;
+        protected static Panmage fall = null;
+        protected static Panmage aim = null;
+        protected static Panmage snap1 = null;
+        protected static Panmage snap2 = null;
+        private final static Set<ChronoProjectile> projectilesOnScreen = new IdentityHashSet<ChronoProjectile>();
+        private int yStart;
+        private int yProjectile;
+        private int yMine;
+        private Player target = null;
+        private float targetY = -1;
+        private boolean resumeNeeded = false;
+        
+        protected ChronoBot(final Segment seg) {
+            super(CHRONO_OFF_X, CHRONO_H, seg);
+            projectilesOnScreen.clear();
+        }
+        
+        @Override
+        protected final void taunt() {
+            yStart = getY();
+            yProjectile = yStart + 16; // Full jump reaches height of 52 pixels (above yStart)
+            yMine = yStart + 43;
+            finishTaunt();
+            startStill();
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                    "You're late!  Punctuality is very important to me.  I don't like falling behind schedule.",
+                    "You'll like what happens next even less.",
+                    "We'll see about that.  It's time to battle!"
+                };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return new String[] { "It's time to battle!" };
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_WAIT_FOR_PROJECTILE) {
+                if (isSnapAllowed()) {
+                    startSnap();
+                }
+            } else if (state == STATE_WAIT_FOR_RESUME) {
+                final Player player = getNearestPlayer();
+                if ((player == null) || !player.isStopped()) {
+                    startStill(); // Could maybe just call pickState
+                }
+            } else if (state == STATE_JUMP_AIM) {
+                if (waitCounter == 1) {
+                    new ChronoProjectile(this, CHRONO_PROJECTILE_OX, CHRONO_PROJECTILE_OY + 2, CHRONO_PROJECTILE_V * getMirrorMultiplier(), 0, resumeNeeded);
+                }
+                return true;
+            } else if ((state == STATE_AIM) && (waitCounter == 1)) {
+                if (targetY <= yProjectile) {
+                    new ChronoProjectile(this, CHRONO_PROJECTILE_OX, CHRONO_PROJECTILE_OY, CHRONO_PROJECTILE_V * getMirrorMultiplier(), 0, resumeNeeded);
+                } else {
+                    new ChronoMine(this, getPlayerX(target));
+                }
+                resumeNeeded = false;
+            } else if ((state == STATE_JUMP_TO_TARGET_HEIGHT) && (getPosition().getY() >= targetY)) {
+                getPosition().setY(targetY);
+                startState(STATE_JUMP_AIM, 16, getJumpAim());
+            }
+            return false;
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            final int r = rand(3);
+            if (r == 0) {
+                //startState(STATE_AIM, 24, getAim());
+            } else if (r == 1) {
+                //startJumps();
+            } else if (!isSnapAllowed()) {
+                startStateIndefinite(STATE_WAIT_FOR_PROJECTILE, getStill());
+            } else {
+                startSnap();
+            }
+            return false;
+        }
+        
+        private final boolean isSnapAllowed() {
+            return projectilesOnScreen.isEmpty() && !isPlayerInvincible();
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            if (state == STATE_SNAP1) {
+                startSnap2();
+            } else if (state == STATE_SNAP2) {
+                target = getNearestPlayer();
+                targetY = getPlayerY(target);
+                if ((targetY <= yProjectile) || (targetY >= yMine)) {
+                    startAim();
+                } else {
+                    startJumpToTargetHeight();
+                }
+            } else if (state == STATE_AIM) {
+                startStateIndefinite(STATE_WAIT_FOR_RESUME, getStill());
+            } else if (state == STATE_JUMP_AIM) {
+                startJump(STATE_FALL, getFall(), 0, 0);
+            } else {
+                startStill();
+            }
+            return false;
+        }
+        
+        private final void startSnap() {
+            startState(STATE_SNAP1, 6, getSnap1());
+        }
+        
+        private final void startSnap2() {
+            startState(STATE_SNAP2, 6, getSnap2());
+            //TODO sound
+            stopPlayers();
+            resumeNeeded = true;
+        }
+        
+        private final void startAim() {
+            startState(STATE_AIM, 16, getAim());
+        }
+        
+        private final void startJumpToTargetHeight() {
+            startJump(STATE_JUMP_TO_TARGET_HEIGHT, getJump(), Player.VEL_JUMP, 0);
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return (still = getChronoImage(still, "chronobot/ChronoBot"));
+        }
+        
+        @Override
+        protected final Panmage getJump() {
+            return (jump = getChronoImage(jump, "chronobot/ChronoBotJump", CHRONO_JUMP_O));
+        }
+        
+        protected final static Panmage getJumpAim() {
+            return (jumpAim = getChronoImage(jumpAim, "chronobot/ChronoBotJumpAim", CHRONO_FALL_O));
+        }
+        
+        protected final static Panmage getFall() {
+            return (fall = getChronoImage(fall, "chronobot/ChronoBotFall", CHRONO_FALL_O));
+        }
+        
+        protected final static Panmage getAim() {
+            return (aim = getChronoImage(aim, "chronobot/ChronoBotAim"));
+        }
+        
+        protected final static Panmage getSnap1() {
+            return (snap1 = getChronoImage(snap1, "chronobot/ChronoBotSnap1"));
+        }
+        
+        protected final static Panmage getSnap2() {
+            return (snap2 = getChronoImage(snap2, "chronobot/ChronoBotSnap2"));
+        }
+        
+        protected final static Panmage getChronoImage(final Panmage img, final String name) {
+            return getChronoImage(img, name, CHRONO_O);
+        }
+        
+        protected final static Panmage getChronoImage(final Panmage img, final String name, final Panple o) {
+            return getImage(img, name, o, CHRONO_MIN, CHRONO_MAX);
+        }
+    }
+    
+    private final static int CHRONO_PROJECTILE_OX = 17;
+    private final static int CHRONO_PROJECTILE_OY = 16;
+    private final static int CHRONO_PROJECTILE_V = 4;
+    
+    private final static class ChronoProjectile extends EnemyProjectile {
+        protected static Panmage img1 = null;
+        protected static Panmage img2 = null;
+        private final boolean resumeNeeded;
+        private int timer = 0;
+        
+        private ChronoProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy, final boolean resumeNeeded) {
+            super(getImage1(), src, ox, oy, vx, vy);
+            this.resumeNeeded = resumeNeeded;
+            ChronoBot.projectilesOnScreen.add(this);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            final Player target = getNearestPlayer(this);
+            if ((target != null) && target.isStopped() && (Math.abs(target.getPosition().getX() - getPosition().getX()) < 64)) {
+                resumePlayersIfNeeded();
+            }
+            timer++;
+            if (timer >= 8) {
+                timer = 0;
+                changeView(getImage2());
+            } else if (timer >= 4) {
+                changeView(getImage1());
+            }
+        }
+        
+        @Override
+        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            prj.burst();
+        }
+        
+        @Override
+        protected final void onDestroy() {
+            resumePlayersIfNeeded();
+            ChronoBot.projectilesOnScreen.remove(this);
+        }
+        
+        private final void resumePlayersIfNeeded() {
+            if (resumeNeeded) {
+                resumePlayers();
+            }
+        }
+        
+        protected final static Panmage getImage1() {
+            return (img1 = Boss.getImage(img1, "chronobot/Projectile1", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+        
+        protected final static Panmage getImage2() {
+            return (img2 = Boss.getImage(img2, "chronobot/Projectile2", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+    }
+    
+    private final static Panple CHRONO_MINE_O = new FinPanple2(16, 1);
+    
+    private final static class ChronoMine extends Panctor implements StepListener {
+        private final static float VX_SPREAD = Player.VX_SPREAD2 * CHRONO_PROJECTILE_V / Player.VEL_PROJECTILE;
+        private final static float VY_SPREAD = Player.VY_SPREAD2 * CHRONO_PROJECTILE_V / Player.VEL_PROJECTILE;
+        private final static float distanceMultiplier = 0.0875f;
+        protected static Panmage img1 = null;
+        protected static Panmage img2 = null;
+        private final ChronoBot src;
+        private final float dstX;
+        
+        private ChronoMine(final ChronoBot src, final float dstX) {
+            EnemyProjectile.addBySource(this, getImage2(), src, CHRONO_PROJECTILE_OX, CHRONO_PROJECTILE_OY);
+            this.src = src;
+            this.dstX = dstX;
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            final Panple pos = getPosition();
+            final float oldX = pos.getX();
+            final float distance = dstX - oldX;
+            float offX = distanceMultiplier * distance;
+            if (isMirror()) {
+                if (offX > -1) {
+                    offX = -1;
+                }
+            } else if (offX < 1) {
+                offX = 1;
+            }
+            if (Math.abs(offX) <= 1) {
+                setView((getView() == getImage2()) ? getImage1() : getImage2());
+            }
+            float newX = oldX + offX;
+            if (Math.abs(dstX - newX) <= 1.0f) {
+                newX = dstX;
+                resumePlayers();
+                destroy();
+                new ChronoProjectile(this, 0, 0, 0, CHRONO_PROJECTILE_V, false);
+                new ChronoProjectile(this, 0, 0, VX_SPREAD, VY_SPREAD, false);
+                new ChronoProjectile(this, 0, 0, -VX_SPREAD, VY_SPREAD, false);
+            }
+            pos.set(
+                    newX,
+                    Math.max(pos.getY() + g, src.yStart));
+        }
+        
+        protected final static Panmage getImage1() {
+            return (img1 = Boss.getImage(img1, "chronobot/Mine1", CHRONO_MINE_O, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+        
+        protected final static Panmage getImage2() {
+            return (img2 = Boss.getImage(img2, "chronobot/Mine2", CHRONO_MINE_O, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
         }
     }
     

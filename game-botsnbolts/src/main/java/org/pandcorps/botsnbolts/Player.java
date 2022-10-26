@@ -69,10 +69,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int VEL_FALL_PROTECTION = 15;
     private final static int VEL_WALK = 3;
     protected final static int VEL_PROJECTILE = 8;
-    private final static float VX_SPREAD1;
-    private final static float VY_SPREAD1;
-    private final static float VX_SPREAD2;
-    private final static float VY_SPREAD2;
+    protected final static float VX_SPREAD1;
+    protected final static float VY_SPREAD1;
+    protected final static float VX_SPREAD2;
+    protected final static float VY_SPREAD2;
     private final static double GRAPPLING_BOOST = 0.01;
     private final static double GRAPPLING_BOOST_MAX = 0.75;
     private final static double GRAPPLING_ANGLE_MIRROR_THRESHOLD = 0.01;
