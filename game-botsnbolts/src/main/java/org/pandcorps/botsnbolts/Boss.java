@@ -5954,8 +5954,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             yStart = getY();
             yProjectile = yStart + 16; // Full jump reaches height of 52 pixels (above yStart)
             yMine = yStart + 43;
-            finishTaunt();
-            startStill();
+            startSnap();
         }
         
         @Override
@@ -6026,6 +6025,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (state == STATE_SNAP1) {
                 startSnap2();
             } else if (state == STATE_SNAP2) {
+                if (finishTaunt()) {
+                    startStill();
+                    return false;
+                }
                 target = getNearestPlayer();
                 targetY = getPlayerY(target);
                 if ((targetY <= yProjectile) || (targetY >= yMine)) {
@@ -6043,13 +6046,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return false;
         }
         
+        private final int getSnapFrameDuration() {
+            return isTauntFinished() ? 6 : 12;
+        }
+        
         private final void startSnap() {
-            startState(STATE_SNAP1, 6, getSnap1());
+            startState(STATE_SNAP1, getSnapFrameDuration(), getSnap1());
         }
         
         private final void startSnap2() {
-            startState(STATE_SNAP2, 6, getSnap2());
+            startState(STATE_SNAP2, getSnapFrameDuration(), getSnap2());
             //TODO sound
+            if (!isTauntFinished()) {
+                return;
+            }
             stopPlayers();
             resumeNeeded = true;
         }
