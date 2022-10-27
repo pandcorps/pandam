@@ -782,6 +782,43 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return (player == null) ? 112 : player.getPosition().getY();
     }
     
+    protected final static boolean isPlayerBetween(final int xMin, final int yMin, final int xMax, final int yMax) {
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            final Player player = PlayerContext.getPlayer(pc);
+            if (player != null) {
+                final Panple pos = player.getPosition();
+                final float x = pos.getX(), y = pos.getY();
+                if ((x < xMin) || (x >= xMax) || (y < yMin) || (y >= yMax)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    protected final static boolean isPlayerXBetween(final int xMin, final int xMax) {
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            final Player player = PlayerContext.getPlayer(pc);
+            if (player != null) {
+                final float x = player.getPosition().getX();
+                if ((x < xMin) || (x >= xMax)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    protected final static boolean isPlayerStopped() {
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            final Player player = PlayerContext.getPlayer(pc);
+            if ((player != null) && player.isStopped()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     protected final static void stopPlayers() {
         for (final PlayerContext pc : BotsnBoltsGame.pcs) {
             pc.player.stop();
@@ -5946,7 +5983,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int yMine;
         private Player target = null;
         private float targetY = -1;
-        private boolean resumeNeeded = false;
         
         protected ChronoBot(final Segment seg) {
             super(CHRONO_OFF_X, CHRONO_H, seg);
@@ -5995,16 +6031,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 }
             } else if (state == STATE_JUMP_AIM) {
                 if (waitCounter == 1) {
-                    new ChronoProjectile(this, CHRONO_PROJECTILE_OX, CHRONO_PROJECTILE_OY + 2, CHRONO_PROJECTILE_V * getMirrorMultiplier(), 0, resumeNeeded);
+                    new ChronoProjectile(this, CHRONO_PROJECTILE_OX, CHRONO_PROJECTILE_OY + 2, CHRONO_PROJECTILE_V * getMirrorMultiplier(), 0);
                 }
                 return true;
             } else if ((state == STATE_AIM) && (waitCounter == 1)) {
                 if (targetY <= yProjectile) {
-                    new ChronoProjectile(this, CHRONO_PROJECTILE_OX, CHRONO_PROJECTILE_OY, CHRONO_PROJECTILE_V * getMirrorMultiplier(), 0, resumeNeeded);
+                    new ChronoProjectile(this, CHRONO_PROJECTILE_OX, CHRONO_PROJECTILE_OY, CHRONO_PROJECTILE_V * getMirrorMultiplier(), 0);
                 } else {
                     new ChronoMine(this, getPlayerX(target));
                 }
-                resumeNeeded = false;
             } else if ((state == STATE_JUMP_TO_TARGET_HEIGHT) && (getPosition().getY() >= targetY)) {
                 getPosition().setY(targetY);
                 startState(STATE_JUMP_AIM, 16, getJumpAim());
@@ -6016,17 +6051,38 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean pickState() {
-            final int r = rand(3);
+            if (isPlayerStopped()) {
+                return false;
+            } else if (isPlayerBehindBoss()) {
+                startJump();
+                return false;
+            }
+            final int r = rand(4);
             if (r == 0) {
                 //startState(STATE_AIM, 24, getAim());
             } else if (r == 1) {
                 startJump();
-            } else if (!isSnapAllowed()) {
+            } else if (!isSnapAllowed()) { // 2 or 3, snap twice as likely as other options
                 startStateIndefinite(STATE_WAIT_FOR_PROJECTILE, getStill());
             } else {
                 startSnap();
             }
             return false;
+        }
+        
+        private final boolean isPlayerBehindBoss() {
+            final int dir = getDirection();
+            if ((dir < 0) && isPlayerXBetween(getX(), BotsnBoltsGame.GAME_W)) {
+                return true;
+            } else if ((dir > 0) && isPlayerXBetween(0, getX() + 1)) {
+                return true;
+            }
+            return false;
+        }
+        
+        private final boolean isPlayerNearBoss() {
+            final int x = getX();
+            return isPlayerXBetween(x - 64, x + 65);
         }
         
         private final boolean isSnapAllowed() {
@@ -6041,10 +6097,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 if (finishTaunt()) {
                     startStill();
                     return false;
+                } else if (isPlayerNearBoss()) {
+                    startJump1();
+                    return false;
                 }
                 target = getNearestPlayer();
                 targetY = getPlayerY(target);
-                if ((targetY <= yProjectile) || (targetY >= yMine)) {
+                if (targetY <= yProjectile) {
+                    if (isPlayerBetween(128, 0, 256, yProjectile + 1) && Mathtil.rand()) {
+                        startJump1();
+                    } else {
+                        startAim();
+                    }
+                } else if (targetY >= yMine) {
                     startAim();
                 } else {
                     startJumpToTargetHeight();
@@ -6057,6 +6122,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startStill();
             }
             return false;
+        }
+        
+        @Override
+        protected final void onBossLandedAny() {
+            if (state == STATE_JUMP) {
+                resumePlayers();
+            }
         }
         
         @Override
@@ -6088,7 +6160,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return;
             }
             stopPlayers();
-            resumeNeeded = true;
         }
         
         private final void startAim() {
@@ -6100,16 +6171,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startJump() {
-            final Panmage img = getJump();
-            final int dir = getDirection();
             if (Mathtil.rand()) {
-                startJump(STATE_JUMP, img, SPEED_JUMP_Y, dir * 9);
+                startJump1();
             } else {
-                final int hv = dir * 3;
+                final Panmage img = getJump();
+                final int hv = getDirection() * 3;
                 startJump(STATE_JUMP, img, SPEED_JUMP_Y, hv);
                 addPendingJump(STATE_JUMP, img, SPEED_JUMP_Y, hv);
                 addPendingJump(STATE_JUMP, img, SPEED_JUMP_Y, hv);
             }
+        }
+        
+        private final void startJump1() {
+            startJump(STATE_JUMP, getJump(), SPEED_JUMP_Y, getDirection() * 9);
         }
         
         @Override
@@ -6158,12 +6232,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class ChronoProjectile extends EnemyProjectile {
         protected static Panmage img1 = null;
         protected static Panmage img2 = null;
-        private final boolean resumeNeeded;
         private int timer = 0;
         
-        private ChronoProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy, final boolean resumeNeeded) {
+        private ChronoProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy) {
             super(getImage1(), src, ox, oy, vx, vy);
-            this.resumeNeeded = resumeNeeded;
             ChronoBot.projectilesOnScreen.add(this);
         }
         
@@ -6172,7 +6244,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             super.onStep(event);
             final Player target = getNearestPlayer(this);
             if ((target != null) && target.isStopped() && (Math.abs(target.getPosition().getX() - getPosition().getX()) < 64)) {
-                resumePlayersIfNeeded();
+                resumePlayers();
             }
             timer++;
             if (timer >= 8) {
@@ -6184,20 +6256,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final boolean hurt(final Player player) {
+            resumePlayers();
+            return super.hurt(player);
+        }
+        
+        @Override
         protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
             prj.burst();
         }
         
         @Override
         protected final void onDestroy() {
-            resumePlayersIfNeeded();
+            resumePlayers();
             ChronoBot.projectilesOnScreen.remove(this);
-        }
-        
-        private final void resumePlayersIfNeeded() {
-            if (resumeNeeded) {
-                resumePlayers();
-            }
         }
         
         protected final static Panmage getImage1() {
@@ -6247,9 +6319,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 newX = dstX;
                 resumePlayers();
                 destroy();
-                new ChronoProjectile(this, 0, 0, 0, CHRONO_PROJECTILE_V, false);
-                new ChronoProjectile(this, 0, 0, VX_SPREAD, VY_SPREAD, false);
-                new ChronoProjectile(this, 0, 0, -VX_SPREAD, VY_SPREAD, false);
+                new ChronoProjectile(this, 0, 0, 0, CHRONO_PROJECTILE_V);
+                new ChronoProjectile(this, 0, 0, VX_SPREAD, VY_SPREAD);
+                new ChronoProjectile(this, 0, 0, -VX_SPREAD, VY_SPREAD);
             }
             pos.set(
                     newX,
