@@ -5983,6 +5983,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int yMine;
         private Player target = null;
         private float targetY = -1;
+        private boolean projectileForced = false;
         
         protected ChronoBot(final Segment seg) {
             super(CHRONO_OFF_X, CHRONO_H, seg);
@@ -6035,8 +6036,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 }
                 return true;
             } else if ((state == STATE_AIM) && (waitCounter == 1)) {
-                if (targetY <= yProjectile) {
+                if (projectileForced || (targetY <= yProjectile)) {
                     new ChronoProjectile(this, CHRONO_PROJECTILE_OX, CHRONO_PROJECTILE_OY, CHRONO_PROJECTILE_V * getMirrorMultiplier(), 0);
+                    projectileForced = false;
                 } else {
                     new ChronoMine(this, getPlayerX(target));
                 }
@@ -6059,7 +6061,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             final int r = rand(4);
             if (r == 0) {
-                //startState(STATE_AIM, 24, getAim());
+                projectileForced = true;
+                startAim();
             } else if (r == 1) {
                 startJump();
             } else if (!isSnapAllowed()) { // 2 or 3, snap twice as likely as other options
@@ -6150,6 +6153,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startSnap() {
+            turnTowardPlayer();
             startState(STATE_SNAP1, getSnapFrameDuration(), getSnap1());
         }
         
@@ -6163,6 +6167,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startAim() {
+            turnTowardPlayer();
             startState(STATE_AIM, 16, getAim());
         }
         
