@@ -5929,6 +5929,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_JUMP_TO_TARGET_HEIGHT = 6;
         protected final static byte STATE_JUMP_AIM = 7;
         protected final static byte STATE_FALL = 8;
+        protected final static byte STATE_JUMP = 9;
+        private final static int SPEED_JUMP_Y = 10;
         protected static Panmage still = null;
         protected static Panmage jump = null;
         protected static Panmage jumpAim = null;
@@ -5937,6 +5939,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage snap1 = null;
         protected static Panmage snap2 = null;
         private final static Set<ChronoProjectile> projectilesOnScreen = new IdentityHashSet<ChronoProjectile>();
+        private final int xRight;
+        private final int xLeft;
         private int yStart;
         private int yProjectile;
         private int yMine;
@@ -5947,6 +5951,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected ChronoBot(final Segment seg) {
             super(CHRONO_OFF_X, CHRONO_H, seg);
             projectilesOnScreen.clear();
+            xRight = getX();
+            xLeft = getMirroredX(xRight);
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
         }
         
         @Override
@@ -5997,6 +6008,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if ((state == STATE_JUMP_TO_TARGET_HEIGHT) && (getPosition().getY() >= targetY)) {
                 getPosition().setY(targetY);
                 startState(STATE_JUMP_AIM, 16, getJumpAim());
+            } else if ((state == STATE_JUMP) && (v < 0)) {
+                changeView(getFall());
             }
             return false;
         }
@@ -6007,7 +6020,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (r == 0) {
                 //startState(STATE_AIM, 24, getAim());
             } else if (r == 1) {
-                //startJumps();
+                startJump();
             } else if (!isSnapAllowed()) {
                 startStateIndefinite(STATE_WAIT_FOR_PROJECTILE, getStill());
             } else {
@@ -6046,6 +6059,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return false;
         }
         
+        @Override
+        protected final void onJumpLanded() {
+            adjustX();
+        }
+        
+        private final void adjustX() {
+            final int x = getX();
+            if (Math.abs(x - xLeft) < 3) {
+                getPosition().setX(xLeft);
+            } else if (Math.abs(x - xRight) < 3) {
+                getPosition().setX(xRight);
+            }
+        }
+        
         private final int getSnapFrameDuration() {
             return isTauntFinished() ? 6 : 12;
         }
@@ -6070,6 +6097,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final void startJumpToTargetHeight() {
             startJump(STATE_JUMP_TO_TARGET_HEIGHT, getJump(), Player.VEL_JUMP, 0);
+        }
+        
+        private final void startJump() {
+            final Panmage img = getJump();
+            final int dir = getDirection();
+            if (Mathtil.rand()) {
+                startJump(STATE_JUMP, img, SPEED_JUMP_Y, dir * 9);
+            } else {
+                final int hv = dir * 3;
+                startJump(STATE_JUMP, img, SPEED_JUMP_Y, hv);
+                addPendingJump(STATE_JUMP, img, SPEED_JUMP_Y, hv);
+                addPendingJump(STATE_JUMP, img, SPEED_JUMP_Y, hv);
+            }
         }
         
         @Override
