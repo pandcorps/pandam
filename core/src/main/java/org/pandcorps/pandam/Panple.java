@@ -92,6 +92,10 @@ public abstract class Panple {
 		set(src.getX(), src.getY(), src.getZ());
 	}
 	
+	public void set2(final Panple src) {
+        set(src.getX(), src.getY());
+    }
+	
 	public void addX(final float x) {
 		setX(getX() + x);
 	}
