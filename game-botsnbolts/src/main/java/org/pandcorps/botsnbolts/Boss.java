@@ -6360,6 +6360,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_JUMP_AIM = 5;
         protected final static byte STATE_FALL = 6;
         protected final static byte STATE_AIM = 7;
+        protected final static byte STATE_JUMPS = 8;
         protected final static int DURATION_AIM = 16;
         protected final static int SPEED_ZOOM = 12;
         protected final static float SPEED_PROJECTILE = 9.0f;
@@ -6443,6 +6444,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return true;
             } else if (state == STATE_AIM) {
                 newProjectileIfNeeded(18, 12, SPEED_PROJECTILE, 0);
+            } else if (state == STATE_JUMPS) {
+                final int y = getY();
+                if (y > 137) {
+                    changeView(getShrink(3));
+                } else if (y > 129) {
+                    changeView(getShrink(2));
+                } else if (y > 119) {
+                    changeView(getShrink(1));
+                } else if (y > 105) {
+                    changeView(getShrink(0));
+                } else {
+                    changeView(getJump());
+                }
             }
             return false;
         }
@@ -6461,7 +6475,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (r == 1) {
                 startAim();
             } else {
-                //startJumps();
+                startJumps();
             }
             return false;
         }
@@ -6549,6 +6563,26 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final void startAim() {
             turnTowardPlayer();
             startState(STATE_AIM, DURATION_AIM, getAim());
+        }
+        
+        @Override
+        protected final boolean hasPendingJumps() {
+            return hasPendingOrContinuedJumps();
+        }
+        
+        @Override
+        protected final byte getStateJumps() {
+            return STATE_JUMPS;
+        }
+        
+        @Override
+        protected final float getJumpsV() {
+            return 11.8f;
+        }
+        
+        @Override
+        protected final int getJumpsHv() {
+            return 4;
         }
         
         private final void newProjectile(final int ox, final int oy, final float vx, final float vy) {
