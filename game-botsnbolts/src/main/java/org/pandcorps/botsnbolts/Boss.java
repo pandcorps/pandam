@@ -49,7 +49,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static String RES_CHR = BotsnBoltsGame.RES + "chr/";
     protected final static byte STATE_STILL = 0;
     private final static int DAMAGE = 4;
-    private final static float DROP_X = 192;
+    private final static int LEFT_X = 16;
+    private final static int RIGHT_X = 367;
+    private final static int MID_X = 192;
+    private final static float DROP_X = MID_X;
     private final static byte TAUNT_NEEDED = 0;
     private final static byte TAUNT_STARTED = 1;
     private final static byte TAUNT_WAITING = 2;
@@ -58,6 +61,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static int DEFAULT_STILL_MIN = 15;
     private final static int DEFAULT_STILL_MAX = 30;
     private final static Panple scratchPanple = new ImplPanple(0, 0, 0);
+    private final static List<Integer> scratchInts = new ArrayList<Integer>(3);
     
     private boolean initializationNeeded = true;
     protected int waitTimer = 0; // Will be assigned by startStillBeforeTaunt()
@@ -771,7 +775,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static float getPlayerX(final Player player) {
-        return (player == null) ? 192 : player.getPosition().getX();
+        return (player == null) ? MID_X : player.getPosition().getX();
     }
     
     protected final float getNearestPlayerY() {
@@ -4997,7 +5001,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final void startJumpToWall() {
             final int x = getX();
-            final int dst = (x >= 192) ? 368 - x : 16 - x;
+            final int dst = (x >= MID_X) ? 368 - x : 16 - x;
             startJump(STATE_JUMP_TO_WALL, getJump(), 9.5f, Math.round(dst / 15.0f));
         }
         
@@ -6339,6 +6343,272 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getImage2() {
             return (img2 = Boss.getImage(img2, "chronobot/Mine2", CHRONO_MINE_O, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+    }
+    
+    protected final static int MICRO_OFF_X = 5, MICRO_H = 23;
+    protected final static Panple MICRO_O = new FinPanple2(12, 1);
+    protected final static Panple MICRO_SMALL_O = new FinPanple2(4, 1);
+    protected final static Panple MICRO_MIN = getMin(MICRO_OFF_X);
+    protected final static Panple MICRO_MAX = getMax(MICRO_OFF_X, MICRO_H);
+    
+    protected final static class MicroBot extends Boss {
+        protected final static byte STATE_SHRINK = 1;
+        protected final static byte STATE_ZOOM = 2;
+        protected final static byte STATE_ZOOM_FINISH = 3;
+        protected final static byte STATE_UNSHRINK = 4;
+        protected final static byte STATE_JUMP_AIM = 5;
+        protected final static byte STATE_FALL = 6;
+        protected final static byte STATE_AIM = 7;
+        protected final static int DURATION_AIM = 16;
+        protected final static int SPEED_ZOOM = 12;
+        protected final static float SPEED_PROJECTILE = 9.0f;
+        protected final static float SPEED_PROJECTILE_DIAGONAL = Player.VX_SPREAD1 * SPEED_PROJECTILE / Player.VEL_PROJECTILE;
+        protected final static int SURFACE_LEFT = 1;
+        protected final static int SURFACE_RIGHT = 2;
+        protected final static int SURFACE_TOP = 3;
+        protected final static Integer KEY_LEFT = Integer.valueOf(SURFACE_LEFT);
+        protected final static Integer KEY_RIGHT = Integer.valueOf(SURFACE_RIGHT);
+        protected final static Integer KEY_TOP = Integer.valueOf(SURFACE_TOP);
+        protected static Panmage still = null;
+        protected static Panmage jump = null;
+        protected static Panmage aim = null;
+        protected static Panmage jumpAim = null;
+        protected static Panmage projectile = null;
+        protected final static Panmage[] shrinks = new Panmage[4];
+        private final Panple dst = new ImplPanple();
+        private final static int xLow = LEFT_X + 40;
+        private final static int xHigh = RIGHT_X - 40;
+        private int yBottom = -1;
+        private int yLow = -1;
+        private int yHigh = -1;
+        private int yTop = -1;
+        private int zoomCount = 0;
+        
+        protected MicroBot(final Segment seg) {
+            super(MICRO_OFF_X, MICRO_H, seg);
+        }
+        
+        @Override
+        protected final void taunt() {
+            yBottom = getY();
+            yLow = yBottom + 40;
+            yHigh = yLow + 80;
+            yTop = yHigh + 40;
+            startStill();
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                    "TODO MICRO",
+                    "NULL",
+                    "MICRO"
+                };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return new String[] { "TODO" };
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if ((state == STATE_ZOOM) || (state == STATE_ZOOM_FINISH)) {
+                final Panple pos = getPosition();
+                Panple.subtract(scratchPanple, dst, pos);
+                final double distance = scratchPanple.getMagnitude2();
+                if (distance < SPEED_ZOOM) {
+                    pos.set2(dst);
+                    if (state == STATE_ZOOM_FINISH) {
+                        startUnshrink();
+                    } else if ((zoomCount < 4) && Mathtil.rand(65)) {
+                        continueZoom();
+                    } else {
+                        finishZoom();
+                    }
+                } else {
+                    final float mag = (float) (SPEED_ZOOM / distance);
+                    scratchPanple.set(scratchPanple.getX() * mag, scratchPanple.getY() * mag);
+                    pos.add2(scratchPanple);
+                }
+                return true;
+            } else if (state == STATE_JUMP_AIM) {
+                newProjectileIfNeeded(14, 6, SPEED_PROJECTILE_DIAGONAL, -SPEED_PROJECTILE_DIAGONAL);
+                return true;
+            } else if (state == STATE_SHRINK) {
+                changeView(getShrink(waitCounter / 4));
+            } else if (state == STATE_UNSHRINK) {
+                changeView(getShrink(waitTimer / 4));
+                return true;
+            } else if (state == STATE_AIM) {
+                newProjectileIfNeeded(18, 12, SPEED_PROJECTILE, 0);
+            }
+            return false;
+        }
+        
+        private final void newProjectileIfNeeded(final int ox, final int oy, final float vx, final float vy) {
+            if ((waitCounter == 1) || (waitCounter == 4) || (waitCounter == 7)) {
+                newProjectile(ox, oy, vx * getMirrorMultiplier(), vy);
+            }
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            final int r = rand(3);
+            if (r == 0) {
+                startShrink();
+            } else if (r == 1) {
+                startAim();
+            } else {
+                //startJumps();
+            }
+            return false;
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            if (state == STATE_SHRINK) {
+                startZoom();
+            } else if (state == STATE_UNSHRINK) {
+                startJumpAim();
+            } else if (state == STATE_JUMP_AIM) {
+                startJump(STATE_FALL, getJump(), 0, 0);
+            } else {
+                startStill();
+            }
+            return false;
+        }
+        
+        private final void startShrink() {
+            startState(STATE_SHRINK, 8, getShrink(0));
+            //TODO sound
+        }
+        
+        private final void startZoom() {
+            zoomCount = 1;
+            dst.set(getPosition().getX(), yTop);
+            startStateZoom();
+        }
+        
+        private final void continueZoom() {
+            zoomCount++;
+            scratchInts.clear();
+            scratchInts.add(KEY_LEFT);
+            scratchInts.add(KEY_RIGHT);
+            scratchInts.add(KEY_TOP);
+            if (getY() > yHigh) {
+                scratchInts.remove(KEY_TOP);
+            }
+            if (getX() < MID_X) {
+                scratchInts.remove(KEY_LEFT);
+            } else {
+                scratchInts.remove(KEY_RIGHT);
+            }
+            final int surface = Mathtil.rand(scratchInts).intValue();
+            if (surface == SURFACE_LEFT) {
+                dst.set(LEFT_X, Mathtil.randi(yLow, yHigh));
+            } else if (surface == SURFACE_RIGHT) {
+                dst.set(RIGHT_X, Mathtil.randi(yLow, yHigh));
+            } else if (surface == SURFACE_TOP) {
+                dst.set(Mathtil.randi(xLow, xHigh), yTop);
+            } else {
+                throw new IllegalStateException("Unexpected surface " + surface);
+            }
+            startStateZoom();
+        }
+        
+        private final void finishZoom() {
+            final float targetX = getNearestPlayerX(), dstX;
+            if (targetX < MID_X) {
+                dstX = targetX + 120;
+                setMirror(true);
+            } else {
+                dstX = targetX - 120;
+                setMirror(false);
+            }
+            dst.set(dstX, yBottom + 120);
+            startStateIndefinite(STATE_ZOOM_FINISH, getShrink(3));
+        }
+        
+        private final void startStateZoom() {
+            hv = 0;
+            startStateIndefinite(STATE_ZOOM, getShrink(3));
+            //TODO sound
+        }
+        
+        private final void startUnshrink() {
+            startState(STATE_UNSHRINK, 8, getShrink(3));
+            //TODO sound
+        }
+        
+        private final void startJumpAim() {
+            startState(STATE_JUMP_AIM, DURATION_AIM, getJumpAim());
+        }
+        
+        private final void startAim() {
+            turnTowardPlayer();
+            startState(STATE_AIM, DURATION_AIM, getAim());
+        }
+        
+        private final void newProjectile(final int ox, final int oy, final float vx, final float vy) {
+            new EnemyProjectile(getProjectile(), this, ox, oy, vx, vy);
+            BotsnBoltsGame.fxEnemyAttack.startSound();
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            return (still = getMicroImage(still, "microbot/MicroBot"));
+        }
+        
+        @Override
+        protected final Panmage getJump() {
+            return (jump = getMicroImage(jump, "microbot/MicroBotJump"));
+        }
+        
+        protected final static Panmage getAim() {
+            return (aim = getMicroImage(aim, "microbot/MicroBotAim"));
+        }
+        
+        protected final static Panmage getJumpAim() {
+            return (jumpAim = getMicroImage(jumpAim, "microbot/MicroBotJumpAim"));
+        }
+        
+        protected final static Panmage getProjectile() {
+            return (projectile = getImage(projectile, "microbot/Projectile", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_4, BotsnBoltsGame.MAX_4));
+        }
+        
+        protected final static Panmage getShrink(final int i) {
+            Panmage img = shrinks[i];
+            if (img == null) {
+                final Panple o, n, x;
+                if (i == 0) {
+                    o = MICRO_O;
+                    n = getMin(4);
+                    x = getMax(4, 17);
+                } else if (i == 1) {
+                    o = MICRO_SMALL_O;
+                    n = getMin(3);
+                    x = getMax(3, 9);
+                } else if (i == 2) {
+                    o = MICRO_SMALL_O;
+                    n = getMin(2);
+                    x = getMax(2, 6);
+                } else if (i == 3) {
+                    o = new FinPanple2(1, 1);
+                    n = getMin(1);
+                    x = getMax(1, 2);
+                } else {
+                    throw new IllegalStateException("Unexpected shrink index " + i);
+                }
+                img = getImage(null, "microbot/MicroBotShrink" + (i + 1), o, n, x);
+                shrinks[i] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getMicroImage(final Panmage img, final String name) {
+            return getImage(img, name, MICRO_O, MICRO_MIN, MICRO_MAX);
         }
     }
     
