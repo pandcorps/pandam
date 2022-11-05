@@ -6376,6 +6376,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage aim = null;
         protected static Panmage jumpAim = null;
         protected static Panmage projectile = null;
+        protected static Panmage projectile2 = null;
         protected final static Panmage[] shrinks = new Panmage[4];
         private final Panple dst = new ImplPanple();
         private final static int xLow = LEFT_X + 40;
@@ -6385,6 +6386,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int yHigh = -1;
         private int yTop = -1;
         private int zoomCount = 0;
+        private int shrinkLevel = 0;
         private final MicroOrbit[] orbits = new MicroOrbit[3];
         
         protected MicroBot(final Segment seg) {
@@ -6444,23 +6446,24 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 newProjectileIfNeeded(14, 6, SPEED_PROJECTILE_DIAGONAL, -SPEED_PROJECTILE_DIAGONAL);
                 return true;
             } else if (state == STATE_SHRINK) {
-                changeView(getShrink(waitCounter / 4));
+                changeView(pickShrink(waitCounter / 4));
             } else if (state == STATE_UNSHRINK) {
-                changeView(getShrink(waitTimer / 4));
+                changeView(pickShrink(waitTimer / 4));
                 return true;
             } else if (state == STATE_AIM) {
                 newProjectileIfNeeded(18, 12, SPEED_PROJECTILE, 0);
             } else if (state == STATE_JUMPS) {
                 final int y = getY();
                 if (y > 137) {
-                    changeView(getShrink(3));
+                    changeView(pickShrink(3));
                 } else if (y > 129) {
-                    changeView(getShrink(2));
+                    changeView(pickShrink(2));
                 } else if (y > 119) {
-                    changeView(getShrink(1));
+                    changeView(pickShrink(1));
                 } else if (y > 105) {
-                    changeView(getShrink(0));
+                    changeView(pickShrink(0));
                 } else {
+                    shrinkLevel = 0;
                     changeView(getJump());
                 }
             }
@@ -6491,6 +6494,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (state == STATE_SHRINK) {
                 startZoom();
             } else if (state == STATE_UNSHRINK) {
+                shrinkLevel = 0;
                 startJumpAim();
             } else if (state == STATE_JUMP_AIM) {
                 startJump(STATE_FALL, getJump(), 0, 0);
@@ -6501,7 +6505,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startShrink() {
-            startState(STATE_SHRINK, 8, getShrink(0));
+            startState(STATE_SHRINK, 8, pickShrink(0));
             //TODO sound
         }
         
@@ -6548,17 +6552,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 setMirror(false);
             }
             dst.set(dstX, yBottom + 120);
-            startStateIndefinite(STATE_ZOOM_FINISH, getShrink(3));
+            startStateIndefinite(STATE_ZOOM_FINISH, pickShrink(3));
         }
         
         private final void startStateZoom() {
             hv = 0;
-            startStateIndefinite(STATE_ZOOM, getShrink(3));
+            startStateIndefinite(STATE_ZOOM, pickShrink(3));
             //TODO sound
         }
         
         private final void startUnshrink() {
-            startState(STATE_UNSHRINK, 8, getShrink(3));
+            startState(STATE_UNSHRINK, 8, pickShrink(3));
             //TODO sound
         }
         
@@ -6616,6 +6620,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getProjectile() {
             return (projectile = getImage(projectile, "microbot/Projectile", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_4, BotsnBoltsGame.MAX_4));
+        }
+        
+        protected final static Panmage getProjectile2() {
+            return (projectile2 = getImage(projectile2, "microbot/Projectile2", BotsnBoltsGame.CENTER_4, BotsnBoltsGame.MIN_4, BotsnBoltsGame.MAX_4));
+        }
+        
+        protected final Panmage pickShrink(final int i) {
+            shrinkLevel = i + 1;
+            return getShrink(i);
         }
         
         protected final static Panmage getShrink(final int i) {
@@ -6687,12 +6700,29 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         public final void onStepEnd(final StepEndEvent event) {
+            final int shrinkLevel = src.shrinkLevel;
+            if (shrinkLevel > 2) {
+                setVisible(false);
+                return;
+            }
+            final double sizeMult;
+            if (shrinkLevel == 2) {
+                sizeMult = 1.0 / 3.0;
+                changeView(MicroBot.getShrink(3));
+            } else if (shrinkLevel == 1) {
+                sizeMult = 2.0 / 3.0;
+                changeView(MicroBot.getProjectile2());
+            } else {
+                sizeMult = 1.0;
+                changeView(MicroBot.getProjectile());
+            }
+            setVisible(true);
             final Panple spos = src.getPosition();
-            final float cx = spos.getX(), cy = spos.getY() + 8;
+            final double cx = spos.getX(), cy = spos.getY() + (sizeMult * 8);
             final double cosT = Math.cos(t), sinT = Math.sin(t);
             setMirror(!src.isMirror());
-            final double ox = ((aCosTheta * cosT) - (bSinTheta * sinT)) * -src.getMirrorMultiplier();
-            final double oy = (aSinTheta * cosT) + (bCosTheta * sinT);
+            final double ox = ((sizeMult * aCosTheta * cosT) - (sizeMult * bSinTheta * sinT)) * -src.getMirrorMultiplier();
+            final double oy = (sizeMult * aSinTheta * cosT) + (sizeMult * bCosTheta * sinT);
             boolean front = t >= Math.PI;
             if (opposite) {
                 front = !front;
