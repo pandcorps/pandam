@@ -6385,9 +6385,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int yHigh = -1;
         private int yTop = -1;
         private int zoomCount = 0;
+        private final MicroOrbit[] orbits = new MicroOrbit[3];
         
         protected MicroBot(final Segment seg) {
             super(MICRO_OFF_X, MICRO_H, seg);
+            getProjectile();
+            final double limit3 = MicroOrbit.limit / 3.0;
+            for (int i = 0; i < 3; i++) {
+                orbits[i] = new MicroOrbit(this, i * limit3, i == 1, projectile);
+            }
         }
         
         @Override
@@ -6643,6 +6649,60 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getMicroImage(final Panmage img, final String name) {
             return getImage(img, name, MICRO_O, MICRO_MIN, MICRO_MAX);
+        }
+        
+        @Override
+        protected final void onEnemyDestroy() {
+            for (final MicroOrbit orbit : orbits) {
+                destroy(orbit);
+            }
+        }
+    }
+    
+    protected final static class MicroOrbit extends Panctor implements StepEndListener {
+        private final static double a = 16.0;
+        private final static double b = 8.0;
+        private final static double limit = 2.0 * Math.PI;
+        private final static double delta = limit / 32.0;
+        private final MicroBot src;
+        private final double aCosTheta;
+        private final double bSinTheta;
+        private final double aSinTheta;
+        private final double bCosTheta;
+        private final boolean opposite;
+        private double t = 0; // 0 <= t < 2 * pi
+        
+        private MicroOrbit(final MicroBot src, final double theta, final boolean opposite, final Panmage img) {
+            this.src = src;
+            final double cosTheta = Math.cos(theta);
+            final double sinTheta = Math.sin(theta);
+            aCosTheta = a * cosTheta;
+            bSinTheta = b * sinTheta;
+            aSinTheta = a * sinTheta;
+            bCosTheta = b * cosTheta;
+            this.opposite = opposite;
+            setView(img);
+            addActor(this);
+        }
+
+        @Override
+        public final void onStepEnd(final StepEndEvent event) {
+            final Panple spos = src.getPosition();
+            final float cx = spos.getX(), cy = spos.getY() + 8;
+            final double cosT = Math.cos(t), sinT = Math.sin(t);
+            setMirror(!src.isMirror());
+            final double ox = ((aCosTheta * cosT) - (bSinTheta * sinT)) * -src.getMirrorMultiplier();
+            final double oy = (aSinTheta * cosT) + (bCosTheta * sinT);
+            boolean front = t >= Math.PI;
+            if (opposite) {
+                front = !front;
+            }
+            final float z = front ? BotsnBoltsGame.DEPTH_ENEMY_FRONT : BotsnBoltsGame.DEPTH_ENEMY_BACK;
+            getPosition().set((float) (cx + ox), (float) (cy + oy), z);
+            t += delta;
+            if (t >= limit) {
+                t -= limit;
+            }
         }
     }
     
