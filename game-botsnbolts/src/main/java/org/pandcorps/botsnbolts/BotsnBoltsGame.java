@@ -139,6 +139,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Queue<Runnable> loaders = new LinkedList<Runnable>();
     protected static Font font = null;
     protected static PlayerImages voidImages = null;
+    protected static PlayerImages nullImages = null;
     protected static PlayerImages volatileImages = null;
     protected static PlayerImages finalImages = null;
     protected final static Map<String, PlayerImages> playerImages = new HashMap<String, PlayerImages>();
@@ -669,11 +670,14 @@ public final class BotsnBoltsGame extends BaseGame {
         final String dir = "betabot", name = "Void";
         openPlayerImages(dir, name);
         voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true);
-        final short s0 = 0, s192 = 192;
-        filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), new FinPancolor(s0, s192, s192));
+        final short s0 = 0, s64 = 64, s128 = 128, s144 = 144, s176 = 176, s192 = 192;
+        final Pancolor darkCyan = new FinPancolor(s0, s192, s192);
+        filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), darkCyan);
         playerMirror = false;
         volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true);
         finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false);
+        filterPlayerImages(Pancolor.CYAN, new FinPancolor(s176, s144, Pancolor.MAX_VALUE), darkCyan, new FinPancolor(s128, s64, Pancolor.MAX_VALUE));
+        nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true);
         closePlayerImages();
         prf0 = new Profile();
     }
@@ -1217,7 +1221,8 @@ public final class BotsnBoltsGame extends BaseGame {
             Menu.addVersion();
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    addPlayerContext(prf0, voidImages, event);
+                    //addPlayerContext(prf0, voidImages, event);
+                    addPlayerContext(prf0, nullImages, event);
                     startGame();
                 }});
         }
