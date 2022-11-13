@@ -6361,6 +6361,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_FALL = 6;
         protected final static byte STATE_AIM = 7;
         protected final static byte STATE_JUMPS = 8;
+        protected final static byte STATE_WAIT_SHRUNK = 9;
         protected final static int DURATION_AIM = 16;
         protected final static int SPEED_ZOOM = 12;
         protected final static float SPEED_PROJECTILE = 9.0f;
@@ -6404,7 +6405,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             yLow = yBottom + 40;
             yHigh = yLow + 80;
             yTop = yHigh + 40;
-            startStill();
+            startShrink();
         }
         
         @Override
@@ -6492,12 +6493,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean continueState() {
             if (state == STATE_SHRINK) {
-                startZoom();
+                if (isTauntFinished()) {
+                    startZoom();
+                } else {
+                    startState(STATE_WAIT_SHRUNK, 24, getShrink(3));
+                }
             } else if (state == STATE_UNSHRINK) {
                 shrinkLevel = 0;
-                startJumpAim();
+                if (finishTaunt()) {
+                    startStill();
+                } else {
+                    startJumpAim();
+                }
             } else if (state == STATE_JUMP_AIM) {
                 startJump(STATE_FALL, getJump(), 0, 0);
+            } else if (state == STATE_WAIT_SHRUNK) {
+                startUnshrink();
             } else {
                 startStill();
             }
