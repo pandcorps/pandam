@@ -200,10 +200,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (pollPendingJumps()) {
                 return false;
             }
-            moves++;
-            return pickState();
+            return runPickState();
         }
         return continueState();
+    }
+    
+    protected boolean runPickState() {
+        moves++;
+        return pickState();
     }
     
     protected boolean isTauntNeeded() {
@@ -6744,6 +6748,214 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (t >= limit) {
                 t -= limit;
             }
+        }
+    }
+    
+    protected final static int AERO_OFF_X = 15, AERO_H = 14;
+    protected final static Panple AERO_O = new FinPanple2(30, 11);
+    protected final static Panple AERO_MIN = getMin(AERO_OFF_X);
+    protected final static Panple AERO_MAX = getMax(AERO_OFF_X, AERO_H);
+    
+    protected final static class AeroBot extends Boss {
+        protected final static byte STATE_START = 1;
+        protected final static byte STATE_VERT_START = 2;
+        protected final static byte STATE_VERT = 3;
+        protected final static byte STATE_WAIT = 4;
+        protected final static byte STATE_GLIDE = 5;
+        protected final static byte STATE_AIM = 6;
+        protected final static int SPEED = 6;
+        protected static Panmage still = null;
+        protected static Panmage aimForward = null;
+        protected static Panmage aimDownward = null;
+        protected static Panmage aimBackward = null;
+        protected static Panmage vert = null;
+        protected static Panmage vertStart = null;
+        protected final static Panmage[] starts = new Panmage[4];
+        private int yGlide;
+        private int yAim;
+        private boolean reachedScreenYet = false;
+        
+        protected AeroBot(final Segment seg) {
+            super(AERO_OFF_X, AERO_H, seg);
+        }
+        
+        @Override
+        protected final void taunt() {
+            final int yStart = getY();
+            yGlide = yStart + 20;
+            yAim = yStart + 120;
+            startState(STATE_START, 30, getStart(0));
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                    "TODO AERO",
+                    "NULL",
+                    "AERO"
+                };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return new String[] { "TODO" };
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if ((state == STATE_GLIDE) || (state == STATE_AIM)) {
+                getPosition().addX(isMirror() ? -SPEED : SPEED);
+                if (state == STATE_AIM) {
+                    if (waitCounter == 12) {
+                        setView(getAimForward());
+                    } else if (waitCounter == 13) {
+                        //projectile
+                    } else if (waitCounter == 36) {
+                        setView(getAimDownward());
+                    } else if (waitCounter == 37) {
+                        //projectile
+                    } else if (waitCounter == 60) {
+                        setView(getAimBackward());
+                    } else if (waitCounter == 61) {
+                        //projectile
+                    }
+                }
+                if (reachedScreenYet) {
+                    startWaitIfNeeded();
+                } else {
+                    reachedScreenYet = isInView();
+                }
+                return true;
+            } else if (state == STATE_WAIT) {
+                return true;
+            } else if (state == STATE_VERT) {
+                getPosition().addY(SPEED);
+                startWaitIfNeeded();
+                return true;
+            } else if (state == STATE_START) {
+                final int startIndex = waitCounter / 4;
+                if (startIndex < 4) {
+                    if (changeView(getStart(startIndex))) {
+                        //TODO sound
+                    }
+                }
+            }
+            return false;
+        }
+        
+        private final void startWaitIfNeeded() {
+            final Panple pos = getPosition();
+            final float x = pos.getX();
+            if ((x < -64.0f) || (x >= 448.0f)) {
+                startWait();
+            }
+            final float y = pos.getY();
+            if ((y < -64.0f) || (y >= 288.0f)) {
+                startWait();
+            }
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            if (moves == 0) {
+                startState(STATE_VERT_START, 5, getVertStart());
+                return false;
+            }
+            final int r = rand(3);
+            if (r == 0) {
+                startGlide();
+                return true;
+            } else if (r == 1) {
+                startAim();
+                return true;
+            } else {
+                startGlide(); //TODO
+                return true;
+            }
+            //return false;
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            if (state == STATE_WAIT) {
+                return runPickState();
+            } else if (state == STATE_VERT) {
+                startWait();
+            } else if (state == STATE_VERT_START) {
+                startStateIndefinite(STATE_VERT, getVert());
+            } else if (state == STATE_START) {
+                startStill(getStart(3));
+            } else {
+                startStill();
+            }
+            return false;
+        }
+        
+        private final void startWait() {
+            startState(STATE_WAIT, Mathtil.randi(20, 60), getStill());
+        }
+        
+        private final void startGlide() {
+            startFly(STATE_GLIDE, yGlide);
+        }
+        
+        private final void startAim() {
+            startFly(STATE_AIM, yAim);
+        }
+        
+        private final void startFly(final byte state, final int y) {
+            final float x;
+            if (getX() > MID_X) {
+                x = RIGHT_X + 48;
+                setMirror(true);
+            } else {
+                x = LEFT_X - 48;
+                setMirror(false);
+            }
+            getPosition().set(x, y);
+            reachedScreenYet = false;
+            startStateIndefinite(state, getStill());
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            if (isTauntFinished()) {
+                return (still = getAeroImage(still, "aerobot/AeroBot"));
+            }
+            return getStart(0);
+        }
+        
+        protected final static Panmage getAimForward() {
+            return (aimForward = getAeroImage(aimForward, "aerobot/AeroBotAimForward"));
+        }
+        
+        protected final static Panmage getAimDownward() {
+            return (aimDownward = getAeroImage(aimDownward, "aerobot/AeroBotAimDownward"));
+        }
+        
+        protected final static Panmage getAimBackward() {
+            return (aimBackward = getAeroImage(aimBackward, "aerobot/AeroBotAimBackward"));
+        }
+        
+        protected final static Panmage getVert() {
+            return (vert = getAeroImage(vert, "aerobot/AeroBotVert"));
+        }
+        
+        protected final static Panmage getVertStart() {
+            return (vertStart = getAeroImage(vertStart, "aerobot/AeroBotVertStart"));
+        }
+        
+        protected final static Panmage getStart(final int i) {
+            Panmage img = starts[i];
+            if (img == null) {
+                img = getAeroImage(null, "aerobot/AeroBotStart" + (i + 1));
+                starts[i] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getAeroImage(final Panmage img, final String name) {
+            return getImage(img, name, AERO_O, AERO_MIN, AERO_MAX);
         }
     }
     
