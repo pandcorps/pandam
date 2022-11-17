@@ -6262,10 +6262,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
             timer++;
             if (timer >= 8) {
                 timer = 0;
-                changeView(getImage2());
-            } else if (timer >= 4) {
                 changeView(getImage1());
+            } else if (timer >= 4) {
+                changeView(getImage2());
             }
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 3;
         }
         
         @Override
@@ -6764,13 +6769,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_GLIDE = 5;
         protected final static byte STATE_AIM = 6;
         protected final static int SPEED = 6;
+        protected final static float V_STRAIGHT = Player.VEL_PROJECTILE;
+        protected final static float V_DIAGONAL = Player.VX_SPREAD1;
         protected static Panmage still = null;
         protected static Panmage aimForward = null;
         protected static Panmage aimDownward = null;
         protected static Panmage aimBackward = null;
         protected static Panmage vert = null;
         protected static Panmage vertStart = null;
-        protected final static Panmage[] starts = new Panmage[4];
+        protected final static Panmage[] starts = new Panmage[7];
         private int yGlide;
         private int yAim;
         private boolean reachedScreenYet = false;
@@ -6809,15 +6816,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     if (waitCounter == 12) {
                         setView(getAimForward());
                     } else if (waitCounter == 13) {
-                        //projectile
+                        new AeroProjectile(this, 11, -5, V_DIAGONAL * getMirrorMultiplier(), -V_DIAGONAL);
                     } else if (waitCounter == 36) {
                         setView(getAimDownward());
                     } else if (waitCounter == 37) {
-                        //projectile
+                        new AeroProjectile(this, 4, -9, 0, -V_STRAIGHT);
                     } else if (waitCounter == 60) {
                         setView(getAimBackward());
                     } else if (waitCounter == 61) {
-                        //projectile
+                        new AeroProjectile(this, -3, -5, V_DIAGONAL * -getMirrorMultiplier(), -V_DIAGONAL);
                     }
                 }
                 if (reachedScreenYet) {
@@ -6833,11 +6840,28 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startWaitIfNeeded();
                 return true;
             } else if (state == STATE_START) {
-                final int startIndex = waitCounter / 4;
-                if (startIndex < 4) {
-                    if (changeView(getStart(startIndex))) {
+                switch (waitCounter) {
+                    case 6 :
+                        setView(getStart(1));
+                        break;
+                    case 9 :
+                        setView(getStart(2));
                         //TODO sound
-                    }
+                        break;
+                    case 15 :
+                        setView(getStart(3));
+                        break;
+                    case 18 :
+                        setView(getStart(4));
+                        //TODO sound
+                        break;
+                    case 24 :
+                        setView(getStart(5));
+                        break;
+                    case 27 :
+                        setView(getStart(6));
+                        //TODO sound
+                        break;
                 }
             }
             return false;
@@ -6863,13 +6887,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             final int r = rand(3);
             if (r == 0) {
-                startGlide();
+                //startGlide(); Keep this
+                startAim(); //temp
                 return true;
             } else if (r == 1) {
                 startAim();
                 return true;
             } else {
-                startGlide(); //TODO
+                startAim(); //TODO something unique
                 return true;
             }
             //return false;
@@ -6884,7 +6909,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (state == STATE_VERT_START) {
                 startStateIndefinite(STATE_VERT, getVert());
             } else if (state == STATE_START) {
-                startStill(getStart(3));
+                startStill(getStart(6));
             } else {
                 startStill();
             }
@@ -6956,6 +6981,41 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getAeroImage(final Panmage img, final String name) {
             return getImage(img, name, AERO_O, AERO_MIN, AERO_MAX);
+        }
+    }
+    
+    private final static class AeroProjectile extends EnemyProjectile {
+        protected static Panmage img1 = null;
+        protected static Panmage img2 = null;
+        private int timer = 0;
+        
+        private AeroProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy) {
+            super(getImage1(), src, ox, oy, vx, vy);
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            timer++;
+            if (timer >= 8) {
+                timer = 0;
+                changeView(getImage1());
+            } else if (timer >= 4) {
+                changeView(getImage2());
+            }
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 3;
+        }
+        
+        protected final static Panmage getImage1() {
+            return (img1 = Boss.getImage(img1, "aerobot/Projectile1", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+        
+        protected final static Panmage getImage2() {
+            return (img2 = Boss.getImage(img2, "aerobot/Projectile2", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
         }
     }
     
