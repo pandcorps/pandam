@@ -6769,6 +6769,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_GLIDE = 5;
         protected final static byte STATE_AIM = 6;
         protected final static byte STATE_DIVE = 7;
+        protected final static byte STATE_VERT_AIM = 8;
         protected final static int SPEED = 6;
         protected final static float V_STRAIGHT = Player.VEL_PROJECTILE;
         protected final static float V_DIAGONAL = Player.VX_SPREAD1;
@@ -6778,10 +6779,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected static Panmage aimBackward = null;
         protected static Panmage vert = null;
         protected static Panmage vertStart = null;
+        protected static Panmage vertAim = null;
         protected final static Panmage[] starts = new Panmage[7];
+        private int yStart;
         private int yGlide;
         private int yAim;
         private boolean reachedScreenYet = false;
+        private boolean launchedProjectileYet = false;
         
         protected AeroBot(final Segment seg) {
             super(AERO_OFF_X, AERO_H, seg);
@@ -6789,7 +6793,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void taunt() {
-            final int yStart = getY();
+            yStart = getY();
             yGlide = yStart + 20;
             yAim = yStart + 120;
             startState(STATE_START, 30, getStart(0));
@@ -6836,9 +6840,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return true;
             } else if (state == STATE_WAIT) {
                 return true;
-            } else if (state == STATE_VERT) {
-                getPosition().addY(SPEED);
-                startWaitIfNeeded();
+            } else if ((state == STATE_VERT) || (state == STATE_VERT_AIM)) {
+                final Panple pos = getPosition();
+                pos.addY(SPEED);
+                if (state == STATE_VERT_AIM) {
+                    final int y = Math.round(pos.getY());
+                    if (y > (yStart + 54)) {
+                        changeView(getVert());
+                    } else if (y >= (yStart - 6)) {
+                        if (!changeView(getVertAim()) && !launchedProjectileYet) {
+                            new AeroProjectile(this, 19, 17, V_STRAIGHT * getMirrorMultiplier(), 0);
+                            launchedProjectileYet = true;
+                        }
+                    }
+                }
+                checkScreen();
                 return true;
             } else if (state == STATE_START) {
                 switch (waitCounter) {
@@ -6900,18 +6916,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             final int r = rand(3);
             if (r == 0) {
-                //startGlide(); Keep this
-                startDive(); //temp
+                startGlide();
                 return true;
             } else if (r == 1) {
-                //startAim();
-                startDive(); //temp
+                startAim();
                 return true;
             } else {
-                startDive();
+                if (getY() > 112) {
+                    startDive();
+                } else {
+                    startVertAim();
+                }
                 return true;
             }
-            //return false;
         }
         
         @Override
@@ -6971,6 +6988,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
             startStateIndefinite(STATE_DIVE, getStill());
         }
         
+        private final void startVertAim() {
+            final float x;
+            if (getNearestPlayerX() < MID_X) {
+                x = RIGHT_X - 48;
+                setMirror(true);
+            } else {
+                x = LEFT_X + 48;
+                setMirror(false);
+            }
+            getPosition().set(x, -32);
+            reachedScreenYet = false;
+            launchedProjectileYet = false;
+            startStateIndefinite(STATE_VERT_AIM, getVert());
+        }
+        
         @Override
         protected final Panmage getStill() {
             if (isTauntFinished()) {
@@ -6997,6 +7029,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getVertStart() {
             return (vertStart = getAeroImage(vertStart, "aerobot/AeroBotVertStart"));
+        }
+        
+        protected final static Panmage getVertAim() {
+            return (vertAim = getAeroImage(vertAim, "aerobot/AeroBotVertAim"));
         }
         
         protected final static Panmage getStart(final int i) {
