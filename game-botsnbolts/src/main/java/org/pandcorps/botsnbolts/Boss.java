@@ -6768,6 +6768,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_WAIT = 4;
         protected final static byte STATE_GLIDE = 5;
         protected final static byte STATE_AIM = 6;
+        protected final static byte STATE_DIVE = 7;
         protected final static int SPEED = 6;
         protected final static float V_STRAIGHT = Player.VEL_PROJECTILE;
         protected final static float V_DIAGONAL = Player.VX_SPREAD1;
@@ -6827,11 +6828,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                         new AeroProjectile(this, -3, -5, V_DIAGONAL * -getMirrorMultiplier(), -V_DIAGONAL);
                     }
                 }
-                if (reachedScreenYet) {
-                    startWaitIfNeeded();
-                } else {
-                    reachedScreenYet = isInView();
-                }
+                checkScreen();
+                return true;
+            } else if (state == STATE_DIVE) {
+                getPosition().addY(-SPEED);
+                checkScreen();
                 return true;
             } else if (state == STATE_WAIT) {
                 return true;
@@ -6867,6 +6868,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return false;
         }
         
+        private final void checkScreen() {
+            final boolean inView = isInView();
+            if (reachedScreenYet) {
+                if (!inView) {
+                    startWaitIfNeeded();
+                }
+            } else {
+                reachedScreenYet = inView;
+            }
+        }
+        
         private final void startWaitIfNeeded() {
             final Panple pos = getPosition();
             final float x = pos.getX();
@@ -6881,6 +6893,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean pickState() {
+            setRot(0);
             if (moves == 0) {
                 startState(STATE_VERT_START, 5, getVertStart());
                 return false;
@@ -6888,13 +6901,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final int r = rand(3);
             if (r == 0) {
                 //startGlide(); Keep this
-                startAim(); //temp
+                startDive(); //temp
                 return true;
             } else if (r == 1) {
-                startAim();
+                //startAim();
+                startDive(); //temp
                 return true;
             } else {
-                startAim(); //TODO something unique
+                startDive();
                 return true;
             }
             //return false;
@@ -6917,6 +6931,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startWait() {
+            setRot(0);
             startState(STATE_WAIT, Mathtil.randi(20, 60), getStill());
         }
         
@@ -6940,6 +6955,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
             getPosition().set(x, y);
             reachedScreenYet = false;
             startStateIndefinite(state, getStill());
+        }
+        
+        private final void startDive() {
+            final Panple pos = getPosition();
+            pos.set(getNearestPlayerX(), BotsnBoltsGame.GAME_H + 32);
+            if (pos.getX() < MID_X) {
+                setMirror(true);
+                setRot(3);
+            } else {
+                setMirror(false);
+                setRot(3);
+            }
+            reachedScreenYet = false;
+            startStateIndefinite(STATE_DIVE, getStill());
         }
         
         @Override
