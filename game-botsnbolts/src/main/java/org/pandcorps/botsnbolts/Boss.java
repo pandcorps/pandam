@@ -6391,6 +6391,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final Panple dst = new ImplPanple();
         private final static int xLow = LEFT_X + 40;
         private final static int xHigh = RIGHT_X - 40;
+        private final int xRight;
+        private final int xLeft;
         private int yBottom = -1;
         private int yLow = -1;
         private int yHigh = -1;
@@ -6401,6 +6403,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected MicroBot(final Segment seg) {
             super(MICRO_OFF_X, MICRO_H, seg);
+            xRight = getX();
+            xLeft = getMirroredX(xRight);
             getProjectile();
             final double limit3 = MicroOrbit.limit / 3.0;
             for (int i = 0; i < 3; i++) {
@@ -6511,6 +6515,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 shrinkLevel = 0;
                 if (finishTaunt()) {
                     startStill();
+                } else if (isGrounded()) {
+                    startAim();
                 } else {
                     startJumpAim();
                 }
@@ -6563,15 +6569,27 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void finishZoom() {
-            final float targetX = getNearestPlayerX(), dstX;
+            final float targetX = getNearestPlayerX(), dstX, dstY;
             if (targetX < MID_X) {
-                dstX = targetX + 120;
+                if (Mathtil.rand()) {
+                    dstX = targetX + 120;
+                    dstY = yBottom + 120;
+                } else {
+                    dstX = xRight;
+                    dstY = yBottom;
+                }
                 setMirror(true);
             } else {
-                dstX = targetX - 120;
+                if (Mathtil.rand()) {
+                    dstX = targetX - 120;
+                    dstY = yBottom + 120;
+                } else {
+                    dstX = xLeft;
+                    dstY = yBottom;
+                }
                 setMirror(false);
             }
-            dst.set(dstX, yBottom + 120);
+            dst.set(dstX, dstY);
             startStateIndefinite(STATE_ZOOM_FINISH, pickShrink(3));
         }
         
