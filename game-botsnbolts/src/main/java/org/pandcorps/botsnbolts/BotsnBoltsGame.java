@@ -742,7 +742,11 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(playerHighlightBox, newFilter(Pancolor.DARK_GREY, Pancolor.GREEN, new Pancolor(s96), new Pancolor(s0, s192, s0)));
     }
     
+    private static Pancolor lastPlayerImagesColor1, lastPlayerImagesColor2;
+    
     private final static void filterPlayerImages(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
+        lastPlayerImagesColor1 = d1;
+        lastPlayerImagesColor2 = d2;
         final PixelFilter[] f = { newFilter(s1, d1, s2, d2) };
         filterImgs(playerDefeatOrb, f);
         Imtil.filterImg(playerProjectile, f);
@@ -954,8 +958,8 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static void postProcess() {
-        final short s0 = 0, s96 = 96, s192 = 192;
-        final PixelFilter[] greyFilter = { newFilter(Pancolor.CYAN, Pancolor.DARK_GREY, new FinPancolor(s0, s192, s192), new FinPancolor(s96)) };
+        final short s96 = 96;
+        final PixelFilter[] greyFilter = { newFilter(lastPlayerImagesColor1, Pancolor.DARK_GREY, lastPlayerImagesColor2, new FinPancolor(s96)) };
         filterImgs(playerDefeatOrb, greyFilter);
         defeatOrbBoss = newAnimation("defeat.orb.boss", playerDefeatOrb, CENTER_16, voidImages.defeat.getFrames()[0].getDuration());
         Imtil.filterImg(playerDisk, greyFilter);
