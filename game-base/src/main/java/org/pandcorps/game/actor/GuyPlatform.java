@@ -164,7 +164,11 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     protected final byte addX(final int v, final boolean adjustY) {
-        return addX(v, adjustY, true);
+        return addX(v, adjustY, isMirrorAdjustedByAddX());
+    }
+    
+    protected boolean isMirrorAdjustedByAddX() {
+        return true;
     }
     
     protected final byte addX(final int v, final boolean adjustY, final boolean adjustMirror) {

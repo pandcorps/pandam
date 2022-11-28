@@ -5993,9 +5993,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int yStart;
         private int yProjectile;
         private int yMine;
+        private int yJumpReverse;
         private Player target = null;
         private float targetY = -1;
         private boolean projectileForced = false;
+        private int reverseCount = 0;
+        private boolean reverseNeeded = false;
         
         protected ChronoBot(final Segment seg) {
             super(CHRONO_OFF_X, CHRONO_H, seg);
@@ -6014,6 +6017,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             yStart = getY();
             yProjectile = yStart + 16; // Full jump reaches height of 52 pixels (above yStart)
             yMine = yStart + 43;
+            yJumpReverse = yStart + 64;
             startSnap();
         }
         
@@ -6058,13 +6062,25 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 getPosition().setY(targetY);
                 startState(STATE_JUMP_AIM, 16, getJumpAim());
             } else if ((state == STATE_JUMP) && (v < 0)) {
-                changeView(getFall());
+                if (reverseNeeded && (reverseCount < 2) && (getPosition().getY() < yJumpReverse)) {
+                    v = -v + g;
+                    hv = -hv;
+                    reverseCount++;
+                } else {
+                    changeView((reverseCount == 1) ? getJump() : getFall());
+                }
             }
             return false;
         }
         
         @Override
+        protected final boolean isMirrorAdjustedByAddX() {
+            return reverseCount == 0;
+        }
+        
+        @Override
         protected final boolean pickState() {
+            reverseNeeded = false;
             if (isPlayerStopped()) {
                 return false;
             } else if (isPlayerBehindBoss()) {
@@ -6141,6 +6157,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void onBossLandedAny() {
+            reverseCount = 0;
             if (state == STATE_JUMP) {
                 resumePlayers();
             }
@@ -6148,6 +6165,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void onJumpLanded() {
+            reverseCount = 0;
             adjustX();
         }
         
@@ -6188,6 +6206,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void startJump() {
+            reverseNeeded = true;
             if (Mathtil.rand()) {
                 startJump1();
             } else {
