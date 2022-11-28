@@ -240,6 +240,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return tauntState == TAUNT_FINISHED;
     }
     
+    protected final boolean isTauntFinishedOrWaiting() {
+        return (tauntState == TAUNT_FINISHED) || (tauntState == TAUNT_WAITING); // Waiting is done with the taunt, waiting for the health bar to fill
+    }
+    
     protected final boolean finishTaunt() {
         if (tauntState == TAUNT_FINISHED) {
             return false;
@@ -7099,6 +7103,122 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getImage2() {
             return (img2 = Boss.getImage(img2, "aerobot/Projectile2", BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8));
+        }
+    }
+    
+    protected final static int HYDRO_OFF_X = 7, HYDRO_H = 25;
+    protected final static Panple HYDRO_O = new FinPanple2(14, 1);
+    protected final static Panple HYDRO_MIN = getMin(HYDRO_OFF_X);
+    protected final static Panple HYDRO_MAX = getMax(HYDRO_OFF_X, HYDRO_H);
+    
+    protected final static class HydroBot extends Boss {
+        protected final static byte STATE_TAUNT = 1;
+        protected final static byte STATE_WAIT = 2;
+        //protected static Panmage still = null;
+        protected final static Panmage[] stills = new Panmage[4];
+        protected final static Panmage[] taunts = new Panmage[6];
+        
+        protected HydroBot(final Segment seg) {
+            super(HYDRO_OFF_X, HYDRO_H, seg);
+        }
+        
+        @Override
+        protected final void taunt() {
+            startStateIndefinite(STATE_TAUNT, getTaunt(0));
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                    "TODO HYDRO",
+                    "NULL",
+                    "HYDRO"
+                };
+        }
+        
+        @Override
+        protected final String[] getRematchMessages() {
+            return new String[] { "TODO" };
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if ((state == STATE_STILL) || (state == STATE_WAIT)) {
+                changeView(getStill());
+            } else if (state == STATE_TAUNT) {
+                if (waitCounter == 8) {
+                    setView(getTaunt(1));
+                } else if (waitCounter == 12) {
+                    setView(getTaunt(2));
+                } else if (waitCounter == 20) {
+                    setView(getTaunt(3));
+                } else if (waitCounter == 24) {
+                    setView(getTaunt(4));
+                } else if (waitCounter == 40) {
+                    setView(getTaunt(5));
+                } else if (waitCounter == 44) {
+                    finishTaunt();
+                    startStateIndefinite(STATE_WAIT, getStill());
+                }
+            }
+            return false;
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            final int r = rand(3);
+            if (r == 0) {
+                //startGlide();
+            } else if (r == 1) {
+                //startAim();
+            } else {
+                //startDive();
+            }
+            return false;
+        }
+        
+        @Override
+        protected final boolean continueState() {
+            /*if (state == STATE_TAUNT) {
+            } else*/ {
+                startStill();
+            }
+            return false;
+        }
+        
+        private int stillTimer = -1;
+        
+        @Override
+        protected final Panmage getStill() {
+            if (!isTauntFinishedOrWaiting()) {
+                return getTaunt(0);
+            }
+            stillTimer++;
+            if (stillTimer >= 48) {
+                stillTimer = 0;
+            }
+            return get(stills, "", stillTimer / 12);
+        }
+        
+        //protected final static Panmage getAimForward() {
+        //    return (still = getHydroImage(still, "hydrobot/HydroBot"));
+        //}
+        
+        protected final static Panmage getTaunt(final int i) {
+            return get(taunts, "Taunt", i);
+        }
+        
+        protected final static Panmage get(final Panmage[] images, final String name, final int i) {
+            Panmage img = images[i];
+            if (img == null) {
+                img = getHydoImage(null, "hydrobot/HydroBot" + name + (i + 1));
+                images[i] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getHydoImage(final Panmage img, final String name) {
+            return getImage(img, name, HYDRO_O, HYDRO_MIN, HYDRO_MAX);
         }
     }
     
