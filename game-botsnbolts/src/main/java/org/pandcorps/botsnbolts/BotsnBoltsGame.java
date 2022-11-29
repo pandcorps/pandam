@@ -1530,12 +1530,44 @@ public final class BotsnBoltsGame extends BaseGame {
         getLayer().addActor(actor);
     }
     
-    protected final static void notify(final CharSequence msg) {
+    private final static void notifyForce(final CharSequence msg) {
         if (Panctor.isDestroyed(notifications)) {
             notifications = new Notifications(Panlayer.isDetached(hud) ? room : hud, font).setDisplayTime(240).setRushedTime(105);
             notifications.getLabel().getPosition().set(8, GAME_H - 16, DEPTH_DIALOGUE_TEXT);
         }
         notifications.enqueue(Chartil.toString(msg));
+    }
+    
+    protected final static void notify(final CharSequence msg) {
+        if (Panctor.isDestroyed(notifications)) {
+            notifyForce(msg);
+            return;
+        }
+        final String currentText = notifications.getCurrentText();
+        if (Chartil.equals(msg, currentText)) {
+            return;
+        }
+        notifyForce(msg);
+    }
+    
+    private final static void notifyForce(final CharSequence... msgs) {
+        for (final CharSequence msg : msgs) {
+            notifyForce(msg);
+        }
+    }
+    
+    protected final static void notify(final CharSequence... msgs) {
+        if (Panctor.isDestroyed(notifications)) {
+            notifyForce(msgs);
+            return;
+        }
+        final String currentText = notifications.getCurrentText();
+        for (final CharSequence msg : msgs) {
+            if (Chartil.equals(msg, currentText)) {
+                return;
+            }
+        }
+        notifyForce(msgs);
     }
     
     protected final static void clearNotifications() {

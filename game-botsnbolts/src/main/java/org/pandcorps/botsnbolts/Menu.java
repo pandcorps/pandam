@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2022, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -453,6 +453,7 @@ public class Menu {
         
         @Override
         protected final void load() throws Exception {
+            suggestedCell = null;
             clearLevelButtons();
             final Pangine engine = Pangine.getEngine();
             BotsnBoltsGame.musicLevelSelect.changeMusic();
@@ -480,7 +481,6 @@ public class Menu {
             Player.registerCapture(grid);
             BotLevel centerLevel = null;
             boolean allBasicFinished = true, anyDenied = false;
-            LevelSelectCell suggestedCell = null;
             for (final BotLevel level : RoomLoader.levels) {
                 if (level.isSpecialLevel()) {
                     if (!level.isAllowed()) {
@@ -504,7 +504,7 @@ public class Menu {
                 if (prf.upgrades.isEmpty()) {
                     BotsnBoltsGame.notify("Collect upgrades to reach the next level!");
                 } else {
-                    BotsnBoltsGame.notify("Keep looking for more upgrades!");
+                    BotsnBoltsGame.notify("Find more upgrades to reach the next level!");
                 }
             }
             if (centerLevel == null) {
@@ -601,11 +601,11 @@ public class Menu {
             final TouchButton btn = new TouchButton(engine.getInteraction(), layer, "level." + x + "." + y, x, y, BotsnBoltsGame.DEPTH_FG, imgEmpty, null, true);
             levelButtons.add(btn);
             engine.registerTouchButton(btn);
+            final LevelSelectCell cell = grid.cells[selectY][selectX];
             grid.register(btn, new GridEndListener() {
                 @Override public final void onGridEnd() {
                     startLevel(level);
                 }});
-            final LevelSelectCell cell = grid.cells[selectY][selectX];
             cell.level = level;
             grid.register(btn, new GridStartListener() {
                 @Override public final void onGridStart() {
@@ -650,6 +650,9 @@ public class Menu {
     }
     
     private final static void startLevel(final BotLevel level) {
+        if (!isLevelAllowed(level)) {
+            return;
+        }
         clearLevelButtons();
         Pangine.getEngine().getAudio().stop();
         BotsnBoltsGame.fxMenuClick.startSound();
@@ -666,6 +669,7 @@ public class Menu {
         RoomLoader.level = level;
         RoomLoader.visitedRooms.clear();
         BotsnBoltsGame.runPlayerContexts(new PlayerContextRunnable() {
+            @Override
             public final void run(final PlayerContext pc) {
                 pc.lives = 5;
             }
@@ -723,6 +727,28 @@ public class Menu {
         }
     }
     
+    private static LevelSelectCell suggestedCell = null;
+    
+    protected final static boolean isCellAllowed(final LevelSelectCell cell) {
+        if ((suggestedCell == null) || (suggestedCell == cell)) {
+            return true;
+        }
+        warnWrongLevel();
+        return false;
+    }
+    
+    protected final static boolean isLevelAllowed(final BotLevel level) {
+        if ((suggestedCell == null) || suggestedCell.level == level) {
+            return true;
+        }
+        warnWrongLevel();
+        return false;
+    }
+    
+    protected final static void warnWrongLevel() {
+        BotsnBoltsGame.notify("Pick the selected level or...", "disable automatic level selection");
+    }
+    
     protected final static class LevelSelectGrid extends Panctor {
         private static Panmage bg = null;
         private final LevelSelectCell[][] cells = new LevelSelectCell[LEVEL_ROWS][LEVEL_COLUMNS];
@@ -774,6 +800,9 @@ public class Menu {
         }
         
         protected final void setCurrentCell(final LevelSelectCell currentCell) {
+            if (!isCellAllowed(currentCell)) {
+                return;
+            }
             setCurrentCell(currentCell, true);
         }
         
@@ -918,7 +947,7 @@ public class Menu {
         protected void loadOptions() {
             optionsY = 156;
             final Profile prf = BotsnBoltsGame.getPrimaryPlayerContext().prf;
-            addOption(bg, "Suggest next level", new OptionSetter() {
+            addOption(bg, "Automatic level selection", new OptionSetter() {
                 @Override public final boolean set() {
                     return (prf.levelSuggestions = !prf.levelSuggestions); }});
             addOption(bg, "Upgrade bolt usage hints", new OptionSetter() {
