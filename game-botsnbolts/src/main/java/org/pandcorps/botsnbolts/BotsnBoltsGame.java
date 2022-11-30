@@ -835,8 +835,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
         final short s0 = 0, s72 = 72, s96 = 96, s128 = 128, s144 = 144, s192 = 192;
         final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96);
-        final Pancolor pri = Pancolor.GREEN, darkPri = new FinPancolor(s0, s192, s0);
-        final Pancolor skin = new FinPancolor(s192, s128, s96), darkSkin = new FinPancolor(s144, s96, s72);
+        final Pancolor pri = Pancolor.GREEN, darkPri = new FinPancolor(s0, s192, s0); //TODO make dynamic
+        final Pancolor skin = new FinPancolor(s192, s128, s96), darkSkin = new FinPancolor(s144, s96, s72); //TODO make dynamic
         final Pancolor frz = Pancolor.WHITE, darkFrz = newColorIce();
         final Pancolor out = Pancolor.BLACK, outFrz = newColorIceDark();
         final ReplacePixelFilter frzFilter = new ReplacePixelFilter(grey, frz, darkGrey, darkFrz, pri, frz, darkPri, darkFrz, skin, frz, darkSkin, darkFrz, out, outFrz);
@@ -862,6 +862,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage jumpAimUp = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 1);
         final Img imgTalk = Imtil.load(pre + "Talk.png"), imgTalkMirror = playerMirror ? Imtil.load(pre + "TalkMirror.png") : null;
         final Panmage talk = newPlayerImage(PRE_IMG + "." + name + ".talk", og, imgTalk, imgTalkMirror);
+        final Img imgWallGrab = Imtil.load(pre + "Wall.png"), imgWallGrabMirror = playerMirror ? Imtil.load(pre + "WallMirror.png") : null;
+        final Panmage wallGrab = newPlayerImage(PRE_IMG + "." + name + ".wall", oj, imgWallGrab, imgWallGrabMirror);
         
         final Panmage basicProjectile = (src == null) ? engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile) : src.basicProjectile;
         final Panimation projectile2 = (src == null) ? newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4) : src.projectile2;
@@ -916,7 +918,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImages pi;
         pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
+            burst, ball, wallGrab, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;
     }

@@ -1499,6 +1499,29 @@ public class Player extends Chr implements Warpable, StepEndListener {
         setH(PLAYER_H);
     }
     
+    private final boolean isWallToGrab() {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final Panple pos = getPosition();
+        final float x = pos.getX() + (isMirror() ? -16 : 16), y = pos.getY();
+        return isAnySolidBehavior(Tile.getBehavior(tm.getTile(tm.getContainer(x, y))))
+                && isAnySolidBehavior(Tile.getBehavior(tm.getTile(tm.getContainer(x, y + 11.0f))))
+                && isAnySolidBehavior(Tile.getBehavior(tm.getTile(tm.getContainer(x, y + 23.0f))));
+    }
+    
+    private final boolean isWallGrabAvailable() {
+        //return isUpgradeAvailable(Profile.UPGRADE_WALL_GRAB);
+        return true;
+    }
+    
+    protected final void startWallGrab() {
+        if (!isWallGrabAvailable()) {
+            return;
+        }
+        clearRun();
+        stateHandler = WALL_GRAB_HANDLER;
+        changeView(pi.wallGrab);
+    }
+    
     private final void endLadder() {
         clearRun();
         stateHandler = NORMAL_HANDLER;
@@ -2134,6 +2157,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if (player.triggerBossDoor()) {
                 return;
             } else if (player.wallTimer == 0 && xResult == X_WALL) {
+                if (player.isWallGrabAvailable() && !player.isGrounded() && player.isWallToGrab()) {
+                    player.startWallGrab();
+                    return;
+                }
                 player.wallTimer = 1;
                 if (player.chv > 0) { // Player could be sliding opposite of direction Player is facing; movement direction is what matters
                     player.wallMirror = false;
@@ -2322,6 +2349,58 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if ((getClock() - player.lastJump) <= 1) {
                 player.endBall();
             }
+            return false;
+        }
+    };
+    
+    protected final static StateHandler WALL_GRAB_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.stateHandler = NORMAL_HANDLER;
+            player.startJump(); // onJumpNormal checks grounded, not necessary here
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+            //TODO
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            //TODO
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+            //TODO
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+        }
+        
+        @Override
+        protected final void onHurt(final Player player) {
+            player.stateHandler = NORMAL_HANDLER;
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            //TODO slide, switch to normal handler if no longer touching wall
+            return true;
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+            player.stateHandler = NORMAL_HANDLER;
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
             return false;
         }
     };
@@ -2735,6 +2814,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panimation chargeVert2;
         protected final Panimation burst;
         private final Panframe[] ball;
+        protected final Panmage wallGrab;
         protected final Panmage warp;
         protected final Panimation materialize;
         protected final Panimation dematerialize;
@@ -2762,7 +2842,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
-                               final Panimation burst, final Panframe[] ball, final Panmage warp, final Panimation materialize, final Panimation bomb,
+                               final Panimation burst, final Panframe[] ball, final Panmage wallGrab,
+                               final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
                                final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox, final Panmage highlightBox,
@@ -2787,6 +2868,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.chargeVert2 = chargeVert2;
             this.burst = burst;
             this.ball = ball;
+            this.wallGrab = wallGrab;
             this.warp = warp;
             this.materialize = materialize;
             dematerialize = Pangine.getEngine().createReverseAnimation(materialize.getId() + ".reverse", materialize);
