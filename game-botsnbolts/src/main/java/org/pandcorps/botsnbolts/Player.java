@@ -1508,6 +1508,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 && isAnySolidBehavior(Tile.getBehavior(tm.getTile(tm.getContainer(x, y + 23.0f))));
     }
     
+    private final boolean isReadyToGrabWall() {
+        return v <= 0.0f;
+    }
+    
     private final boolean isWallGrabAvailable() {
         //return isUpgradeAvailable(Profile.UPGRADE_WALL_GRAB);
         return true;
@@ -1520,6 +1524,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         clearRun();
         stateHandler = WALL_GRAB_HANDLER;
         changeView(pi.wallGrab);
+    }
+    
+    protected final void endWallGrab() {
+        stateHandler = NORMAL_HANDLER;
     }
     
     private final void endLadder() {
@@ -2157,7 +2165,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if (player.triggerBossDoor()) {
                 return;
             } else if (player.wallTimer == 0 && xResult == X_WALL) {
-                if (player.isWallGrabAvailable() && !player.isGrounded() && player.isWallToGrab()) {
+                if (player.isWallGrabAvailable() && !player.isGrounded() && player.isWallToGrab() && player.isReadyToGrabWall()) {
                     player.startWallGrab();
                     return;
                 }
@@ -2356,7 +2364,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static StateHandler WALL_GRAB_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
-            player.stateHandler = NORMAL_HANDLER;
+            player.endWallGrab();
             player.startJump(); // onJumpNormal checks grounded, not necessary here
         }
         
@@ -2385,7 +2393,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onHurt(final Player player) {
-            player.stateHandler = NORMAL_HANDLER;
+            player.endWallGrab();
         }
         
         @Override
@@ -2396,7 +2404,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onGrounded(final Player player) {
-            player.stateHandler = NORMAL_HANDLER;
+            player.endWallGrab();
         }
         
         @Override
