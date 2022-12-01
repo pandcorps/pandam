@@ -615,6 +615,11 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Pancolor newColorIceDark() {
+        final short s128 = 128, s192 = 192;
+        return new FinPancolor(s128, s192, Pancolor.MAX_VALUE);
+    }
+    
+    private final static Pancolor newColorIceOutline() {
         final short s96 = 96, s176 = 176;
         return new FinPancolor(s96, s176, Pancolor.MAX_VALUE);
     }
@@ -666,17 +671,28 @@ public final class BotsnBoltsGame extends BaseGame {
         return filter;
     }
     
+    private static Pancolor lastPlayerImagesPrimary1, lastPlayerImagesPrimary2;
+    private static Pancolor lastPlayerImagesEnergy1, lastPlayerImagesEnergy2;
+    private static Pancolor lastPlayerImagesSkin1, lastPlayerImagesSkin2;
+    
     private final static void loadPlayer() {
         final String dir = "betabot", name = "Void";
         openPlayerImages(dir, name);
+        final short s0 = 0, s48 = 48, s64 = 64, s72 = 72, s96 = 96, s120 = 120, s128 = 128, s144 = 144, s160 = 160, s176 = 176, s192 = 192, s240 = 240;
+        final Pancolor skin0 = new FinPancolor(s240, s160, s120), skin1 = new FinPancolor(s192, s128, s96), skin2 = new FinPancolor(s144, s96, s72);
+        lastPlayerImagesPrimary1 = lastPlayerImagesEnergy1 = Pancolor.GREEN; lastPlayerImagesPrimary2 = lastPlayerImagesEnergy2 = new FinPancolor(s0, s192, s0);
+        lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
         voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true);
-        final short s0 = 0, s64 = 64, s128 = 128, s144 = 144, s176 = 176, s192 = 192;
         final Pancolor darkCyan = new FinPancolor(s0, s192, s192);
         filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), darkCyan);
+        lastPlayerImagesSkin1 = skin0; lastPlayerImagesSkin2 = skin1;
         playerMirror = false;
         volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true);
+        lastPlayerImagesSkin1 = new FinPancolor(s96, s128, s192); lastPlayerImagesSkin2 = new FinPancolor(s72, s96, s144);
         finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false);
         filterPlayerImages(Pancolor.CYAN, new FinPancolor(s176, s144, Pancolor.MAX_VALUE), darkCyan, new FinPancolor(s128, s64, Pancolor.MAX_VALUE));
+        lastPlayerImagesPrimary1 = lastPlayerImagesEnergy2; lastPlayerImagesPrimary2 = new FinPancolor(s96, s48, s192);
+        lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
         nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true);
         closePlayerImages();
         prf0 = new Profile();
@@ -742,11 +758,9 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(playerHighlightBox, newFilter(Pancolor.DARK_GREY, Pancolor.GREEN, new Pancolor(s96), new Pancolor(s0, s192, s0)));
     }
     
-    private static Pancolor lastPlayerImagesColor1, lastPlayerImagesColor2;
-    
     private final static void filterPlayerImages(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
-        lastPlayerImagesColor1 = d1;
-        lastPlayerImagesColor2 = d2;
+        lastPlayerImagesPrimary1 = lastPlayerImagesEnergy1 = d1;
+        lastPlayerImagesPrimary2 = lastPlayerImagesEnergy2 = d2;
         final PixelFilter[] f = { newFilter(s1, d1, s2, d2) };
         filterImgs(playerDefeatOrb, f);
         Imtil.filterImg(playerProjectile, f);
@@ -833,13 +847,13 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pangine engine = Pangine.getEngine();
         final Img imgHurt = Imtil.load(pre + "Hurt.png", false), imgHurtMirror = playerMirror ? Imtil.load(pre + "HurtMirror.png", false) : null;
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
-        final short s0 = 0, s72 = 72, s96 = 96, s128 = 128, s144 = 144, s192 = 192;
-        final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96);
-        final Pancolor pri = Pancolor.GREEN, darkPri = new FinPancolor(s0, s192, s0); //TODO make dynamic
-        final Pancolor skin = new FinPancolor(s192, s128, s96), darkSkin = new FinPancolor(s144, s96, s72); //TODO make dynamic
-        final Pancolor frz = Pancolor.WHITE, darkFrz = newColorIce();
-        final Pancolor out = Pancolor.BLACK, outFrz = newColorIceDark();
-        final ReplacePixelFilter frzFilter = new ReplacePixelFilter(grey, frz, darkGrey, darkFrz, pri, frz, darkPri, darkFrz, skin, frz, darkSkin, darkFrz, out, outFrz);
+        final short s64 = 64, s96 = 96;
+        final Pancolor grey = Pancolor.DARK_GREY, darkGrey = new FinPancolor(s96), darkerGrey = new FinPancolor(s64);
+        final Pancolor pri = lastPlayerImagesPrimary1, darkPri = lastPlayerImagesPrimary2;
+        final Pancolor skin = lastPlayerImagesSkin1, darkSkin = lastPlayerImagesSkin2;
+        final Pancolor frz = Pancolor.WHITE, darkFrz = newColorIce(), darkerFrz = newColorIceDark();
+        final Pancolor out = Pancolor.BLACK, outFrz = newColorIceOutline();
+        final ReplacePixelFilter frzFilter = new ReplacePixelFilter(grey, frz, darkGrey, darkFrz, darkerGrey, darkerFrz, pri, frz, darkPri, darkFrz, skin, frz, darkSkin, darkFrz, out, outFrz);
         if (playerMirror) {
             filterImgs(new Img[] { imgHurt, imgHurtMirror }, frzFilter);
         } else {
@@ -961,7 +975,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static void postProcess() {
         final short s96 = 96;
-        final PixelFilter[] greyFilter = { newFilter(lastPlayerImagesColor1, Pancolor.DARK_GREY, lastPlayerImagesColor2, new FinPancolor(s96)) };
+        final PixelFilter[] greyFilter = { newFilter(lastPlayerImagesEnergy1, Pancolor.DARK_GREY, lastPlayerImagesEnergy2, new FinPancolor(s96)) };
         filterImgs(playerDefeatOrb, greyFilter);
         defeatOrbBoss = newAnimation("defeat.orb.boss", playerDefeatOrb, CENTER_16, voidImages.defeat.getFrames()[0].getDuration());
         Imtil.filterImg(playerDisk, greyFilter);
