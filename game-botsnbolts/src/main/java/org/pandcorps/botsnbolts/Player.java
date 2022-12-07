@@ -115,6 +115,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private int queuedX = 0;
     private boolean air = false;
     private int wallTimer = 0;
+    private int wallSlideTimer = 0;
     private boolean wallMirror = false;
     protected boolean movedDuringJump = false;
     private byte bossDoorStatus = 0;
@@ -422,6 +423,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final void setJumpAllowed(final boolean jumpAllowed) {
         this.jumpAllowed = jumpAllowed;
+    }
+    
+    @Override
+    protected final float getG() {
+        return stateHandler.getG(this);
+    }
+    
+    protected final float getGNormal() {
+        return super.getG();
     }
     
     protected final void shoot() {
@@ -743,6 +753,19 @@ public class Player extends Chr implements Warpable, StepEndListener {
         puff.setMirror(src.isMirror());
         addActor(src, puff);
         return puff;
+    }
+    
+    private final void puffStill(final int offX, final int offY) {
+        burstStill(this, BotsnBoltsGame.puff, offX, offY);
+    }
+    
+    private final static void burstStill(final Panctor src, final Panimation anm, final int offX, final int offY) {
+        final Burst burst = new Burst(anm);
+        final Panple playerPos = src.getPosition();
+        final boolean mirror = src.isMirror();
+        burst.getPosition().set(playerPos.getX() + (getMirrorMultiplier(mirror) * offX), playerPos.getY() + offY, BotsnBoltsGame.DEPTH_BURST);
+        burst.setMirror(mirror);
+        addActor(src, burst);
     }
     
     protected final static void defeatOrbs(final Panctor src, final Panimation defeat) {
@@ -1522,6 +1545,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return;
         }
         clearRun();
+        wallSlideTimer = 0;
         stateHandler = WALL_GRAB_HANDLER;
         changeView(pi.wallGrab);
     }
@@ -2043,6 +2067,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected void onAirJump(final Player player) {
         }
         
+        protected float getG(final Player player) {
+            return player.getGNormal();
+        }
+        
         protected abstract void onShootStart(final Player player);
         
         protected abstract void onShooting(final Player player);
@@ -2369,6 +2397,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final float getG(final Player player) {
+            return player.isUnderWater() ? gWallSlideWater : gWallSlide;
+        }
+        
+        @Override
         protected final void onShootStart(final Player player) {
             //TODO
         }
@@ -2398,8 +2431,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final boolean onStep(final Player player) {
-            //TODO slide, switch to normal handler if no longer touching wall
-            return true;
+            player.wallSlideTimer++;
+            if (player.wallSlideTimer == 12) {
+                player.puffStill(4, 24);
+                player.wallSlideTimer = 0;
+            }
+            return false;
         }
         
         @Override
