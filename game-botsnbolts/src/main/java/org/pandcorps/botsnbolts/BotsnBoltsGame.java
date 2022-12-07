@@ -878,6 +878,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage talk = newPlayerImage(PRE_IMG + "." + name + ".talk", og, imgTalk, imgTalkMirror);
         final Img imgWallGrab = Imtil.load(pre + "Wall.png"), imgWallGrabMirror = playerMirror ? Imtil.load(pre + "WallMirror.png") : null;
         final Panmage wallGrab = newPlayerImage(PRE_IMG + "." + name + ".wall", oj, imgWallGrab, imgWallGrabMirror);
+        final Img imgWallGrabAim = Imtil.load(pre + "WallAim.png"), imgWallGrabAimMirror = playerMirror ? Imtil.load(pre + "WallAimMirror.png") : null;
+        final Panmage wallGrabAim = newPlayerImage(PRE_IMG + "." + name + ".wall.aim", oj, imgWallGrabAim, imgWallGrabAimMirror);
         
         final Panmage basicProjectile = (src == null) ? engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile) : src.basicProjectile;
         final Panimation projectile2 = (src == null) ? newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4) : src.projectile2;
@@ -932,7 +934,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImages pi;
         pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, wallGrab, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
+            burst, ball, wallGrab, wallGrabAim, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;
     }

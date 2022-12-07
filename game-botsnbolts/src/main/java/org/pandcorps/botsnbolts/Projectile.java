@@ -68,9 +68,13 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     protected final static void init(final SpecProjectile sp, final Pandy prj, final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
         setPower(sp, power);
         final Panple srcPos = ref.getPosition();
-        prj.setMirror(ref.isMirror());
+        boolean mirror = ref.isMirror();
+        if (src.isAimMirrorReversed()) {
+            mirror = !mirror;
+        }
+        prj.setMirror(mirror);
         final int xm = prj.getMirrorMultiplier();
-        prj.getPosition().set(srcPos.getX() + (xm * OFF_X), srcPos.getY() + OFF_Y, BotsnBoltsGame.DEPTH_PROJECTILE);
+        prj.getPosition().set(srcPos.getX() + (xm * OFF_X), srcPos.getY() + src.getAimOffsetY(), BotsnBoltsGame.DEPTH_PROJECTILE);
         prj.getVelocity().set(xm * vx, vy);
         ref.getLayer().addActor(prj);
     }

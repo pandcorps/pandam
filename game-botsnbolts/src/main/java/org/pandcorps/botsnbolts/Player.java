@@ -467,6 +467,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         blinkTimer = 0;
     }
     
+    protected final boolean isAimMirrorReversed() {
+        return stateHandler.isAimMirrorReversed(this);
+    }
+    
+    protected final int getAimOffsetY() {
+        return stateHandler.getAimOffsetY(this);
+    }
+    
     protected final void right() {
         if (isFreeOrStopped()) {
             stateHandler.onRight(this);
@@ -1545,6 +1553,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return;
         }
         clearRun();
+        v = 0.0f;
         wallSlideTimer = 0;
         stateHandler = WALL_GRAB_HANDLER;
         changeView(pi.wallGrab);
@@ -2077,6 +2086,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         protected abstract void onShootEnd(final Player player);
         
+        protected boolean isAimMirrorReversed(final Player player) {
+            return false;
+        }
+        
+        protected int getAimOffsetY(final Player player) {
+            return Projectile.OFF_Y;
+        }
+        
         protected abstract void onRight(final Player player);
         
         protected abstract void onLeft(final Player player);
@@ -2403,17 +2420,27 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onShootStart(final Player player) {
-            //TODO
+            player.prf.shootMode.onShootStart(player);
         }
         
         @Override
         protected final void onShooting(final Player player) {
-            //TODO
+            player.prf.shootMode.onShooting(player);
         }
         
         @Override
         protected final void onShootEnd(final Player player) {
-            //TODO
+            player.prf.shootMode.onShootEnd(player);
+        }
+        
+        @Override
+        protected final boolean isAimMirrorReversed(final Player player) {
+            return true;
+        }
+        
+        @Override
+        protected final int getAimOffsetY(final Player player) {
+            return Projectile.OFF_Y - 4;
         }
         
         @Override
@@ -2435,6 +2462,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if (player.wallSlideTimer == 12) {
                 player.puffStill(4, 24);
                 player.wallSlideTimer = 0;
+            }
+            if (player.isShootPoseNeeded()) {
+                player.changeView(player.pi.wallGrabAim);
+            } else {
+                player.changeView(player.pi.wallGrab);
             }
             return false;
         }
@@ -2860,6 +2892,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panimation burst;
         private final Panframe[] ball;
         protected final Panmage wallGrab;
+        protected final Panmage wallGrabAim;
         protected final Panmage warp;
         protected final Panimation materialize;
         protected final Panimation dematerialize;
@@ -2887,7 +2920,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
-                               final Panimation burst, final Panframe[] ball, final Panmage wallGrab,
+                               final Panimation burst, final Panframe[] ball, final Panmage wallGrab, final Panmage wallGrabAim,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
@@ -2914,6 +2947,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.burst = burst;
             this.ball = ball;
             this.wallGrab = wallGrab;
+            this.wallGrabAim = wallGrabAim;
             this.warp = warp;
             this.materialize = materialize;
             dematerialize = Pangine.getEngine().createReverseAnimation(materialize.getId() + ".reverse", materialize);
