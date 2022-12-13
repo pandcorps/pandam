@@ -68,6 +68,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int VEL_SPRING = 10;
     private final static int VEL_FALL_PROTECTION = 15;
     private final static int VEL_WALK = 3;
+    private final static int VEL_SLIDE = 6;
     protected final static int VEL_PROJECTILE = 8;
     protected final static float VX_SPREAD1;
     protected final static float VY_SPREAD1;
@@ -115,7 +116,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private int queuedX = 0;
     private boolean air = false;
     private int wallTimer = 0;
-    private int wallSlideTimer = 0;
+    private int slideTimer = 0;
     private boolean wallMirror = false;
     protected boolean movedDuringJump = false;
     private byte bossDoorStatus = 0;
@@ -1440,16 +1441,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
             running = false;
         } else {
             blinkTimer = 0;
-            if (wallTimer > 0 && set.crouch != null && !RoomChanger.isChanging() && wallMirror == isMirror() && isBallAvailable() && isRoomForBall()) {
-                wallTimer++;
-                if (wallTimer > 6) {
-                    startBall();
-                } else if (wallTimer > 3) {
-                    changeView(set.crouch[1]);
-                } else {
-                    changeView(set.crouch[0]);
+            if (wallTimer > 0 && set.crouch != null && !RoomChanger.isChanging() && wallMirror == isMirror() && isRoomForBall()) {
+                if (isDashing() && isSlideAvailable()) {
+                    startSlide();
+                    return;
+                } else if (isBallAvailable()) {
+                    wallTimer++;
+                    if (wallTimer > 6) {
+                        startBall();
+                    } else if (wallTimer > 3) {
+                        changeView(set.crouch[1]);
+                    } else {
+                        changeView(set.crouch[0]);
+                    }
+                    return;
                 }
-                return;
             }
             wallTimer = 0;
             final boolean wasRunning = running;
@@ -1525,9 +1531,39 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void endBall() {
+        // Also used by endSlide
         clearRun();
         stateHandler = NORMAL_HANDLER;
         setH(PLAYER_H);
+    }
+    
+    private final boolean isSlideAvailable() {
+        return isUpgradeAvailable(Profile.UPGRADE_SLIDE);
+    }
+    
+    protected final void startSlide() {
+        if (!isSlideAvailable()) {
+            return;
+        }
+        clearRun();
+        slideTimer = 0;
+        stateHandler = SLIDE_HANDLER;
+        lastBall = getClock();
+        changeView(pi.slide);
+        setH(BALL_H);
+        wallTimer = 0;
+    }
+    
+    protected final void slidePuff(final int offX, final int offY) {
+        slideTimer++;
+        if (slideTimer == 12) {
+            puffStill(offX, offY);
+            slideTimer = 0;
+        }
+    }
+    
+    protected final void endSlide() {
+        endBall();
     }
     
     private final boolean isWallToGrab() {
@@ -1544,8 +1580,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final boolean isWallGrabAvailable() {
-        //return isUpgradeAvailable(Profile.UPGRADE_WALL_GRAB);
-        return true;
+        return isUpgradeAvailable(Profile.UPGRADE_WALL_GRAB);
     }
     
     protected final void startWallGrab() {
@@ -1554,13 +1589,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         clearRun();
         v = 0.0f;
-        wallSlideTimer = 0;
+        slideTimer = 0;
         stateHandler = WALL_GRAB_HANDLER;
         changeView(pi.wallGrab);
     }
     
     protected final void endWallGrab() {
         stateHandler = NORMAL_HANDLER;
+    }
+    
+    protected final void startDash() {
+        //TODO
+    }
+    
+    protected final boolean isDashing() {
+        return true; //TODO
     }
     
     private final void endLadder() {
@@ -2406,6 +2449,75 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
+    protected final static StateHandler SLIDE_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.onJumpNormal();
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+            player.setMirror(VEL_SLIDE);
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+            player.setMirror(-VEL_SLIDE);
+        }
+        
+        private final boolean isRoomToStand(final Player player) {
+            /*
+            try {
+                player.setH(PLAYER_H);
+                return player.isJumpPossible();
+            } finally {
+                player.setH(BALL_H);
+            }
+            */
+            final Panple pos = player.getPosition();
+            final float x = pos.getX(), y = pos.getY() + PLAYER_H;
+            final TileMap tm = BotsnBoltsGame.tm;
+            if (Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(tm.getContainer(x + player.getOffLeft(), y))))) {
+                return false;
+            } else if (Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(tm.getContainer(x + player.getOffRight(), y))))) {
+                return false;
+            }
+            return true;
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            if ((getClock() > (player.lastBall + 1)) && isRoomToStand(player)) {
+                player.endSlide();
+                return false;
+            }
+            player.hv = player.isMirror() ? -VEL_SLIDE : VEL_SLIDE;
+            player.slidePuff(-8, 5);
+            return false;
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return false;
+        }
+    };
+    
     protected final static StateHandler WALL_GRAB_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
@@ -2458,11 +2570,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final boolean onStep(final Player player) {
-            player.wallSlideTimer++;
-            if (player.wallSlideTimer == 12) {
-                player.puffStill(4, 24);
-                player.wallSlideTimer = 0;
-            }
+            player.slidePuff(4, 24);
             if (player.isShootPoseNeeded()) {
                 player.changeView(player.pi.wallGrabAim);
             } else {
@@ -2893,6 +3001,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         private final Panframe[] ball;
         protected final Panmage wallGrab;
         protected final Panmage wallGrabAim;
+        protected final Panmage slide;
         protected final Panmage warp;
         protected final Panimation materialize;
         protected final Panimation dematerialize;
@@ -2920,7 +3029,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
-                               final Panimation burst, final Panframe[] ball, final Panmage wallGrab, final Panmage wallGrabAim,
+                               final Panimation burst, final Panframe[] ball, final Panmage wallGrab, final Panmage wallGrabAim, final Panmage slide,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
@@ -2948,6 +3057,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.ball = ball;
             this.wallGrab = wallGrab;
             this.wallGrabAim = wallGrabAim;
+            this.slide = slide;
             this.warp = warp;
             this.materialize = materialize;
             dematerialize = Pangine.getEngine().createReverseAnimation(materialize.getId() + ".reverse", materialize);

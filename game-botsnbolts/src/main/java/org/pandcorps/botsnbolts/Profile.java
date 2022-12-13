@@ -301,6 +301,16 @@ public class Profile {
         @Override public final String getDisplayName(final PlayerContext pc) {
             return pc.pi.birdName + " Rescue";
         }};
+        
+    protected final static Upgrade UPGRADE_WALL_GRAB = new Upgrade("WallGrab") {
+        @Override public final String getDisplayName(final PlayerContext pc) {
+            return "Wall Grab";
+        }};
+    
+    protected final static Upgrade UPGRADE_SLIDE = new Upgrade("Slide") {
+        @Override public final String getDisplayName(final PlayerContext pc) {
+            return "Slide";
+        }};
     
     protected final static Upgrade BASIC_JUMP = new Upgrade("BasicJump") {
         @Override public final String getDisplayName(final PlayerContext pc) {
@@ -313,7 +323,7 @@ public class Profile {
         }};
     
     protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM, UPGRADE_SPRING,
-            UPGRADE_RESCUE, BASIC_ATTACK, BASIC_JUMP };
+            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, BASIC_ATTACK, BASIC_JUMP };
     
     protected abstract static class Upgrade {
         protected final String name;

@@ -132,6 +132,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 oss = new FinPanple2(13, 1);
     protected final static FinPanple2 os = new FinPanple2(15, 1);
     protected final static FinPanple2 ojs = new FinPanple2(15, 4);
+    protected final static FinPanple2 oSlide = new FinPanple2(17, 4);
     protected final static FinPanple originOverlay = new FinPanple(0, 0, DEPTH_OVERLAY);
     protected final static FinPanple2 minCube = new FinPanple2(-5, -5);
     protected final static FinPanple2 maxCube = new FinPanple2(5, 5);
@@ -880,6 +881,9 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage wallGrab = newPlayerImage(PRE_IMG + "." + name + ".wall", oj, imgWallGrab, imgWallGrabMirror);
         final Img imgWallGrabAim = Imtil.load(pre + "WallAim.png"), imgWallGrabAimMirror = playerMirror ? Imtil.load(pre + "WallAimMirror.png") : null;
         final Panmage wallGrabAim = newPlayerImage(PRE_IMG + "." + name + ".wall.aim", oj, imgWallGrabAim, imgWallGrabAimMirror);
+        final Img imgSlide = Imtil.load(pre + "Slide.png"), imgSlideMirror = playerMirror ? Imtil.load(pre + "SlideMirror.png") : null;
+        final int slideX = Player.PLAYER_X + 2;
+        final Panmage slide = newPlayerImage(PRE_IMG + "." + name + ".slide", oSlide, GuyPlatform.getMin(slideX), GuyPlatform.getMax(slideX, 19), imgSlide, imgSlideMirror);
         
         final Panmage basicProjectile = (src == null) ? engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile) : src.basicProjectile;
         final Panimation projectile2 = (src == null) ? newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4) : src.projectile2;
@@ -934,7 +938,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImages pi;
         pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
-            burst, ball, wallGrab, wallGrabAim, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
+            burst, ball, wallGrab, wallGrabAim, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;
     }
@@ -1088,10 +1092,14 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static Panmage newPlayerImage(final String id, final Panple o, final Img img, final Img imgMirror) {
+        return newPlayerImage(id, o, ng, xg, img, imgMirror);
+    }
+    
+    private final static Panmage newPlayerImage(final String id, final Panple o, final Panple n, final Panple x, final Img img, final Img imgMirror) {
         final Pangine engine = Pangine.getEngine();
-        final Panmage image = engine.createImage(id, o, ng, xg, img);
+        final Panmage image = engine.createImage(id, o, n, x, img);
         if (playerMirror) {
-            image.setMirrorSource(engine.createImage(id + ".mirror", o, ng, xg, imgMirror));
+            image.setMirrorSource(engine.createImage(id + ".mirror", o, n, x, imgMirror));
         }
         return image;
     }
