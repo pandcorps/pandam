@@ -454,7 +454,7 @@ public abstract class BaseGame extends Pangame {
 	
 	public final static ButtonImages newCircleImages(final int white, final int grey, final int darkGrey, final int black, final PixelFilter clearFilter, final int d) {
     	final Img circle = newButtonImg(d);
-        Imtil.drawCircle(circle, black, black, darkGrey, true);
+        Imtil.drawCircle(circle, black, black, grey, true);
         ImtilX.highlight(circle, new int[] { white }, true);
         ImtilX.highlight(circle, new int[] { darkGrey, grey, grey, grey, white, black, darkGrey }, false);
         return newButtonImages(circle, clearFilter, d, black, null);
