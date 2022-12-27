@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2022, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -239,8 +239,15 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     @Override
     public final void onCollision(final CollisionEvent event) {
         final Collidable collider = event.getCollider();
+        final Projectile projectile;
         if (collider instanceof Projectile) { // Projectile can have sub-classes like Explosion
-            final Projectile projectile = (Projectile) collider;
+            projectile = (Projectile) collider;
+        } else if (collider instanceof SlideKick) {
+            projectile = ((SlideKick) collider).pseudoProjectile;
+        } else {
+            return;
+        }
+        if (projectile != null) {
             final int projectilePower = projectile.power;
             if (projectilePower <= 0) {
                 return;

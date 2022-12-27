@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2022, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -76,12 +76,11 @@ public abstract class Extra extends Panctor {
         protected int x;
         protected int y;
         protected int waitTimer;
-        private static Panmage img = null;
         
         protected EnemySpawner(final Segment seg) {
             super(seg, BotsnBoltsGame.DEPTH_BG);
             initTimer();
-            setView(getImage());
+            setView(BotsnBoltsGame.getEmpty16());
         }
         
         @Override
@@ -124,13 +123,6 @@ public abstract class Extra extends Panctor {
         }
         
         protected abstract Enemy newEnemy();
-        
-        private final static Panmage getImage() {
-            if (img == null) {
-                img = Pangine.getEngine().createEmptyImage("spawner", FinPanple.ORIGIN, FinPanple.ORIGIN, BotsnBoltsGame.CENTER_32);
-            }
-            return img;
-        }
     }
     
     protected final static class BoulderSpawner extends EnemySpawner {

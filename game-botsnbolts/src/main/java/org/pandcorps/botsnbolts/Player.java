@@ -134,6 +134,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected Spring spring = null;
+    private SlideKick slideKick = null;
     protected Carrier carrier = null;
     protected float carrierOff = 0;
     protected float carrierX = NULL_COORD;
@@ -1397,8 +1398,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
                     iter.remove();
                     continue;
                 }
+                follower.setMirror(mirror); // Allow getOffsetX() to use new mirror value if needed
                 follower.getPosition().set(x + follower.getOffsetX(), y + follower.getOffsetY());
-                follower.setMirror(mirror);
             }
         }
     }
@@ -1442,10 +1443,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         } else {
             blinkTimer = 0;
             if (wallTimer > 0 && set.crouch != null && !RoomChanger.isChanging() && wallMirror == isMirror() && isRoomForBall()) {
-                if (isDashing() && isSlideAvailable()) {
+                final boolean ballAvailable = isBallAvailable();
+                if (isSlideAvailable() && (!ballAvailable || isDashing())) {
                     startSlide();
                     return;
-                } else if (isBallAvailable()) {
+                } else if (ballAvailable) {
                     wallTimer++;
                     if (wallTimer > 6) {
                         startBall();
@@ -1552,6 +1554,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         changeView(pi.slide);
         setH(BALL_H);
         wallTimer = 0;
+        slideKick = new SlideKick(this);
+        addActor(slideKick);
+        addFollower(slideKick);
     }
     
     protected final void slidePuff(final int offX, final int offY) {
@@ -1564,6 +1569,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final void endSlide() {
         endBall();
+        Panctor.destroy(slideKick); // updateFollowers will remove from followers List
     }
     
     private final boolean isWallToGrab() {
@@ -3428,6 +3434,32 @@ public class Player extends Chr implements Warpable, StepEndListener {
             } else if (timer > 15) {
                 changeView(BotsnBoltsGame.bubble[1]);
             }
+        }
+    }
+    
+    protected final static class SlideKick extends Panctor implements Collidable, Follower {
+        protected final Projectile pseudoProjectile;
+        
+        protected SlideKick(final Player player) {
+            Projectile.autoAddProjectile = false;
+            this.pseudoProjectile = new Explosion(player, player) {
+                @Override
+                public final void burst() {
+                    // Don't let super method destroy this
+                }
+            };
+            Projectile.autoAddProjectile = true;
+            setView(BotsnBoltsGame.getEmpty16());
+        }
+
+        @Override
+        public final int getOffsetX() {
+            return 14 * getMirrorMultiplier();
+        }
+
+        @Override
+        public final int getOffsetY() {
+            return 0;
         }
     }
     

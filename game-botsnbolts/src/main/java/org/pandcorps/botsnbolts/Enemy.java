@@ -517,7 +517,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     protected final static class AiExplosion extends AiProjectile implements AnimationEndListener {
         protected AiExplosion(final Bomb bomb) {
             super(bomb.src, bomb.src.pi, Player.SHOOT_BOMB, bomb, 0, 0, 1);
-            Explosion.init(this, bomb);
+            Explosion.init(this, bomb.src, bomb);
         }
         
         @Override

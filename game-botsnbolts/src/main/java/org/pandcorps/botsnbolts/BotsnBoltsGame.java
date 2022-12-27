@@ -212,6 +212,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static HudMeterImages hudMeterBlank = null;
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
+    private static Panmage empty16 = null;
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicIntro = null;
     protected static Pansound musicLevelSelect = null;
@@ -521,6 +522,13 @@ public final class BotsnBoltsGame extends BaseGame {
             spikeTile = Pangine.getEngine().createImage("spikeTile", RES + "bg/SpikeTile.png");
         }
         return spikeTile;
+    }
+    
+    protected final static Panmage getEmpty16() {
+        if (empty16 == null) {
+            empty16 = Pangine.getEngine().createEmptyImage("spawner", FinPanple.ORIGIN, FinPanple.ORIGIN, BotsnBoltsGame.CENTER_32);
+        }
+        return empty16;
     }
     
     private final static Pancolor newColorHidden() {

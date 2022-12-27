@@ -65,6 +65,8 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         }
     }
     
+    protected static boolean autoAddProjectile = true;
+    
     protected final static void init(final SpecProjectile sp, final Pandy prj, final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
         setPower(sp, power);
         final Panple srcPos = ref.getPosition();
@@ -76,7 +78,9 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         final int xm = prj.getMirrorMultiplier();
         prj.getPosition().set(srcPos.getX() + (xm * OFF_X), srcPos.getY() + src.getAimOffsetY(), BotsnBoltsGame.DEPTH_PROJECTILE);
         prj.getVelocity().set(xm * vx, vy);
-        ref.getLayer().addActor(prj);
+        if (autoAddProjectile) {
+            ref.getLayer().addActor(prj);
+        }
     }
     
     protected final void setPower(final int power) {
@@ -107,7 +111,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     }
     
     @Override
-    public final void burst() {
+    public void burst() {
         burst(this);
         destroy();
     }
@@ -194,20 +198,22 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         }
     }
     
-    public final static class Explosion extends Projectile implements AnimationEndListener {
+    public static class Explosion extends Projectile implements AnimationEndListener {
         protected Explosion(final Bomb bomb) {
-            super(bomb.src, bomb.src.pi, Player.SHOOT_BOMB, bomb, 0, 0, 1);
-            init(this, bomb);
+            this(bomb.src, bomb);
         }
         
-        protected final static void init(final Panctor exp, final Bomb bomb) {
-            final Panple pos = exp.getPosition(), bombPos = bomb.getPosition();
+        protected Explosion(final Player src, final Panctor ref) {
+            super(src, src.pi, Player.SHOOT_BOMB, ref, 0, 0, 1);
+            init(this, src, ref);
+        }
+        
+        protected final static void init(final Panctor exp, final Player src, final Panctor ref) {
+            final Panple pos = exp.getPosition(), bombPos = ref.getPosition();
             pos.set(bombPos.getX(), bombPos.getY(), BotsnBoltsGame.DEPTH_BURST);
-            exp.setView(bomb.src.pi.burst);
-            final Player player = bomb.src;
-            if (player == null) {
-                return;
-            } else if (player.stateHandler != Player.BALL_HANDLER) {
+            exp.setView(src.pi.burst);
+            final Player player = src;
+            if (player.stateHandler != Player.BALL_HANDLER) {
                 return;
             } else if (player.v >= Player.VEL_BOUNCE_BOMB) {
                 return;
