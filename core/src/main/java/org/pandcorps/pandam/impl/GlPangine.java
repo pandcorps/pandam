@@ -117,6 +117,12 @@ public abstract class GlPangine extends Pangine {
 	    initTruncatedSize();
 	}
 	
+	public final void forceDisplaySize(final int w, final int h) {
+	    this.w = w;
+	    this.h = h;
+	    initViewport(); // Also calls initTruncatedSize()
+	}
+	
 	@Override
 	public final void zoom(final float mag) {
 	    super.zoom(mag);
