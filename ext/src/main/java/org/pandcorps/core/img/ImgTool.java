@@ -28,6 +28,7 @@ import java.util.Map.*;
 
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
+import org.pandcorps.core.img.Pancolor.*;
 import org.pandcorps.core.seg.*;
 
 public final class ImgTool {
@@ -103,6 +104,8 @@ public final class ImgTool {
             processWire(inLoc, outLoc);
         } else if ("reduce".equalsIgnoreCase(mode)) {
             reduceColors(inLoc, outLoc);
+        } else if ("replace".equalsIgnoreCase(mode)) {
+            replaceColors(inLoc, outLoc, args);
         } else if ("pad".equalsIgnoreCase(mode)) {
             pad(inLoc, outLoc);
         } else if ("param".equalsIgnoreCase(mode)) {
@@ -199,6 +202,10 @@ public final class ImgTool {
         return clamp(cRaw + cLight - 128);
     }
     
+    private final static int clamp(final float c) {
+        return clamp(Math.round(c));
+    }
+    
     private final static int clamp(final int c) {
         return Math.max(0, Math.min(Pancolor.MAX_VALUE, c));
     }
@@ -252,9 +259,25 @@ public final class ImgTool {
         return f.getDataElement(0, 0, b, a);
     }
     
-    protected final static void sortChannels(final int r, final int g, final int b) {
+    protected final static void setChannels(final int p) {
+        setChannels(f.getRed(p), f.getGreen(p), f.getBlue(p));
+    }
+    
+    protected final static void setChannels(final int r, final int g, final int b) {
         channels[0] = r; channels[1] = g; channels[2] = b;
+    }
+    
+    protected final static void sortChannels(final int r, final int g, final int b) {
+        setChannels(r, g, b);
         Arrays.sort(channels);
+    }
+    
+    protected final static int getDataElementFromChannels() {
+        return getDataElementFromChannels(ALPHA_OPAQUE);
+    }
+    
+    protected final static int getDataElementFromChannels(final int alpha) {
+        return f.getDataElement(channels[0], channels[1], channels[2], alpha);
     }
     
     protected final static int toCyan(final int r, final int g, final int b, final int a) {
@@ -503,6 +526,47 @@ public final class ImgTool {
         return rounded;
     }
     
+    private final static void replaceColors(final String inLoc, final String outLoc, final String[] args) {
+        final Pancolor srcMin = getColor(args, 3);
+        final Pancolor srcMax = getColor(args, 6);
+        final Pancolor dstMin = getColor(args, 9);
+        final Pancolor dstMax = getColor(args, 12);
+        final float srcDivisor[] = new float[3], dstMultiplier[] = new float[3];
+        final Channel[] channelValues = Channel.values();
+        for (int c = 0; c < 3; c++) {
+            final Channel channel = channelValues[c];
+            srcDivisor[c] = srcMax.get(channel) - srcMin.get(channel);
+            dstMultiplier[c] = dstMax.get(channel) - dstMin.get(channel);
+        }
+        final Img img = Imtil.load(inLoc);
+        Channel.values();
+        final int w = img.getWidth(), h = img.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                final int p = img.getRGB(x, y);
+                setChannels(p);
+                float totalScaled = 0;
+                for (int c = 0; c < 3; c++) {
+                    final float raw = channels[c];
+                    final float scaled = ((raw - srcMin.get(channelValues[c])) / srcDivisor[c]);
+                    totalScaled += scaled;
+                }
+                final float meanScaled = totalScaled / 3.0f;
+                for (int c = 0; c < 3; c++) {
+                    final float replaced = meanScaled * dstMultiplier[c] + dstMin.get(channelValues[c]);
+                    channels[c] = clamp(replaced);
+                }
+                img.setRGB(x, y, getDataElementFromChannels(f.getAlpha(p)));
+            }
+        }
+        Imtil.save(img, outLoc);
+        img.close();
+    }
+    
+    private final static Pancolor getColor(final String[] args, final int off) {
+        return new FinPancolor(Short.parseShort(args[off]), Short.parseShort(args[off + 1]), Short.parseShort(args[off + 2]));
+    }
+    
     private final static void pad(final String inLoc, final String outLoc) {
         info("Padding image from " + inLoc + " into " + outLoc);
         final Img in = Imtil.load(inLoc);
@@ -607,7 +671,7 @@ public final class ImgTool {
                 final int p = img.getRGB(x, y);
                 final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p);
                 final int ro = brighten(r), go = brighten(g), bo = brighten(b);
-                img.setRGB(x, y, f.getDataElement(ro, go, bo, Pancolor.MAX_VALUE));
+                img.setRGB(x, y, getOpaque(ro, go, bo));
             }
         }
     }
@@ -656,7 +720,7 @@ public final class ImgTool {
                 final int p = img.getRGB(x, y);
                 final int r = f.getRed(p), g = f.getGreen(p), b = f.getBlue(p);
                 final int ro = stretch(r), go = stretch(g), bo = stretch(b);
-                img.setRGB(x, y, f.getDataElement(ro, go, bo, Pancolor.MAX_VALUE));
+                img.setRGB(x, y, getOpaque(ro, go, bo));
                 if (!maxFound && ((ro == Pancolor.MAX_VALUE) || (go == Pancolor.MAX_VALUE) || (bo == Pancolor.MAX_VALUE))) {
                     //info("Stretched to max value at " + x + ", " + y);
                     maxFound = true;
@@ -680,7 +744,7 @@ public final class ImgTool {
     }
     
     private final static void analyzeStretchValue(final float sum, final float n) {
-        analyzeStretchValue(clamp(Math.round(sum / n)));
+        analyzeStretchValue(clamp(sum / n));
     }
 
     private final static void analyzeStretchValue(final int value) {
@@ -944,7 +1008,7 @@ public final class ImgTool {
                 final int ro = process(xformR, r, g, b);
                 final int go = process(xformG, r, g, b);
                 final int bo = process(xformB, r, g, b);
-                img.setRGB(x, y, f.getDataElement(ro, go, bo, Pancolor.MAX_VALUE));
+                img.setRGB(x, y, getOpaque(ro, go, bo));
             }
         }
     }
