@@ -110,6 +110,10 @@ public final class UnitPangine extends Pangine {
         this.w = w;
         this.h = h;
     }
+    
+    @Override
+    public final void setRenderSmallAndThenEnlarge(final boolean renderSmallAndThenEnlarge) {
+    }
 	
 	@Override
 	public final void setFullScreen(final boolean full) {

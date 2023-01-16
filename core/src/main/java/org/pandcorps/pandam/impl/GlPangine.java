@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -51,6 +51,7 @@ public abstract class GlPangine extends Pangine {
     private static boolean swiping = false;
 	protected final static List<InputEvent> inputEvents = Coltil.newSafeList();
 	private FloatBuffer blendRectangle = null;
+	private FloatBuffer blendTexCoords = null;
 	public boolean capsLock = false;
 	public boolean ins = false;
 	//private long frameStartNano = System.nanoTime();
@@ -101,7 +102,9 @@ public abstract class GlPangine extends Pangine {
 	protected int w = 640, h = 480;
 	protected int truncatedWidth = w, truncatedHeight = h;
 	protected int effectiveWidth = w, effectiveHeight = h;
+	//protected int inputWidth = -1, inputHeight = -1;
     protected boolean fullScreen = getDefaultFullScreeen();
+    protected boolean renderSmallAndThenEnlarge = false;
 	private boolean initialized = false;
 	private float clr = 0.0f, clg = 0.0f, clb = 0.0f, cla = 0.0f;
 	
@@ -185,6 +188,19 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	@Override
+	public final void setRenderSmallAndThenEnlarge(final boolean renderSmallAndThenEnlarge) {
+	    this.renderSmallAndThenEnlarge = renderSmallAndThenEnlarge;
+	}
+	
+	/*
+	Used if sizes reported by input events (touchscreen touches or mouse clicks) are different than display size.
+	*/
+	/*public final void setInputSize(final int w, final int h) {
+	    inputWidth = w;
+	    inputHeight = h;
+	}*/
+	
+	@Override
     public final void setFullScreen(final boolean fullScreen) {
         if (initialized) {
             throw new UnsupportedOperationException("Cannot change full-screen after initialization");
@@ -263,7 +279,11 @@ public abstract class GlPangine extends Pangine {
 	
 	private final void initViewport() {
 		initTruncatedSize();
-		gl.glViewport(0, 0, w, h);
+		if (renderSmallAndThenEnlarge) {
+		    gl.glViewport(0, 0, effectiveWidth, effectiveHeight);
+		} else {
+		    gl.glViewport(0, 0, w, h);
+		}
 	}
 	
 	@Override
@@ -449,10 +469,12 @@ public abstract class GlPangine extends Pangine {
 	
 	protected final int getEffectiveCoordinateX(final float rawX) {
 	    return getEffectiveCoordinate(rawX, effectiveWidth, truncatedWidth);
+	    //return getEffectiveCoordinate(rawX, effectiveWidth, (inputWidth < 0) ? truncatedWidth : inputWidth);
 	}
 	
 	protected final int getEffectiveCoordinateY(final float rawY) {
 	    return getEffectiveCoordinate(rawY, effectiveHeight, truncatedHeight);
+	    //return getEffectiveCoordinate(rawY, effectiveHeight, (inputHeight < 0) ? truncatedHeight : inputHeight);
     }
 	
 	public final void addTouchEvent(final int id, final byte type, final float x, final float y) {
@@ -785,6 +807,11 @@ public abstract class GlPangine extends Pangine {
 	private final float getCamMin(final float i, final float lp, final float mp, final float sz) {
 		return lp == mp ? i : (i * (lp - sz) / (mp - sz));
 	}
+	
+	private static int renderSmallAndThenEnlargeTextureId = GlPanmage.NULL_TID;
+	private static int renderSmallAndThenEnlargeTextureDim = -1;
+	private static float renderSmallAndThenEnlargeTextureWidth = -1;
+	private static float renderSmallAndThenEnlargeTextureHeight = -1;
 
 	private final void draw() {
 		gl.glClear(gl.GL_COLOR_BUFFER_BIT);
@@ -823,7 +850,29 @@ public abstract class GlPangine extends Pangine {
 		    Imtil.save(img, dst);
 		    img.close();
 		}
+		if (renderSmallAndThenEnlarge) {
+		    if (renderSmallAndThenEnlargeTextureId == GlPanmage.NULL_TID) {
+		        renderSmallAndThenEnlargeTextureId = GlPanmage.newTextureId();
+		        renderSmallAndThenEnlargeTextureDim = GlPanmage.getMaxPow2(effectiveWidth, effectiveHeight);
+		        final float d = renderSmallAndThenEnlargeTextureDim;
+		        renderSmallAndThenEnlargeTextureWidth = effectiveWidth / d;
+		        renderSmallAndThenEnlargeTextureHeight = effectiveHeight / d;
+		        GlPanmage.initTexture(renderSmallAndThenEnlargeTextureId);
+		    }
+		    gl.glBindTexture(gl.GL_TEXTURE_2D, renderSmallAndThenEnlargeTextureId);
+		    // Copy small image from screen buffer into texture
+		    //gl.glCopyTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, 0, 0, effectiveWidth, effectiveHeight, 0); // Might need to be power of 2 w/h
+		    gl.glCopyTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGB, 0, 0, renderSmallAndThenEnlargeTextureDim, renderSmallAndThenEnlargeTextureDim, 0);
+		    // Render that texture enlarged
+		    gl.glViewport(0, 0, w, h);
+		    //gl.glOrtho(0.0, w, 0.0, h, -1.0, 1.0);
+		    //quad(0.0f, w, 0.0f, h, 0.0f, 0.0f, renderSmallAndThenEnlargeTextureWidth, 0.0f, renderSmallAndThenEnlargeTextureHeight);
+		    quad(0.0f, effectiveWidth, 0.0f, effectiveHeight, 0.0f, 0.0f, renderSmallAndThenEnlargeTextureWidth, 0.0f, renderSmallAndThenEnlargeTextureHeight);
+		}
 		update();
+		if (renderSmallAndThenEnlarge) {
+		    gl.glViewport(0, 0, effectiveWidth, effectiveHeight);
+		}
 		/*int err;
 		while ((err = gl.glGetError()) != gl.GL_NO_ERROR) {
 			System.err.println("Error: " + err);
@@ -918,8 +967,6 @@ public abstract class GlPangine extends Pangine {
 	}
 	
 	private final void quad(final Pancolor color, final float minx, final float maxx, final float miny, final float maxy, final float z) {
-	    gl.glLoadIdentity();
-	    gl.glDisable(gl.GL_DEPTH_TEST);
 	    gl.glDisable(gl.GL_TEXTURE_2D);
 	    gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY);
 	    final short a = color.getA();
@@ -929,6 +976,18 @@ public abstract class GlPangine extends Pangine {
 		    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
 	    }
         gl.glColor4b(toByte(color.getR()), toByte(color.getG()), toByte(color.getB()), toByte(a));
+        quad(minx, maxx, miny, maxy, z, null);
+        gl.glColor4b(Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE);
+        if (blending) {
+            gl.glDisable(gl.GL_BLEND);
+        }
+        gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
+        gl.glEnable(gl.GL_TEXTURE_2D);
+	}
+	
+	private final void quad(final float minx, final float maxx, final float miny, final float maxy, final float z, final FloatBuffer texCoords) {
+	    gl.glLoadIdentity();
+        gl.glDisable(gl.GL_DEPTH_TEST);
         //final int maxx = 256, maxy = 192;
 		final boolean quad = gl.isQuadSupported();
 		if (blendRectangle == null) {
@@ -958,14 +1017,36 @@ public abstract class GlPangine extends Pangine {
         blendRectangle.rewind();
         //gl.glDrawElements(gl.GL_QUADS, blendRectangle); array of indices into other arrays
         gl.glVertexPointer(3, 0, blendRectangle);
-        gl.glDrawArrays(quad ? gl.GL_QUADS : gl.GL_TRIANGLES, 0, quad ? 4 : 6); // Number of vertices
-        gl.glColor4b(Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE, Byte.MAX_VALUE);
-        if (blending) {
-        	gl.glDisable(gl.GL_BLEND);
+        if (texCoords != null) {
+            gl.glTexCoordPointer(2, 0, texCoords);
         }
-        gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY);
-        gl.glEnable(gl.GL_TEXTURE_2D);
+        gl.glDrawArrays(quad ? gl.GL_QUADS : gl.GL_TRIANGLES, 0, quad ? 4 : 6); // Number of vertices
         gl.glEnable(gl.GL_DEPTH_TEST);
+	}
+	
+	private final void quad(final float minx, final float maxx, final float miny, final float maxy, final float z,
+	        final float texMinx, final float texMaxx, final float texMiny, final float texMaxy) {
+	    final boolean quad = gl.isQuadSupported();
+        if (blendTexCoords == null) {
+            blendTexCoords = Pantil.allocateDirectFloatBuffer(quad ? 8 : 12);
+        }
+        blendTexCoords.rewind();
+        blendTexCoords.put(texMaxx);
+        blendTexCoords.put(texMaxy);
+        blendTexCoords.put(texMinx);
+        blendTexCoords.put(texMaxy);
+        blendTexCoords.put(texMinx);
+        blendTexCoords.put(texMiny);
+        blendTexCoords.put(texMaxx);
+        blendTexCoords.put(texMiny);
+        if (!quad) {
+            blendTexCoords.put(texMaxx);
+            blendTexCoords.put(texMaxy);
+            blendTexCoords.put(texMinx);
+            blendTexCoords.put(texMiny);
+        }
+        blendTexCoords.rewind();
+	    quad(minx, maxx, miny, maxy, z, blendTexCoords);
 	}
 
 	private final void onAction(final Panput input) {

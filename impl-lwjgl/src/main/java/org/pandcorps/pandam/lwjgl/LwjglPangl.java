@@ -95,6 +95,11 @@ public final class LwjglPangl extends Pangl {
 	}
 	
 	@Override
+	public final void glCopyTexImage2D(final int target, final int level, final int internalFormat, final int x, final int y, final int width, final int height, final int border) {
+	    GL11.glCopyTexImage2D(target, level, internalFormat, x, y, width, height, border);
+	}
+	
+	@Override
 	public final void glDeleteBuffers(final int buffer) {
 		GL15.glDeleteBuffers(buffer);
 	}

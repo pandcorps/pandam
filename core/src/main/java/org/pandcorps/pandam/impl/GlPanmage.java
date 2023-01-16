@@ -30,7 +30,7 @@ import org.pandcorps.core.img.scale.*;
 import org.pandcorps.pandam.*;
 
 public final class GlPanmage extends Panmage {
-	private final static int NULL_TID = 0;
+	protected final static int NULL_TID = 0;
 	/*package*/ static boolean colorArrayEnabled = false;
 	/*package*/ static int colorArrayNumChannels = 3;
 	public static boolean saveTextures = false;
@@ -133,9 +133,13 @@ public final class GlPanmage extends Panmage {
 	    }
 	}
 	
+	protected final static int getMaxPow2(final int usableWidth, final int usableHeight) {
+	    return Math.max(toPow2(usableWidth), toPow2(usableHeight));
+	}
+	
 	private final static Img pad(final Img _img) {
 	    final int usableWidth = _img.getWidth(), usableHeight = _img.getHeight();
-	    final int d = Math.max(toPow2(usableWidth), toPow2(usableHeight));
+	    final int d = getMaxPow2(usableWidth, usableHeight);
 	    if (d == usableWidth && d == usableHeight) {
 	    	return _img;
 	    }
@@ -185,19 +189,22 @@ public final class GlPanmage extends Panmage {
 	        }*/
 			return; // Must have been handled by a different GlPanmage with same Texture
 		}
-		// Create A IntBuffer For Image Address In Memory
-		final IntBuffer buf = Pantil.allocateDirectIntBuffer(1);
-		GlPangine.gl.glGenTextures(buf); // Create Texture In OpenGL
-		// Create Nearest Filtered Texture
-		tid = buf.get(0);
-		if (tid == NULL_TID) {
-            throw new IllegalStateException("New texture id was unexpectedly " + tid);
-        }
+		tid = newTextureId();
 		tex.tid = tid;
 		rebindTexture();
 		if (!saveTextures) {
 			tex.close();
 		}
+	}
+	
+	protected final static int newTextureId() {
+	    final IntBuffer buf = Pantil.allocateDirectIntBuffer(1);
+        GlPangine.gl.glGenTextures(buf); // Create Texture In OpenGL
+        final int tid = buf.get(0);
+        if (tid == NULL_TID) {
+            throw new IllegalStateException("New texture id was unexpectedly " + tid);
+        }
+        return tid;
 	}
 	
 	protected final void destroyLayer(final Panlayer layer) {
@@ -207,11 +214,16 @@ public final class GlPanmage extends Panmage {
 		}
 	}
 	
+	protected final static void initTexture(final int tid) {
+	    final Pangl gl = GlPangine.gl;
+        gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST);
+	}
+	
 	protected final void rebindTexture() {
 		final Pangl gl = GlPangine.gl;
-		gl.glBindTexture(gl.GL_TEXTURE_2D, tid);
-		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
-		gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST);
+		initTexture(tid);
 		gl.glTexImage2D(
 			gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, tex.scaledWidth, tex.scaledHeight, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE,
 			tex.scratch);

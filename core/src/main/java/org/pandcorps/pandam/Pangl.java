@@ -110,6 +110,8 @@ public abstract class Pangl {
 	
 	public abstract void glColorPointer(final int size, final int type, final int stride, final int offset);
 	
+	public abstract void glCopyTexImage2D(final int target, final int level, final int internalFormat, final int x, final int y, final int width, final int height, final int border);
+	
 	public abstract void glDeleteBuffers(final int buffer);
 	
 	public abstract void glDeleteTextures(final int texture);

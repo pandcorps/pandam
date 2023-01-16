@@ -1012,6 +1012,7 @@ public abstract class Pangine {
         setFullScreen(true);
         setDisplaySize(getDesktopWidth(), getDesktopHeight()); // Should this be in setFullScreen? Do we ever not want this in full-screen mode?
         setEffectiveSize(w, h);
+        setRenderSmallAndThenEnlarge(true);
     }
 	
 	public final void setApproximateFullScreenZoomedDisplaySize(final int minWidth, final int minHeight, final boolean pow2) {
@@ -1076,6 +1077,8 @@ public abstract class Pangine {
 	public abstract int getEffectiveHeight();
 	
 	public abstract void setEffectiveSize(final int w, final int h);
+	
+	public abstract void setRenderSmallAndThenEnlarge(final boolean renderSmallAndThenEnlarge);
 	
 	/*
 	// Used to have these, but getEffectiveWidth/Height are better
