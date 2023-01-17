@@ -25,7 +25,11 @@ ENM|66|10|SpringEnemy
 
 LDR|70|11|3
 
+POW
+DOR|71|3|Blue|Find the secret first
+PEL
 DOR|71|3|Cyan
+PND
 
 RPT|1|9|70|5|RockslideRockDark
 RPT|1|1|70|7|RockslideWood
