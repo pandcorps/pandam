@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2022, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -28,6 +28,7 @@ import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.Profile.*;
 import org.pandcorps.core.*;
+import org.pandcorps.core.seg.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
@@ -47,6 +48,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     protected final int x;
     protected final int y;
     private final int doorX;
+    private final String hintText;
     protected ShootableDoorDefinition def = null;
     private int temperature = 0;
     private int ineffectiveCount = 0;
@@ -58,7 +60,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         displaySmall = new ImplPansplay(FinPanple.ORIGIN, min, new FinPanple2(12, 16));
     }
     
-    protected ShootableDoor(final int x, final int y, ShootableDoorDefinition def) {
+    protected ShootableDoor(final int x, final int y, ShootableDoorDefinition def, final Segment seg) {
         tm = BotsnBoltsGame.tm;
         tm.getLayer().addActor(this);
         this.x = x;
@@ -68,6 +70,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         tm.savePosition(pos, x, y);
         initPosition(pos);
         doorX = getDoorX();
+        hintText = seg.getValue(3);
         init();
     }
     
@@ -255,7 +258,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
             final Integer requiredPower = def.requiredPower;
             final boolean powerInsufficient = (requiredPower != null) && (requiredPower.intValue() > projectilePower);
             final ShootMode shootMode = projectile.shootMode, hintShootMode = def.hintShootMode, requiredShootMode = def.requiredShootMode;
-            final CharSequence hintText = def.hintText;
+            final CharSequence hintText = Chartil.isEmpty(this.hintText) ? def.hintText : this.hintText;
             if (powerInsufficient || (hintText != null) || ((hintShootMode != null) && (hintShootMode != shootMode))) {
                 ineffectiveCount += projectilePower;
                 final int ineffectiveThreshold = (shootMode == Player.SHOOT_RAPID) ? 4 : 2;
@@ -264,7 +267,9 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                     final Profile prf = Player.getProfile(player);
                     if ((prf != null) && prf.boltUsageHints) {
                         final Upgrade hintUpgrade = (hintShootMode == null) ? null : hintShootMode.getRequiredUpgrade();
-                        if ((hintUpgrade != null) && !prf.isUpgradeAvailable(hintUpgrade)) {
+                        if (Chartil.isValued(this.hintText)) { // If hint explicitly specified for this door instance, then it overrides any other hint logic
+                            BotsnBoltsGame.notify(this.hintText);
+                        } else if ((hintUpgrade != null) && !prf.isUpgradeAvailable(hintUpgrade)) {
                             BotsnBoltsGame.notify("Find new Bolts and try again later");
                         } else if (hintText != null) {
                             BotsnBoltsGame.notify(hintText);
@@ -372,8 +377,8 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     protected final static class ShootableBarrier extends ShootableDoor {
         private int openIndex = -1;
         
-        protected ShootableBarrier(final int x, final int y, final ShootableDoorDefinition def) {
-            super(x, y, def);
+        protected ShootableBarrier(final int x, final int y, final ShootableDoorDefinition def, final Segment seg) {
+            super(x, y, def, seg);
         }
         
         @Override

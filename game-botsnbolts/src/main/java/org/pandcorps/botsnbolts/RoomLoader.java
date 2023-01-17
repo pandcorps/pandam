@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -207,6 +207,10 @@ public abstract class RoomLoader {
                 ver(seg, in);
             } else if ("VND".equals(name)) { // Version End
                 // VER reads until VND when version doesn't match; nothing to do here if version does match
+            } else if ("POW".equals(name)) { // If power-up path being forced
+                pow(seg, in);
+            } else if ("PEL".equals(name)) { // Else if power-up path not being forced
+                pel(seg, in);
             } else if ("M".equals(name)) { // Map
                 m(seg, tm);
             } else if ("CEL".equals(name)) { // Cell
@@ -258,9 +262,9 @@ public abstract class RoomLoader {
             } else if ("LDR".equals(name)) { // Ladder
                 ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
             } else if ("BRR".equals(name)) { // Barrier
-                brr(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+                brr(seg);
             } else if ("DOR".equals(name)) { // Door
-                dor(seg.intValue(0), seg.intValue(1), seg.getValue(2));
+                dor(seg);
             } else if ("SBT".equals(name)) { // Shootable Button
                 sbt(seg, in);
             } else if ("CRR".equals(name)) { // Carrier
@@ -556,6 +560,38 @@ public abstract class RoomLoader {
         }
     }
     
+    private final static boolean isPowerupPathForcingNeeded() {
+        final Profile prf = BotsnBoltsGame.pcs.get(0).prf;
+        return !prf.isUpgradeAvailable(level.boltName) // Player doesn't have it yet
+                && prf.levelSuggestions; // Player asked for hints and has been forced to play the next level where it's possible to get the power-up
+    }
+    
+    private final static void pow(final Segment seg, final SegmentStream in) throws Exception {
+        if (isPowerupPathForcingNeeded()) {
+            return; // Process the segments that follow POW normally if path forcing needed
+        }
+        while (true) { // Skip the segments that follow POW if path forcing not needed (will process segments following PEL instead)
+            final Segment skp = in.read();
+            final String name = skp.getName();
+            if ("PEL".equals(name) || "PND".equals(name)) {
+                break;
+            }
+        }
+    }
+    
+    private final static void pel(final Segment seg, final SegmentStream in) throws Exception {
+        if (!isPowerupPathForcingNeeded()) {
+            return; // Process the segments that follow PEL normally if path forcing not needed
+        }
+        while (true) { // Skip the segments that follow PEL if path forcing needed (would have processed segments following POW instead)
+            final Segment skp = in.read();
+            final String name = skp.getName();
+            if ("PND".equals(name)) {
+                break;
+            }
+        }
+    }
+    
     private final static void m(final Segment seg, final TileMap tm) {
         final String value = seg.getValue(0);
         final int size = Chartil.size(value);
@@ -739,11 +775,11 @@ public abstract class RoomLoader {
     }
     
     private final static void vdr(final Segment seg) {
-        doors.add(new ShootableDoor(seg.intValue(0), seg.intValue(1), (levelVersion == 0) ? BotsnBoltsGame.doorCyan : BotsnBoltsGame.doorSilver));
+        doors.add(new ShootableDoor(seg.intValue(0), seg.intValue(1), (levelVersion == 0) ? BotsnBoltsGame.doorCyan : BotsnBoltsGame.doorSilver, seg));
     }
     
     private final static void vbr(final Segment seg) {
-        doors.add(new ShootableBarrier(seg.intValue(0), seg.intValue(1), (levelVersion == 0) ? BotsnBoltsGame.doorCyan : BotsnBoltsGame.doorSilver));
+        doors.add(new ShootableBarrier(seg.intValue(0), seg.intValue(1), (levelVersion == 0) ? BotsnBoltsGame.doorCyan : BotsnBoltsGame.doorSilver, seg));
     }
     
     private final static void blt(final Segment seg) throws Exception {
@@ -903,11 +939,15 @@ public abstract class RoomLoader {
         }
     }
     
-    private final static void brr(final int x, final int y, final String doorType) {
-        doors.add(new ShootableBarrier(x, y, ShootableDoor.getShootableDoorDefinition(doorType)));
+    private final static void brr(final Segment seg) {
+        final int x = seg.intValue(0), y = seg.intValue(1);
+        final String doorType = seg.getValue(2);
+        doors.add(new ShootableBarrier(x, y, ShootableDoor.getShootableDoorDefinition(doorType), seg));
     }
     
-    private final static void dor(final int x, final int y, final String doorType) {
+    private final static void dor(final Segment seg) {
+        final int x = seg.intValue(0), y = seg.intValue(1);
+        final String doorType = seg.getValue(2);
         if ("Boss".equals(doorType)) {
             bossDoors.add(new BossDoor(x, y, true));
         } else if ("BossLeft".equals(doorType)) {
@@ -915,7 +955,7 @@ public abstract class RoomLoader {
         } else if ("Bolt".equals(doorType)) {
             boltDoor = new BoltDoor(x, y);
         } else {
-            doors.add(new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType)));
+            doors.add(new ShootableDoor(x, y, ShootableDoor.getShootableDoorDefinition(doorType), seg));
         }
     }
     

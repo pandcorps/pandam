@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2022, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -729,8 +729,12 @@ public class Menu {
     
     private static LevelSelectCell suggestedCell = null;
     
+    private final static boolean hasSuggestedCell() {
+        return (suggestedCell != null) && (BotsnBoltsGame.getPrimaryPlayerContext().prf.levelSuggestions);
+    }
+    
     protected final static boolean isCellAllowed(final LevelSelectCell cell) {
-        if ((suggestedCell == null) || (suggestedCell == cell)) {
+        if (!hasSuggestedCell() || (suggestedCell == cell)) {
             return true;
         }
         warnWrongLevel();
@@ -738,7 +742,7 @@ public class Menu {
     }
     
     protected final static boolean isLevelAllowed(final BotLevel level) {
-        if ((suggestedCell == null) || suggestedCell.level == level) {
+        if (!hasSuggestedCell() || suggestedCell.level == level) {
             return true;
         }
         warnWrongLevel();
