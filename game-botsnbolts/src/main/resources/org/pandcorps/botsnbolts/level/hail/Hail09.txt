@@ -21,6 +21,11 @@ BOX|17|3
 
 DOR|0|3|Blue
 SBT|2|12|Door
+
+POW
+DOR|23|3|Black|Find the secret first
+PEL
 DOR|23|3|Cyan
+PND
 
 RPT|1|3|22|9|HailBrickDark

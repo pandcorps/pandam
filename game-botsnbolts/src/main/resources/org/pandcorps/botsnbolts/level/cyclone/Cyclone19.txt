@@ -20,7 +20,12 @@ ROM||||||true
 LDR|5|0|2
 
 DOR|0|8|Cyan
+
+POW
+DOR|23|2|Black|Find the secret first
+PEL
 DOR|23|2|Cyan
+PND
 
 ENM|19|8|JetpackEnemy
 

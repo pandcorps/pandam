@@ -19,6 +19,10 @@ LDR|21|0|3
 LDR|14|1|8
 LDR|2|11|3
 
+POW
+DOR|23|3|Black|Find the secret first
+PEL
 DOR|23|3|Cyan
+PND
 
 RPT|0|0|24|14|FloodInterior
