@@ -16,7 +16,11 @@ M|v0*           (\dv6    i
 M|(-,(-).()(-)5 bv/)()7  v
 
 LDR|22|0|14
+
+POW
+PEL
 LDR|11|5|9
+PND
 
 EXT|-2|11|RocketSpawner|2|30
 

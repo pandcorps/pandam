@@ -19,9 +19,15 @@ ENM|18|10|JackhammerEnemy
 
 LDR|9|0|4
 LDR|7|6|4
-LDR|21|0|4
 
 DOR|0|4|Cyan
+
+POW
+LDR|21|2|2
+DOR|23|4|Black|Find the secret first
+PEL
+LDR|21|0|4
 DOR|23|4|Cyan
+PND
 
 RPT|1|0|22|12|EarthquakeDirtDark

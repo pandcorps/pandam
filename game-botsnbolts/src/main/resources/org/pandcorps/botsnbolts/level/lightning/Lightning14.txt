@@ -17,7 +17,12 @@ M|            5 Sv9 vb4  /
 
 LDR|22|0|2
 LDR|13|7|3
+
+POW
+PEL
 LDR|22|10|4
+PND
+
 LDR|11|0|14
 
 DOR|23|5|Silver

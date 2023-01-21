@@ -17,7 +17,12 @@ M|            v(-).8 v(\ *
 
 LDR|22|0|3
 LDR|22|8|6
+
+POW
+LDR|11|7|7
+PEL
 LDR|11|0|14
+PND
 
 EXT|-2|5|RocketSpawner|3|30
 EXT|-2|9|RocketSpawner|3|75

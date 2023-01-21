@@ -20,7 +20,14 @@ ENM|18|3|ShovelEnemy
 DOR|0|3|Cyan
 
 LDR|9|11|3
+
+POW
+M|g|8|5
+M|g|4|8
+M|g|9|10
+PEL
 LDR|21|6|8
+PND
 
 RPT|1|4|22|10|EarthquakeDirtDark
 RPT|1|0|22|3|EarthquakeGreen
