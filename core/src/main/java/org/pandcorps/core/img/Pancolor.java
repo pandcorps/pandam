@@ -51,6 +51,8 @@ public class Pancolor {
         Alpha
     }
     
+    public final static Channel[] COLOR_CHANNELS = { Channel.Red, Channel.Green, Channel.Blue };
+    
     public Pancolor(final short[] rgb) {
         this(rgb[0], rgb[1], rgb[2], rgb.length > 3 ? rgb[3] : MAX_VALUE);
     }

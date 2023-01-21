@@ -48,7 +48,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
     protected final int x;
     protected final int y;
     private final int doorX;
-    private final String hintText;
+    protected final String hintText;
     protected ShootableDoorDefinition def = null;
     private int temperature = 0;
     private int ineffectiveCount = 0;
@@ -265,7 +265,9 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
                 if (ineffectiveCount > ineffectiveThreshold) {
                     final Player player = projectile.src;
                     final Profile prf = Player.getProfile(player);
-                    if ((prf != null) && prf.boltUsageHints) {
+                    final boolean hintAllowed = (prf != null) && prf.boltUsageHints;
+                    final boolean hintForced = Chartil.isValued(this.hintText);
+                    if (hintAllowed || hintForced) {
                         final Upgrade hintUpgrade = (hintShootMode == null) ? null : hintShootMode.getRequiredUpgrade();
                         if (Chartil.isValued(this.hintText)) { // If hint explicitly specified for this door instance, then it overrides any other hint logic
                             BotsnBoltsGame.notify(this.hintText);

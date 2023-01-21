@@ -207,10 +207,12 @@ public abstract class RoomLoader {
                 ver(seg, in);
             } else if ("VND".equals(name)) { // Version End
                 // VER reads until VND when version doesn't match; nothing to do here if version does match
-            } else if ("POW".equals(name)) { // If power-up path being forced
+            } else if ("POW".equals(name)) { // If Power-up path being forced
                 pow(seg, in);
-            } else if ("PEL".equals(name)) { // Else if power-up path not being forced
+            } else if ("PEL".equals(name)) { // Else If Power-up path not being forced
                 pel(seg, in);
+            } else if ("PND".equals(name)) { // Power-up End
+                // POW/PEL will read until PND; nothing to do here
             } else if ("M".equals(name)) { // Map
                 m(seg, tm);
             } else if ("CEL".equals(name)) { // Cell
@@ -1222,7 +1224,7 @@ public abstract class RoomLoader {
         for (final Panctor actor : getActors()) {
             if (actor instanceof ShootableDoor) {
                 final ShootableDoor door = (ShootableDoor) actor;
-                if (door.def == BotsnBoltsGame.doorBlack) {
+                if ((door.def == BotsnBoltsGame.doorBlack) && Chartil.isEmpty(door.hintText)) {
                     door.setDefinition(BotsnBoltsGame.doorCyan);
                 }
             }
