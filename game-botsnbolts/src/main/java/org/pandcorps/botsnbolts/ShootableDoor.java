@@ -70,7 +70,7 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         tm.savePosition(pos, x, y);
         initPosition(pos);
         doorX = getDoorX();
-        hintText = seg.getValue(3);
+        hintText = seg.getValue(3); // Don't default to def.hintText; onCollision and RoomLoader.onEnemiesCleared have logic for forced hints
         init();
     }
     
