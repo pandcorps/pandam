@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -153,12 +153,15 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         final int oldHealth = health, oldPower = prj.power;
         health -= oldPower;
         enemy.setHealth(health);
+        final Player src = prj.src;
+        if ((src != null) && (src.stamina < HudMeter.MAX_VALUE)) {
+            src.stamina++;
+        }
         BotsnBoltsGame.fxImpact.startSound();
         if (health <= 0) {
             if (enemy.isBurstNeeded()) {
                 prj.burst(enemy);
             }
-            final Player src = prj.src;
             enemy.award(src);
             enemy.onDefeat(src);
             if (enemy.isDestroyedAfterDefeat()) {
