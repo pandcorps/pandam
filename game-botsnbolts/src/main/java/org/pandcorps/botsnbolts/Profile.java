@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2022, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -311,6 +311,11 @@ public class Profile {
         @Override public final String getDisplayName(final PlayerContext pc) {
             return "Slide";
         }};
+        
+    protected final static Upgrade UPGRADE_DASH = new Upgrade("Dash") {
+        @Override public final String getDisplayName(final PlayerContext pc) {
+            return "Dash";
+        }};
     
     protected final static Upgrade BASIC_JUMP = new Upgrade("BasicJump") {
         @Override public final String getDisplayName(final PlayerContext pc) {
@@ -323,7 +328,7 @@ public class Profile {
         }};
     
     protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM, UPGRADE_SPRING,
-            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, BASIC_ATTACK, BASIC_JUMP };
+            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, UPGRADE_DASH, BASIC_ATTACK, BASIC_JUMP };
     
     protected abstract static class Upgrade {
         protected final String name;

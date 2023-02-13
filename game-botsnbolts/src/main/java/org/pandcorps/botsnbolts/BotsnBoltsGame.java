@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2022, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -51,8 +51,8 @@ import org.pandcorps.pandax.visual.*;
 
 public final class BotsnBoltsGame extends BaseGame {
     protected final static String TITLE = "Bots 'n Bolts";
-    protected final static String VERSION = "1.0.7";
-    protected final static String YEAR = "2016-2022";
+    protected final static String VERSION = "1.0.8";
+    protected final static String YEAR = "2016-2023";
     protected final static String AUTHOR = "Andrew M. Martin";
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
     
@@ -132,7 +132,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 oss = new FinPanple2(13, 1);
     protected final static FinPanple2 os = new FinPanple2(15, 1);
     protected final static FinPanple2 ojs = new FinPanple2(15, 4);
-    protected final static FinPanple2 oSlide = new FinPanple2(17, 4);
+    protected final static FinPanple2 oSlide = oj;
     protected final static FinPanple originOverlay = new FinPanple(0, 0, DEPTH_OVERLAY);
     protected final static FinPanple2 minCube = new FinPanple2(-5, -5);
     protected final static FinPanple2 maxCube = new FinPanple2(5, 5);
@@ -851,8 +851,14 @@ public final class BotsnBoltsGame extends BaseGame {
     
     private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName, final PlayerImages src, final boolean pupilNeeded) {
         final String pre = getCharacterPrefix(dir, name);
-        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj);
-        final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs);
+        final int slideX = Player.PLAYER_X + 2;
+        final Panple nSlide = GuyPlatform.getMin(slideX), xSlide = GuyPlatform.getMax(slideX, 19);
+        final Img imgDash = Imtil.load(pre + "Dash.png"), imgDashMirror = playerMirror ? Imtil.load(pre + "DashMirror.png") : null;
+        final Panmage dash = newPlayerImage(PRE_IMG + "." + name + ".dash", og, nSlide, xSlide, imgDash, imgDashMirror);
+        final Img imgDashAim = Imtil.load(pre + "DashAim.png"), imgDashAimMirror = playerMirror ? Imtil.load(pre + "DashAimMirror.png") : null;
+        final Panmage dashAim = newPlayerImage(PRE_IMG + "." + name + ".dash.Aim", os, nSlide, xSlide, imgDashAim, imgDashAimMirror);
+        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj, dash);
+        final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs, dashAim);
         final Pangine engine = Pangine.getEngine();
         final Img imgHurt = Imtil.load(pre + "Hurt.png", false), imgHurtMirror = playerMirror ? Imtil.load(pre + "HurtMirror.png", false) : null;
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
@@ -890,8 +896,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img imgWallGrabAim = Imtil.load(pre + "WallAim.png"), imgWallGrabAimMirror = playerMirror ? Imtil.load(pre + "WallAimMirror.png") : null;
         final Panmage wallGrabAim = newPlayerImage(PRE_IMG + "." + name + ".wall.aim", oj, imgWallGrabAim, imgWallGrabAimMirror);
         final Img imgSlide = Imtil.load(pre + "Slide.png"), imgSlideMirror = playerMirror ? Imtil.load(pre + "SlideMirror.png") : null;
-        final int slideX = Player.PLAYER_X + 2;
-        final Panmage slide = newPlayerImage(PRE_IMG + "." + name + ".slide", oSlide, GuyPlatform.getMin(slideX), GuyPlatform.getMax(slideX, 19), imgSlide, imgSlideMirror);
+        final Panmage slide = newPlayerImage(PRE_IMG + "." + name + ".slide", oSlide, nSlide, xSlide, imgSlide, imgSlideMirror);
         
         final Panmage basicProjectile = (src == null) ? engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile) : src.basicProjectile;
         final Panimation projectile2 = (src == null) ? newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4) : src.projectile2;
@@ -951,7 +956,8 @@ public final class BotsnBoltsGame extends BaseGame {
         return pi;
     }
     
-    private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj) {
+    private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj,
+            final Panmage dash) {
         final String pre = PRE_IMG + "." + name + ".";
         final Img[] imgs = Imtil.loadStrip(path + ".png", 32);
         final Img[] imgsMirror = loadPlayerMirrorStrip(path + "Mirror.png");
@@ -976,7 +982,7 @@ public final class BotsnBoltsGame extends BaseGame {
             blink = null;
             crouch = null;
         }
-        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch);
+        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch, dash);
     }
     
     private final static Img[] loadPlayerMirrorStrip(final String loc) {

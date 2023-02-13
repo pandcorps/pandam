@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2022, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -69,6 +69,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int VEL_FALL_PROTECTION = 15;
     private final static int VEL_WALK = 3;
     private final static int VEL_SLIDE = 6;
+    private final static float VEL_DASH = 8.5f;
+    private final static float DASH_SLOWDOWN = 0.1875f;
+    private final static float DASH_BRAKE = 0.25f;
     protected final static int VEL_PROJECTILE = 8;
     protected final static float VX_SPREAD1;
     protected final static float VY_SPREAD1;
@@ -104,6 +107,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastJump = NULL_CLOCK;
     private long lastLift = NULL_CLOCK;
     private long lastBall = NULL_CLOCK;
+    private long lastRightStart = NULL_CLOCK;
+    private long lastLeftStart = NULL_CLOCK;
+    private float hvForced = 0;
     private int wrappedJumps = 0;
     protected Carrier jumpStartedOnCarrier = null;
     protected Carrier walkedOffCarrier = null;
@@ -219,8 +225,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
             @Override public final void onAction(final ActionEvent event) { shooting(); }});
         register(shootInput, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) { releaseShoot(); }});
+        register(rightInput, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { rightStart(); }});
         register(rightInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { right(); }});
+        register(leftInput, new ActionStartListener() {
+            @Override public final void onActionStart(final ActionStartEvent event) { leftStart(); }});
         register(leftInput, new ActionListener() {
             @Override public final void onAction(final ActionEvent event) { left(); }});
         register(upInput, new ActionListener() {
@@ -477,8 +487,19 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return stateHandler.getAimOffsetY(this);
     }
     
+    protected final void rightStart() {
+        if (isFreeOrStopped()) {
+            stateHandler.onRightStart(this);
+        }
+    }
+    
+    private final void onRightStartNormal() {
+        lastRightStart = startDashIfNeeded(lastRightStart, 1);
+    }
+    
     protected final void right() {
         if (isFreeOrStopped()) {
+            lastLeftStart = NULL_CLOCK;
             stateHandler.onRight(this);
         }
     }
@@ -488,7 +509,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void moveHorizontal(final int vel) {
-        hv = vel;
+        if (hvForced > VEL_WALK) {
+            if (vel < 0) {
+                hvForced -= DASH_BRAKE;
+            }
+        } else if (hvForced < -VEL_WALK) {
+            if (vel > 0) {
+                hvForced += DASH_BRAKE;
+            }
+        } else {
+            hv = vel;
+        }
         if (!isGrounded()) {
             movedDuringJump = true;
         }
@@ -512,8 +543,19 @@ public class Player extends Chr implements Warpable, StepEndListener {
         lastShotPosed = NULL_CLOCK;
     }
     
+    protected final void leftStart() {
+        if (isFreeOrStopped()) {
+            stateHandler.onLeftStart(this);
+        }
+    }
+    
+    private final void onLeftStartNormal() {
+        lastLeftStart = startDashIfNeeded(lastLeftStart, -1);
+    }
+    
     protected final void left() {
         if (isFreeOrStopped()) {
+            lastRightStart = NULL_CLOCK;
             stateHandler.onLeft(this);
         }
     }
@@ -538,6 +580,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final Panple pos = getPosition();
         pos.setX((Math.round(pos.getX()) / 16) * 16 + 7);
         stateHandler = LADDER_HANDLER;
+        clearDash();
     }
     
     private final static int OFF_LADDER_TOP = 20;
@@ -1076,6 +1119,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 hv = getDirection(changer.getVelocityX());
                 v = getDirection(changer.getVelocityY());
             } else {
+                clearDash();
                 hv = 0;
                 v = 0;
             }
@@ -1366,7 +1410,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (carrier != null) {
             carrier.onStepCarried(this);
         }
-        hv = 0;
+        if (isDashing()) {
+            if (hvForced > 0) {
+                hvForced -= DASH_SLOWDOWN;
+            } else {
+                hvForced += DASH_SLOWDOWN;
+            }
+            hv = Math.round(hvForced);
+        } else {
+            hvForced = 0.0f;
+            hv = 0;
+        }
         final Panple pos = getPosition();
         final float x = pos.getX();
         if (x < minX) {
@@ -1460,6 +1514,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 }
             }
             wallTimer = 0;
+            if (isDashing()) {
+                changeView(set.dash);
+                return;
+            }
             final boolean wasRunning = running;
             running = true;
             if (!wasRunning && set.start != null) {
@@ -1520,6 +1578,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return;
         }
         clearRun();
+        clearDash();
         stateHandler = BALL_HANDLER;
         lastBall = getClock();
         final Panmage[] crouch = pi.basicSet.crouch;
@@ -1604,12 +1663,31 @@ public class Player extends Chr implements Warpable, StepEndListener {
         stateHandler = NORMAL_HANDLER;
     }
     
-    protected final void startDash() {
-        //TODO
+    protected final void clearDash() {
+        lastRightStart = NULL_CLOCK;
+        lastLeftStart = NULL_CLOCK;
+    }
+    
+    private final boolean isDashAvailable() {
+        return isUpgradeAvailable(Profile.UPGRADE_DASH);
+    }
+    
+    protected final long startDashIfNeeded(final long lastStart, final int dir) {
+        if (!isDashAvailable()) {
+            return NULL_CLOCK;
+        }
+        final long clock = getClock();
+        if ((clock - lastStart) < 8) {
+            hvForced = (dir * VEL_DASH);
+            hv = Math.round(hvForced);
+            return NULL_CLOCK;
+        } else {
+            return clock;
+        }
     }
     
     protected final boolean isDashing() {
-        return true; //TODO
+        return Math.abs(hvForced) > VEL_WALK;
     }
     
     private final void endLadder() {
@@ -1629,6 +1707,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         } else if (!grapplingAllowed) {
             return;
         }
+        clearDash();
         grapplingHook = new GrapplingHook(this);
         v = Math.max(v, VEL_JUMP / 3);
         grapplingV = 0;
@@ -1718,6 +1797,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         } else if (v < VEL_JUMP) {
             v = (v + (3 * VEL_JUMP)) / 4;
         }
+        clearDash();
         hv = 0;
     }
     
@@ -1942,6 +2022,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void startRescue() {
+        clearDash();
         hv = 0;
         chv = 0;
         startState(RESCUED_HANDLER);
@@ -2143,7 +2224,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return Projectile.OFF_Y;
         }
         
+        //@OverrideMe
+        protected void onRightStart(final Player player) {
+        }
+        
         protected abstract void onRight(final Player player);
+        
+        //@OverrideMe
+        protected void onLeftStart(final Player player) {
+        }
         
         protected abstract void onLeft(final Player player);
         
@@ -2215,8 +2304,18 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final void onRightStart(final Player player) {
+            player.onRightStartNormal();
+        }
+        
+        @Override
         protected final void onRight(final Player player) {
             player.onRightNormal();
+        }
+        
+        @Override
+        protected final void onLeftStart(final Player player) {
+            player.onLeftStartNormal();
         }
         
         @Override
@@ -3094,14 +3193,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
         private final Panmage start;
         protected final Panmage blink;
         private final Panmage[] crouch;
+        private final Panmage dash;
         
-        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch) {
+        protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch,
+                final Panmage dash) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
             this.start = start;
             this.blink = blink;
             this.crouch = crouch;
+            this.dash = dash;
         }
     }
     
