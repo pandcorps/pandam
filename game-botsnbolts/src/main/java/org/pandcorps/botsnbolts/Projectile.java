@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2022, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -76,7 +76,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         }
         prj.setMirror(mirror);
         final int xm = prj.getMirrorMultiplier();
-        prj.getPosition().set(srcPos.getX() + (xm * OFF_X), srcPos.getY() + src.getAimOffsetY(), BotsnBoltsGame.DEPTH_PROJECTILE);
+        prj.getPosition().set(srcPos.getX() + (xm * src.getAimOffsetX()), srcPos.getY() + src.getAimOffsetY(), BotsnBoltsGame.DEPTH_PROJECTILE);
         prj.getVelocity().set(xm * vx, vy);
         if (autoAddProjectile) {
             ref.getLayer().addActor(prj);

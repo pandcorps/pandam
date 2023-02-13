@@ -483,6 +483,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return stateHandler.isAimMirrorReversed(this);
     }
     
+    protected final int getAimOffsetX() {
+        if (isDashing()) {
+            final int off = Math.round(Math.abs(hvForced)) - VEL_WALK;
+            if (off > 0) {
+                return Projectile.OFF_X + (2 * off);
+            }
+        }
+        return Projectile.OFF_X;
+    }
+    
     protected final int getAimOffsetY() {
         return stateHandler.getAimOffsetY(this);
     }
@@ -1515,6 +1525,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             wallTimer = 0;
             if (isDashing()) {
+                slidePuff(-16, 5);
                 changeView(set.dash);
                 return;
             }
@@ -1666,6 +1677,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final void clearDash() {
         lastRightStart = NULL_CLOCK;
         lastLeftStart = NULL_CLOCK;
+        hvForced = 0;
     }
     
     private final boolean isDashAvailable() {
@@ -1673,11 +1685,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final long startDashIfNeeded(final long lastStart, final int dir) {
-        if (!isDashAvailable()) {
+        if (!isGrounded()) {
+            return NULL_CLOCK;
+        } else if (!isDashAvailable()) {
             return NULL_CLOCK;
         }
         final long clock = getClock();
         if ((clock - lastStart) < 8) {
+            slideTimer = 0;
             hvForced = (dir * VEL_DASH);
             hv = Math.round(hvForced);
             return NULL_CLOCK;
