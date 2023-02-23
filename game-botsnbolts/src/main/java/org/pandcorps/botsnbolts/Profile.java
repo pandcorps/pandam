@@ -288,6 +288,8 @@ public class Profile {
     
     protected final static Upgrade UPGRADE_CHARGE = new ChargeUpgrade();
     
+    protected final static Upgrade UPGRADE_STREAM = new StreamUpgrade();
+    
     protected final static Upgrade UPGRADE_BOMB = new Upgrade("Bomb") {
         @Override public final String getDisplayName(final PlayerContext pc) {
             return "Shift Bomb";
@@ -328,7 +330,7 @@ public class Profile {
         }};
     
     protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM, UPGRADE_SPRING,
-            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, UPGRADE_DASH, BASIC_ATTACK, BASIC_JUMP };
+            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, UPGRADE_DASH, UPGRADE_STREAM, BASIC_ATTACK, BASIC_JUMP };
     
     protected abstract static class Upgrade {
         protected final String name;
@@ -507,6 +509,17 @@ public class Profile {
         public final String[] getTutorial() {
             final Profile prf = PlayerContext.getProfile(BotsnBoltsGame.getPrimaryPlayerContext());
             return ((prf != null) && !prf.autoCharge) ? new String[] { "Hold fire button to charge" } : null;
+        }
+    }
+    
+    protected final static class StreamUpgrade extends ShootUpgrade {
+        protected StreamUpgrade() {
+            super("Stream");
+        }
+        
+        @Override
+        protected final ShootMode getShootMode() {
+            return Player.SHOOT_STREAM;
         }
     }
 }

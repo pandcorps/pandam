@@ -116,6 +116,8 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static int MAX_CAMERA_SPEED = 10;
     
+    protected final static FinPanple2 TUPLE_1_1 = new FinPanple2(1, 1);
+    protected final static FinPanple2 TUPLE_2_2 = CENTER_4;
     protected final static FinPanple2 MIN_32 = new FinPanple2(-13, -13);
     protected final static FinPanple2 MAX_32 = new FinPanple2(13, 13);
     protected final static FinPanple2 MIN_16 = new FinPanple2(-6, -6);
@@ -123,7 +125,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static FinPanple2 MIN_8 = new FinPanple2(-3, -3);
     protected final static FinPanple2 MAX_8 = new FinPanple2(3, 3);
     protected final static FinPanple2 MIN_4 = new FinPanple2(-1, -1);
-    protected final static FinPanple2 MAX_4 = new FinPanple2(1, 1);
+    protected final static FinPanple2 MAX_4 = TUPLE_1_1;
     
     protected final static FinPanple2 ng = GuyPlatform.getMin(Player.PLAYER_X);
     protected final static FinPanple2 xg = GuyPlatform.getMax(Player.PLAYER_X, Player.PLAYER_H);
@@ -716,6 +718,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img[] playerChargeVert = null;
     private static Img[] playerCharge2 = null;
     private static Img[] playerChargeVert2 = null;
+    private static Img[] playerPlasma = null;
     private static Img playerWarp = null;
     private static Img[] playerMaterialize = null;
     private static Img[] playerBomb = null;
@@ -743,6 +746,12 @@ public final class BotsnBoltsGame extends BaseGame {
         playerChargeVert = Imtil.loadStrip(pre + "ChargeVert.png", 8, false);
         playerCharge2 = Imtil.loadStrip(pre + "Charge2.png", 8, false);
         playerChargeVert2 = Imtil.loadStrip(pre + "ChargeVert2.png", 8, false);
+        playerPlasma = new Img[] {
+                Imtil.load(pre + "Plasma1.png", false),
+                Imtil.load(pre + "Plasma2.png", false),
+                Imtil.load(pre + "Plasma3.png", false),
+                Imtil.load(pre + "Plasma4.png", false)
+        };
         playerWarp = Imtil.load(pre + "Warp.png", false);
         playerMaterialize = Imtil.loadStrip(pre + "Materialize.png", 32, false);
         playerBomb = Imtil.loadStrip(pre + "Bomb.png", 8, false);
@@ -780,6 +789,7 @@ public final class BotsnBoltsGame extends BaseGame {
         filterImgs(playerChargeVert, f);
         filterImgs(playerCharge2, f);
         filterImgs(playerChargeVert2, f);
+        filterImgs(playerPlasma, f);
         Imtil.filterImg(playerWarp, f);
         filterImgs(playerMaterialize, f);
         filterImgs(playerBomb, f);
@@ -816,6 +826,8 @@ public final class BotsnBoltsGame extends BaseGame {
         playerCharge2 = null;
         Img.close(playerChargeVert2);
         playerChargeVert2 = null;
+        Img.close(playerPlasma);
+        playerPlasma = null;
         playerWarp.close();
         playerWarp = null;
         Img.close(playerMaterialize);
@@ -907,6 +919,14 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panimation chargeVert = (src == null) ? newAnimation(pre + "ChargeVert", playerChargeVert, oChargeVert, 1) : src.chargeVert;
         final Panimation charge2 = (src == null) ? newAnimation(pre + "Charge2", playerCharge2, null, 1) : src.charge2;
         final Panimation chargeVert2 = (src == null) ? newAnimation(pre + "ChargeVert2", playerChargeVert2, oChargeVert, 1) : src.chargeVert2;
+        final Panmage[] plasma = (src == null)
+                ? new Panmage[] {
+                        engine.createImage(pre + "Plasma1", null, TUPLE_1_1, new FinPanple2(6, 6), playerPlasma[0]),
+                        engine.createImage(pre + "Plasma2", TUPLE_2_2, TUPLE_1_1, new FinPanple2(10, 10), playerPlasma[1]),
+                        engine.createImage(pre + "Plasma3", null, TUPLE_1_1, new FinPanple2(14, 14), playerPlasma[2]),
+                        engine.createImage(pre + "Plasma4", null, TUPLE_1_1, new FinPanple2(14, 22), playerPlasma[3])
+                }
+                : src.plasma;
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -950,7 +970,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
         final PlayerImages pi;
-        pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2,
+        pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma,
             burst, ball, wallGrab, wallGrabAim, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;

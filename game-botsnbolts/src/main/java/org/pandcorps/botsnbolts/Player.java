@@ -55,9 +55,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
+    private final static int SHOOT_DELAY_STREAM = 0;
     protected final static int SHOOT_TIME = 12;
     private final static int CHARGE_TIME_MEDIUM = 30;
     private final static int CHARGE_TIME_BIG = 60;
+    protected final static int STREAM_SIZE = 6;
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
     private final static int FROZEN_TIME = 60;
@@ -139,6 +141,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean grapplingRetractAllowed = false;
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
+    private final StreamProjectile[] streamProjectiles = new StreamProjectile[STREAM_SIZE];
     protected Spring spring = null;
     private SlideKick slideKick = null;
     protected Carrier carrier = null;
@@ -293,6 +296,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void setShootMode(final ShootMode shootMode) {
+        if (prf.shootMode != null) {
+            prf.shootMode.onDeselect(this);
+        }
         prf.shootMode = shootMode;
         shootMode.onSelect(this);
     }
@@ -472,6 +478,38 @@ public class Player extends Chr implements Warpable, StepEndListener {
         new Bomb(this);
     }
     
+    protected StreamProjectile newStreamProjectile(final int ox) {
+        return new StreamProjectile(this, ox);
+    }
+    
+    protected final int getStreamOffsetX() {
+        if (stateHandler == WALL_GRAB_HANDLER) {
+            return 3;
+        } else if (!isGrounded()) {
+            return 2;
+        } else if (running) {
+            return 2;
+        } else if (isDashing()) {
+            return 2;
+        }
+        return 4;
+    }
+    
+    protected final int getStreamOffsetY() {
+        if (stateHandler == WALL_GRAB_HANDLER) {
+            return -1;
+        } else if (!isGrounded()) {
+            return 0;
+        } else if (running) {
+            return ((runIndex == 0) || (runIndex == 2)) ? -4 : -2;
+        }
+        return -3;
+    }
+    
+    protected final void clearStream() {
+        detach(streamProjectiles);
+    }
+    
     private final void afterShoot(final long clock) {
         lastShotFired = clock;
         lastShotPosed = clock;
@@ -484,7 +522,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final int getAimOffsetX() {
-        if (isDashing()) {
+        if ((prf.shootMode != SHOOT_STREAM) && isDashing()) {
             final int off = Math.round(Math.abs(hvForced)) - VEL_WALK;
             if (off > 0) {
                 return Projectile.OFF_X + (2 * off);
@@ -1590,6 +1628,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         clearRun();
         clearDash();
+        clearStream();
         stateHandler = BALL_HANDLER;
         lastBall = getClock();
         final Panmage[] crouch = pi.basicSet.crouch;
@@ -1723,6 +1762,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return;
         }
         clearDash();
+        clearStream();
         grapplingHook = new GrapplingHook(this);
         v = Math.max(v, VEL_JUMP / 3);
         grapplingV = 0;
@@ -3016,6 +3056,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected void onSelect(final Player player) {
         }
         
+        //@OverrideMe
+        protected void onDeselect(final Player player) {
+        }
+        
         protected abstract void onShootStart(final Player player);
         
         //@OverrideMe
@@ -3117,6 +3161,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panimation chargeVert;
         protected final Panimation charge2;
         protected final Panimation chargeVert2;
+        protected final Panmage[] plasma;
         protected final Panimation burst;
         private final Panframe[] ball;
         protected final Panmage wallGrab;
@@ -3149,6 +3194,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
+                               final Panmage[] plasma,
                                final Panimation burst, final Panframe[] ball, final Panmage wallGrab, final Panmage wallGrabAim, final Panmage slide,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
@@ -3173,6 +3219,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.chargeVert = chargeVert;
             this.charge2 = charge2;
             this.chargeVert2 = chargeVert2;
+            this.plasma = plasma;
             this.burst = burst;
             this.ball = ball;
             this.wallGrab = wallGrab;
@@ -3405,6 +3452,97 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
+    protected final static ShootMode SHOOT_STREAM = new ShootMode(Profile.UPGRADE_STREAM, SHOOT_DELAY_STREAM) {
+        @Override
+        protected final void onDeselect(final Player player) {
+            player.clearStream();
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            shoot(player);
+        }
+        
+        @Override
+        protected final void onStep(final Player player) {
+            int i = 0;
+            if ((player.lastShotFired + 1) < getClock()) {
+                for (; i < STREAM_SIZE; i++) {
+                    final StreamProjectile streamProjectile = player.streamProjectiles[i];
+                    if (isAttached(streamProjectile)) {
+                        streamProjectile.detach();
+                        break;
+                    }
+                }
+            }
+            boolean lastWasAttached = true;
+            i++;
+            for (; i < STREAM_SIZE; i++) {
+                final StreamProjectile streamProjectile = player.streamProjectiles[i];
+                final boolean attached = isAttached(streamProjectile);
+                if (attached && !lastWasAttached) {
+                    player.streamProjectiles[i].detach();
+                }
+                lastWasAttached = attached;
+            }
+        }
+        
+        @Override
+        protected final int getRequiredStamina() {
+            return 1;
+        }
+        
+        @Override
+        protected final void createProjectile(final Player player) {
+            for (int i = 0; i < STREAM_SIZE; i++) {
+                final StreamProjectile old = player.streamProjectiles[i];
+                if (isDestroyed(old)) {
+                    final int ox;
+                    final Panmage image;
+                    switch (i) {
+                        case 0 :
+                            ox = 0;
+                            image = player.pi.plasma[0];
+                            break;
+                        case 1 :
+                            ox = 8;
+                            image = player.pi.plasma[1];
+                            break;
+                        case 2 :
+                            ox = 20;
+                            image = player.pi.plasma[1];
+                            break;
+                        case 3 :
+                            ox = 32;
+                            image = player.pi.plasma[2];
+                            break;
+                        case 4 :
+                            ox = 48;
+                            image = player.pi.plasma[2];
+                            break;
+                        case 5 :
+                            ox = 64;
+                            image = player.pi.plasma[3];
+                            break;
+                        default :
+                            throw new IllegalStateException("Maximum stream size exceeded");
+                    }
+                    final StreamProjectile streamProjectile = player.newStreamProjectile(ox);
+                    streamProjectile.setView(image);
+                    player.streamProjectiles[i] = streamProjectile;
+                    break;
+                } else if (old.getLayer() == null) {
+                    player.addActor(old);
+                    break;
+                }
+            }
+        }
+    };
+    
     protected final static ShootMode SHOOT_BOMB = new ShootMode(Profile.UPGRADE_BOMB, SHOOT_DELAY_DEFAULT) {
         @Override
         protected final void onShootStart(final Player player) {
@@ -3422,7 +3560,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
-    private final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID };
+    private final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID, SHOOT_STREAM }; //TODO separate list per episode
     
     protected abstract static class JumpMode extends InputMode {
         protected JumpMode(final Upgrade requiredUpgrade) {

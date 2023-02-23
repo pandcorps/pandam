@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -69,6 +70,13 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     
     protected final static void init(final SpecProjectile sp, final Pandy prj, final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
         setPower(sp, power);
+        initPosition(prj, src, ref, vx, vy);
+        if (autoAddProjectile) {
+            ref.getLayer().addActor(prj);
+        }
+    }
+    
+    protected final static void initPosition(final Pandy prj, final Player src, final Panctor ref, final float vx, final float vy) {
         final Panple srcPos = ref.getPosition();
         boolean mirror = ref.isMirror();
         if (src.isAimMirrorReversed()) {
@@ -78,9 +86,6 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         final int xm = prj.getMirrorMultiplier();
         prj.getPosition().set(srcPos.getX() + (xm * src.getAimOffsetX()), srcPos.getY() + src.getAimOffsetY(), BotsnBoltsGame.DEPTH_PROJECTILE);
         prj.getVelocity().set(xm * vx, vy);
-        if (autoAddProjectile) {
-            ref.getLayer().addActor(prj);
-        }
     }
     
     protected final void setPower(final int power) {
@@ -136,7 +141,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         BotsnBoltsGame.addActor(burst);
     }
     
-    protected final void bounce() {
+    protected void bounce() {
         new Bounce(this);
         BotsnBoltsGame.fxRicochet.startSound();
         destroy();
@@ -144,7 +149,9 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
 
     @Override
     public void onAllOob(final AllOobEvent event) {
-        destroy();
+        if (isDestructionWhenOobNeeded()) {
+            destroy();
+        }
     }
     
     @Override
@@ -152,14 +159,23 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         if (!stopped) {
             super.onStep(event);
         }
-        if (!isInView()) { // onAllOob above checks the whole room, not just the current view
+        if (isDestructionWhenOobNeeded() && !isInView()) { // onAllOob above checks the whole room, not just the current view
             destroy();
         }
+    }
+    
+    protected boolean isDestructionWhenOobNeeded() {
+        return true;
     }
     
     @Override
     public final void onStepEnd(final StepEndEvent event) {
         stopped = src.isStopped();
+        onStepEndProjectile();
+    }
+    
+    //@OverrideMe
+    protected void onStepEndProjectile() {
     }
     
     @Override
@@ -230,6 +246,33 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         @Override
         public final void onAnimationEnd(final AnimationEndEvent event) {
             destroy();
+        }
+    }
+    
+    public static class StreamProjectile extends Projectile {
+        private final int ox;
+        
+        protected StreamProjectile(final Player src, final int ox) {
+            super(src, src.pi, Player.SHOOT_STREAM, src, 0, 0, 1);
+            this.ox = ox;
+        }
+        
+        @Override
+        protected final void bounce() {
+            detach();
+        }
+        
+        @Override
+        protected final void onStepEndProjectile() {
+            final boolean mirror = Mathtil.rand(20) ? !isMirror() : isMirror();
+            initPosition(this, src, src, 0, 0);
+            getPosition().add(getMirrorMultiplier() * (ox + src.getStreamOffsetX()), src.getStreamOffsetY());
+            //setMirror(mirror);
+        }
+        
+        @Override
+        protected final boolean isDestructionWhenOobNeeded() {
+            return false;
         }
     }
     
