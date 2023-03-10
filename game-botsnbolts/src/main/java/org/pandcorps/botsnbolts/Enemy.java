@@ -50,6 +50,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     protected static boolean intro = false;
     protected int health;
+    private long lastStreamCollision = NULL_CLOCK;
     
     static {
         final Panple tmp = new ImplPanple(VEL_PROJECTILE, 0, 0);
@@ -113,6 +114,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     public static void onCollision(final SpecEnemy enemy, final CollisionEvent event) {
         final Collidable collider = event.getCollider();
         if (collider instanceof Projectile) { // Projectile can have sub-classes like Explosion
+            if (collider instanceof StreamProjectile) {
+                final long clock = getClock();
+                if (clock <= (enemy.getLastStreamCollision() + 2)) {
+                    return;
+                }
+                enemy.setLastStreamCollision(clock);
+            }
             if (enemy.isVulnerable()) {
                 enemy.onShot((Projectile) collider);
             }
@@ -195,6 +203,16 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     @Override
     public boolean isDestroyedAfterDefeat() {
         return true;
+    }
+    
+    @Override
+    public final long getLastStreamCollision() {
+        return lastStreamCollision;
+    }
+    
+    @Override
+    public final void setLastStreamCollision(final long lastStreamCollision) {
+        this.lastStreamCollision = lastStreamCollision;
     }
     
     protected boolean isVulnerableToProjectile(final Projectile prj) {

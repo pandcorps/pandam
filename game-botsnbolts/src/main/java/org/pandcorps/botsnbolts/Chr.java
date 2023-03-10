@@ -148,6 +148,10 @@ public abstract class Chr extends GuyPlatform {
         public void onDefeat(final Player player);
         
         public boolean isDestroyedAfterDefeat();
+        
+        public long getLastStreamCollision();
+        
+        public void setLastStreamCollision(final long lastStreamCollision);
     }
     
     protected static interface SpecBoss extends SpecEnemy {

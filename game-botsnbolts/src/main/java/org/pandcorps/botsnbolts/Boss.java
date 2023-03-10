@@ -7261,6 +7261,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected int shootTimer = 0;
         protected int extra = 0;
         private float lastV = 0;
+        private long lastStreamCollision = NULL_CLOCK;
         
         protected AiBoss(final PlayerImages pi, final int x, final int y) {
             super(newPlayerContext(pi));
@@ -7641,6 +7642,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         public final boolean isDestroyedAfterDefeat() {
             return false;
+        }
+        
+        @Override
+        public final long getLastStreamCollision() {
+            return lastStreamCollision;
+        }
+        
+        @Override
+        public final void setLastStreamCollision(final long lastStreamCollision) {
+            this.lastStreamCollision = lastStreamCollision;
         }
     }
     
