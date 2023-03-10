@@ -56,6 +56,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_DELAY_STREAM = 0;
+    private final static int SHOOT_STAMINA_TIMER_STREAM = 4;
     protected final static int SHOOT_TIME = 12;
     private final static int CHARGE_TIME_MEDIUM = 30;
     private final static int CHARGE_TIME_BIG = 60;
@@ -142,6 +143,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected final StreamProjectile[] streamProjectiles = new StreamProjectile[STREAM_SIZE];
+    private int streamStaminaCounter = 0;
     protected Spring spring = null;
     private SlideKick slideKick = null;
     protected Carrier carrier = null;
@@ -1743,7 +1745,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return NULL_CLOCK;
         }
         final long clock = getClock();
-        if ((clock - lastStart) < 8) {
+        if (((clock - lastStart) < 8) && useStamina(1)) {
             slideTimer = 0;
             hvForced = (dir * VEL_DASH);
             hv = Math.round(hvForced);
@@ -3055,7 +3057,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return player.isUpgradeAvailable(getRequiredUpgrade());
         }
         
-        protected abstract int getRequiredStamina();
+        protected abstract int getRequiredStamina(final Player player);
     }
     
     protected abstract static class ShootMode extends InputMode {
@@ -3095,7 +3097,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final void shoot(final Player player) {
             final long clock = getClock();
             if (clock - player.lastShotFired > delay) {
-                if (!player.useAttackStamina(getRequiredStamina())) {
+                if (!player.useAttackStamina(getRequiredStamina(player))) {
                     SHOOT_NORMAL.shoot(player);
                     return;
                 };
@@ -3294,7 +3296,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 0;
         }
         
@@ -3315,7 +3317,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 1;
         }
         
@@ -3332,7 +3334,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 5;
         }
         
@@ -3460,7 +3462,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 0;
         }
         
@@ -3518,8 +3520,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final int getRequiredStamina() {
-            return 1;
+        protected final int getRequiredStamina(final Player player) {
+            if (player.stamina <= 0) {
+                player.streamStaminaCounter = 0;
+                return 1;
+            }
+            final int requiredStamina = (player.streamStaminaCounter == 0) ? 1 : 0;
+            player.streamStaminaCounter++;
+            if (player.streamStaminaCounter >= SHOOT_STAMINA_TIMER_STREAM) {
+                player.streamStaminaCounter = 0;
+            }
+            return requiredStamina;
         }
         
         @Override
@@ -3586,7 +3597,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 0;
         }
         
@@ -3604,7 +3615,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         protected final void onAirJump(final Player player) {
-            if (player.useStamina(getRequiredStamina())) {
+            if (player.useStamina(getRequiredStamina(player))) {
                 airJump(player);
             }
         }
@@ -3618,7 +3629,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final static JumpMode JUMP_NORMAL = new JumpMode(null) {
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 0;
         }
         
@@ -3630,7 +3641,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final static JumpMode JUMP_BALL = new JumpMode(Profile.UPGRADE_BALL) {
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 0;
         }
         
@@ -3642,7 +3653,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final static JumpMode JUMP_GRAPPLING_HOOK = new JumpMode(Profile.UPGRADE_GRAPPLING_BEAM) {
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 1;
         }
         
@@ -3660,7 +3671,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final static JumpMode JUMP_SPRING = new JumpMode(Profile.UPGRADE_SPRING) {
         @Override
-        protected final int getRequiredStamina() {
+        protected final int getRequiredStamina(final Player player) {
             return 1;
         }
         
