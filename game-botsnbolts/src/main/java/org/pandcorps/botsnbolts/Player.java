@@ -141,7 +141,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean grapplingRetractAllowed = false;
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
-    private final StreamProjectile[] streamProjectiles = new StreamProjectile[STREAM_SIZE];
+    protected final StreamProjectile[] streamProjectiles = new StreamProjectile[STREAM_SIZE];
     protected Spring spring = null;
     private SlideKick slideKick = null;
     protected Carrier carrier = null;
@@ -496,6 +496,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final int getStreamOffsetY() {
+        //TODO ladder
         if (stateHandler == WALL_GRAB_HANDLER) {
             return -1;
         } else if (!isGrounded()) {
@@ -504,6 +505,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return ((runIndex == 0) || (runIndex == 2)) ? -4 : -2;
         }
         return -3;
+    }
+    
+    protected final void resetStream() {
+        detach(streamProjectiles[1]);
+        detach(streamProjectiles[2]);
     }
     
     protected final void clearStream() {
@@ -519,6 +525,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final boolean isAimMirrorReversed() {
         return stateHandler.isAimMirrorReversed(this);
+    }
+    
+    protected final boolean getAimMirror() {
+        return isAimMirrorReversed() ? !isMirror() : isMirror();
     }
     
     protected final int getAimOffsetX() {
@@ -1478,6 +1488,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         updateWrapper();
         updateFollowers();
+        prf.shootMode.onStepEnd(this);
     }
     
     private final void updateWrapper() {
@@ -1706,6 +1717,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         v = 0.0f;
         slideTimer = 0;
         stateHandler = WALL_GRAB_HANDLER;
+        resetStream();
         changeView(pi.wallGrab);
     }
     
@@ -2730,6 +2742,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final boolean onStep(final Player player) {
+            player.prf.shootMode.onStep(player);
             player.slidePuff(4, 24);
             if (player.isShootPoseNeeded()) {
                 player.changeView(player.pi.wallGrabAim);
@@ -3068,6 +3081,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         //@OverrideMe
         protected void onStep(final Player player) {
+        }
+        
+        //@OverrideMe
+        protected void onStepEnd(final Player player) {
         }
         
         //@OverrideMe
@@ -3469,25 +3486,33 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onStep(final Player player) {
-            int i = 0;
-            if ((player.lastShotFired + 1) < getClock()) {
-                for (; i < STREAM_SIZE; i++) {
-                    final StreamProjectile streamProjectile = player.streamProjectiles[i];
-                    if (isAttached(streamProjectile)) {
-                        streamProjectile.detach();
-                        break;
-                    }
-                }
-            }
             boolean lastWasAttached = true;
-            i++;
-            for (; i < STREAM_SIZE; i++) {
+            for (int i = 0; i < STREAM_SIZE; i++) {
                 final StreamProjectile streamProjectile = player.streamProjectiles[i];
                 final boolean attached = isAttached(streamProjectile);
                 if (attached && !lastWasAttached) {
                     player.streamProjectiles[i].detach();
                 }
                 lastWasAttached = attached;
+            }
+            final StreamProjectile second = player.streamProjectiles[1];
+            if ((second != null) && (player.getAimMirror() != second.srcMirror)) {
+                player.resetStream();
+            }
+            if ((player.lastShotFired + 1) < getClock()) {
+                detach(player.streamProjectiles[0]);
+            }
+        }
+        
+        @Override
+        protected final void onStepEnd(final Player player) {
+            for (int i = STREAM_SIZE - 1; i >= 0; i--) {
+                final StreamProjectile streamProjectile = player.streamProjectiles[i];
+                if (streamProjectile == null) {
+                    continue;
+                }
+                final float y = (i > 0) ? player.streamProjectiles[i - 1].getPosition().getY() : NULL_COORD;
+                streamProjectile.onStepEnd(y);
             }
         }
         
@@ -3499,8 +3524,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void createProjectile(final Player player) {
             for (int i = 0; i < STREAM_SIZE; i++) {
-                final StreamProjectile old = player.streamProjectiles[i];
-                if (isDestroyed(old)) {
+                StreamProjectile streamProjectile = player.streamProjectiles[i];
+                if (isDestroyed(streamProjectile)) {
                     final int ox;
                     final Panmage image;
                     switch (i) {
@@ -3531,12 +3556,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
                         default :
                             throw new IllegalStateException("Maximum stream size exceeded");
                     }
-                    final StreamProjectile streamProjectile = player.newStreamProjectile(ox);
+                    streamProjectile = player.newStreamProjectile(ox);
                     streamProjectile.setView(image);
                     player.streamProjectiles[i] = streamProjectile;
+                    streamProjectile.initSourceMirror();
                     break;
-                } else if (old.getLayer() == null) {
-                    player.addActor(old);
+                } else if (streamProjectile.getLayer() == null) {
+                    player.addActor(streamProjectile);
+                    streamProjectile.initSourceMirror();
                     break;
                 }
             }

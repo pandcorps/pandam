@@ -70,18 +70,13 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     
     protected final static void init(final SpecProjectile sp, final Pandy prj, final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
         setPower(sp, power);
-        initPosition(prj, src, ref, vx, vy);
+        initPosition(prj, src, ref.getPosition(), src.isAimMirrorReversed() ? !ref.isMirror() : ref.isMirror(), vx, vy);
         if (autoAddProjectile) {
             ref.getLayer().addActor(prj);
         }
     }
     
-    protected final static void initPosition(final Pandy prj, final Player src, final Panctor ref, final float vx, final float vy) {
-        final Panple srcPos = ref.getPosition();
-        boolean mirror = ref.isMirror();
-        if (src.isAimMirrorReversed()) {
-            mirror = !mirror;
-        }
+    protected final static void initPosition(final Pandy prj, final Player src, final Panple srcPos, final boolean mirror, final float vx, final float vy) {
         prj.setMirror(mirror);
         final int xm = prj.getMirrorMultiplier();
         prj.getPosition().set(srcPos.getX() + (xm * src.getAimOffsetX()), srcPos.getY() + src.getAimOffsetY(), BotsnBoltsGame.DEPTH_PROJECTILE);
@@ -251,23 +246,45 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     
     public static class StreamProjectile extends Projectile {
         private final int ox;
+        protected boolean srcMirror;
         
         protected StreamProjectile(final Player src, final int ox) {
             super(src, src.pi, Player.SHOOT_STREAM, src, 0, 0, 1);
             this.ox = ox;
         }
         
-        @Override
-        protected final void bounce() {
-            detach();
+        protected final void initSourceMirror() {
+            srcMirror = src.getAimMirror();
         }
         
         @Override
-        protected final void onStepEndProjectile() {
+        protected final void bounce() {
+            boolean detaching = false;
+            for (final StreamProjectile prj : src.streamProjectiles) {
+                if (prj == this) {
+                    detaching = true;
+                }
+                if (detaching) {
+                    prj.detach();
+                }
+            }
+        }
+        
+        protected final void onStepEnd(final float y) {
             final boolean mirror = Mathtil.rand(20) ? !isMirror() : isMirror();
-            initPosition(this, src, src, 0, 0);
-            getPosition().add(getMirrorMultiplier() * (ox + src.getStreamOffsetX()), src.getStreamOffsetY());
-            //setMirror(mirror);
+            if (y == Player.NULL_COORD) {
+                initSourceMirror();
+            }
+            initPosition(this, src, src.getPosition(), srcMirror, 0, 0);
+            final int m = getMirrorMultiplier();
+            final Panple pos = getPosition();
+            pos.addX(m * (ox + src.getStreamOffsetX() + ((srcMirror == mirror) ? 0 : (1 + Math.round(getCurrentDisplay().getBoundingMaximum().getX())))));
+            if (y == Player.NULL_COORD) {
+                pos.addY(src.getStreamOffsetY());
+            } else {
+                pos.setY(y);
+            }
+            setMirror(mirror);
         }
         
         @Override
