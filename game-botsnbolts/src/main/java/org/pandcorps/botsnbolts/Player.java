@@ -59,7 +59,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int SHOOT_TIME = 12;
     private final static int CHARGE_TIME_MEDIUM = 30;
     private final static int CHARGE_TIME_BIG = 60;
-    protected final static int STREAM_SIZE = 6;
+    protected final static int STREAM_SIZE = 8;
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
     private final static int FROZEN_TIME = 60;
@@ -3535,22 +3535,30 @@ public class Player extends Chr implements Warpable, StepEndListener {
                             break;
                         case 1 :
                             ox = 8;
-                            image = player.pi.plasma[1];
+                            image = player.pi.plasma[0];
                             break;
                         case 2 :
-                            ox = 20;
+                            ox = 16;
                             image = player.pi.plasma[1];
                             break;
                         case 3 :
-                            ox = 32;
-                            image = player.pi.plasma[2];
+                            ox = 28;
+                            image = player.pi.plasma[1];
                             break;
                         case 4 :
-                            ox = 48;
+                            ox = 40;
                             image = player.pi.plasma[2];
                             break;
                         case 5 :
-                            ox = 64;
+                            ox = 56;
+                            image = player.pi.plasma[2];
+                            break;
+                        case 6 :
+                            ox = 72;
+                            image = player.pi.plasma[3];
+                            break;
+                        case 7 :
+                            ox = 88;
                             image = player.pi.plasma[3];
                             break;
                         default :
