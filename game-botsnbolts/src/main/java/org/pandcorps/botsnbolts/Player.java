@@ -496,9 +496,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final int getStreamOffsetY() {
-        //TODO ladder
         if (stateHandler == WALL_GRAB_HANDLER) {
             return -1;
+        } else if (stateHandler == LADDER_HANDLER) {
+            return -2;
         } else if (!isGrounded()) {
             return 0;
         } else if (running) {
