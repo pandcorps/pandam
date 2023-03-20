@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -29,6 +29,7 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
 	private final Panple origin;
 	private final Panple boundMin;
 	private Panple boundMax;
+	private Object extra = null;
 
 	protected Panmage(final String id, final Panple origin, final Panple boundMin, final Panple boundMax) {
 		super(id);
@@ -140,6 +141,18 @@ public abstract class Panmage extends BasePantity implements Panview, Pansplay {
 	//@OverrideMe
 	public void setMirrorSource(final Panmage mirrorSource) {
 	    throw new UnsupportedOperationException();
+	}
+	
+	public final Object getExtra() {
+	    return extra;
+	}
+	
+	public final void setExtra(final Object extra) {
+	    this.extra = extra;
+	}
+	
+	public final static Object getExtra(final Pansplay display) {
+	    return (display instanceof Panmage) ? ((Panmage) display).getExtra() : null;
 	}
 	
 	@Override

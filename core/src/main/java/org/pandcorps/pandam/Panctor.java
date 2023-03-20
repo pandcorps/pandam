@@ -71,6 +71,10 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	public Pansplay getCurrentDisplay() {
 		return impl.getCurrentDisplay();
 	}
+	
+	public final Object getCurrentDisplayExtra() {
+	    return Panmage.getExtra(getCurrentDisplay());
+	}
 
 	protected void renderView(final Panderer renderer) {
 		impl.renderView();
