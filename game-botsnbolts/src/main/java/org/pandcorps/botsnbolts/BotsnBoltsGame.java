@@ -719,6 +719,9 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img[] playerCharge2 = null;
     private static Img[] playerChargeVert2 = null;
     private static Img[] playerPlasma = null;
+    private static Img playerShieldVert = null;
+    private static Img playerShieldDiag = null;
+    private static Img playerShieldCircle = null;
     private static Img playerWarp = null;
     private static Img[] playerMaterialize = null;
     private static Img[] playerBomb = null;
@@ -752,6 +755,9 @@ public final class BotsnBoltsGame extends BaseGame {
                 Imtil.load(pre + "Plasma3.png", false),
                 Imtil.load(pre + "Plasma4.png", false)
         };
+        playerShieldVert = Imtil.load(pre + "ShieldVert.png", false);
+        playerShieldDiag = Imtil.load(pre + "ShieldDiag.png", false);
+        playerShieldCircle = Imtil.load(pre + "ShieldCircle.png", false);
         playerWarp = Imtil.load(pre + "Warp.png", false);
         playerMaterialize = Imtil.loadStrip(pre + "Materialize.png", 32, false);
         playerBomb = Imtil.loadStrip(pre + "Bomb.png", 8, false);
@@ -790,6 +796,9 @@ public final class BotsnBoltsGame extends BaseGame {
         filterImgs(playerCharge2, f);
         filterImgs(playerChargeVert2, f);
         filterImgs(playerPlasma, f);
+        Imtil.filterImg(playerShieldVert, f);
+        Imtil.filterImg(playerShieldDiag, f);
+        Imtil.filterImg(playerShieldCircle, f);
         Imtil.filterImg(playerWarp, f);
         filterImgs(playerMaterialize, f);
         filterImgs(playerBomb, f);
@@ -828,6 +837,12 @@ public final class BotsnBoltsGame extends BaseGame {
         playerChargeVert2 = null;
         Img.close(playerPlasma);
         playerPlasma = null;
+        playerShieldVert.close();
+        playerShieldVert = null;
+        playerShieldDiag.close();
+        playerShieldDiag = null;
+        playerShieldCircle.close();
+        playerShieldCircle = null;
         playerWarp.close();
         playerWarp = null;
         Img.close(playerMaterialize);
@@ -927,6 +942,9 @@ public final class BotsnBoltsGame extends BaseGame {
                         engine.createImage(pre + "Plasma4", null, TUPLE_1_1, new FinPanple2(14, 22), playerPlasma[3])
                 }
                 : src.plasma;
+        final Panmage shieldVert = (src == null) ? engine.createImage(pre + "ShieldVert", playerShieldVert) : src.shieldVert;
+        final Panmage shieldDiag = (src == null) ? engine.createImage(pre + "ShieldDiag", playerShieldDiag) : src.shieldDiag;
+        final Panmage shieldCircle = (src == null) ? engine.createImage(pre + "ShieldCircle", playerShieldCircle) : src.shieldCircle;
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -970,7 +988,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
         final PlayerImages pi;
-        pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma,
+        pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
             burst, ball, wallGrab, wallGrabAim, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;
