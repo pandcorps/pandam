@@ -97,22 +97,24 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_ABOVE = 14;
     protected final static int DEPTH_CARRIER = 16;
     protected final static int DEPTH_POWER_UP = 18;
-    protected final static int DEPTH_PLAYER = 20;
-    protected final static int DEPTH_ENEMY_BACK_2 = 22;
-    protected final static int DEPTH_ENEMY_BACK = 24;
-    protected final static int DEPTH_ENEMY = 26;
-    protected final static int DEPTH_ENEMY_FRONT = 28;
-    protected final static int DEPTH_PROJECTILE = 30;
-    protected final static int DEPTH_OVERLAY = 32;
-    protected final static int DEPTH_BURST = 66;
-    protected final static int DEPTH_DIALOGUE_BOX = 68;
-    protected final static int DEPTH_DIALOGUE_TEXT = 70;
-    protected final static int DEPTH_HUD = 72;
-    protected final static int DEPTH_HUD_TEXT = 74;
-    protected final static int DEPTH_HUD_OVERLAY = 76;
+    protected final static int DEPTH_PLAYER_BACK = 20;
+    protected final static int DEPTH_PLAYER = 22;
+    protected final static int DEPTH_PLAYER_FRONT = 24;
+    protected final static int DEPTH_ENEMY_BACK_2 = 26;
+    protected final static int DEPTH_ENEMY_BACK = 28;
+    protected final static int DEPTH_ENEMY = 30;
+    protected final static int DEPTH_ENEMY_FRONT = 32;
+    protected final static int DEPTH_PROJECTILE = 34;
+    protected final static int DEPTH_OVERLAY = 36;
+    protected final static int DEPTH_BURST = 74;
+    protected final static int DEPTH_DIALOGUE_BOX = 76;
+    protected final static int DEPTH_DIALOGUE_TEXT = 78;
+    protected final static int DEPTH_HUD = 80;
+    protected final static int DEPTH_HUD_TEXT = 82;
+    protected final static int DEPTH_HUD_OVERLAY = 84;
     protected final static byte Z_OFF_OVERLAY = 2;
     protected final static byte Z_OFF_TEXT = 4;
-    protected final static int DEPTH_CURSOR = 78;
+    protected final static int DEPTH_CURSOR = 86;
     
     protected final static int MAX_CAMERA_SPEED = 10;
     
@@ -945,6 +947,10 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage shieldVert = (src == null) ? engine.createImage(pre + "ShieldVert", playerShieldVert) : src.shieldVert;
         final Panmage shieldDiag = (src == null) ? engine.createImage(pre + "ShieldDiag", playerShieldDiag) : src.shieldDiag;
         final Panmage shieldCircle = (src == null) ? engine.createImage(pre + "ShieldCircle", playerShieldCircle) : src.shieldCircle;
+        
+        final PlayerImageExtra stillExtra = new PlayerImageExtra(shieldVert, 3, 3, DEPTH_PLAYER_BACK, false, false, 0);
+        basicSet.stand.setExtra(stillExtra);
+        basicSet.blink.setExtra(stillExtra);
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);

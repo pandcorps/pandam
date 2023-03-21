@@ -3618,14 +3618,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final void onStepEnd(final Player player) {
             final Object o = player.getCurrentDisplayExtra();
             if (o == null) {
+                Panctor.detach(player.shield);
                 return;
             }
             final PlayerImageExtra ext = (PlayerImageExtra) o;
             final Panple pos = player.getPosition();
-            final Panctor shield = player.shield;
+            Panctor shield = player.shield;
+            if (Panctor.isDestroyed(shield)) {
+                player.shield = shield = new Panctor();
+            }
+            if (shield.getLayer() == null) {
+                player.addActor(shield);
+            }
             shield.changeView(ext.shieldImage);
             shield.getPosition().set(pos.getX() + ext.shieldX, pos.getY() + ext.shieldY, ext.shieldZ);
-            shield.setMirror(ext.shieldMirror);
+            shield.setMirror(ext.shieldMirror ^ player.isMirror());
             shield.setFlip(ext.shieldFlip);
             shield.setRot(ext.shieldRot);
         }
@@ -3652,7 +3659,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
-    private final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID, SHOOT_STREAM }; //TODO separate list per episode
+    private final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID, SHOOT_STREAM, SHOOT_SHIELD }; //TODO separate list per episode
     
     protected abstract static class JumpMode extends InputMode {
         protected JumpMode(final Upgrade requiredUpgrade) {

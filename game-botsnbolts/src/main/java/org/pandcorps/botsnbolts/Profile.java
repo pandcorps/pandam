@@ -457,8 +457,12 @@ public class Profile {
         protected final String displayName;
         
         protected ShootUpgrade(final String name) {
+            this(name, name + " Cannon");
+        }
+        
+        protected ShootUpgrade(final String name, final String displayName) {
             super(name);
-            this.displayName = name + " Cannon";
+            this.displayName = displayName;
         }
         
         @Override
@@ -528,17 +532,12 @@ public class Profile {
     
     protected final static class ShieldUpgrade extends ShootUpgrade {
         protected ShieldUpgrade() {
-            super("Shield");
+            super("Shield", "Disc Shield");
         }
         
         @Override
         protected final ShootMode getShootMode() {
             return Player.SHOOT_SHIELD;
-        }
-        
-        @Override
-        public final String getDisplayName(final PlayerContext pc) {
-            return "Disc Shield";
         }
     }
 }
