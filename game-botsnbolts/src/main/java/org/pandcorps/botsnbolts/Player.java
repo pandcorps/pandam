@@ -163,6 +163,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private float safeY = NULL_COORD;
     private boolean safeMirror = false;
     private List<Follower> followers = null;
+    private Panctor shield = null;
     private boolean hidden = false;
     protected boolean active = true;
     private boolean scripted = false;
@@ -3596,6 +3597,44 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
+    protected final static ShootMode SHOOT_SHIELD = new ShootMode(Profile.UPGRADE_SHIELD, SHOOT_DELAY_SPREAD) {
+        @Override
+        protected final void onDeselect(final Player player) {
+            Panctor.detach(player.shield);
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+            shoot(player);
+            player.setShootMode(SHOOT_NORMAL);
+        }
+        
+        @Override
+        protected final int getRequiredStamina(final Player player) {
+            return 5;
+        }
+        
+        @Override
+        protected final void onStepEnd(final Player player) {
+            final Object o = player.getCurrentDisplayExtra();
+            if (o == null) {
+                return;
+            }
+            final PlayerImageExtra ext = (PlayerImageExtra) o;
+            final Panple pos = player.getPosition();
+            final Panctor shield = player.shield;
+            shield.changeView(ext.shieldImage);
+            shield.getPosition().set(pos.getX() + ext.shieldX, pos.getY() + ext.shieldY, ext.shieldZ);
+            shield.setMirror(ext.shieldMirror);
+            shield.setFlip(ext.shieldFlip);
+            shield.setRot(ext.shieldRot);
+        }
+
+        @Override
+        protected final void createProjectile(final Player player) {
+        }
+    };
+    
     protected final static ShootMode SHOOT_BOMB = new ShootMode(Profile.UPGRADE_BOMB, SHOOT_DELAY_DEFAULT) {
         @Override
         protected final void onShootStart(final Player player) {
@@ -3930,6 +3969,27 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         public final int getOffsetY() {
             return offsetY;
+        }
+    }
+    
+    protected final static class PlayerImageExtra {
+        private final Panmage shieldImage;
+        private final float shieldX;
+        private final float shieldY;
+        private final float shieldZ;
+        private final boolean shieldMirror;
+        private final boolean shieldFlip;
+        private final int shieldRot;
+        
+        protected PlayerImageExtra(final Panmage shieldImage, final int shieldX, final int shieldY, final int shieldZ,
+                final boolean shieldMirror, final boolean shieldFlip, final int shieldRot) {
+            this.shieldImage = shieldImage;
+            this.shieldX = shieldX;
+            this.shieldY = shieldY;
+            this.shieldZ = shieldZ;
+            this.shieldMirror = shieldMirror;
+            this.shieldFlip = shieldFlip;
+            this.shieldRot = shieldRot;
         }
     }
     
