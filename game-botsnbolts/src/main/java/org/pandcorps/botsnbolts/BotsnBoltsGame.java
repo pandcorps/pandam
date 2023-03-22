@@ -948,9 +948,10 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage shieldDiag = (src == null) ? engine.createImage(pre + "ShieldDiag", playerShieldDiag) : src.shieldDiag;
         final Panmage shieldCircle = (src == null) ? engine.createImage(pre + "ShieldCircle", playerShieldCircle) : src.shieldCircle;
         
-        final PlayerImageExtra stillExtra = new PlayerImageExtra(shieldVert, 3, 3, DEPTH_PLAYER_BACK, false, false, 0);
+        final PlayerImageExtra stillExtra = new PlayerImageExtra(shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null);
         basicSet.stand.setExtra(stillExtra);
         basicSet.blink.setExtra(stillExtra);
+        basicSet.jump.setExtra(new PlayerImageExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump));
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -1309,8 +1310,8 @@ public final class BotsnBoltsGame extends BaseGame {
             Menu.addVersion();
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    //addPlayerContext(prf0, voidImages, event);
-                    addPlayerContext(prf0, nullImages, event);
+                    addPlayerContext(prf0, voidImages, event);
+                    //addPlayerContext(prf0, nullImages, event);
                     startGame();
                 }});
         }

@@ -3631,10 +3631,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 player.addActor(shield);
             }
             shield.changeView(ext.shieldImage);
-            shield.getPosition().set(pos.getX() + ext.shieldX, pos.getY() + ext.shieldY, ext.shieldZ);
+            shield.getPosition().set(pos.getX() + (player.getMirrorMultiplier() * ext.shieldX), pos.getY() + ext.shieldY, ext.shieldZ);
             shield.setMirror(ext.shieldMirror ^ player.isMirror());
             shield.setFlip(ext.shieldFlip);
             shield.setRot(ext.shieldRot);
+            if (ext.shieldReplacement != null) {
+                player.changeView(ext.shieldReplacement);
+            }
         }
 
         @Override
@@ -3987,9 +3990,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         private final boolean shieldMirror;
         private final boolean shieldFlip;
         private final int shieldRot;
+        private final Panmage shieldReplacement;
         
         protected PlayerImageExtra(final Panmage shieldImage, final int shieldX, final int shieldY, final int shieldZ,
-                final boolean shieldMirror, final boolean shieldFlip, final int shieldRot) {
+                final boolean shieldMirror, final boolean shieldFlip, final int shieldRot, final Panmage shieldReplacement) {
             this.shieldImage = shieldImage;
             this.shieldX = shieldX;
             this.shieldY = shieldY;
@@ -3997,6 +4001,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.shieldMirror = shieldMirror;
             this.shieldFlip = shieldFlip;
             this.shieldRot = shieldRot;
+            this.shieldReplacement = shieldReplacement;
         }
     }
     
