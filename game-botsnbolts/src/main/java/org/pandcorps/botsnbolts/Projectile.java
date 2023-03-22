@@ -25,6 +25,7 @@ package org.pandcorps.botsnbolts;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.Player.*;
+import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
@@ -40,6 +41,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     protected final static int OFF_X = 15;
     protected final static int OFF_Y = 13;
     protected final static Set<Projectile> currentProjectiles = new HashSet<Projectile>();
+    private static Panple scratch = new ImplPanple();
     
     protected final Player src;
     protected final PlayerImages pi;
@@ -285,6 +287,108 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
                 pos.setY(y);
             }
             setMirror(mirror);
+        }
+        
+        @Override
+        protected final boolean isDestructionWhenOobNeeded() {
+            return false;
+        }
+    }
+    
+    public static class ShieldProjectile extends Projectile {
+        private final static int VEL_SHIELD = Player.VEL_PROJECTILE;
+        private Panctor target = null;
+        private int vel = 0;
+        
+        protected ShieldProjectile(final Player src) {
+            super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, 2);
+            setView(src.pi.shieldCircle);
+            Panctor nearestEnemyInFront = null, nearestEnemyBehind = null, shootableButton = null;
+            double nearestEnemyInFrontDistance = Float.MAX_VALUE, nearestEnemyBehindDistance = Float.MAX_VALUE;
+            final Panple pos = src.getPosition();
+            final float x = pos.getX();
+            final boolean mirror = src.isMirror();
+            for (final Panctor actor : src.getLayerRequired().getActors()) {
+                if (actor instanceof Enemy) {
+                    if (!actor.isInView()) {
+                        continue;
+                    }
+                    final Panple tpos = actor.getPosition();
+                    final float tx = tpos.getX();
+                    final double distance = tpos.getDistance2(pos);
+                    if (((tx > x) && !mirror) || ((tx < x) && mirror)) {
+                        if ((nearestEnemyInFront == null) || (distance < nearestEnemyInFrontDistance)) {
+                            nearestEnemyInFront = actor;
+                            nearestEnemyInFrontDistance = distance;
+                        }
+                    } else {
+                        if ((nearestEnemyBehind == null) || (distance < nearestEnemyBehindDistance)) {
+                            nearestEnemyBehind = actor;
+                            nearestEnemyBehindDistance = distance;
+                        }
+                    }
+                } else if (actor instanceof ShootableButton) {
+                    if (actor.isInView()) {
+                        shootableButton = actor;
+                    }
+                }
+            }
+            if (nearestEnemyInFront != null) {
+                target = nearestEnemyInFront;
+            } else if (nearestEnemyBehind != null) {
+                target = nearestEnemyBehind;
+            } else if (shootableButton != null) {
+                target = shootableButton;
+            } else {
+                vel = src.getMirrorMultiplier() * VEL_SHIELD;
+            }
+        }
+        
+        @Override
+        protected final void onStepEndProjectile() {
+            if (!isInView()) {
+                target = src;
+            } else if (target == null) {
+                getPosition().addX(vel);
+            } else if (target.isDestroyed()) {
+                if (target == src) {
+                    destroy();
+                } else {
+                    target = src;
+                }
+            } else {
+                final Panple pos = getPosition(), tpos = target.getPosition();
+                Panple.subtract(scratch, tpos, pos);
+                final double mag = scratch.getMagnitude2();
+                if (mag < VEL_SHIELD) {
+                    if (target == src) {
+                        src.setShootMode(Player.SHOOT_SHIELD);
+                        destroy();
+                    } else {
+                        pos.set2(tpos);
+                        startReturnToPlayer();
+                    }
+                } else {
+                    scratch.setMagnitude2(VEL_SHIELD);
+                    pos.add(scratch);
+                }
+            }
+        }
+        
+        private final void startReturnToPlayer() {
+            target = src;
+        }
+        
+        @Override
+        public final void burst() {
+            //TODO Boss version of this will need same behavior
+            startReturnToPlayer();
+        }
+        
+        @Override
+        protected final void bounce() {
+            target = src;
+            startReturnToPlayer();
         }
         
         @Override

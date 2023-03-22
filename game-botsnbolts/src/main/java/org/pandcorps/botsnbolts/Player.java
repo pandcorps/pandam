@@ -3598,6 +3598,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     };
     
     protected final static ShootMode SHOOT_SHIELD = new ShootMode(Profile.UPGRADE_SHIELD, SHOOT_DELAY_SPREAD) {
+        //TODO Don't allow to be selected if this Player already has a shield in the air
         @Override
         protected final void onDeselect(final Player player) {
             Panctor.detach(player.shield);
@@ -3642,6 +3643,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
 
         @Override
         protected final void createProjectile(final Player player) {
+            new ShieldProjectile(player);
         }
     };
     
