@@ -3278,11 +3278,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static class PlayerImagesSubSet {
         protected final Panmage stand;
         protected final Panmage jump;
-        private final Panmage[] run;
-        private final Panmage start;
+        protected final Panmage[] run;
+        protected final Panmage start;
         protected final Panmage blink;
-        private final Panmage[] crouch;
-        private final Panmage dash;
+        protected final Panmage[] crouch;
+        protected final Panmage dash;
         
         protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch,
                 final Panmage dash) {
