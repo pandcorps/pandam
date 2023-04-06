@@ -886,8 +886,11 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage dash = newPlayerImage(PRE_IMG + "." + name + ".dash", og, nSlide, xSlide, imgDash, imgDashMirror);
         final Img imgDashAim = Imtil.load(pre + "DashAim.png"), imgDashAimMirror = playerMirror ? Imtil.load(pre + "DashAimMirror.png") : null;
         final Panmage dashAim = newPlayerImage(PRE_IMG + "." + name + ".dash.Aim", os, nSlide, xSlide, imgDashAim, imgDashAimMirror);
+        final Img imgDashThrow = Imtil.load(pre + "DashThrow.png"), imgDashThrowMirror = playerMirror ? Imtil.load(pre + "DashThrowMirror.png") : null;
+        final Panmage dashThrow = newPlayerImage(PRE_IMG + "." + name + ".dash.Throw", os, nSlide, xSlide, imgDashThrow, imgDashThrowMirror);
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj, dash);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs, dashAim);
+        final PlayerImagesSubSet throwSet = loadPlayerImagesSubSet(pre + "Throw", name + ".throw", false, oss, os, ojs, dashThrow);
         final Pangine engine = Pangine.getEngine();
         final Img imgHurt = Imtil.load(pre + "Hurt.png", false), imgHurtMirror = playerMirror ? Imtil.load(pre + "HurtMirror.png", false) : null;
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
@@ -998,7 +1001,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
         final PlayerImages pi;
-        pi = new PlayerImages(basicSet, shootSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
+        pi = new PlayerImages(basicSet, shootSet, throwSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
             burst, ball, wallGrab, wallGrabAim, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;

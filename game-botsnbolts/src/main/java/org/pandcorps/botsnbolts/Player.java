@@ -93,6 +93,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final PlayerContext pc;
     protected final Profile prf;
     protected final PlayerImages pi;
+    private PlayerImagesSubSet currentShootSet = null;
     protected StateHandler stateHandler = NORMAL_HANDLER;
     private boolean running = false;
     private int runIndex = 0;
@@ -1119,7 +1120,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final PlayerImagesSubSet getCurrentImagesSubSet() {
-        return isShootPoseNeeded() ? pi.shootSet : pi.basicSet;
+        if (isShootPoseNeeded()) {
+            if (currentShootSet != null) {
+                return currentShootSet;
+            }
+            return pi.shootSet;
+        }
+        currentShootSet = null;
+        return pi.basicSet;
     }
     
     private final void clearRun() {
@@ -3104,6 +3112,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 };
                 player.afterShoot(clock);
                 createProjectile(player);
+                player.currentShootSet = null;
             }
         }
         
@@ -3166,6 +3175,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static class PlayerImages {
         protected final PlayerImagesSubSet basicSet;
         protected final PlayerImagesSubSet shootSet;
+        protected final PlayerImagesSubSet throwSet;
         private final Panmage hurt;
         private final Panmage frozen;
         protected final Panimation defeat;
@@ -3212,7 +3222,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final String animalName;
         protected final String birdName;
         
-        protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet,
+        protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final PlayerImagesSubSet throwSet,
                                final Panmage hurt, final Panmage frozen, final Panimation defeat,
                                final Panmage climb, final Panmage climbShoot, final Panmage climbTop,
                                final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
@@ -3227,6 +3237,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage portrait, final HudMeterImages hudMeterImages, final String name, final String animalName, final String birdName) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
+            this.throwSet = throwSet;
             this.hurt = hurt;
             this.frozen = frozen;
             this.defeat = defeat;
@@ -3607,6 +3618,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void onShootStart(final Player player) {
             shoot(player);
+            player.currentShootSet = player.pi.throwSet;
             player.setShootMode(SHOOT_NORMAL);
         }
         
