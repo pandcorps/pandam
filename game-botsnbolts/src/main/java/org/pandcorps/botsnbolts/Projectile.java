@@ -340,13 +340,13 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
             } else if (shootableButton != null) {
                 target = shootableButton;
             } else {
-                vel = src.getMirrorMultiplier() * VEL_SHIELD;
+                vel = getMirrorMultiplier(src.getAimMirror()) * VEL_SHIELD;
             }
         }
         
         @Override
         protected final void onStepEndProjectile() {
-            if (!isInView()) {
+            if (!isInView() && (target != src)) {
                 target = src;
             } else if (target == null) {
                 getPosition().addX(vel);

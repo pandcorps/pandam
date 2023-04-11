@@ -1730,7 +1730,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         slideTimer = 0;
         stateHandler = WALL_GRAB_HANDLER;
         resetStream();
-        changeView(pi.wallGrab);
+        changeView(pi.basicSet.wallGrab);
     }
     
     protected final void endWallGrab() {
@@ -2756,11 +2756,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final boolean onStep(final Player player) {
             player.prf.shootMode.onStep(player);
             player.slidePuff(4, 24);
-            if (player.isShootPoseNeeded()) {
-                player.changeView(player.pi.wallGrabAim);
-            } else {
-                player.changeView(player.pi.wallGrab);
-            }
+            player.changeView(player.getCurrentImagesSubSet().wallGrab);
             return false;
         }
         
@@ -3198,8 +3194,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panmage shieldCircle;
         protected final Panimation burst;
         private final Panframe[] ball;
-        protected final Panmage wallGrab;
-        protected final Panmage wallGrabAim;
         protected final Panmage slide;
         protected final Panmage warp;
         protected final Panimation materialize;
@@ -3229,7 +3223,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panmage[] plasma, Panmage shieldVert, Panmage shieldDiag, Panmage shieldCircle,
-                               final Panimation burst, final Panframe[] ball, final Panmage wallGrab, final Panmage wallGrabAim, final Panmage slide,
+                               final Panimation burst, final Panframe[] ball, final Panmage slide,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
@@ -3260,8 +3254,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.shieldCircle = shieldCircle;
             this.burst = burst;
             this.ball = ball;
-            this.wallGrab = wallGrab;
-            this.wallGrabAim = wallGrabAim;
             this.slide = slide;
             this.warp = warp;
             this.materialize = materialize;
@@ -3293,16 +3285,18 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panmage start;
         protected final Panmage blink;
         protected final Panmage[] crouch;
+        protected final Panmage wallGrab;
         protected final Panmage dash;
         
         protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch,
-                final Panmage dash) {
+                final Panmage wallGrab, final Panmage dash) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
             this.start = start;
             this.blink = blink;
             this.crouch = crouch;
+            this.wallGrab = wallGrab;
             this.dash = dash;
         }
     }
