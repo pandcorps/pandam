@@ -882,6 +882,14 @@ public final class BotsnBoltsGame extends BaseGame {
         final String pre = getCharacterPrefix(dir, name);
         final int slideX = Player.PLAYER_X + 2;
         final Panple nSlide = GuyPlatform.getMin(slideX), xSlide = GuyPlatform.getMax(slideX, 19);
+        final Panple oClimb = new FinPanple2(15, 4);
+        final Img[] climbImgs = Imtil.loadStrip(pre + "Climb.png", 32);
+        final Img[] climbImgsMirror = loadPlayerMirrorStrip(pre + "ClimbMirror.png");
+        final Panmage climb = newPlayerImage(pre + "Climb", oClimb, climbImgs, climbImgsMirror, 0);
+        final Panmage climbAim = newPlayerImage(pre + "Climb.Shoot", oClimb, climbImgs, climbImgsMirror, 1);
+        final Panmage climbTop = newPlayerImage(pre + "Climb.Top", oClimb, climbImgs, climbImgsMirror, 2);
+        final Img imgClimbThrow = Imtil.load(pre + "ClimbThrow.png"), imgClimbThrowMirror = playerMirror ? Imtil.load(pre + "ClimbThrowMirror.png") : null;
+        final Panmage climbThrow = newPlayerImage(pre + "Climb.Throw", oClimb, imgClimbThrow, imgClimbThrowMirror);
         final Img imgWallGrab = Imtil.load(pre + "Wall.png"), imgWallGrabMirror = playerMirror ? Imtil.load(pre + "WallMirror.png") : null;
         final Panmage wallGrab = newPlayerImage(PRE_IMG + "." + name + ".wall", oj, imgWallGrab, imgWallGrabMirror);
         final Img imgWallGrabAim = Imtil.load(pre + "WallAim.png"), imgWallGrabAimMirror = playerMirror ? Imtil.load(pre + "WallAimMirror.png") : null;
@@ -894,9 +902,9 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage dashAim = newPlayerImage(PRE_IMG + "." + name + ".dash.Aim", os, nSlide, xSlide, imgDashAim, imgDashAimMirror);
         final Img imgDashThrow = Imtil.load(pre + "DashThrow.png"), imgDashThrowMirror = playerMirror ? Imtil.load(pre + "DashThrowMirror.png") : null;
         final Panmage dashThrow = newPlayerImage(PRE_IMG + "." + name + ".dash.Throw", os, nSlide, xSlide, imgDashThrow, imgDashThrowMirror);
-        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj, wallGrab, dash);
-        final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs, wallGrabAim, dashAim);
-        final PlayerImagesSubSet throwSet = loadPlayerImagesSubSet(pre + "Throw", name + ".throw", false, oss, os, ojs, wallGrabThrow, dashThrow);
+        final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj, climb, wallGrab, dash);
+        final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs, climbAim, wallGrabAim, dashAim);
+        final PlayerImagesSubSet throwSet = loadPlayerImagesSubSet(pre + "Throw", name + ".throw", false, oss, os, ojs, climbThrow, wallGrabThrow, dashThrow);
         final Pangine engine = Pangine.getEngine();
         final Img imgHurt = Imtil.load(pre + "Hurt.png", false), imgHurtMirror = playerMirror ? Imtil.load(pre + "HurtMirror.png", false) : null;
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
@@ -917,12 +925,6 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final Panimation defeat = newAnimation(pre + "DefeatOrb", playerDefeatOrb, CENTER_16, 6);
         
-        final Panple oClimb = new FinPanple2(15, 4);
-        final Img[] climbImgs = Imtil.loadStrip(pre + "Climb.png", 32);
-        final Img[] climbImgsMirror = loadPlayerMirrorStrip(pre + "ClimbMirror.png");
-        final Panmage climb = newPlayerImage(pre + "Climb", oClimb, climbImgs, climbImgsMirror, 0);
-        final Panmage climbShoot = newPlayerImage(pre + "Climb.Shoot", oClimb, climbImgs, climbImgsMirror, 1);
-        final Panmage climbTop = newPlayerImage(pre + "Climb.Top", oClimb, climbImgs, climbImgsMirror, 2);
         final Img[] jumpAimImgs = Imtil.loadStrip(pre + "JumpAim.png", 32);
         final Img[] jumpAimImgsMirror = loadPlayerMirrorStrip(pre + "JumpAimMirror.png");
         final Panmage jumpAimDiag = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 0);
@@ -1006,14 +1008,14 @@ public final class BotsnBoltsGame extends BaseGame {
         final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
         final PlayerImages pi;
-        pi = new PlayerImages(basicSet, shootSet, throwSet, hurt, frozen, defeat, climb, climbShoot, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
+        pi = new PlayerImages(basicSet, shootSet, throwSet, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
             burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;
     }
     
     private final static PlayerImagesSubSet loadPlayerImagesSubSet(final String path, final String name, final boolean startNeeded, final Panple os, final Panple o, final Panple oj,
-            final Panmage wallGrab, final Panmage dash) {
+            final Panmage climb, final Panmage wallGrab, final Panmage dash) {
         final String pre = PRE_IMG + "." + name + ".";
         final Img[] imgs = Imtil.loadStrip(path + ".png", 32);
         final Img[] imgsMirror = loadPlayerMirrorStrip(path + "Mirror.png");
@@ -1038,7 +1040,7 @@ public final class BotsnBoltsGame extends BaseGame {
             blink = null;
             crouch = null;
         }
-        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch, wallGrab, dash);
+        return new PlayerImagesSubSet(still, jump, new Panmage[] { run1, run2, run3 }, start, blink, crouch, climb, wallGrab, dash);
     }
     
     private final static Img[] loadPlayerMirrorStrip(final String loc) {
@@ -1321,8 +1323,8 @@ public final class BotsnBoltsGame extends BaseGame {
             Menu.addVersion();
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    addPlayerContext(prf0, voidImages, event);
-                    //addPlayerContext(prf0, nullImages, event);
+                    //addPlayerContext(prf0, voidImages, event);
+                    addPlayerContext(prf0, nullImages, event);
                     startGame();
                 }});
         }

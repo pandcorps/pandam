@@ -1121,13 +1121,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     private final PlayerImagesSubSet getCurrentImagesSubSet() {
         if (isShootPoseNeeded()) {
-            if (currentShootSet != null) {
-                return currentShootSet;
-            }
-            return pi.shootSet;
+            return getCurrentAimImagesSubSet();
         }
         currentShootSet = null;
         return pi.basicSet;
+    }
+    
+    private final PlayerImagesSubSet getCurrentAimImagesSubSet() {
+        if (currentShootSet != null) {
+            return currentShootSet;
+        }
+        return pi.shootSet;
     }
     
     private final void clearRun() {
@@ -2541,12 +2545,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             final Panmage view;
             if (player.isShootPoseNeeded()) {
-                view = player.pi.climbShoot;
+                view = player.getCurrentAimImagesSubSet().climb;
             } else if (!(player.isTouchingLadder() || player.isTouchingLadder(OFF_LADDER_BOTTOM + VEL_WALK))) {
                 view = player.pi.climbTop;
                 player.normalizeY(0, 2);
             } else {
-                view = player.pi.climb;
+                view = player.pi.basicSet.climb;
             }
             player.changeView(view);
             return true;
@@ -3175,8 +3179,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
         private final Panmage hurt;
         private final Panmage frozen;
         protected final Panimation defeat;
-        private final Panmage climb;
-        private final Panmage climbShoot;
         private final Panmage climbTop;
         private final Panmage jumpAimDiag;
         private final Panmage jumpAimUp;
@@ -3218,7 +3220,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final PlayerImagesSubSet throwSet,
                                final Panmage hurt, final Panmage frozen, final Panimation defeat,
-                               final Panmage climb, final Panmage climbShoot, final Panmage climbTop,
+                               final Panmage climbTop,
                                final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
@@ -3235,8 +3237,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.hurt = hurt;
             this.frozen = frozen;
             this.defeat = defeat;
-            this.climb = climb;
-            this.climbShoot = climbShoot;
             this.climbTop = climbTop;
             this.jumpAimDiag = jumpAimDiag;
             this.jumpAimUp = jumpAimUp;
@@ -3285,17 +3285,19 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panmage start;
         protected final Panmage blink;
         protected final Panmage[] crouch;
+        protected final Panmage climb;
         protected final Panmage wallGrab;
         protected final Panmage dash;
         
         protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch,
-                final Panmage wallGrab, final Panmage dash) {
+                final Panmage climb, final Panmage wallGrab, final Panmage dash) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
             this.start = start;
             this.blink = blink;
             this.crouch = crouch;
+            this.climb = climb;
             this.wallGrab = wallGrab;
             this.dash = dash;
         }
