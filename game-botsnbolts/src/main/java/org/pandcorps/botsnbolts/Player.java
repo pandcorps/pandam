@@ -542,6 +542,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if (off > 0) {
                 return Projectile.OFF_X + (2 * off);
             }
+        } else if (stateHandler == LADDER_HANDLER && isMirror()) {
+            return Projectile.OFF_X - 1;
         }
         return Projectile.OFF_X;
     }
