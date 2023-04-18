@@ -1149,6 +1149,19 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void renderViewNormal(final Panderer renderer) {
+        if (isMirror()) {
+            final Pansplay display = getCurrentDisplay();
+            final Object o = Panmage.getExtra(display);
+            if (o != null) {
+                final PlayerImageExtra ext = (PlayerImageExtra) o;
+                final int mirrorX = ext.mirrorX;
+                if (mirrorX != 0) {
+                    final Panple pos = getPosition();
+                    renderer.render(getLayer(), (Panmage) display, pos.getX() + mirrorX, pos.getY(), pos.getZ(), getRot(), true, isFlip());
+                    return;
+                }
+            }
+        }
         super.renderView(renderer);
     }
     
@@ -3993,6 +4006,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final static class PlayerImageExtra {
+        private final int mirrorX;
         private final Panmage shieldImage;
         private final float shieldX;
         private final float shieldY;
@@ -4002,8 +4016,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         private final int shieldRot;
         private final Panmage shieldReplacement;
         
-        protected PlayerImageExtra(final Panmage shieldImage, final int shieldX, final int shieldY, final int shieldZ,
+        protected PlayerImageExtra(final int mirrorX, final Panmage shieldImage, final int shieldX, final int shieldY, final int shieldZ,
                 final boolean shieldMirror, final boolean shieldFlip, final int shieldRot, final Panmage shieldReplacement) {
+            this.mirrorX = mirrorX;
             this.shieldImage = shieldImage;
             this.shieldX = shieldX;
             this.shieldY = shieldY;
