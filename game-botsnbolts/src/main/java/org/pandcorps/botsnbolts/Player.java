@@ -3118,17 +3118,18 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected void onShootEnd(final Player player) {
         }
         
-        protected final void shoot(final Player player) {
+        protected final boolean shoot(final Player player) {
             final long clock = getClock();
             if (clock - player.lastShotFired > delay) {
                 if (!player.useAttackStamina(getRequiredStamina(player))) {
-                    SHOOT_NORMAL.shoot(player);
-                    return;
+                    return SHOOT_NORMAL.shoot(player);
                 };
                 player.afterShoot(clock);
                 createProjectile(player);
                 player.currentShootSet = null;
+                return true;
             }
+            return false;
         }
         
         protected abstract void createProjectile(final Player player);
@@ -3628,7 +3629,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onShootStart(final Player player) {
-            shoot(player);
+            if (!shoot(player)) {
+                return;
+            }
             player.currentShootSet = player.pi.throwSet;
             player.setShootMode(SHOOT_NORMAL);
         }
