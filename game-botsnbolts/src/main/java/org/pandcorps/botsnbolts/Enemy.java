@@ -420,7 +420,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             final Collidable collider = event.getCollider();
             if (collider.getClass() == Player.class) {
                 final Player player = (Player) collider;
-                if (hurt(player)) {
+                if (isBlocked(player)) {
+                    ricochet();
+                } else if (hurt(player)) {
                     burst(player);
                     if (isDestroyedOnImpact()) {
                         destroy();
@@ -429,6 +431,23 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             } else if (collider instanceof Projectile) {
                 onCollisionWithPlayerProjectile((Projectile) collider);
             }
+        }
+        
+        protected boolean isBlocked(final Player player) {
+            if (!isBlockable()) {
+                return false;
+            } else if (!player.isBlocking(this)) {
+                return false;
+            }
+            return true;
+        }
+        
+        protected void ricochet() {
+            new Bounce(this);
+        }
+        
+        protected boolean isBlockable() {
+            return getClass() == EnemyProjectile.class;
         }
         
         protected boolean hurt(final Player player) {

@@ -27,6 +27,7 @@ import java.util.concurrent.*;
 
 import org.pandcorps.botsnbolts.Animal.*;
 import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
+import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Profile.*;
@@ -1785,6 +1786,25 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final boolean isDashing() {
         return Math.abs(hvForced) > VEL_WALK;
+    }
+    
+    protected final boolean isBlocking(final EnemyProjectile prj) {
+        if (prf.shootMode != Player.SHOOT_SHIELD) {
+            return false;
+        } else if (!isInBlockingPose()) {
+            return false;
+        }
+        final float prjVelX = prj.getVelocity().getX(), prjX = prj.getPosition().getX(), x = getPosition().getX();
+        if ((prjVelX < 0) && !getAimMirror() && (prjX > x)) {
+            return true;
+        } else if ((prjVelX > 0) && getAimMirror() && (prjX < x)) {
+            return true;
+        }
+        return false;
+    }
+    
+    private final boolean isInBlockingPose() {
+        return Panctor.isAttached(shield) && shield.isVisible() && (shield.getView() == pi.shieldVert);
     }
     
     private final void endLadder() {
