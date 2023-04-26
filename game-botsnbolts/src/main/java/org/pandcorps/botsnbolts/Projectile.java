@@ -140,8 +140,6 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     
     protected void bounce() {
         new Bounce(this);
-        BotsnBoltsGame.fxRicochet.startSound();
-        destroy();
     }
 
     @Override
@@ -302,14 +300,16 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         
         protected ShieldProjectile(final Player src) {
             super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, 2);
+            getPosition().addY(-15);
             setView(src.pi.shieldCircle);
-            Panctor nearestEnemyInFront = null, nearestEnemyBehind = null, shootableButton = null;
-            double nearestEnemyInFrontDistance = Float.MAX_VALUE, nearestEnemyBehindDistance = Float.MAX_VALUE;
+            Panctor nearestEnemy = null, shootableButton = null;
+            double nearestEnemyDistance = Float.MAX_VALUE;
             final Panple pos = src.getPosition();
             final float x = pos.getX();
             final boolean mirror = src.isMirror();
             for (final Panctor actor : src.getLayerRequired().getActors()) {
-                if (actor instanceof Enemy) {
+                final boolean enemy = actor instanceof Enemy;
+                if (enemy || (actor instanceof ShootableButton)) {
                     if (!actor.isInView()) {
                         continue;
                     }
@@ -317,26 +317,19 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
                     final float tx = tpos.getX();
                     final double distance = tpos.getDistance2(pos);
                     if (((tx > x) && !mirror) || ((tx < x) && mirror)) {
-                        if ((nearestEnemyInFront == null) || (distance < nearestEnemyInFrontDistance)) {
-                            nearestEnemyInFront = actor;
-                            nearestEnemyInFrontDistance = distance;
+                        if (enemy) {
+                            if ((nearestEnemy == null) || (distance < nearestEnemyDistance)) {
+                                nearestEnemy = actor;
+                                nearestEnemyDistance = distance;
+                            }
+                        } else {
+                            shootableButton = actor;
                         }
-                    } else {
-                        if ((nearestEnemyBehind == null) || (distance < nearestEnemyBehindDistance)) {
-                            nearestEnemyBehind = actor;
-                            nearestEnemyBehindDistance = distance;
-                        }
-                    }
-                } else if (actor instanceof ShootableButton) {
-                    if (actor.isInView()) {
-                        shootableButton = actor;
                     }
                 }
             }
-            if (nearestEnemyInFront != null) {
-                target = nearestEnemyInFront;
-            } else if (nearestEnemyBehind != null) {
-                target = nearestEnemyBehind;
+            if (nearestEnemy != null) {
+                target = nearestEnemy;
             } else if (shootableButton != null) {
                 target = shootableButton;
             } else {
@@ -398,7 +391,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     }
     
     public final static class Bounce extends Pandy implements AllOobListener {
-        protected Bounce(final Projectile prj) {
+        protected Bounce(final Pandy prj) {
             getPosition().set(prj.getPosition());
             final Panple vel = getVelocity();
             final boolean mirror = prj.getVelocity().getX() > 0;
@@ -407,6 +400,8 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
             setMirror(mirror);
             setView(prj);
             BotsnBoltsGame.addActor(this);
+            BotsnBoltsGame.fxRicochet.startSound();
+            prj.destroy();
         }
         
         @Override
