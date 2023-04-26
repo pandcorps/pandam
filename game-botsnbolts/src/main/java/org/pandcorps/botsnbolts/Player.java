@@ -1804,7 +1804,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final boolean isInBlockingPose() {
-        return Panctor.isAttached(shield) && shield.isVisible() && (shield.getView() == pi.shieldVert);
+        return Panctor.isAttached(shield) && shield.isVisible() && (shield.getView() == pi.shieldVert) && (shield.getPosition().getZ() > BotsnBoltsGame.DEPTH_PLAYER);
     }
     
     private final void endLadder() {
