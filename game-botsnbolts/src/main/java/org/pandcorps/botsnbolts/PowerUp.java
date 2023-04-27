@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -23,6 +23,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package org.pandcorps.botsnbolts;
 
 import org.pandcorps.botsnbolts.Profile.*;
+import org.pandcorps.botsnbolts.Projectile.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.boundary.*;
@@ -44,6 +45,8 @@ public abstract class PowerUp extends Chr implements CollisionListener {
             final Panple pos = getPosition();
             Projectile.burst(player, player.pi.burst, pos.getX(), pos.getY() + getCurrentDisplay().getBoundingMaximum().getY() / 2);
             destroy();
+        } else if (collider.getClass() == ShieldProjectile.class) {
+            ((ShieldProjectile) collider).addPowerUp(this);
         }
     }
     

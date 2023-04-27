@@ -294,22 +294,36 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     }
     
     public static class ShieldProjectile extends Projectile {
+        private final static byte TARGET_NONE = -1;
+        private final static byte TARGET_ENEMY = 0;
+        private final static byte TARGET_POWER_UP = 1;
+        private final static byte TARGET_BUTTON = 2;
         private final static int VEL_SHIELD = Player.VEL_PROJECTILE;
         private Panctor target = null;
         private int vel = 0;
+        private List<PowerUp> collectedPowerUps = null;
         
         protected ShieldProjectile(final Player src) {
             super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, 2);
             getPosition().addY(-15);
             setView(src.pi.shieldCircle);
-            Panctor nearestEnemy = null, shootableButton = null;
-            double nearestEnemyDistance = Float.MAX_VALUE;
+            Panctor nearestEnemy = null, nearestPowerUp = null, shootableButton = null;
+            double nearestEnemyDistance = Float.MAX_VALUE, nearestPowerUpDistance = Float.MAX_VALUE;
             final Panple pos = src.getPosition();
             final float x = pos.getX();
             final boolean mirror = src.isMirror();
             for (final Panctor actor : src.getLayerRequired().getActors()) {
-                final boolean enemy = actor instanceof Enemy;
-                if (enemy || (actor instanceof ShootableButton)) {
+                final byte targetType;
+                if (actor instanceof Enemy) {
+                    targetType = TARGET_ENEMY;
+                } else if (actor instanceof PowerUp) {
+                    targetType = TARGET_POWER_UP;
+                } else if (actor instanceof ShootableButton){
+                    targetType = TARGET_BUTTON;
+                } else {
+                    targetType = TARGET_NONE;
+                }
+                if (targetType != TARGET_NONE) {
                     if (!actor.isInView()) {
                         continue;
                     }
@@ -317,10 +331,15 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
                     final float tx = tpos.getX();
                     final double distance = tpos.getDistance2(pos);
                     if (((tx > x) && !mirror) || ((tx < x) && mirror)) {
-                        if (enemy) {
+                        if (targetType == TARGET_ENEMY) {
                             if ((nearestEnemy == null) || (distance < nearestEnemyDistance)) {
                                 nearestEnemy = actor;
                                 nearestEnemyDistance = distance;
+                            }
+                        } else if (targetType == TARGET_POWER_UP) {
+                            if ((nearestPowerUp == null) || (distance < nearestPowerUpDistance)) {
+                                nearestPowerUp = actor;
+                                nearestPowerUpDistance = distance;
                             }
                         } else {
                             shootableButton = actor;
@@ -330,6 +349,8 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
             }
             if (nearestEnemy != null) {
                 target = nearestEnemy;
+            } else if (nearestPowerUp != null) {
+                target = nearestPowerUp;
             } else if (shootableButton != null) {
                 target = shootableButton;
             } else {
@@ -339,18 +360,20 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         
         @Override
         protected final void onStepEndProjectile() {
+            final Panple pos = getPosition();
             if (!isInView() && (target != src)) {
                 target = src;
             } else if (target == null) {
-                getPosition().addX(vel);
+                pos.addX(vel);
             } else if (target.isDestroyed()) {
                 if (target == src) {
+                    onCaught();
                     destroy();
                 } else {
                     target = src;
                 }
             } else {
-                final Panple pos = getPosition(), tpos = target.getPosition();
+                final Panple tpos = target.getPosition();
                 Panple.subtract(scratch, tpos, pos);
                 final double mag = scratch.getMagnitude2();
                 if (mag < VEL_SHIELD) {
@@ -366,10 +389,26 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
                     pos.add(scratch);
                 }
             }
+            for (final PowerUp powerUp : Coltil.unnull(collectedPowerUps)) {
+                powerUp.getPosition().set2(pos);
+            }
         }
         
         private final void startReturnToPlayer() {
             target = src;
+        }
+        
+        private final void onCaught() {
+            for (final PowerUp powerUp : Coltil.unnull(collectedPowerUps)) {
+                powerUp.getPosition().set2(src.getPosition());
+            }
+        }
+        
+        protected final void addPowerUp(final PowerUp powerUp) {
+            if (collectedPowerUps == null) {
+                collectedPowerUps = new LinkedList<PowerUp>();
+            }
+            collectedPowerUps.add(powerUp);
         }
         
         @Override
