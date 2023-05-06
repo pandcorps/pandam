@@ -165,7 +165,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private float safeY = NULL_COORD;
     private boolean safeMirror = false;
     private List<Follower> followers = null;
-    private Panctor shield = null;
+    private HeldShield shield = null;
     protected ShieldProjectile lastShieldProjectile = null;
     private boolean hidden = false;
     protected boolean active = true;
@@ -1790,7 +1790,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final boolean isBlocking(final EnemyProjectile prj) {
-        if (prf.shootMode != Player.SHOOT_SHIELD) {
+        if (prf.shootMode != SHOOT_SHIELD) {
             return false;
         } else if (!isInBlockingPose()) {
             return false;
@@ -2370,6 +2370,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         //@OverrideMe
         protected void renderView(final Player player, final Panderer renderer) {
             player.renderViewNormal(renderer);
+        }
+        
+        //@OverrideMe
+        protected boolean isPlayerRendered() {
+            return true;
         }
         
         //@OverrideMe
@@ -3034,6 +3039,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final boolean isPlayerRendered() {
+            return false;
+        }
+        
+        @Override
         protected final void onGrounded(final Player player) {
         }
         
@@ -3695,14 +3705,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             final PlayerImageExtra ext = (PlayerImageExtra) o;
             final Panple pos = player.getPosition();
-            Panctor shield = player.shield;
+            HeldShield shield = player.shield;
             if (Panctor.isDestroyed(shield)) {
-                player.shield = shield = new Panctor();
+                player.shield = shield = new HeldShield(player);
             }
             if (shield.getLayer() == null) {
                 player.addActor(shield);
             }
-            shield.setVisible(player.isVisible());
+            shield.setVisible(Panctor.isAttached(player) && player.isVisible() && player.stateHandler.isPlayerRendered());
             shield.changeView(ext.shieldImage);
             shield.getPosition().set(pos.getX() + (player.getMirrorMultiplier() * ext.shieldX), pos.getY() + ext.shieldY, ext.shieldZ);
             shield.setMirror(ext.shieldMirror ^ player.isMirror());
@@ -4053,6 +4063,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         public final int getOffsetY() {
             return offsetY;
+        }
+    }
+    
+    protected final static class HeldShield extends Panctor {
+        //private final Player src;
+        
+        protected HeldShield(final Player src) {
+            //this.src = src;
         }
     }
     
