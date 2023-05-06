@@ -965,9 +965,10 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.run[2].setExtra(new PlayerImageExtra(0, shieldDiag, -5, 18, DEPTH_PLAYER_BACK, true, true, 0, null));
         basicSet.dash.setExtra(new PlayerImageExtra(0, shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null));
         basicSet.wallGrab.setExtra(new PlayerImageExtra(0, shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab));
-        basicSet.climb.setExtra(new PlayerImageExtra(1, null, 0, 0, DEPTH_PLAYER_FRONT, false, false, 0, null));
-        climbTop.setExtra(new PlayerImageExtra(1, null, 0, 0, DEPTH_PLAYER_FRONT, false, false, 0, null));
+        basicSet.climb.setExtra(new PlayerImageExtra(1, shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null));
+        climbTop.setExtra(new PlayerImageExtra(1, null, 0, 0, DEPTH_PLAYER_FRONT, false, false, 0, null)); //TODO
         shootSet.climb.setExtra(new PlayerImageExtra(1, null, 0, 0, DEPTH_PLAYER_FRONT, false, false, 0, null));
+        //slide.setExtra(extra);
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -1326,8 +1327,8 @@ public final class BotsnBoltsGame extends BaseGame {
             Menu.addVersion();
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    //addPlayerContext(prf0, voidImages, event);
-                    addPlayerContext(prf0, nullImages, event);
+                    addPlayerContext(prf0, voidImages, event);
+                    //addPlayerContext(prf0, nullImages, event);
                     startGame();
                 }});
         }

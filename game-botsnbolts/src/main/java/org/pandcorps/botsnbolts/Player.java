@@ -3722,8 +3722,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             shield.setVisible(Panctor.isAttached(player) && player.isVisible() && player.stateHandler.isPlayerRendered());
             shield.changeView(ext.shieldImage);
-            shield.getPosition().set(pos.getX() + (player.getMirrorMultiplier() * ext.shieldX), pos.getY() + ext.shieldY, ext.shieldZ);
-            shield.setMirror(ext.shieldMirror ^ player.isMirror());
+            final boolean playerMirror = player.isMirror();
+            shield.getPosition().set(pos.getX() + (player.getMirrorMultiplier() * ext.shieldX) + (playerMirror ? ext.mirrorX : 0), pos.getY() + ext.shieldY, ext.shieldZ);
+            shield.setMirror(ext.shieldMirror ^ playerMirror);
             shield.setFlip(ext.shieldFlip);
             shield.setRot(ext.shieldRot);
             if (ext.shieldReplacement != null) {
