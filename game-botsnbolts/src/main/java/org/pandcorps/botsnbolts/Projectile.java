@@ -302,13 +302,14 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         private final static byte TARGET_BUTTON = 2;
         private final static int VEL_SHIELD = Player.VEL_PROJECTILE;
         private Panctor target = null;
+        private float targetOffsetY = 0;
         private int vel = 0;
         private List<PowerUp> collectedPowerUps = null;
         
         protected ShieldProjectile(final Player src) {
             super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, 2);
             src.lastShieldProjectile = this;
-            getPosition().addY(-15);
+            getPosition().addY(-12);
             setView(src.pi.shieldCircle);
             Panctor nearestEnemy = null, nearestPowerUp = null, shootableButton = null;
             double nearestEnemyDistance = Float.MAX_VALUE, nearestPowerUpDistance = Float.MAX_VALUE;
@@ -351,21 +352,26 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
                 }
             }
             if (nearestEnemy != null) {
-                target = nearestEnemy;
+                setTarget(nearestEnemy, 0);
             } else if (nearestPowerUp != null) {
-                target = nearestPowerUp;
+                setTarget(nearestPowerUp, 0);
             } else if (shootableButton != null) {
-                target = shootableButton;
+                setTarget(shootableButton, 0);
             } else {
                 vel = getMirrorMultiplier(src.getAimMirror()) * VEL_SHIELD;
             }
+        }
+        
+        private final void setTarget(final Panctor target, final float targetOffsetY) {
+            this.target = target;
+            this.targetOffsetY = targetOffsetY;
         }
         
         @Override
         protected final void onStepEndProjectile() {
             final Panple pos = getPosition();
             if (!isInView() && (target != src)) {
-                target = src;
+                startReturnToPlayer();
             } else if (target == null) {
                 pos.addX(vel);
             } else if (target.isDestroyed()) {
@@ -373,23 +379,23 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
                     onCaught();
                     destroy();
                 } else {
-                    target = src;
+                    startReturnToPlayer();
                 }
             } else {
-                final Panple tpos = target.getPosition();
-                Panple.subtract(scratch, tpos, pos);
+                setToTarget(scratch);
+                Panple.subtract(scratch, scratch, pos);
                 final double mag = scratch.getMagnitude2();
                 if (mag < VEL_SHIELD) {
                     if (target == src) {
                         src.setShootMode(Player.SHOOT_SHIELD);
                         destroy();
                     } else {
-                        pos.set2(tpos);
+                        setToTarget(pos);
                         startReturnToPlayer();
                     }
                 } else {
                     scratch.setMagnitude2(VEL_SHIELD);
-                    pos.add(scratch);
+                    pos.add2(scratch);
                 }
             }
             for (final PowerUp powerUp : Coltil.unnull(collectedPowerUps)) {
@@ -397,8 +403,13 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
             }
         }
         
+        private final void setToTarget(final Panple p) {
+            final Panple tpos = target.getPosition();
+            p.set(tpos.getX(), tpos.getY() + targetOffsetY);
+        }
+        
         private final void startReturnToPlayer() {
-            target = src;
+            setTarget(src, 1);
         }
         
         private final void onCaught() {
@@ -422,7 +433,6 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         
         @Override
         protected final void bounce() {
-            target = src;
             startReturnToPlayer();
         }
         

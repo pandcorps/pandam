@@ -331,6 +331,7 @@ public class Menu {
         pauseMenuButtons[currIndex++] = quit = addPauseMenuButton(layer, "Quit", px, py, active, imgQuit);
         registrar.register(quit, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
+                save();
                 Pangine.getEngine().exit();
             }});
         addCursor(layer);
@@ -429,6 +430,7 @@ public class Menu {
     }
     
     protected final static void goLevelSelect() {
+        save();
         final Pangine engine = Pangine.getEngine();
         if (engine.isPaused()) {
             engine.setPaused(false);
@@ -916,6 +918,7 @@ public class Menu {
     }
     
     protected final static void goOptions() {
+        save();
         Panscreen.set(new OptionsScreen());
     }
     
