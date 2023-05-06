@@ -56,6 +56,7 @@ public class Profile {
     /*package*/ boolean fallProtection = false;
     /*package*/ boolean hazardProtection = false;
     /*package*/ boolean airJump = false;
+    /*package*/ ShootMode lastUsedFallbackShootMode = Player.SHOOT_NORMAL;
     /*package*/ final static int NUM_DIFFICULTY_SETTINGS = 12;
     private final Profile old;
     
@@ -100,6 +101,7 @@ public class Profile {
         fallProtection = src.fallProtection;
         hazardProtection = src.hazardProtection;
         airJump = src.airJump;
+        lastUsedFallbackShootMode = src.lastUsedFallbackShootMode;
     }
     
     private final boolean isSame() {
@@ -109,7 +111,7 @@ public class Profile {
                 && (infiniteStamina == old.infiniteStamina) && (infiniteLives == old.infiniteLives)
                 && (infiniteHealth == old.infiniteHealth) && (stunProtection == old.stunProtection)
                 && (fallProtection == old.fallProtection) && (hazardProtection == old.hazardProtection)
-                && (airJump == old.airJump);
+                && (airJump == old.airJump) && (lastUsedFallbackShootMode == old.lastUsedFallbackShootMode);
     }
     
     private final void loadBolts() {
@@ -182,6 +184,7 @@ public class Profile {
         fallProtection = seg.getBoolean(13, fallProtection);
         hazardProtection = seg.getBoolean(14, hazardProtection);
         airJump = seg.getBoolean(15, airJump);
+        lastUsedFallbackShootMode = getShootMode(seg.getValue(16));
     }
     
     /*package*/ final void saveBolts() {
@@ -221,6 +224,7 @@ public class Profile {
         seg.setBoolean(13, fallProtection);
         seg.setBoolean(14, hazardProtection);
         seg.setBoolean(15, airJump);
+        seg.setValue(16, lastUsedFallbackShootMode.getName());
         Savtil.save(seg, LOC_PROFILE);
         old.load(this);
     }

@@ -307,6 +307,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         
         protected ShieldProjectile(final Player src) {
             super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, 2);
+            src.lastShieldProjectile = this;
             getPosition().addY(-15);
             setView(src.pi.shieldCircle);
             Panctor nearestEnemy = null, nearestPowerUp = null, shootableButton = null;

@@ -3163,6 +3163,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 player.afterShoot(clock);
                 createProjectile(player);
                 player.currentShootSet = null;
+                if (isAllowedFallbackOption()) {
+                    player.prf.lastUsedFallbackShootMode = this;
+                }
                 return true;
             }
             return false;
@@ -3185,6 +3188,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             player.afterShoot(getClock());
             player.newProjectile(VEL_PROJECTILE, 0, power);
+        }
+        
+        //@OverrideMe
+        protected boolean isAllowedFallbackOption() {
+            return true;
         }
         
         //@OverrideMe
@@ -3688,7 +3696,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 return;
             }
             player.currentShootSet = player.pi.throwSet;
-            player.setShootMode(SHOOT_NORMAL);
+            player.setShootMode(player.prf.lastUsedFallbackShootMode);
         }
         
         @Override
@@ -3726,6 +3734,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void createProjectile(final Player player) {
             new ShieldProjectile(player);
+        }
+        
+        @Override
+        protected final boolean isAllowedFallbackOption() {
+            return false;
         }
     };
     
