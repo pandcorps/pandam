@@ -695,18 +695,18 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor skin0 = new FinPancolor(s240, s160, s120), skin1 = new FinPancolor(s192, s128, s96), skin2 = new FinPancolor(s144, s96, s72);
         lastPlayerImagesPrimary1 = lastPlayerImagesEnergy1 = Pancolor.GREEN; lastPlayerImagesPrimary2 = lastPlayerImagesEnergy2 = new FinPancolor(s0, s192, s0);
         lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
-        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true);
+        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true, 0);
         final Pancolor darkCyan = new FinPancolor(s0, s192, s192);
         filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), darkCyan);
         lastPlayerImagesSkin1 = skin0; lastPlayerImagesSkin2 = skin1;
         playerMirror = false;
-        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true);
+        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true, 0);
         lastPlayerImagesSkin1 = new FinPancolor(s96, s128, s192); lastPlayerImagesSkin2 = new FinPancolor(s72, s96, s144);
-        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false);
+        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false, 0);
         filterPlayerImages(Pancolor.CYAN, new FinPancolor(s176, s144, Pancolor.MAX_VALUE), darkCyan, new FinPancolor(s128, s64, Pancolor.MAX_VALUE));
         lastPlayerImagesPrimary1 = lastPlayerImagesEnergy2; lastPlayerImagesPrimary2 = new FinPancolor(s96, s48, s192);
         lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
-        nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true);
+        nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true, 1);
         closePlayerImages();
         prf0 = new Profile();
     }
@@ -878,7 +878,8 @@ public final class BotsnBoltsGame extends BaseGame {
         return RES + "chr/" + dir + "/" + name;
     }
     
-    private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName, final PlayerImages src, final boolean pupilNeeded) {
+    private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName, final PlayerImages src, final boolean pupilNeeded,
+            final int shieldRunOffsetX) {
         final String pre = getCharacterPrefix(dir, name);
         final int slideX = Player.PLAYER_X + 2;
         final Panple nSlide = GuyPlatform.getMin(slideX), xSlide = GuyPlatform.getMax(slideX, 19);
@@ -961,9 +962,9 @@ public final class BotsnBoltsGame extends BaseGame {
         talk.setExtra(stillExtra);
         basicSet.start.setExtra(stillExtra);
         basicSet.jump.setExtra(new PlayerImageExtra(0, shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump));
-        basicSet.run[0].setExtra(new PlayerImageExtra(0, shieldDiag, 3, 18, DEPTH_PLAYER_BACK, false, true, 0, null));
+        basicSet.run[0].setExtra(new PlayerImageExtra(0, shieldDiag, 3 - shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, false, true, 0, null));
         basicSet.run[1].setExtra(new PlayerImageExtra(0, shieldVert, 11, 18, DEPTH_PLAYER_BACK, true, true, 0, null));
-        basicSet.run[2].setExtra(new PlayerImageExtra(0, shieldDiag, -5, 18, DEPTH_PLAYER_BACK, true, true, 0, null));
+        basicSet.run[2].setExtra(new PlayerImageExtra(0, shieldDiag, -5 + shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, true, true, 0, null));
         basicSet.dash.setExtra(new PlayerImageExtra(0, shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null));
         basicSet.wallGrab.setExtra(new PlayerImageExtra(0, shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab));
         basicSet.climb.setExtra(new PlayerImageExtra(1, shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null));
@@ -1329,8 +1330,8 @@ public final class BotsnBoltsGame extends BaseGame {
             Menu.addVersion();
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    addPlayerContext(prf0, voidImages, event);
-                    //addPlayerContext(prf0, nullImages, event);
+                    //addPlayerContext(prf0, voidImages, event);
+                    addPlayerContext(prf0, nullImages, event);
                     startGame();
                 }});
         }
