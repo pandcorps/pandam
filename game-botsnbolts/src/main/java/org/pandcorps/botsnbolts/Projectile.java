@@ -71,6 +71,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     protected static boolean autoAddProjectile = true;
     
     protected final static void init(final SpecProjectile sp, final Pandy prj, final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
+        prj.setView(pi.basicProjectile);
         setPower(sp, power);
         initPosition(prj, src, ref.getPosition(), src.isAimMirrorReversed() ? !ref.isMirror() : ref.isMirror(), vx, vy);
         if (autoAddProjectile) {
@@ -91,12 +92,8 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     
     protected final static void setPower(final SpecProjectile prj, final int power) {
         prj.assignPower(power);
-        if (power > POWER_MEDIUM) {
-            prj.changeView(prj.getPlayerImages().projectile3);
-        } else if (power > 1) {
-            prj.changeView(prj.getPlayerImages().projectile2);
-        } else if (power > 0) {
-            prj.changeView(prj.getPlayerImages().basicProjectile);
+        if (power > 0) {
+            prj.getShootMode().onAssignPower(prj, power);
         } else {
             prj.burst();
         }
@@ -110,6 +107,11 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
     @Override
     public final PlayerImages getPlayerImages() {
         return pi;
+    }
+    
+    @Override
+    public final ShootMode getShootMode() {
+        return shootMode;
     }
     
     @Override

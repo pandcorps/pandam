@@ -7488,7 +7488,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void newProjectile(final float vx, final float vy, final int power) {
-            new AiProjectile(this, Projectile.OFF_X, Projectile.OFF_Y, getMirrorMultiplier() * vx, vy, pi, power);
+            new AiProjectile(this, Projectile.OFF_X, Projectile.OFF_Y, getMirrorMultiplier() * vx, vy, pi, prf.shootMode, power);
         }
         
         @Override
@@ -8959,7 +8959,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int dropX;
         
         private WagonMortar(final Panctor src, final int dropX) {
-            super(src, 111, 83, 0, Player.VEL_PROJECTILE, BotsnBoltsGame.finalImages, Projectile.POWER_MEDIUM);
+            super(src, 111, 83, 0, Player.VEL_PROJECTILE, BotsnBoltsGame.finalImages, Player.SHOOT_CHARGE, Projectile.POWER_MEDIUM);
             setRot(1);
             getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_BACK_2);
             setView(getAnim());
@@ -9601,7 +9601,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void shootCharged() {
-            initCharged(new AiProjectile(this, 0, 0, 0, -VEL_PROJECTILE, BotsnBoltsGame.finalImages, Projectile.POWER_MAXIMUM));
+            initCharged(new AiProjectile(this, 0, 0, 0, -VEL_PROJECTILE, BotsnBoltsGame.finalImages, Player.SHOOT_CHARGE, Projectile.POWER_MAXIMUM));
         }
         
         private final void shootSelfDestruct() {

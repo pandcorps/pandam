@@ -3170,6 +3170,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
             player.afterShoot(getClock());
             player.newProjectile(VEL_PROJECTILE, 0, power);
         }
+        
+        //@OverrideMe
+        protected void onAssignPower(final SpecProjectile prj, final int power) {
+        }
     }
     
     protected final static class PlayerContext {
@@ -3519,6 +3523,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void createProjectile(final Player player) {
             createDefaultProjectile(player);
+        }
+        
+        @Override
+        protected final void onAssignPower(final SpecProjectile prj, final int power) {
+            if (power > Projectile.POWER_MEDIUM) {
+                prj.changeView(prj.getPlayerImages().projectile3);
+            } else if (power > 1) {
+                prj.changeView(prj.getPlayerImages().projectile2);
+            } else {
+                prj.changeView(prj.getPlayerImages().basicProjectile);
+            }
         }
     };
     
@@ -4060,6 +4075,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         public void assignPower(final int power);
         
         public PlayerImages getPlayerImages();
+        
+        public ShootMode getShootMode();
         
         public void burst();
     }

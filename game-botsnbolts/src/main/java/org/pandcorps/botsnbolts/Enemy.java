@@ -503,16 +503,18 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     protected static class AiProjectile extends EnemyProjectile implements SpecProjectile {
         private final PlayerImages pi;
+        private final ShootMode shootMode;
         private int power;
         
-        protected AiProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy, final PlayerImages pi, final int power) {
+        protected AiProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy, final PlayerImages pi, final ShootMode shootMode, final int power) {
             super(src, ox, oy, vx, vy);
             this.pi = pi;
+            this.shootMode = shootMode;
             Projectile.setPower(this, power);
         }
         
         protected AiProjectile(final Player src, final PlayerImages pi, final ShootMode shootMode, final Panctor ref, final float vx, final float vy, final int power) {
-            this(src, Projectile.OFF_X, Projectile.OFF_Y, vx, vy, pi, power);
+            this(src, Projectile.OFF_X, Projectile.OFF_Y, vx, vy, pi, shootMode, power);
             Projectile.init(this, this, src, pi, shootMode, ref, vx, vy, power);
         }
         
@@ -534,6 +536,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         public final PlayerImages getPlayerImages() {
             return pi;
+        }
+        
+        @Override
+        public final ShootMode getShootMode() {
+            return shootMode;
         }
         
         @Override
