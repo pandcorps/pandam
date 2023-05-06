@@ -958,6 +958,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImageExtra stillExtra = new PlayerImageExtra(0, shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null);
         basicSet.stand.setExtra(stillExtra);
         basicSet.blink.setExtra(stillExtra);
+        talk.setExtra(stillExtra);
         basicSet.start.setExtra(stillExtra);
         basicSet.jump.setExtra(new PlayerImageExtra(0, shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump));
         basicSet.run[0].setExtra(new PlayerImageExtra(0, shieldDiag, 3, 18, DEPTH_PLAYER_BACK, false, true, 0, null));
@@ -968,7 +969,8 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.climb.setExtra(new PlayerImageExtra(1, shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null));
         climbTop.setExtra(new PlayerImageExtra(1, shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null));
         shootSet.climb.setExtra(new PlayerImageExtra(1, null, 0, 0, DEPTH_PLAYER_FRONT, false, false, 0, null));
-        //slide.setExtra(extra);
+        slide.setExtra(new PlayerImageExtra(0, shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null));
+        basicSet.crouch[0].setExtra(new PlayerImageExtra(0, shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null));
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
