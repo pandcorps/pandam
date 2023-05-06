@@ -166,6 +166,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean safeMirror = false;
     private List<Follower> followers = null;
     private Panctor shield = null;
+    protected ShieldProjectile lastShieldProjectile = null;
     private boolean hidden = false;
     protected boolean active = true;
     private boolean scripted = false;
@@ -319,7 +320,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 index = last;
             }
             final T newMode = modes[index];
-            if (newMode.isAvailable(this)) {
+            if (newMode.isAvailable(this) && newMode.isCurrentlyAllowed(this)) {
                 return newMode;
             }
         }
@@ -3101,6 +3102,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return player.isUpgradeAvailable(getRequiredUpgrade());
         }
         
+        //@OverrideMe
+        protected boolean isCurrentlyAllowed(final Player player) {
+            return true;
+        }
+        
         protected abstract int getRequiredStamina(final Player player);
     }
     
@@ -3656,7 +3662,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
     };
     
     protected final static ShootMode SHOOT_SHIELD = new ShootMode(Profile.UPGRADE_SHIELD, SHOOT_DELAY_SPREAD) {
-        //TODO Don't allow to be selected if this Player already has a shield in the air
+        @Override
+        protected final boolean isCurrentlyAllowed(final Player player) {
+            return Panctor.isDestroyed(player.lastShieldProjectile);
+        }
+        
         @Override
         protected final void onDeselect(final Player player) {
             Panctor.detach(player.shield);
