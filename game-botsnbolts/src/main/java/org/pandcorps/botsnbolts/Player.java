@@ -2482,7 +2482,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if (player.triggerBossDoor()) {
                 return;
             } else if (player.wallTimer == 0 && xResult == X_WALL) {
-                if (player.isWallGrabAvailable() && !player.isGrounded() && player.isWallToGrab() && player.isReadyToGrabWall()) {
+                if (player.isWallGrabAvailable() && !player.isGrounded() && player.isWallToGrab() && player.isReadyToGrabWall() && !player.isTouchingLadder()) {
                     player.startWallGrab();
                     return;
                 }
