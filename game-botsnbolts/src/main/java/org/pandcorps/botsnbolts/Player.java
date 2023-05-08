@@ -101,6 +101,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private int runTimer = 0;
     private int blinkTimer = 0;
     private long lastShotFired = NULL_CLOCK;
+    private int lastShotDelay = 0;
     private long lastShotPosed = NULL_CLOCK;
     protected static long lastShotByAnyPlayer = NULL_CLOCK;
     private long startCharge = NULL_CLOCK;
@@ -3157,13 +3158,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         protected final boolean shoot(final Player player) {
             final long clock = getClock();
-            if (clock - player.lastShotFired > delay) {
+            if (clock - player.lastShotFired > Math.max(delay, player.lastShotDelay)) {
                 if (!player.useAttackStamina(getRequiredStamina(player))) {
                     return SHOOT_NORMAL.shoot(player);
                 };
                 player.afterShoot(clock);
                 createProjectile(player);
                 player.currentShootSet = null;
+                player.lastShotDelay = delay;
                 if (isAllowedFallbackOption()) {
                     player.prf.lastUsedFallbackShootMode = this;
                 }
@@ -3189,6 +3191,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             player.afterShoot(getClock());
             player.newProjectile(VEL_PROJECTILE, 0, power);
+        }
+        
+        //@OverrideMe
+        protected boolean isContinuous() {
+            return false;
         }
         
         //@OverrideMe
@@ -3403,6 +3410,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void createProjectile(final Player player) {
             createDefaultProjectile(player);
+        }
+        
+        @Override
+        protected final boolean isContinuous() {
+            return true;
         }
     };
     
@@ -3678,6 +3690,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 }
             }
         }
+        
+        @Override
+        protected final boolean isContinuous() {
+            return true;
+        }
     };
     
     protected final static ShootMode SHOOT_SHIELD = new ShootMode(Profile.UPGRADE_SHIELD, SHOOT_DELAY_SPREAD) {
@@ -3698,6 +3715,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             player.currentShootSet = player.pi.throwSet;
             player.setShootMode(player.prf.lastUsedFallbackShootMode);
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            if (player.prf.lastUsedFallbackShootMode.isContinuous()) {
+                onShootStart(player);
+            }
         }
         
         @Override
