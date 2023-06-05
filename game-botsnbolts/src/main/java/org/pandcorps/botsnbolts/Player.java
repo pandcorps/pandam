@@ -3844,7 +3844,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
-    private final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID, SHOOT_STREAM, SHOOT_SHIELD }; //TODO separate list per episode
+    private final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID, SHOOT_STREAM, SHOOT_SHIELD, SHOOT_SWORD }; //TODO separate list per episode
     
     protected abstract static class JumpMode extends InputMode {
         protected JumpMode(final Upgrade requiredUpgrade) {
