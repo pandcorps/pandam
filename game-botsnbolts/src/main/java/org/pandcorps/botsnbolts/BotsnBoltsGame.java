@@ -999,9 +999,15 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.jump.setExtra(new PlayerImageExtra(0,
                 new HeldExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump),
                 new HeldExtra(swordDiag, -9, 21, DEPTH_PLAYER_BACK, true, false, 0, null)));
-        basicSet.run[0].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, 3 - shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, false, true, 0, null), null));
-        basicSet.run[1].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, 11, 18, DEPTH_PLAYER_BACK, true, true, 0, null), null));
-        basicSet.run[2].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, -5 + shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, true, true, 0, null), null));
+        basicSet.run[0].setExtra(new PlayerImageExtra(0,
+                new HeldExtra(shieldDiag, 3 - shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, false, true, 0, null),
+                new HeldExtra(swordDiag, -8, 15, DEPTH_PLAYER_FRONT, true, true, 0, null)));
+        basicSet.run[1].setExtra(new PlayerImageExtra(0,
+                new HeldExtra(shieldVert, 11, 18, DEPTH_PLAYER_BACK, true, true, 0, null),
+                new HeldExtra(swordDiag, -7, 12, DEPTH_PLAYER_FRONT, false, true, 0, null)));
+        basicSet.run[2].setExtra(new PlayerImageExtra(0,
+                new HeldExtra(shieldDiag, -5 + shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, true, true, 0, null),
+                new HeldExtra(swordDiag, 0, 5, DEPTH_PLAYER_FRONT, false, false, 0, null)));
         basicSet.dash.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null), null));
         basicSet.wallGrab.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab), null));
         basicSet.climb.setExtra(new PlayerImageExtra(1, new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null), null));
