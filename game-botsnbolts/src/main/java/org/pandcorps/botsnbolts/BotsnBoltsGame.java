@@ -724,6 +724,9 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img playerShieldVert = null;
     private static Img playerShieldDiag = null;
     private static Img playerShieldCircle = null;
+    private static Img playerSwordHoriz = null;
+    private static Img playerSwordDiag = null;
+    private static Img[] playerSwordTrails = null;
     private static Img playerWarp = null;
     private static Img[] playerMaterialize = null;
     private static Img[] playerBomb = null;
@@ -760,6 +763,13 @@ public final class BotsnBoltsGame extends BaseGame {
         playerShieldVert = Imtil.load(pre + "ShieldVert.png", false);
         playerShieldDiag = Imtil.load(pre + "ShieldDiag.png", false);
         playerShieldCircle = Imtil.load(pre + "ShieldCircle.png", false);
+        playerSwordHoriz = Imtil.load(pre + "SwordHoriz.png", false);
+        playerSwordDiag = Imtil.load(pre + "SwordDiag.png", false);
+        playerSwordTrails = new Img[] {
+                Imtil.load(pre + "SwordTrail1.png", false),
+                Imtil.load(pre + "SwordTrail2.png", false),
+                Imtil.load(pre + "SwordTrail3.png", false)
+        };
         playerWarp = Imtil.load(pre + "Warp.png", false);
         playerMaterialize = Imtil.loadStrip(pre + "Materialize.png", 32, false);
         playerBomb = Imtil.loadStrip(pre + "Bomb.png", 8, false);
@@ -801,6 +811,9 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(playerShieldVert, f);
         Imtil.filterImg(playerShieldDiag, f);
         Imtil.filterImg(playerShieldCircle, f);
+        Imtil.filterImg(playerSwordHoriz, f);
+        Imtil.filterImg(playerSwordDiag, f);
+        filterImgs(playerSwordTrails, f);
         Imtil.filterImg(playerWarp, f);
         filterImgs(playerMaterialize, f);
         filterImgs(playerBomb, f);
@@ -845,6 +858,12 @@ public final class BotsnBoltsGame extends BaseGame {
         playerShieldDiag = null;
         playerShieldCircle.close();
         playerShieldCircle = null;
+        playerSwordHoriz.close();
+        playerSwordHoriz = null;
+        playerSwordDiag.close();
+        playerSwordDiag = null;
+        Img.close(playerSwordTrails);
+        playerSwordTrails = null;
         playerWarp.close();
         playerWarp = null;
         Img.close(playerMaterialize);
@@ -906,6 +925,11 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj, climb, wallGrab, dash);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs, climbAim, wallGrabAim, dashAim);
         final PlayerImagesSubSet throwSet = loadPlayerImagesSubSet(pre + "Throw", name + ".throw", false, oss, os, ojs, climbThrow, wallGrabThrow, dashThrow);
+        final PlayerImagesSubSet[] wieldSets = {
+                loadPlayerImagesSubSet(pre + "Wield1", name + ".wield1", false, og, og, oj, climb, wallGrab, dash), //TODO climb/wallGrab/dash
+                loadPlayerImagesSubSet(pre + "Wield2", name + ".wield2", false, og, og, oj, climb, wallGrab, dash),
+                loadPlayerImagesSubSet(pre + "Wield3", name + ".wield3", false, og, og, oj, climb, wallGrab, dash)
+        };
         final Pangine engine = Pangine.getEngine();
         final Img imgHurt = Imtil.load(pre + "Hurt.png", false), imgHurtMirror = playerMirror ? Imtil.load(pre + "HurtMirror.png", false) : null;
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
@@ -955,23 +979,32 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage shieldVert = (src == null) ? engine.createImage(pre + "ShieldVert", playerShieldVert) : src.shieldVert;
         final Panmage shieldDiag = (src == null) ? engine.createImage(pre + "ShieldDiag", playerShieldDiag) : src.shieldDiag;
         final Panmage shieldCircle = (src == null) ? engine.createImage(pre + "ShieldCircle", playerShieldCircle) : src.shieldCircle;
+        final Panmage swordHoriz = (src == null) ? engine.createImage(pre + "SwordHoriz", playerSwordHoriz) : src.swordHoriz;
+        final Panmage swordDiag = (src == null) ? engine.createImage(pre + "SwordDiag", playerSwordDiag) : src.swordDiag;
+        final Panmage[] swordTrails = (src == null)
+                ? new Panmage[] {
+                        engine.createImage(pre + "SwordTrail1", playerSwordTrails[0]),
+                        engine.createImage(pre + "SwordTrail2", playerSwordTrails[1]),
+                        engine.createImage(pre + "SwordTrail3", playerSwordTrails[2]),
+                }
+                : src.plasma;
         
-        final PlayerImageExtra stillExtra = new PlayerImageExtra(0, shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null);
+        final PlayerImageExtra stillExtra = new PlayerImageExtra(0, new HeldExtra(shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null), null);
         basicSet.stand.setExtra(stillExtra);
         basicSet.blink.setExtra(stillExtra);
         talk.setExtra(stillExtra);
         basicSet.start.setExtra(stillExtra);
-        basicSet.jump.setExtra(new PlayerImageExtra(0, shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump));
-        basicSet.run[0].setExtra(new PlayerImageExtra(0, shieldDiag, 3 - shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, false, true, 0, null));
-        basicSet.run[1].setExtra(new PlayerImageExtra(0, shieldVert, 11, 18, DEPTH_PLAYER_BACK, true, true, 0, null));
-        basicSet.run[2].setExtra(new PlayerImageExtra(0, shieldDiag, -5 + shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, true, true, 0, null));
-        basicSet.dash.setExtra(new PlayerImageExtra(0, shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null));
-        basicSet.wallGrab.setExtra(new PlayerImageExtra(0, shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab));
-        basicSet.climb.setExtra(new PlayerImageExtra(1, shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null));
-        climbTop.setExtra(new PlayerImageExtra(1, shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null));
-        shootSet.climb.setExtra(new PlayerImageExtra(1, null, 0, 0, DEPTH_PLAYER_FRONT, false, false, 0, null));
-        slide.setExtra(new PlayerImageExtra(0, shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null));
-        basicSet.crouch[0].setExtra(new PlayerImageExtra(0, shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null));
+        basicSet.jump.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump), null));
+        basicSet.run[0].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, 3 - shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, false, true, 0, null), null));
+        basicSet.run[1].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, 11, 18, DEPTH_PLAYER_BACK, true, true, 0, null), null));
+        basicSet.run[2].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, -5 + shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, true, true, 0, null), null));
+        basicSet.dash.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null), null));
+        basicSet.wallGrab.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab), null));
+        basicSet.climb.setExtra(new PlayerImageExtra(1, new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null), null));
+        climbTop.setExtra(new PlayerImageExtra(1, new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null), null));
+        shootSet.climb.setExtra(new PlayerImageExtra(1, null, null));
+        slide.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
+        basicSet.crouch[0].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null), null));
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
@@ -1015,8 +1048,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
         final PlayerImages pi;
-        pi = new PlayerImages(basicSet, shootSet, throwSet, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
-            burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
+        pi = new PlayerImages(basicSet, shootSet, throwSet, wieldSets, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
+            swordHoriz, swordDiag, swordTrails, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;
     }

@@ -167,6 +167,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean safeMirror = false;
     private List<Follower> followers = null;
     private HeldShield shield = null;
+    private HeldSword sword = null;
     protected ShieldProjectile lastShieldProjectile = null;
     private boolean hidden = false;
     protected boolean active = true;
@@ -3248,6 +3249,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final PlayerImagesSubSet basicSet;
         protected final PlayerImagesSubSet shootSet;
         protected final PlayerImagesSubSet throwSet;
+        protected final PlayerImagesSubSet[] wieldSets;
         private final Panmage hurt;
         private final Panmage frozen;
         protected final Panimation defeat;
@@ -3266,6 +3268,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panmage shieldVert;
         protected final Panmage shieldDiag;
         protected final Panmage shieldCircle;
+        protected final Panmage swordHoriz;
+        protected final Panmage swordDiag;
+        protected final Panmage[] swordTrails;
         protected final Panimation burst;
         private final Panframe[] ball;
         protected final Panmage slide;
@@ -3291,12 +3296,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final String birdName;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final PlayerImagesSubSet throwSet,
+                               final PlayerImagesSubSet[] wieldSets,
                                final Panmage hurt, final Panmage frozen, final Panimation defeat,
                                final Panmage climbTop,
                                final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panmage[] plasma, Panmage shieldVert, Panmage shieldDiag, Panmage shieldCircle,
+                               final Panmage swordHoriz, final Panmage swordDiag, final Panmage[] swordTrails,
                                final Panimation burst, final Panframe[] ball, final Panmage slide,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
@@ -3306,6 +3313,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.throwSet = throwSet;
+            this.wieldSets = wieldSets;
             this.hurt = hurt;
             this.frozen = frozen;
             this.defeat = defeat;
@@ -3324,6 +3332,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.shieldVert = shieldVert;
             this.shieldDiag = shieldDiag;
             this.shieldCircle = shieldCircle;
+            this.swordHoriz = swordHoriz;
+            this.swordDiag = swordDiag;
+            this.swordTrails = swordTrails;
             this.burst = burst;
             this.ball = ball;
             this.slide = slide;
@@ -3732,29 +3743,77 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void onStepEnd(final Player player) {
             final Object o = player.getCurrentDisplayExtra();
-            if (o == null) {
+            final PlayerImageExtra pext = (o == null) ? null : (PlayerImageExtra) o;
+            final HeldExtra ext = (pext == null) ? null : pext.shield;
+            if (ext == null) {
                 Panctor.detach(player.shield);
                 return;
             }
-            final PlayerImageExtra ext = (PlayerImageExtra) o;
-            final Panple pos = player.getPosition();
             HeldShield shield = player.shield;
             if (Panctor.isDestroyed(shield)) {
                 player.shield = shield = new HeldShield(player);
             }
-            if (shield.getLayer() == null) {
-                player.addActor(shield);
+            onStepHeld(player, shield, pext, ext);
+        }
+        
+        @Override
+        protected final void createProjectile(final Player player) {
+            new ShieldProjectile(player);
+        }
+        
+        @Override
+        protected final boolean isAllowedFallbackOption() {
+            return false;
+        }
+    };
+    
+    protected final static void onStepHeld(final Player player, final Panctor held, final PlayerImageExtra pext, final HeldExtra ext) {
+        final Panple pos = player.getPosition();
+        if (held.getLayer() == null) {
+            player.addActor(held);
+        }
+        held.setVisible(Panctor.isAttached(player) && player.isVisible() && player.stateHandler.isPlayerRendered());
+        held.changeView(ext.heldImage);
+        final boolean playerMirror = player.isMirror();
+        held.getPosition().set(pos.getX() + (player.getMirrorMultiplier() * ext.heldX) + (playerMirror ? pext.mirrorX : 0), pos.getY() + ext.heldY, ext.heldZ);
+        held.setMirror(ext.heldMirror ^ playerMirror);
+        held.setFlip(ext.heldFlip);
+        held.setRot(ext.heldRot);
+        if (ext.heldReplacement != null) {
+            player.changeView(ext.heldReplacement);
+        }
+    }
+    
+    protected final static ShootMode SHOOT_SWORD = new ShootMode(Profile.UPGRADE_SWORD, SHOOT_DELAY_SPREAD) {
+        @Override
+        protected final void onDeselect(final Player player) {
+            Panctor.detach(player.sword);
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+            //TODO
+        }
+        
+        @Override
+        protected final int getRequiredStamina(final Player player) {
+            return 5;
+        }
+        
+        @Override
+        protected final void onStepEnd(final Player player) {
+            final Object o = player.getCurrentDisplayExtra();
+            final PlayerImageExtra pext = (o == null) ? null : (PlayerImageExtra) o;
+            final HeldExtra ext = (pext == null) ? null : pext.sword;
+            if (ext == null) {
+                Panctor.detach(player.sword);
+                return;
             }
-            shield.setVisible(Panctor.isAttached(player) && player.isVisible() && player.stateHandler.isPlayerRendered());
-            shield.changeView(ext.shieldImage);
-            final boolean playerMirror = player.isMirror();
-            shield.getPosition().set(pos.getX() + (player.getMirrorMultiplier() * ext.shieldX) + (playerMirror ? ext.mirrorX : 0), pos.getY() + ext.shieldY, ext.shieldZ);
-            shield.setMirror(ext.shieldMirror ^ playerMirror);
-            shield.setFlip(ext.shieldFlip);
-            shield.setRot(ext.shieldRot);
-            if (ext.shieldReplacement != null) {
-                player.changeView(ext.shieldReplacement);
+            HeldSword sword = player.sword;
+            if (Panctor.isDestroyed(sword)) {
+                player.sword = sword = new HeldSword(player);
             }
+            onStepHeld(player, sword, pext, ext);
         }
 
         @Override
@@ -4113,28 +4172,43 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
+    protected final static class HeldSword extends Panctor {
+        protected HeldSword(final Player src) {
+        }
+    }
+    
     protected final static class PlayerImageExtra {
         private final int mirrorX;
-        private final Panmage shieldImage;
-        private final float shieldX;
-        private final float shieldY;
-        private final float shieldZ;
-        private final boolean shieldMirror;
-        private final boolean shieldFlip;
-        private final int shieldRot;
-        private final Panmage shieldReplacement;
+        private final HeldExtra shield;
+        private final HeldExtra sword;
         
-        protected PlayerImageExtra(final int mirrorX, final Panmage shieldImage, final int shieldX, final int shieldY, final int shieldZ,
-                final boolean shieldMirror, final boolean shieldFlip, final int shieldRot, final Panmage shieldReplacement) {
+        protected PlayerImageExtra(final int mirrorX, final HeldExtra shield, final HeldExtra sword) {
             this.mirrorX = mirrorX;
-            this.shieldImage = shieldImage;
-            this.shieldX = shieldX;
-            this.shieldY = shieldY;
-            this.shieldZ = shieldZ;
-            this.shieldMirror = shieldMirror;
-            this.shieldFlip = shieldFlip;
-            this.shieldRot = shieldRot;
-            this.shieldReplacement = shieldReplacement;
+            this.shield = shield;
+            this.sword = sword;
+        }
+    }
+    
+    protected final static class HeldExtra {
+        private final Panmage heldImage;
+        private final float heldX;
+        private final float heldY;
+        private final float heldZ;
+        private final boolean heldMirror;
+        private final boolean heldFlip;
+        private final int heldRot;
+        private final Panmage heldReplacement;
+        
+        protected HeldExtra(final Panmage heldImage, final int heldX, final int heldY, final int heldZ,
+                final boolean heldMirror, final boolean heldFlip, final int heldRot, final Panmage heldReplacement) {
+            this.heldImage = heldImage;
+            this.heldX = heldX;
+            this.heldY = heldY;
+            this.heldZ = heldZ;
+            this.heldMirror = heldMirror;
+            this.heldFlip = heldFlip;
+            this.heldRot = heldRot;
+            this.heldReplacement = heldReplacement;
         }
     }
     

@@ -260,7 +260,7 @@ public class Profile {
     
     /*package*/ final boolean isAttackUpgradeAvailable() {
         return isUpgradeAvailable(UPGRADE_SPREAD) || isUpgradeAvailable(UPGRADE_CHARGE) || isUpgradeAvailable(UPGRADE_RAPID)
-                || isUpgradeAvailable(UPGRADE_STREAM) || isUpgradeAvailable(UPGRADE_SHIELD);
+                || isUpgradeAvailable(UPGRADE_STREAM) || isUpgradeAvailable(UPGRADE_SHIELD) || isUpgradeAvailable(UPGRADE_SWORD);
     }
     
     /*package*/ final boolean isJumpUpgradeAvailable() {
@@ -296,6 +296,8 @@ public class Profile {
     protected final static Upgrade UPGRADE_STREAM = new StreamUpgrade();
     
     protected final static Upgrade UPGRADE_SHIELD = new ShieldUpgrade();
+    
+    protected final static Upgrade UPGRADE_SWORD = new SwordUpgrade();
     
     protected final static Upgrade UPGRADE_BOMB = new Upgrade("Bomb") {
         @Override public final String getDisplayName(final PlayerContext pc) {
@@ -337,7 +339,7 @@ public class Profile {
         }};
     
     protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM, UPGRADE_SPRING,
-            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, UPGRADE_DASH, UPGRADE_STREAM, UPGRADE_SHIELD, BASIC_ATTACK, BASIC_JUMP };
+            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, UPGRADE_DASH, UPGRADE_STREAM, UPGRADE_SHIELD, UPGRADE_SWORD, BASIC_ATTACK, BASIC_JUMP };
     
     protected abstract static class Upgrade {
         protected final String name;
@@ -542,6 +544,17 @@ public class Profile {
         @Override
         protected final ShootMode getShootMode() {
             return Player.SHOOT_SHIELD;
+        }
+    }
+    
+    protected final static class SwordUpgrade extends ShootUpgrade {
+        protected SwordUpgrade() {
+            super("Sword", "Plasma Blade");
+        }
+        
+        @Override
+        protected final ShootMode getShootMode() {
+            return Player.SHOOT_SWORD;
         }
     }
 }
