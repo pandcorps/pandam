@@ -333,7 +333,10 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
                     }
                     final Panple tpos = actor.getPosition();
                     final float tx = tpos.getX();
-                    final double distance = tpos.getDistance2(pos);
+                    //TODO If shield projectile is still in air when changing room, then change mode back to shield
+                    //TODO Don't track nearest enemy/powerup/button separately, just track nearest target, but weight by type.
+                    // Will shoot enemy if a powerup is a little closer. Will shoot powerup if if it's much closer.
+                    final double distance = tpos.getDistance2(pos); //TODO Maybe average total distance with y distance to prioritize enemies directly in front of Player
                     if (((tx > x) && !mirror) || ((tx < x) && mirror)) {
                         if (targetType == TARGET_ENEMY) {
                             if ((nearestEnemy == null) || (distance < nearestEnemyDistance)) {
@@ -439,6 +442,25 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         @Override
         protected final boolean isDestructionWhenOobNeeded() {
             return false;
+        }
+    }
+    
+    public static class SwordProjectile extends Projectile {
+        private boolean firstStep = true;
+        
+        protected SwordProjectile(final Player src) {
+            super(src, src.pi, Player.SHOOT_SWORD, src, 0, 0, 5); //TODO compare to charged shot
+            setView(BotsnBoltsGame.getSwordHitBox());
+            getPosition().set2(src.getPosition());
+        }
+        
+        @Override
+        protected final void onStepEndProjectile() {
+            if (firstStep) {
+                firstStep = false;
+            } else {
+                destroy();
+            }
         }
     }
     

@@ -3161,7 +3161,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
             final long clock = getClock();
             if (clock - player.lastShotFired > Math.max(delay, player.lastShotDelay)) {
                 if (!player.useAttackStamina(getRequiredStamina(player))) {
-                    return SHOOT_NORMAL.shoot(player);
+                    SHOOT_NORMAL.shoot(player);
+                    return false;
                 };
                 player.afterShoot(clock);
                 createProjectile(player);
@@ -3792,7 +3793,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onShootStart(final Player player) {
-            //TODO
+            if (shoot(player)) {
+                player.currentShootSet = player.pi.wieldSets[0];
+            }
         }
         
         @Override
@@ -3814,11 +3817,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 player.sword = sword = new HeldSword(player);
             }
             onStepHeld(player, sword, pext, ext);
+            //TODO trail
         }
 
         @Override
         protected final void createProjectile(final Player player) {
-            new ShieldProjectile(player);
+            new SwordProjectile(player);
         }
         
         @Override

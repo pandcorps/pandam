@@ -217,6 +217,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static HudMeterImages hudMeterBoss = null;
     protected static Img[] hudMeterImgs = null;
     private static Panmage empty16 = null;
+    private static Panmage swordHitBox = null;
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicIntro = null;
     protected static Pansound musicLevelSelect = null;
@@ -533,6 +534,13 @@ public final class BotsnBoltsGame extends BaseGame {
             empty16 = Pangine.getEngine().createEmptyImage("spawner", FinPanple.ORIGIN, FinPanple.ORIGIN, BotsnBoltsGame.CENTER_32);
         }
         return empty16;
+    }
+    
+    protected final static Panmage getSwordHitBox() {
+        if (swordHitBox == null) {
+            swordHitBox = Pangine.getEngine().createEmptyImage("swordHitBox", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(24, 24));
+        }
+        return swordHitBox;
     }
     
     private final static Pancolor newColorHidden() {
@@ -1015,6 +1023,15 @@ public final class BotsnBoltsGame extends BaseGame {
         shootSet.climb.setExtra(new PlayerImageExtra(1, null, null));
         slide.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
         basicSet.crouch[0].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null), null));
+        wieldSets[0].stand.setExtra(new PlayerImageExtra(0, null,
+                new HeldExtra(swordDiag, 7, 14, DEPTH_PLAYER_FRONT, false, false, 0, null)));
+        final PlayerImageExtra wieldRunExtra = new PlayerImageExtra(0, null,
+                new HeldExtra(swordDiag, 6, 14, DEPTH_PLAYER_FRONT, false, false, 0, null));
+        wieldSets[0].run[0].setExtra(wieldRunExtra);
+        wieldSets[0].run[1].setExtra(wieldRunExtra);
+        wieldSets[0].run[2].setExtra(wieldRunExtra);
+        wieldSets[0].jump.setExtra(new PlayerImageExtra(0, null,
+                new HeldExtra(swordDiag, 7, 17, DEPTH_PLAYER_FRONT, false, false, 0, null)));
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
