@@ -59,6 +59,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int SHOOT_DELAY_STREAM = 0;
     private final static int SHOOT_STAMINA_TIMER_STREAM = 4;
     protected final static int SHOOT_TIME = 12;
+    protected final static int WIELD_TIME = 21;
     private final static int CHARGE_TIME_MEDIUM = 30;
     private final static int CHARGE_TIME_BIG = 60;
     protected final static int STREAM_SIZE = 8;
@@ -95,6 +96,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final Profile prf;
     protected final PlayerImages pi;
     private PlayerImagesSubSet currentShootSet = null;
+    private int currentShootTime = SHOOT_TIME;
     protected StateHandler stateHandler = NORMAL_HANDLER;
     private boolean running = false;
     private int runIndex = 0;
@@ -1122,7 +1124,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final boolean isShootPoseNeeded() {
-        return (getClock() - lastShotPosed) < SHOOT_TIME;
+        if ((getClock() - lastShotPosed) < currentShootTime) {
+            return true;
+        }
+        currentShootTime = SHOOT_TIME;
+        return false;
     }
     
     private final PlayerImagesSubSet getCurrentImagesSubSet() {
@@ -3793,8 +3799,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onShootStart(final Player player) {
+            final PlayerImagesSubSet currentShootSet = player.currentShootSet; // Cleared by shoot method below, so read it first
             if (shoot(player)) {
-                player.currentShootSet = player.pi.wieldSets[0];
+                final PlayerImagesSubSet[] wieldSets = player.pi.wieldSets;
+                if (currentShootSet == wieldSets[0]) {
+                    player.currentShootSet = wieldSets[1];
+                } else {
+                    player.currentShootSet = wieldSets[0];
+                }
+                player.currentShootTime = WIELD_TIME;
             }
         }
         
