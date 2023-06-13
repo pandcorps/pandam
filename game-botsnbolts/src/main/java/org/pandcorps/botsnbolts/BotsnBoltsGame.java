@@ -1032,6 +1032,15 @@ public final class BotsnBoltsGame extends BaseGame {
         wieldSets[0].run[2].setExtra(wieldRunExtra);
         wieldSets[0].jump.setExtra(new PlayerImageExtra(0, null,
                 new HeldExtra(swordDiag, 7, 17, DEPTH_PLAYER_FRONT, false, false, 0, null)));
+        wieldSets[1].stand.setExtra(new PlayerImageExtra(0, null,
+                new HeldExtra(swordDiag, 6, 8, DEPTH_PLAYER_FRONT, false, true, 0, null)));
+        final PlayerImageExtra wield1RunExtra = new PlayerImageExtra(0, null,
+                new HeldExtra(swordDiag, 5, 8, DEPTH_PLAYER_FRONT, false, true, 0, null));
+        wieldSets[1].run[0].setExtra(wield1RunExtra);
+        wieldSets[1].run[1].setExtra(wield1RunExtra);
+        wieldSets[1].run[2].setExtra(wield1RunExtra);
+        wieldSets[1].jump.setExtra(new PlayerImageExtra(0, null,
+                new HeldExtra(swordDiag, 6, 11, DEPTH_PLAYER_FRONT, false, true, 0, null)));
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
