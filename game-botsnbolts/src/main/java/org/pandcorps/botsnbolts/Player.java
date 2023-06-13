@@ -3802,7 +3802,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
             final PlayerImagesSubSet currentShootSet = player.currentShootSet; // Cleared by shoot method below, so read it first
             if (shoot(player)) {
                 final PlayerImagesSubSet[] wieldSets = player.pi.wieldSets;
-                if (currentShootSet == wieldSets[0]) {
+                if (currentShootSet == wieldSets[1]) {
+                    player.currentShootSet = wieldSets[2];
+                } else if (currentShootSet == wieldSets[0]) {
                     player.currentShootSet = wieldSets[1];
                 } else {
                     player.currentShootSet = wieldSets[0];

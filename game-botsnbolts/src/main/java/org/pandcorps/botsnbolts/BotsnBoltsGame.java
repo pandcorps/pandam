@@ -1023,24 +1023,26 @@ public final class BotsnBoltsGame extends BaseGame {
         shootSet.climb.setExtra(new PlayerImageExtra(1, null, null));
         slide.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
         basicSet.crouch[0].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null), null));
-        wieldSets[0].stand.setExtra(new PlayerImageExtra(0, null,
-                new HeldExtra(swordDiag, 7, 14, DEPTH_PLAYER_FRONT, false, false, 0, null)));
-        final PlayerImageExtra wieldRunExtra = new PlayerImageExtra(0, null,
-                new HeldExtra(swordDiag, 6, 14, DEPTH_PLAYER_FRONT, false, false, 0, null));
-        wieldSets[0].run[0].setExtra(wieldRunExtra);
-        wieldSets[0].run[1].setExtra(wieldRunExtra);
-        wieldSets[0].run[2].setExtra(wieldRunExtra);
-        wieldSets[0].jump.setExtra(new PlayerImageExtra(0, null,
-                new HeldExtra(swordDiag, 7, 17, DEPTH_PLAYER_FRONT, false, false, 0, null)));
-        wieldSets[1].stand.setExtra(new PlayerImageExtra(0, null,
-                new HeldExtra(swordDiag, 6, 8, DEPTH_PLAYER_FRONT, false, true, 0, null)));
-        final PlayerImageExtra wield1RunExtra = new PlayerImageExtra(0, null,
-                new HeldExtra(swordDiag, 5, 8, DEPTH_PLAYER_FRONT, false, true, 0, null));
-        wieldSets[1].run[0].setExtra(wield1RunExtra);
-        wieldSets[1].run[1].setExtra(wield1RunExtra);
-        wieldSets[1].run[2].setExtra(wield1RunExtra);
-        wieldSets[1].jump.setExtra(new PlayerImageExtra(0, null,
-                new HeldExtra(swordDiag, 6, 11, DEPTH_PLAYER_FRONT, false, true, 0, null)));
+        for (int wi = 0; wi < 3; wi++) {
+            final int wx, wy;
+            final boolean wm, wf;
+            if (wi == 0) {
+                wx = 7; wy = 14; wm = false; wf = false;
+            } else if (wi == 1) {
+                wx = 6; wy = 8; wm = false; wf = true;
+            } else {
+                wx = -10; wy = 12; wm = true; wf = false;
+            }
+            wieldSets[wi].stand.setExtra(new PlayerImageExtra(0, null,
+                    new HeldExtra(swordDiag, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+            final PlayerImageExtra wieldRunExtra = new PlayerImageExtra(0, null,
+                    new HeldExtra(swordDiag, wx - 1, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null));
+            wieldSets[wi].run[0].setExtra(wieldRunExtra);
+            wieldSets[wi].run[1].setExtra(wieldRunExtra);
+            wieldSets[wi].run[2].setExtra(wieldRunExtra);
+            wieldSets[wi].jump.setExtra(new PlayerImageExtra(0, null,
+                    new HeldExtra(swordDiag, wx, wy + 3, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+        }
         
         final Panframe ball[] = new Panframe[8];
         final Panple ob = new FinPanple2(8, 1), xb = GuyPlatform.getMax(Player.PLAYER_X, Player.BALL_H);
