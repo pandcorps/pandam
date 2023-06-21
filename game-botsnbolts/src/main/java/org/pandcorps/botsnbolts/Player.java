@@ -56,10 +56,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
+    private final static int SHOOT_DELAY_WIELD_SHORT = 9;
+    private final static int SHOOT_DELAY_WIELD_LONG = 28;
     private final static int SHOOT_DELAY_STREAM = 0;
     private final static int SHOOT_STAMINA_TIMER_STREAM = 4;
     protected final static int SHOOT_TIME = 12;
-    protected final static int WIELD_TIME = 21;
+    protected final static int WIELD_TIME_SHORT = 16;
+    protected final static int WIELD_TIME_LONG = 25;
     private final static int CHARGE_TIME_MEDIUM = 30;
     private final static int CHARGE_TIME_BIG = 60;
     protected final static int STREAM_SIZE = 8;
@@ -149,6 +152,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected final StreamProjectile[] streamProjectiles = new StreamProjectile[STREAM_SIZE];
     private int streamStaminaCounter = 0;
+    private SwordProjectile lastSwordProjectile = null;
     protected Spring spring = null;
     private SlideKick slideKick = null;
     protected Carrier carrier = null;
@@ -3791,10 +3795,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
-    protected final static ShootMode SHOOT_SWORD = new ShootMode(Profile.UPGRADE_SWORD, SHOOT_DELAY_SPREAD) {
+    protected final static ShootMode SHOOT_SWORD = new ShootMode(Profile.UPGRADE_SWORD, SHOOT_DELAY_WIELD_SHORT) {
         @Override
         protected final void onDeselect(final Player player) {
             Panctor.detach(player.sword);
+            player.lastShotDelay = 0;
         }
         
         @Override
@@ -3802,14 +3807,19 @@ public class Player extends Chr implements Warpable, StepEndListener {
             final PlayerImagesSubSet currentShootSet = player.currentShootSet; // Cleared by shoot method below, so read it first
             if (shoot(player)) {
                 final PlayerImagesSubSet[] wieldSets = player.pi.wieldSets;
-                if (currentShootSet == wieldSets[1]) {
+                if (currentShootSet == wieldSets[0]) {
                     player.currentShootSet = wieldSets[2];
-                } else if (currentShootSet == wieldSets[0]) {
-                    player.currentShootSet = wieldSets[1];
-                } else {
+                    player.currentShootTime = WIELD_TIME_LONG;
+                    player.lastShotDelay = SHOOT_DELAY_WIELD_LONG;
+                    player.lastSwordProjectile.power = Projectile.POWER_MAXIMUM;
+                    player.lastSwordProjectile.setView(BotsnBoltsGame.getSwordFullHitBox());
+                } else if (currentShootSet == wieldSets[1]) {
                     player.currentShootSet = wieldSets[0];
+                    player.currentShootTime = WIELD_TIME_SHORT;
+                } else {
+                    player.currentShootSet = wieldSets[1];
+                    player.currentShootTime = WIELD_TIME_SHORT;
                 }
-                player.currentShootTime = WIELD_TIME;
             }
         }
         
@@ -3832,12 +3842,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 player.sword = sword = new HeldSword(player);
             }
             onStepHeld(player, sword, pext, ext);
-            //TODO trail
+            sword.pext = pext;
         }
 
         @Override
         protected final void createProjectile(final Player player) {
-            new SwordProjectile(player);
+            player.lastSwordProjectile = new SwordProjectile(player);
         }
         
         @Override
@@ -4184,25 +4194,119 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final static class HeldShield extends Panctor {
-        //private final Player src;
-        
         protected HeldShield(final Player src) {
-            //this.src = src;
         }
     }
     
     protected final static class HeldSword extends Panctor {
+        private final Player src;
+        private PlayerImageExtra pext = null;
+        
         protected HeldSword(final Player src) {
+            this.src = src;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            if (pext == null) {
+                return;
+            }
+            final int trail = pext.trail;
+            if (trail == 0) {
+                return;
+            }
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            final Panmage[] swordTrails = src.pi.swordTrails;
+            final boolean mirror = src.getAimMirror();
+            final int m = getMirrorMultiplier(mirror), o = mirror ? -15 : 0;
+            final long t = getClock() - src.lastShotFired;
+            if (trail == 1) {
+                if (t > 6) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                if (t > 4) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[0], x + (m * 17) + o, y - 8, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                if (t > 2) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y - 24, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, true);
+            } else if (trail == 2) {
+                if (t > 6) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y - 15, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, true);
+                if (t > 4) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[0], x + (m * 17) + o, y + 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                if (t > 2) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y + 9, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+            } else if (trail == 3) {
+                if (t > 22) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * -23) + o, y - 2, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, !mirror, false);
+                if (t > 20) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[0], x + (m * -22) + o, y - 9, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, !mirror, false);
+                if (t > 18) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * -16) + o, y - 23, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, !mirror, true);
+                if (t > 16) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[2], x + (m * -9) + o, y - 27, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, !mirror, true);
+                if (t > 14) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * -2) + o, y - 30, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 1, mirror, true);
+                if (t > 12) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[0], x + (m * 13) + o, y - 31, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 3, mirror, false);
+                if (t > 10) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * 20) + o, y - 29, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 1, !mirror, true);
+                if (t > 8) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[2], x + (m * 24) + o, y - 22, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, true);
+                if (t > 6) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * 28) + o, y - 16, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, true);
+                if (t > 4) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[0], x + (m * 27) + o, y - 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                if (t > 2) {
+                    return;
+                }
+                renderer.render(layer, swordTrails[1], x + (m * 23) + o, y + 5, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+            }
         }
     }
     
     protected final static class PlayerImageExtra {
         private final int mirrorX;
+        private final int trail;
         private final HeldExtra shield;
         private final HeldExtra sword;
         
-        protected PlayerImageExtra(final int mirrorX, final HeldExtra shield, final HeldExtra sword) {
+        protected PlayerImageExtra(final int mirrorX, final int trail, final HeldExtra shield, final HeldExtra sword) {
             this.mirrorX = mirrorX;
+            this.trail = trail;
             this.shield = shield;
             this.sword = sword;
         }

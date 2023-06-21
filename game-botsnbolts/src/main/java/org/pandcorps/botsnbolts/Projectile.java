@@ -449,9 +449,11 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         private boolean firstStep = true;
         
         protected SwordProjectile(final Player src) {
-            super(src, src.pi, Player.SHOOT_SWORD, src, 0, 0, 5); //TODO compare to charged shot
+            //TODO Don't draw burst on Player
+            super(src, src.pi, Player.SHOOT_SWORD, src, 0, 0, POWER_MEDIUM);
             setView(BotsnBoltsGame.getSwordHitBox());
-            getPosition().set2(src.getPosition());
+            final Panple pos = src.getPosition();
+            getPosition().set(pos.getX(), pos.getY() - 6);
         }
         
         @Override

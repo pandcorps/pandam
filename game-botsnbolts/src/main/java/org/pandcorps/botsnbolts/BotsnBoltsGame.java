@@ -218,6 +218,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Img[] hudMeterImgs = null;
     private static Panmage empty16 = null;
     private static Panmage swordHitBox = null;
+    private static Panmage swordFullHitBox = null;
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicIntro = null;
     protected static Pansound musicLevelSelect = null;
@@ -538,9 +539,16 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static Panmage getSwordHitBox() {
         if (swordHitBox == null) {
-            swordHitBox = Pangine.getEngine().createEmptyImage("swordHitBox", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(24, 24));
+            swordHitBox = Pangine.getEngine().createEmptyImage("swordHitBox", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(36, 34));
         }
         return swordHitBox;
+    }
+    
+    protected final static Panmage getSwordFullHitBox() {
+        if (swordFullHitBox == null) {
+            swordFullHitBox = Pangine.getEngine().createEmptyImage("swordHitBox", FinPanple.ORIGIN, new FinPanple2(-28, 0), getSwordHitBox().getBoundingMaximum());
+        }
+        return swordFullHitBox;
     }
     
     private final static Pancolor newColorHidden() {
@@ -933,11 +941,12 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj, climb, wallGrab, dash);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs, climbAim, wallGrabAim, dashAim);
         final PlayerImagesSubSet throwSet = loadPlayerImagesSubSet(pre + "Throw", name + ".throw", false, oss, os, ojs, climbThrow, wallGrabThrow, dashThrow);
-        final PlayerImagesSubSet[] wieldSets = {
-                loadPlayerImagesSubSet(pre + "Wield1", name + ".wield1", false, og, og, oj, climb, wallGrab, dash), //TODO climb/wallGrab/dash
-                loadPlayerImagesSubSet(pre + "Wield2", name + ".wield2", false, og, og, oj, climb, wallGrab, dash),
-                loadPlayerImagesSubSet(pre + "Wield3", name + ".wield3", false, og, og, oj, climb, wallGrab, dash)
-        };
+        final PlayerImagesSubSet[] wieldSets = new PlayerImagesSubSet[3];
+        for (int i = 1; i <= 3; i++) {
+            final Panmage dashWield = newPlayerImage(PRE_IMG + "." + name + ".dash.Wield1", os, nSlide, xSlide,
+                    Imtil.load(pre + "DashWield" + i + ".png"), playerMirror ? Imtil.load(pre + "DashWield" + i + "Mirror.png") : null);
+            wieldSets[i - 1] = loadPlayerImagesSubSet(pre + "Wield" + i, name + ".wield" + i, false, og, og, oj, climb, wallGrab, dashWield); //TODO climb/wallGrab
+        }
         final Pangine engine = Pangine.getEngine();
         final Img imgHurt = Imtil.load(pre + "Hurt.png", false), imgHurtMirror = playerMirror ? Imtil.load(pre + "HurtMirror.png", false) : null;
         final Panmage hurt = newPlayerImage(PRE_IMG + "." + name + ".hurt", oj, imgHurt, imgHurtMirror);
@@ -995,36 +1004,36 @@ public final class BotsnBoltsGame extends BaseGame {
                         engine.createImage(pre + "SwordTrail2", playerSwordTrails[1]),
                         engine.createImage(pre + "SwordTrail3", playerSwordTrails[2]),
                 }
-                : src.plasma;
+                : src.swordTrails;
         
-        final PlayerImageExtra stillExtra = new PlayerImageExtra(0,
+        final PlayerImageExtra stillExtra = new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null),
                 new HeldExtra(swordHoriz, -13, 4, DEPTH_PLAYER_FRONT, false, false, 0, null)); //TODO x - 1 for Void
         basicSet.stand.setExtra(stillExtra);
         basicSet.blink.setExtra(stillExtra);
         talk.setExtra(stillExtra);
         basicSet.start.setExtra(stillExtra);
-        basicSet.jump.setExtra(new PlayerImageExtra(0,
+        basicSet.jump.setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump),
                 new HeldExtra(swordDiag, -9, 21, DEPTH_PLAYER_BACK, true, false, 0, null)));
-        basicSet.run[0].setExtra(new PlayerImageExtra(0,
+        basicSet.run[0].setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldDiag, 3 - shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, false, true, 0, null),
                 new HeldExtra(swordDiag, -8, 15, DEPTH_PLAYER_FRONT, true, true, 0, null)));
-        basicSet.run[1].setExtra(new PlayerImageExtra(0,
+        basicSet.run[1].setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 11, 18, DEPTH_PLAYER_BACK, true, true, 0, null),
                 new HeldExtra(swordDiag, -7, 12, DEPTH_PLAYER_FRONT, false, true, 0, null)));
-        basicSet.run[2].setExtra(new PlayerImageExtra(0,
+        basicSet.run[2].setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldDiag, -5 + shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, true, true, 0, null),
                 new HeldExtra(swordDiag, 0, 5, DEPTH_PLAYER_FRONT, false, false, 0, null)));
-        basicSet.dash.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null), null));
-        basicSet.wallGrab.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab), null));
-        basicSet.climb.setExtra(new PlayerImageExtra(1, new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null), null));
-        climbTop.setExtra(new PlayerImageExtra(1, new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null), null));
-        shootSet.climb.setExtra(new PlayerImageExtra(1, null, null));
-        slide.setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
-        basicSet.crouch[0].setExtra(new PlayerImageExtra(0, new HeldExtra(shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null), null));
+        basicSet.dash.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null), null));
+        basicSet.wallGrab.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab), null));
+        basicSet.climb.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null), null));
+        climbTop.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null), null));
+        shootSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
+        slide.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
+        basicSet.crouch[0].setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null), null));
         for (int wi = 0; wi < 3; wi++) {
-            final int wx, wy;
+            final int wx, wy, trail = wi + 1;
             final boolean wm, wf;
             if (wi == 0) {
                 wx = 7; wy = 14; wm = false; wf = false;
@@ -1033,14 +1042,14 @@ public final class BotsnBoltsGame extends BaseGame {
             } else {
                 wx = -10; wy = 12; wm = true; wf = false;
             }
-            wieldSets[wi].stand.setExtra(new PlayerImageExtra(0, null,
+            wieldSets[wi].stand.setExtra(new PlayerImageExtra(0, trail, null,
                     new HeldExtra(swordDiag, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
-            final PlayerImageExtra wieldRunExtra = new PlayerImageExtra(0, null,
+            final PlayerImageExtra wieldRunExtra = new PlayerImageExtra(0, trail, null,
                     new HeldExtra(swordDiag, wx - 1, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null));
             wieldSets[wi].run[0].setExtra(wieldRunExtra);
             wieldSets[wi].run[1].setExtra(wieldRunExtra);
             wieldSets[wi].run[2].setExtra(wieldRunExtra);
-            wieldSets[wi].jump.setExtra(new PlayerImageExtra(0, null,
+            wieldSets[wi].jump.setExtra(new PlayerImageExtra(0, trail, null,
                     new HeldExtra(swordDiag, wx, wy + 3, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
         }
         
