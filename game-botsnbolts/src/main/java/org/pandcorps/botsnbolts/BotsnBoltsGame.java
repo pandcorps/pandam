@@ -1025,7 +1025,9 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.run[2].setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldDiag, -5 + shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, true, true, 0, null),
                 new HeldExtra(swordDiag, 0, 5, DEPTH_PLAYER_FRONT, false, false, 0, null)));
-        basicSet.dash.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null), null));
+        basicSet.dash.setExtra(new PlayerImageExtra(0, 0,
+                new HeldExtra(shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null),
+                new HeldExtra(swordDiag, -5, 16, DEPTH_PLAYER_FRONT, true, true, 0, null)));
         basicSet.wallGrab.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab), null));
         basicSet.climb.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null), null));
         climbTop.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null), null));
@@ -1051,6 +1053,8 @@ public final class BotsnBoltsGame extends BaseGame {
             wieldSets[wi].run[2].setExtra(wieldRunExtra);
             wieldSets[wi].jump.setExtra(new PlayerImageExtra(0, trail, null,
                     new HeldExtra(swordDiag, wx, wy + 3, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+            wieldSets[wi].dash.setExtra(new PlayerImageExtra(0, trail, null,
+                    new HeldExtra(swordDiag, wx + 2, wy - 2, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
         }
         
         final Panframe ball[] = new Panframe[8];
