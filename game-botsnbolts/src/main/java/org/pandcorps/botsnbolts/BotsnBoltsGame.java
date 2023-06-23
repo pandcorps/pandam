@@ -1028,7 +1028,9 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.dash.setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null),
                 new HeldExtra(swordDiag, -5, 16, DEPTH_PLAYER_FRONT, true, true, 0, null)));
-        basicSet.wallGrab.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab), null));
+        basicSet.wallGrab.setExtra(new PlayerImageExtra(0, 0,
+                new HeldExtra(shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab),
+                new HeldExtra(swordDiag, -6, 20, DEPTH_PLAYER_BACK, false, true, 0, null)));
         basicSet.climb.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null), null));
         climbTop.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null), null));
         shootSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
