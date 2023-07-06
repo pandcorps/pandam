@@ -3281,6 +3281,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panmage shieldCircle;
         protected final Panmage swordHoriz;
         protected final Panmage swordDiag;
+        protected final Panmage swordBack;
         protected final Panmage[] swordTrails;
         protected final Panimation burst;
         private final Panframe[] ball;
@@ -3314,7 +3315,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panmage[] plasma, Panmage shieldVert, Panmage shieldDiag, Panmage shieldCircle,
-                               final Panmage swordHoriz, final Panmage swordDiag, final Panmage[] swordTrails,
+                               final Panmage swordHoriz, final Panmage swordDiag, final Panmage swordBack, final Panmage[] swordTrails,
                                final Panimation burst, final Panframe[] ball, final Panmage slide,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
@@ -3345,6 +3346,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.shieldCircle = shieldCircle;
             this.swordHoriz = swordHoriz;
             this.swordDiag = swordDiag;
+            this.swordBack = swordBack;
             this.swordTrails = swordTrails;
             this.burst = burst;
             this.ball = ball;

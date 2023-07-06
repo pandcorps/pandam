@@ -742,6 +742,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img playerShieldCircle = null;
     private static Img playerSwordHoriz = null;
     private static Img playerSwordDiag = null;
+    private static Img playerSwordBack = null;
     private static Img[] playerSwordTrails = null;
     private static Img playerWarp = null;
     private static Img[] playerMaterialize = null;
@@ -781,6 +782,7 @@ public final class BotsnBoltsGame extends BaseGame {
         playerShieldCircle = Imtil.load(pre + "ShieldCircle.png", false);
         playerSwordHoriz = Imtil.load(pre + "SwordHoriz.png", false);
         playerSwordDiag = Imtil.load(pre + "SwordDiag.png", false);
+        playerSwordBack = Imtil.load(pre + "SwordBack.png", false);
         playerSwordTrails = new Img[] {
                 Imtil.load(pre + "SwordTrail1.png", false),
                 Imtil.load(pre + "SwordTrail2.png", false),
@@ -829,6 +831,7 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(playerShieldCircle, f);
         Imtil.filterImg(playerSwordHoriz, f);
         Imtil.filterImg(playerSwordDiag, f);
+        Imtil.filterImg(playerSwordBack, f);
         filterImgs(playerSwordTrails, f);
         Imtil.filterImg(playerWarp, f);
         filterImgs(playerMaterialize, f);
@@ -878,6 +881,8 @@ public final class BotsnBoltsGame extends BaseGame {
         playerSwordHoriz = null;
         playerSwordDiag.close();
         playerSwordDiag = null;
+        playerSwordBack.close();
+        playerSwordBack = null;
         Img.close(playerSwordTrails);
         playerSwordTrails = null;
         playerWarp.close();
@@ -998,6 +1003,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage shieldCircle = (src == null) ? engine.createImage(pre + "ShieldCircle", playerShieldCircle) : src.shieldCircle;
         final Panmage swordHoriz = (src == null) ? engine.createImage(pre + "SwordHoriz", playerSwordHoriz) : src.swordHoriz;
         final Panmage swordDiag = (src == null) ? engine.createImage(pre + "SwordDiag", playerSwordDiag) : src.swordDiag;
+        final Panmage swordBack = (src == null) ? engine.createImage(pre + "SwordBack", playerSwordBack) : src.swordBack;
         final Panmage[] swordTrails = (src == null)
                 ? new Panmage[] {
                         engine.createImage(pre + "SwordTrail1", playerSwordTrails[0]),
@@ -1031,7 +1037,9 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.wallGrab.setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, -6, 3, DEPTH_PLAYER_FRONT, true, false, 0, shootSet.wallGrab),
                 new HeldExtra(swordDiag, -6, 20, DEPTH_PLAYER_BACK, false, true, 0, null)));
-        basicSet.climb.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null), null));
+        basicSet.climb.setExtra(new PlayerImageExtra(1, 0,
+                new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null),
+                new HeldExtra(swordBack, -6, -8, DEPTH_PLAYER_FRONT, false, false, 0, null)));
         climbTop.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null), null));
         shootSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
         slide.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
@@ -1102,7 +1110,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImages pi;
         pi = new PlayerImages(basicSet, shootSet, throwSet, wieldSets, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
-            swordHoriz, swordDiag, swordTrails, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
+            swordHoriz, swordDiag, swordBack, swordTrails, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;
     }
