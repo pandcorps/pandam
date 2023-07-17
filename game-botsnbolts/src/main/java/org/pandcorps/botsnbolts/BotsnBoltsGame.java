@@ -1040,7 +1040,9 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.climb.setExtra(new PlayerImageExtra(1, 0,
                 new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null),
                 new HeldExtra(swordBack, -6, -8, DEPTH_PLAYER_FRONT, false, false, 0, null)));
-        climbTop.setExtra(new PlayerImageExtra(1, 0, new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null), null));
+        climbTop.setExtra(new PlayerImageExtra(1, 0,
+                new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null),
+                new HeldExtra(swordBack, -6, -6, DEPTH_PLAYER_FRONT, false, false, 0, null)));
         shootSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
         slide.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
         basicSet.crouch[0].setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null), null));
