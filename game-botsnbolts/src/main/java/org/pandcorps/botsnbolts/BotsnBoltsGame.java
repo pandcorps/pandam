@@ -948,9 +948,11 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet throwSet = loadPlayerImagesSubSet(pre + "Throw", name + ".throw", false, oss, os, ojs, climbThrow, wallGrabThrow, dashThrow);
         final PlayerImagesSubSet[] wieldSets = new PlayerImagesSubSet[3];
         for (int i = 1; i <= 3; i++) {
-            final Panmage dashWield = newPlayerImage(PRE_IMG + "." + name + ".dash.Wield1", os, nSlide, xSlide,
+            final Panmage climbWield = newPlayerImage(PRE_IMG + "." + name + ".climb.wield" + i, oClimb, ng, xg,
+                    Imtil.load(pre + "ClimbWield" + i + ".png"), playerMirror ? Imtil.load(pre + "ClimbWield" + i + "Mirror.png") : null);
+            final Panmage dashWield = newPlayerImage(PRE_IMG + "." + name + ".dash.wield" + i, os, nSlide, xSlide,
                     Imtil.load(pre + "DashWield" + i + ".png"), playerMirror ? Imtil.load(pre + "DashWield" + i + "Mirror.png") : null);
-            wieldSets[i - 1] = loadPlayerImagesSubSet(pre + "Wield" + i, name + ".wield" + i, false, og, og, oj, climb, wallGrab, dashWield); //TODO climb/wallGrab
+            wieldSets[i - 1] = loadPlayerImagesSubSet(pre + "Wield" + i, name + ".wield" + i, false, og, og, oj, climbWield, wallGrab, dashWield); //TODO wallGrab
         }
         final Pangine engine = Pangine.getEngine();
         final Img imgHurt = Imtil.load(pre + "Hurt.png", false), imgHurtMirror = playerMirror ? Imtil.load(pre + "HurtMirror.png", false) : null;
@@ -1065,6 +1067,8 @@ public final class BotsnBoltsGame extends BaseGame {
             wieldSets[wi].run[2].setExtra(wieldRunExtra);
             wieldSets[wi].jump.setExtra(new PlayerImageExtra(0, trail, null,
                     new HeldExtra(swordDiag, wx, wy + 3, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+            wieldSets[wi].climb.setExtra(new PlayerImageExtra(0, trail, null,
+                    new HeldExtra(swordDiag, wx + 3, wy + 1, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
             wieldSets[wi].dash.setExtra(new PlayerImageExtra(0, trail, null,
                     new HeldExtra(swordDiag, wx + 2, wy - 2, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
         }
