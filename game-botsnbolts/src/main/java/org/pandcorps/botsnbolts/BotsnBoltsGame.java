@@ -1072,7 +1072,7 @@ public final class BotsnBoltsGame extends BaseGame {
             wieldSets[wi].climb.setExtra(new PlayerImageExtra(0, trail, null,
                     new HeldExtra(swordDiag, wx + 3, wy + 1, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
             wieldSets[wi].wallGrab.setExtra(new PlayerImageExtra(0, trail, null,
-                    new HeldExtra(swordDiag, wx - 12, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+                    new HeldExtra(swordDiag, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
             wieldSets[wi].dash.setExtra(new PlayerImageExtra(0, trail, null,
                     new HeldExtra(swordDiag, wx + 2, wy - 2, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
         }
