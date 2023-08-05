@@ -76,6 +76,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int VEL_JUMP = 8;
     protected final static float VEL_BOUNCE_BOMB = 7.5f;
     protected final static int VEL_SPRING = 10;
+    protected final static int VEL_BOARD_BUMP = 5;
     private final static int VEL_FALL_PROTECTION = 15;
     private final static int VEL_WALK = 3;
     private final static int VEL_BOARD = 5;
@@ -1001,6 +1002,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final void onDestroy() {
         destroyGrapplingHook();
         freeWrapper();
+        destroy(shield);
+        destroy(sword);
         super.onDestroy();
     }
     
@@ -1991,6 +1994,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
+    protected final void endBoardIfNeeded() {
+        if (stateHandler == BOARD_HANDLER) {
+            endBoard();
+        }
+    }
+    
     private final void startState(final StateHandler stateHandler) {
         destroyGrapplingHook();
         if (this.stateHandler == BALL_HANDLER) {
@@ -2166,6 +2175,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected boolean onFell() {
         endGrapplingState();
         destroyGrapplingHook();
+        endBoardIfNeeded();
         if (changeRoom(0, -1)) {
             v = 0;
             return true;
@@ -2262,6 +2272,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         lastShotByAnyPlayer = NULL_CLOCK;
         initAvailableRescues();
         endGrapple();
+        endBoardIfNeeded();
         safeX = safeY = NULL_COORD;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
@@ -3127,6 +3138,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final boolean onAir(final Player player) {
             return false;
+        }
+        
+        @Override
+        protected final void onWall(final Player player, final byte xResult) {
+            player.endBoard();
+            player.v = Math.max(player.v, VEL_BOARD_BUMP);
         }
     };
     
