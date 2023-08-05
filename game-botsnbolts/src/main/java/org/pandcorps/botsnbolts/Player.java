@@ -177,6 +177,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean safeMirror = false;
     private List<Follower> followers = null;
     protected int offY = 0;
+    private int boardSlope = SLOPE_NONE;
     private HeldShield shield = null;
     private HeldSword sword = null;
     protected ShieldProjectile lastShieldProjectile = null;
@@ -1195,9 +1196,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final boolean mirror = isMirror();
         final int m = getMirrorMultiplier(mirror);
         renderer.render(layer, (Panmage) getCurrentDisplay(), x, y + BOARD_Y_OFF, pos.getZ(), 0, mirror, false);
-        renderer.render(layer, pi.boardImage = Animal.getAnimalImage(pi.boardImage, pi, "Board"),
-                x - (m * 17) - (mirror ? 31 : 0), y + 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
-                0, 0, 32, 32, 0, mirror, false);
+        if (boardSlope == SLOPE_NONE) {
+            renderer.render(layer, pi.boardImage = Animal.getAnimalImage(pi.boardImage, pi, "Board"),
+                    x - (m * 17) - (mirror ? 31 : 0), y + 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                    0, 0, 32, 32, 0, mirror, false);
+        } else if (boardSlope == SLOPE_UP ) {
+            renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
+                    x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                    0, 0, 32, 32, 0, mirror, false);
+        }
     }
     
     protected final void setHidden(final boolean hidden) {
@@ -1982,6 +1989,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         clearDash();
         clearStream();
         offY = BOARD_Y_OFF;
+        boardSlope = 0;
         stateHandler = BOARD_HANDLER;
     }
     
@@ -3063,12 +3071,19 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void onJump(final Player player) {
             /* //TODO
-            if (ascending) {
+            if (ascending or just finished ascending) {
                 jumpHigher;
             } else {
             */
                 player.onJumpNormal();
             //}
+        }
+        
+        @Override
+        protected final void onAirJump(final Player player) {
+            //TODO if tapped jump twice very quickly, ignore second jump
+            //TODO otherwise, if was recently grounded (pressed jump right after passing edge), allow an air jump
+            player.endBoard();
         }
         
         @Override
@@ -3118,15 +3133,26 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 set = player.pi.basicSet;
             }
             final Panmage view;
-            /* //TODO
-            if () {
-                view = set.jump;
-            } else if () {
-                view = set.descend;
+            final int slope;
+            if (player.isGrounded()) {
+                slope = player.getMirrorMultiplier() * player.getCurrentSlope();
             } else {
-            */
+                if (player.v > 2.75f) {
+                    slope = SLOPE_UP;
+                //} else if (player.v < -2.75f) {
+                //    slope = SLOPE_DOWN;
+                } else {
+                    slope = SLOPE_NONE;
+                }
+            }
+            if (slope == SLOPE_UP) {
+                view = set.jump;
+            //} else if (slope == SLOPE_DOWN ) {
+            //    view = set.descend;
+            } else {
                 view = set.stand;
-            //}
+            }
+            player.boardSlope = slope;
             player.changeView(view);
             return false;
         }
@@ -3440,6 +3466,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final String animalName;
         protected final String birdName;
         protected Panmage boardImage = null;
+        protected Panmage boardDiagImage = null;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final PlayerImagesSubSet throwSet,
                                final PlayerImagesSubSet[] wieldSets,
