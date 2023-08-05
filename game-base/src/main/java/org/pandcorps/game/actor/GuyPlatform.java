@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -75,6 +75,17 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected final void setH(final int h) {
         H = h;
         OFF_BUTTING = H + 1;
+    }
+    
+    protected final void setHIfPossible(final int h) {
+        if (H == h) {
+            return;
+        }
+        final int oldH = H;
+        setH(h);
+        if (!isJumpPossible()) {
+            setH(oldH);
+        }
     }
     
     public final static FinPanple2 getMin(final int offX) {

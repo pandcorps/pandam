@@ -453,7 +453,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
             super(src, src.pi, Player.SHOOT_SWORD, src, 0, 0, POWER_MEDIUM);
             setView(BotsnBoltsGame.getSwordHitBox());
             final Panple pos = src.getPosition();
-            getPosition().set(pos.getX(), pos.getY() - 6);
+            getPosition().set(pos.getX(), pos.getY() - 7);
         }
         
         @Override

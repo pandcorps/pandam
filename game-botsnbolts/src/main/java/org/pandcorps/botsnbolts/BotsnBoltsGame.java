@@ -539,14 +539,14 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static Panmage getSwordHitBox() {
         if (swordHitBox == null) {
-            swordHitBox = Pangine.getEngine().createEmptyImage("swordHitBox", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(36, 34));
+            swordHitBox = Pangine.getEngine().createEmptyImage("swordHitBox", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(38, 36));
         }
         return swordHitBox;
     }
     
     protected final static Panmage getSwordFullHitBox() {
         if (swordFullHitBox == null) {
-            swordFullHitBox = Pangine.getEngine().createEmptyImage("swordHitBox", FinPanple.ORIGIN, new FinPanple2(-28, 0), getSwordHitBox().getBoundingMaximum());
+            swordFullHitBox = Pangine.getEngine().createEmptyImage("swordHitBox", FinPanple.ORIGIN, new FinPanple2(-30, 0), getSwordHitBox().getBoundingMaximum());
         }
         return swordFullHitBox;
     }

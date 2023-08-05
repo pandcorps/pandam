@@ -52,6 +52,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int PLAYER_X = 6;
     protected final static int PLAYER_H = 23;
     protected final static int BALL_H = 15;
+    protected final static int BOARD_Y_OFF = 11;
+    protected final static int BOARD_H = PLAYER_H + BOARD_Y_OFF;
     protected final static int CENTER_Y = 11;
     private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
@@ -76,6 +78,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int VEL_SPRING = 10;
     private final static int VEL_FALL_PROTECTION = 15;
     private final static int VEL_WALK = 3;
+    private final static int VEL_BOARD = 5;
     private final static int VEL_SLIDE = 6;
     private final static float VEL_DASH = 8.5f;
     private final static float DASH_SLOWDOWN = 0.1875f;
@@ -172,6 +175,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private float safeY = NULL_COORD;
     private boolean safeMirror = false;
     private List<Follower> followers = null;
+    protected int offY = 0;
     private HeldShield shield = null;
     private HeldSword sword = null;
     protected ShieldProjectile lastShieldProjectile = null;
@@ -1181,6 +1185,18 @@ public class Player extends Chr implements Warpable, StepEndListener {
         super.renderView(renderer);
     }
     
+    protected final void renderViewBoard(final Panderer renderer) {
+        final Panlayer layer = getLayer();
+        final Panple pos = getPosition();
+        final float x = pos.getX(), y = pos.getY();
+        final boolean mirror = isMirror();
+        final int m = getMirrorMultiplier(mirror);
+        renderer.render(layer, (Panmage) getCurrentDisplay(), x, y + BOARD_Y_OFF, pos.getZ(), 0, mirror, false);
+        renderer.render(layer, pi.boardImage = Animal.getAnimalImage(pi.boardImage, pi, "Board"),
+                x - (m * 17) - (mirror ? 31 : 0), y + 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                0, 0, 32, 32, 0, mirror, false);
+    }
+    
     protected final void setHidden(final boolean hidden) {
         this.hidden = hidden;
         if (hidden) {
@@ -1959,10 +1975,28 @@ public class Player extends Chr implements Warpable, StepEndListener {
         Panctor.destroy(spring);
     }
     
+    private final void startBoard() {
+        clearDash();
+        clearStream();
+        offY = BOARD_Y_OFF;
+        stateHandler = BOARD_HANDLER;
+    }
+    
+    protected final void endBoard() {
+        clearRun();
+        offY = 0;
+        setH(PLAYER_H);
+        if (stateHandler == BOARD_HANDLER) {
+            stateHandler = NORMAL_HANDLER;
+        }
+    }
+    
     private final void startState(final StateHandler stateHandler) {
         destroyGrapplingHook();
         if (this.stateHandler == BALL_HANDLER) {
             endBall();
+        } else if (this.stateHandler == BOARD_HANDLER) {
+            endBoard();
         }
         this.stateHandler = stateHandler;
     }
@@ -3014,6 +3048,88 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
+    protected final static StateHandler BOARD_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            /* //TODO
+            if (ascending) {
+                jumpHigher;
+            } else {
+            */
+                player.onJumpNormal();
+            //}
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+            player.prf.shootMode.onShootStart(player);
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+            player.prf.shootMode.onShooting(player);
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+            player.prf.shootMode.onShootEnd(player);
+        }
+        
+        @Override
+        protected final int getAimOffsetY(final Player player) {
+            return Projectile.OFF_Y + BOARD_Y_OFF;
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+            // Nothing
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+            // Nothing
+        }
+        
+        @Override
+        protected final void renderView(final Player player, final Panderer renderer) {
+            player.renderViewBoard(renderer);
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            player.setHIfPossible(BOARD_H);
+            player.moveHorizontal(player.getMirrorMultiplier() * VEL_BOARD);
+            player.prf.shootMode.onStep(player);
+            final PlayerImagesSubSet set;
+            if (player.isShootPoseNeeded()) {
+                set = player.getCurrentAimImagesSubSet();
+            } else {
+                set = player.pi.basicSet;
+            }
+            final Panmage view;
+            /* //TODO
+            if () {
+                view = set.jump;
+            } else if () {
+                view = set.descend;
+            } else {
+            */
+                view = set.stand;
+            //}
+            player.changeView(view);
+            return false;
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return false;
+        }
+    };
+    
     /*
     As Player enters level, will warp through ceiling.
     So don't use a Player object that could get stuck.
@@ -3306,6 +3422,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final String name;
         protected final String animalName;
         protected final String birdName;
+        protected Panmage boardImage = null;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final PlayerImagesSubSet throwSet,
                                final PlayerImagesSubSet[] wieldSets,
@@ -3788,7 +3905,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         held.setVisible(Panctor.isAttached(player) && player.isVisible() && player.stateHandler.isPlayerRendered());
         held.changeView(ext.heldImage);
         final boolean playerMirror = player.getAimMirror();
-        held.getPosition().set(pos.getX() + (Player.getMirrorMultiplier(playerMirror) * ext.heldX) + (playerMirror ? pext.mirrorX : 0), pos.getY() + ext.heldY, ext.heldZ);
+        held.getPosition().set(pos.getX() + (Player.getMirrorMultiplier(playerMirror) * ext.heldX) + (playerMirror ? pext.mirrorX : 0), pos.getY() + ext.heldY + player.offY, ext.heldZ);
         held.setMirror(ext.heldMirror ^ playerMirror);
         held.setFlip(ext.heldFlip);
         held.setRot(ext.heldRot);
@@ -3949,7 +4066,24 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
-    private final static JumpMode[] JUMP_MODES = { JUMP_NORMAL, JUMP_BALL, JUMP_SPRING, JUMP_GRAPPLING_HOOK };
+    protected final static JumpMode JUMP_BOARD = new JumpMode(Profile.UPGRADE_BOARD) {
+        @Override
+        protected final int getRequiredStamina(final Player player) {
+            return 1;
+        }
+        
+        @Override
+        protected final void airJump(final Player player) {
+            player.startBoard();
+        }
+        
+        @Override
+        protected final void onDeselect(final Player player) {
+            player.endBoard();
+        }
+    };
+    
+    private final static JumpMode[] JUMP_MODES = { JUMP_NORMAL, JUMP_BALL, JUMP_SPRING, JUMP_GRAPPLING_HOOK, JUMP_BOARD };
     
     protected final static class Bubble extends Panctor implements StepListener {
         private int dir;
