@@ -429,7 +429,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                     }
                 }
             } else if (collider instanceof Projectile) {
-                onCollisionWithPlayerProjectile((Projectile) collider);
+                final Projectile playerProjectile = (Projectile) collider;
+                if (isVulnerableToSword() && (playerProjectile.getShootMode() == Player.SHOOT_SWORD)) {
+                    BotsnBoltsGame.fxAttack.startSound();
+                    destroy();
+                } else {
+                    onCollisionWithPlayerProjectile(playerProjectile);
+                }
             }
         }
         
@@ -460,6 +466,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         //@OverrideMe
         protected void onCollisionWithPlayerProjectile(final Projectile prj) {
+        }
+        
+        //@OverrideMe
+        protected boolean isVulnerableToSword() {
+            return true;
         }
         
         protected void burst(final Player player) {
@@ -612,6 +623,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         protected void onExpire() {
+        }
+        
+        @Override
+        protected final boolean isVulnerableToSword() {
+            return false;
         }
     }
     
