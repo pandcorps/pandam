@@ -1031,10 +1031,10 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.blink.setExtra(stillExtra);
         talk.setExtra(stillExtra);
         basicSet.start.setExtra(stillExtra);
-        final PlayerImageExtra jumpExtra = new PlayerImageExtra(0, 0,
+        final HeldExtra jumpExtraSword = new HeldExtra(swordDiag, -9, 21, DEPTH_PLAYER_BACK, true, false, 0, null);
+        basicSet.jump.setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump),
-                new HeldExtra(swordDiag, -9, 21, DEPTH_PLAYER_BACK, true, false, 0, null));
-        basicSet.jump.setExtra(jumpExtra);
+                jumpExtraSword));
         basicSet.run[0].setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldDiag, 3 - shieldRunOffsetX, 18, DEPTH_PLAYER_BACK, false, true, 0, null),
                 new HeldExtra(swordDiag, -8, 15, DEPTH_PLAYER_FRONT, true, true, 0, null)));
@@ -1047,7 +1047,9 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.dash.setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 14, -4, DEPTH_PLAYER_FRONT, false, false, 1, null),
                 new HeldExtra(swordDiag, -5, 16, DEPTH_PLAYER_FRONT, true, true, 0, null)));
-        basicSet.descend.setExtra(jumpExtra);
+        basicSet.descend.setExtra(new PlayerImageExtra(0, 0,
+                new HeldExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.descend),
+                jumpExtraSword));
         basicSet.wallGrab.setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 6, 3, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.wallGrab),
                 new HeldExtra(swordDiag, 6, 20, DEPTH_PLAYER_BACK, true, true, 0, null)));
