@@ -178,6 +178,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private List<Follower> followers = null;
     protected int offY = 0;
     private int boardSlope = SLOPE_NONE;
+    private int boardX = 0;
+    private int boardY = 0;
     private HeldShield shield = null;
     private HeldSword sword = null;
     protected ShieldProjectile lastShieldProjectile = null;
@@ -1198,12 +1200,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
         renderer.render(layer, (Panmage) getCurrentDisplay(), x, y + BOARD_Y_OFF, pos.getZ(), 0, mirror, false);
         if (boardSlope == SLOPE_NONE) {
             renderer.render(layer, pi.boardImage = Animal.getAnimalImage(pi.boardImage, pi, "Board"),
-                    x - (m * 17) - (mirror ? 31 : 0), y + 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                    x - (m * (17 - boardX)) - (mirror ? 31 : 0), y + 1 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                     0, 0, 32, 32, 0, mirror, false);
         } else if (boardSlope == SLOPE_UP ) {
             renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
                     x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                     0, 0, 32, 32, 0, mirror, false);
+        } else if (boardSlope == SLOPE_DOWN ) {
+            renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
+                    x - (m * 18) - (mirror ? 31 : 0), y - 11, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                    0, 0, 32, 32, 3, mirror, false);
         }
     }
     
@@ -3132,25 +3138,29 @@ public class Player extends Chr implements Warpable, StepEndListener {
             } else {
                 set = player.pi.basicSet;
             }
+            final boolean grounded = player.isGrounded();
+            player.boardX = player.boardY = 0;
             final Panmage view;
             final int slope;
-            if (player.isGrounded()) {
+            if (grounded) {
                 slope = player.getMirrorMultiplier() * player.getCurrentSlope();
             } else {
                 if (player.v > 2.75f) {
                     slope = SLOPE_UP;
-                //} else if (player.v < -2.75f) {
-                //    slope = SLOPE_DOWN;
+                } else if (player.v < -2.75f) {
+                    slope = SLOPE_DOWN;
                 } else {
                     slope = SLOPE_NONE;
+                    player.boardX = 3;
+                    player.boardY = 2;
                 }
             }
             if (slope == SLOPE_UP) {
                 view = set.jump;
-            //} else if (slope == SLOPE_DOWN ) {
-            //    view = set.descend;
+            } else if (slope == SLOPE_DOWN ) {
+                view = set.descend;
             } else {
-                view = set.stand;
+                view = grounded ? set.stand : set.jump;
             }
             player.boardSlope = slope;
             player.changeView(view);
@@ -3545,9 +3555,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panmage climb;
         protected final Panmage wallGrab;
         protected final Panmage dash;
+        protected final Panmage descend;
         
         protected PlayerImagesSubSet(final Panmage stand, final Panmage jump, final Panmage[] run, final Panmage start, final Panmage blink, final Panmage[] crouch,
-                final Panmage climb, final Panmage wallGrab, final Panmage dash) {
+                final Panmage climb, final Panmage wallGrab, final Panmage dash, final Panmage descend) {
             this.stand = stand;
             this.jump = jump;
             this.run = run;
@@ -3557,6 +3568,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.climb = climb;
             this.wallGrab = wallGrab;
             this.dash = dash;
+            this.descend = descend;
         }
     }
     
