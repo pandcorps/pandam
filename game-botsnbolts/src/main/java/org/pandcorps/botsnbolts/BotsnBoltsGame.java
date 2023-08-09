@@ -86,6 +86,9 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static byte TILE_WATER = 17;
     protected final static byte TILE_ACTIVATE = 18;
     protected final static byte TILE_TRACTOR_BEAM = 19;
+    protected final static byte TILE_RAIL = 20;
+    protected final static byte TILE_UPSLOPE_RAIL = 21;
+    protected final static byte TILE_DOWNSLOPE_RAIL = 22;
     
     protected final static int DEPTH_PARALLAX_BG = 0;
     protected final static int DEPTH_PARALLAX_FG = 2;
@@ -164,6 +167,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage doorBoss = null;
     protected static Panmage box = null;
     protected static Panmage ladder = null;
+    protected static Panmage rail = null;
     protected static Panmage[] blockCyan = null;
     protected static Panmage[] blockTimed = null;
     protected static Panmage[] blockButton = null;
@@ -500,6 +504,13 @@ public final class BotsnBoltsGame extends BaseGame {
             ladder = Pangine.getEngine().createImage("ladder", RES + "bg/Ladder.png");
         }
         return ladder;
+    }
+    
+    protected final static Panmage getRail() {
+        if (rail == null) {
+            rail = Pangine.getEngine().createImage("rail", RES + "bg/Rail.png");
+        }
+        return rail;
     }
     
     protected final static Panmage getBlockSpike() {

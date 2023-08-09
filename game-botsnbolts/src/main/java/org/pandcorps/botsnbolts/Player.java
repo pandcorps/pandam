@@ -466,6 +466,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     @Override
+    protected final boolean isFloorBehavior(final byte b) {
+        return super.isFloorBehavior(b) || stateHandler.isFloorBehavior(b);
+    }
+    
+    @Override
+    protected final boolean isUpslopeFloorBehavior(final byte b) {
+        return stateHandler.isUpslopeFloorBehavior(b);
+    }
+    
+    @Override
+    protected final boolean isDownslopeFloorBehavior(final byte b) {
+        return stateHandler.isDownslopeFloorBehavior(b);
+    }
+    
+    @Override
     protected final float getG() {
         return stateHandler.getG(this);
     }
@@ -2295,8 +2310,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final List<Panlayer> layersToKeepBeneath = Coltil.singletonList(BotsnBoltsGame.bgLayer);
         final List<Panlayer> layersToKeepAbove = Arrays.asList(BotsnBoltsGame.hud);
         final List<Panctor> actorsToKeep = new ArrayList<Panctor>();
+        final List<Panctor> actorsToDestroy = new ArrayList<Panctor>();
         actorsToKeep.add(this);
         actorsToKeep.add(BotsnBoltsGame.tm);
+        actorsToKeep.addAll(RoomLoader.actorsDisplayedDuringChange);
+        actorsToDestroy.addAll(RoomLoader.actorsDisplayedDuringChange);
+        RoomLoader.actorsDisplayedDuringChange.clear();
         if (BotsnBoltsGame.tracked instanceof PlayerMean) {
             actorsToKeep.add(BotsnBoltsGame.tracked);
         }
@@ -2306,7 +2325,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
             actorsToKeep.add(Boss.aiBoss);
         }
         Coltil.addIfValued(actorsToKeep, boltDoor); // Keep Player and old TileMap while scrolling
-        final List<Panctor> actorsToDestroy = new ArrayList<Panctor>();
         actorsToDestroy.add(BotsnBoltsGame.tm);
         Coltil.addIfValued(actorsToDestroy, boltDoor); // Destroy old TileMap after scrolling
         for (final Panctor actor : getLayer().getActors()) {
@@ -2395,6 +2413,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         //@OverrideMe
         protected void onAirJump(final Player player) {
+        }
+        
+        //@OverrideMe
+        protected boolean isFloorBehavior(final byte b) {
+            return false;
+        }
+        
+        //@OverrideMe
+        protected boolean isUpslopeFloorBehavior(final byte b) {
+            return false;
+        }
+        
+        //@OverrideMe
+        protected boolean isDownslopeFloorBehavior(final byte b) {
+            return false;
         }
         
         protected float getG(final Player player) {
@@ -3090,6 +3123,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
             //TODO if tapped jump twice very quickly, ignore second jump
             //TODO otherwise, if was recently grounded (pressed jump right after passing edge), allow an air jump
             player.endBoard();
+        }
+        
+        @Override
+        protected final boolean isFloorBehavior(final byte b) {
+            return b == BotsnBoltsGame.TILE_RAIL;
+        }
+        
+        @Override
+        protected final boolean isUpslopeFloorBehavior(final byte b) {
+            return b == BotsnBoltsGame.TILE_UPSLOPE_RAIL;
+        }
+        
+        @Override
+        protected final boolean isDownslopeFloorBehavior(final byte b) {
+            return b == BotsnBoltsGame.TILE_DOWNSLOPE_RAIL;
         }
         
         @Override

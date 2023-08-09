@@ -517,11 +517,11 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     protected boolean isAnyUpslope(final byte b) {
-        return (b == TILE_UPSLOPE) || (b == TILE_UPSLOPE_FLOOR);
+        return (b == TILE_UPSLOPE) || isUpslopeFloorBehavior(b);
     }
     
     protected boolean isAnyDownslope(final byte b) {
-        return (b == TILE_DOWNSLOPE) || (b == TILE_DOWNSLOPE_FLOOR);
+        return (b == TILE_DOWNSLOPE) || isDownslopeFloorBehavior(b);
     }
     
     protected boolean isSolid(final int index, final float left, final float right, final float y) {
@@ -542,14 +542,15 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         }
         final float top = y + H - 1, yoff = y - getPosition().getY();
         final int iy = (int) y, curHeight = iy % ImtilX.DIM;
-        if (b == TILE_UPSLOPE || (yoff <= 0 && b == TILE_UPSLOPE_FLOOR)) {
+        final boolean upslopeFloor = isUpslopeFloorBehavior(b), downslopeFloor = isDownslopeFloorBehavior(b);
+        if (b == TILE_UPSLOPE || (yoff <= 0 && upslopeFloor)) {
             if (map.getContainer(right, y) != index) {
-                if (b == TILE_UPSLOPE_FLOOR && curHeight != 15) {
+                if (upslopeFloor && curHeight != 15) {
                     return false;
                 } else if (map.getContainer(left, y) == index) {
                     final int i = map.getColumn(index), j = map.getRow(index);
-                    return b != TILE_UPSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, 1, 1))) != TILE_UPSLOPE_FLOOR;
-                } else if (b == TILE_UPSLOPE_FLOOR) {
+                    return !upslopeFloor || !isUpslopeFloorBehavior(Tile.getBehavior(map.getTile(map.getRelative(i, j, 1, 1))));
+                } else if (upslopeFloor) {
                     return false;
                 }
                 for (int i = 0; true; i += 16) {
@@ -562,15 +563,15 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
                 }
             }
             final int minHeight = (int) right % ImtilX.DIM;
-            return (b == TILE_UPSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
-        } else if (b == TILE_DOWNSLOPE || (yoff <= 0 && b == TILE_DOWNSLOPE_FLOOR)) {
+            return upslopeFloor ? (curHeight == minHeight) : (curHeight <= minHeight);
+        } else if (b == TILE_DOWNSLOPE || (yoff <= 0 && downslopeFloor)) {
             if (map.getContainer(left, y) != index) {
-                if (b == TILE_DOWNSLOPE_FLOOR && curHeight != 15) {
+                if (downslopeFloor && curHeight != 15) {
                     return false;
                 } else if (map.getContainer(right, y) == index) {
                     final int i = map.getColumn(index), j = map.getRow(index);
-                    return b != TILE_DOWNSLOPE_FLOOR || Tile.getBehavior(map.getTile(map.getRelative(i, j, -1, 1))) != TILE_DOWNSLOPE_FLOOR;
-                } else if (b == TILE_DOWNSLOPE_FLOOR) {
+                    return !downslopeFloor || !isDownslopeFloorBehavior(Tile.getBehavior(map.getTile(map.getRelative(i, j, -1, 1))));
+                } else if (downslopeFloor) {
                     return false;
                 }
                 for (int i = 0; true; i += 16) {
@@ -583,7 +584,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
                 }
             }
             final int minHeight = 15 - ((int) left % ImtilX.DIM);
-            return (b == TILE_DOWNSLOPE_FLOOR) ? (curHeight == minHeight) : (curHeight <= minHeight);
+            return downslopeFloor ? (curHeight == minHeight) : (curHeight <= minHeight);
         }
         return false;
     }
@@ -714,6 +715,14 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     protected abstract boolean isSolidBehavior(final byte b);
     
     protected abstract boolean isFloorBehavior(final byte b);
+    
+    protected boolean isUpslopeFloorBehavior(final byte b) {
+        return b == TILE_UPSLOPE_FLOOR;
+    }
+    
+    protected boolean isDownslopeFloorBehavior(final byte b) {
+        return b == TILE_DOWNSLOPE_FLOOR;
+    }
     
     public final static void registerCapture(final Panctor actor) {
         final Pangine engine = Pangine.getEngine();

@@ -51,6 +51,7 @@ public abstract class RoomLoader {
     protected final static Map<String, BotLevel> levelMap = new HashMap<String, BotLevel>();
     private static BotLevel firstLevel = null;
     private final static List<Panctor> actors = new ArrayList<Panctor>();
+    protected final static List<Panctor> actorsDisplayedDuringChange = new ArrayList<Panctor>();
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     protected final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     protected final static Set<StepHandler> stepHandlers = new HashSet<StepHandler>();
@@ -263,6 +264,8 @@ public abstract class RoomLoader {
                 fpb(seg);
             } else if ("LDR".equals(name)) { // Ladder
                 ldr(seg.intValue(0), seg.intValue(1), seg.intValue(2));
+            } else if ("RAL".equals(name)) { // Rail
+                ral(seg);
             } else if ("BRR".equals(name)) { // Barrier
                 brr(seg);
             } else if ("DOR".equals(name)) { // Door
@@ -941,6 +944,12 @@ public abstract class RoomLoader {
         }
     }
     
+    private final static void ral(final Segment seg) {
+        final Panctor rail = new Rail(seg);
+        getLayer().addActor(rail);
+        actorsDisplayedDuringChange.add(rail);
+    }
+    
     private final static void brr(final Segment seg) {
         final int x = seg.intValue(0), y = seg.intValue(1);
         final String doorType = seg.getValue(2);
@@ -1448,6 +1457,97 @@ public abstract class RoomLoader {
         def.icons = seg.getIntArray(1);
         def.markers = seg.getIntArray(2);
         def.lines = seg.getIntArray(3);
+    }
+    
+    protected final static class Rail extends Panctor {
+        private final List<RailSection> sections = new ArrayList<RailSection>();
+        
+        protected Rail(final Segment seg) {
+            final TileMap tm = BotsnBoltsGame.tm;
+            final List<Field> vertices = seg.getRepetitions(0);
+            final int numVertices = vertices.size(), lastVertex = numVertices - 1;
+            Field prevVertex = null, prevPrevVertex = null;
+            for (int i = 0; i < numVertices; i++) {
+                final Field vertex = vertices.get(i);
+                if (prevVertex != null) {
+                    final Field nextVertex = (i < lastVertex) ? vertices.get(i + 1) : null;
+                    final int startX = prevVertex.intValue(0), startY = prevVertex.intValue(1);
+                    final int endX = vertex.intValue(0), endY = vertex.intValue(1);
+                    final int lastX = endX - 1;
+                    final int deltaY = (endY > startY) ? 1 : ((endY < startY) ? -1 : 0);
+                    final Integer prevPrevY = (prevPrevVertex == null) ? null : Integer.valueOf(prevPrevVertex.intValue(1));
+                    final Integer nextY = (nextVertex == null) ? null : Integer.valueOf(nextVertex.intValue(1));
+                    if ((deltaY != 0) && ((endX - startX) != Math.abs(endY - startY))) {
+                        throw new IllegalStateException("Bad rail");
+                    }
+                    if (prevPrevVertex == null) {
+                        final int startCapX = startX - 1;
+                        if (!Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(startCapX, startY)))) {
+                            if (deltaY > 0) {
+                                sections.add(new RailSection(startCapX, startY, 16, 48, false));
+                            } else {
+                                sections.add(new RailSection(startCapX, startY, 48, 0, false));
+                            }
+                        }
+                    }
+                    for (int x = startX, y = startY; x < endX; x++, y += deltaY) {
+                        if (deltaY == 0) {
+                            tm.setBehavior(x, y, BotsnBoltsGame.TILE_RAIL);
+                            if ((x == startX) && (prevPrevY != null) && (prevPrevY.intValue() > startY)) {
+                                sections.add(new RailSection(x, y, 16, 32, true));
+                            } else if ((x == lastX) && (nextY != null) && (nextY.intValue() > endY)) {
+                                sections.add(new RailSection(x, y, 16, 32, false));
+                            } else {
+                                sections.add(new RailSection(x, y, 0, 32, false));
+                            }
+                        } else if (deltaY > 0) {
+                            tm.setBehavior(x, y + 1, BotsnBoltsGame.TILE_UPSLOPE_RAIL);
+                            sections.add(new RailSection(x, y, 32, 32, false));
+                            if (x == lastX) {
+                                sections.add(new RailSection(x, y + 1, 0, 0, false));
+                            } else {
+                                sections.add(new RailSection(x, y + 1, 32, 16, false));
+                            }
+                        } else {
+                            tm.setBehavior(x, y, BotsnBoltsGame.TILE_DOWNSLOPE_RAIL);
+                            sections.add(new RailSection(x, y - 1, 32, 32, true));
+                            if (x == startX) {
+                                sections.add(new RailSection(x, y, 0, 0, true));
+                            } else {
+                                sections.add(new RailSection(x, y, 32, 16, true));
+                            }
+                        }
+                    }
+                }
+                prevPrevVertex = prevVertex;
+                prevVertex = vertex;
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panmage image = BotsnBoltsGame.getRail();
+            for (final RailSection section : sections) {
+                renderer.render(layer, image, section.x, section.y, BotsnBoltsGame.DEPTH_ABOVE, section.ix, section.iy, 16, 16, 0, section.mirror, false);
+            }
+        }
+    }
+    
+    private final static class RailSection {
+        private final float x;
+        private final float y;
+        private final float ix;
+        private final float iy;
+        private final boolean mirror;
+        
+        private RailSection(final int x, final int y, final int ix, final int iy, final boolean mirror) {
+            this.x = x * BotsnBoltsGame.DIM;
+            this.y = (y * BotsnBoltsGame.DIM) + 4;
+            this.ix = ix;
+            this.iy = iy;
+            this.mirror = mirror;
+        }
     }
     
     protected final static class TileAnimator {

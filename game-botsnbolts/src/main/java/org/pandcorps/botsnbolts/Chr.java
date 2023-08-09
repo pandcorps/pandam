@@ -96,8 +96,18 @@ public abstract class Chr extends GuyPlatform {
     }
     
     @Override
-    protected final boolean isFloorBehavior(final byte b) {
+    protected boolean isFloorBehavior(final byte b) {
         return (b == BotsnBoltsGame.TILE_FLOOR) || (b == BotsnBoltsGame.TILE_LADDER_TOP);
+    }
+    
+    @Override
+    protected boolean isUpslopeFloorBehavior(final byte b) {
+        return false;
+    }
+    
+    @Override
+    protected boolean isDownslopeFloorBehavior(final byte b) {
+        return false;
     }
     
     protected final boolean isUnderWater() {
