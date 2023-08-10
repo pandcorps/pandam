@@ -1479,7 +1479,6 @@ public abstract class RoomLoader {
                     if ((deltaY != 0) && ((endX - startX) != Math.abs(endY - startY))) {
                         throw new IllegalStateException("Bad rail");
                     }
-                    //TODO attachments to wall
                     if (prevPrevVertex == null) {
                         final int startCapX = startX - 1;
                         if (!Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(startCapX, startY)))) {
@@ -1500,30 +1499,31 @@ public abstract class RoomLoader {
                         }
                     }
                     for (int x = startX, y = startY; x < endX; x++, y += deltaY) {
+                        final int iyOff = ((x == startX) || (x == lastX)) ? -16 : 0;
                         if (deltaY == 0) {
                             tm.setBehavior(x, y, BotsnBoltsGame.TILE_RAIL);
                             if ((x == startX) && (prevPrevY != null) && (prevPrevY.intValue() > startY)) {
-                                sections.add(new RailSection(x, y, 16, 32, true));
+                                sections.add(new RailSection(x, y, 16, 32 + iyOff, true));
                             } else if ((x == lastX) && (nextY != null) && (nextY.intValue() > endY)) {
-                                sections.add(new RailSection(x, y, 16, 32, false));
+                                sections.add(new RailSection(x, y, 16, 32 + iyOff, false));
                             } else {
-                                sections.add(new RailSection(x, y, 0, 32, false));
+                                sections.add(new RailSection(x, y, 0, 32 + iyOff, false));
                             }
                         } else if (deltaY > 0) {
                             tm.setBehavior(x, y + 1, BotsnBoltsGame.TILE_UPSLOPE_RAIL);
                             sections.add(new RailSection(x, y, 32, 32, false));
                             if (x == lastX) {
-                                sections.add(new RailSection(x, y + 1, 0, 0, false));
+                                sections.add(new RailSection(x, y + 1, 48, 48 + iyOff, false));
                             } else {
-                                sections.add(new RailSection(x, y + 1, 32, 16, false));
+                                sections.add(new RailSection(x, y + 1, 32, 16 + iyOff, false));
                             }
                         } else {
                             tm.setBehavior(x, y, BotsnBoltsGame.TILE_DOWNSLOPE_RAIL);
                             sections.add(new RailSection(x, y - 1, 32, 32, true));
                             if (x == startX) {
-                                sections.add(new RailSection(x, y, 0, 0, true));
+                                sections.add(new RailSection(x, y, 48, 48 + iyOff, true));
                             } else {
-                                sections.add(new RailSection(x, y, 32, 16, true));
+                                sections.add(new RailSection(x, y, 32, 16 + iyOff, true));
                             }
                         }
                     }
