@@ -50,8 +50,8 @@ public abstract class RoomLoader {
     protected final static List<BotLevel> levels = new ArrayList<BotLevel>();
     protected final static Map<String, BotLevel> levelMap = new HashMap<String, BotLevel>();
     private static BotLevel firstLevel = null;
-    private final static List<Panctor> actors = new ArrayList<Panctor>();
-    protected final static List<Panctor> actorsDisplayedDuringChange = new ArrayList<Panctor>();
+    private final static List<Panctor> actors = new ArrayList<Panctor>(); // Cleared when room change starts
+    //protected final static List<Panctor> actorsDisplayedDuringChange = new ArrayList<Panctor>(); // Shouldn't need; extend Extra; isVisibleWhileRoomChanging() 
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
     protected final static List<TileAnimator> animators = new ArrayList<TileAnimator>();
     protected final static Set<StepHandler> stepHandlers = new HashSet<StepHandler>();
@@ -947,7 +947,6 @@ public abstract class RoomLoader {
     private final static void ral(final Segment seg) {
         final Panctor rail = new Rail(seg);
         getLayer().addActor(rail);
-        actorsDisplayedDuringChange.add(rail);
     }
     
     private final static void brr(final Segment seg) {
@@ -1459,7 +1458,7 @@ public abstract class RoomLoader {
         def.lines = seg.getIntArray(3);
     }
     
-    protected final static class Rail extends Panctor {
+    protected final static class Rail extends Extra {
         private final List<RailSection> sections = new ArrayList<RailSection>();
         
         protected Rail(final Segment seg) {
@@ -1480,6 +1479,7 @@ public abstract class RoomLoader {
                     if ((deltaY != 0) && ((endX - startX) != Math.abs(endY - startY))) {
                         throw new IllegalStateException("Bad rail");
                     }
+                    //TODO end cap, attachments to wall
                     if (prevPrevVertex == null) {
                         final int startCapX = startX - 1;
                         if (!Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(startCapX, startY)))) {
@@ -1527,10 +1527,17 @@ public abstract class RoomLoader {
         @Override
         protected final void renderView(final Panderer renderer) {
             final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
             final Panmage image = BotsnBoltsGame.getRail();
             for (final RailSection section : sections) {
-                renderer.render(layer, image, section.x, section.y, BotsnBoltsGame.DEPTH_ABOVE, section.ix, section.iy, 16, 16, 0, section.mirror, false);
+                renderer.render(layer, image, x + section.x, y + section.y, BotsnBoltsGame.DEPTH_ABOVE, section.ix, section.iy, 16, 16, 0, section.mirror, false);
             }
+        }
+        
+        @Override
+        protected final boolean isVisibleWhileRoomChanging() {
+            return true;
         }
     }
     

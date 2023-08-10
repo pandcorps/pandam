@@ -2313,9 +2313,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final List<Panctor> actorsToDestroy = new ArrayList<Panctor>();
         actorsToKeep.add(this);
         actorsToKeep.add(BotsnBoltsGame.tm);
-        actorsToKeep.addAll(RoomLoader.actorsDisplayedDuringChange);
-        actorsToDestroy.addAll(RoomLoader.actorsDisplayedDuringChange);
-        RoomLoader.actorsDisplayedDuringChange.clear();
         if (BotsnBoltsGame.tracked instanceof PlayerMean) {
             actorsToKeep.add(BotsnBoltsGame.tracked);
         }
