@@ -1479,7 +1479,7 @@ public abstract class RoomLoader {
                     if ((deltaY != 0) && ((endX - startX) != Math.abs(endY - startY))) {
                         throw new IllegalStateException("Bad rail");
                     }
-                    //TODO end cap, attachments to wall
+                    //TODO attachments to wall
                     if (prevPrevVertex == null) {
                         final int startCapX = startX - 1;
                         if (!Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(startCapX, startY)))) {
@@ -1487,6 +1487,15 @@ public abstract class RoomLoader {
                                 sections.add(new RailSection(startCapX, startY, 16, 48, false));
                             } else {
                                 sections.add(new RailSection(startCapX, startY, 48, 0, false));
+                            }
+                        }
+                    }
+                    if (nextVertex == null) {
+                        if (!Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(endX, endY)))) {
+                            if (deltaY < 0) {
+                                sections.add(new RailSection(endX, endY, 32, 48, false));
+                            } else {
+                                sections.add(new RailSection(endX, endY, 16, 0, false));
                             }
                         }
                     }
