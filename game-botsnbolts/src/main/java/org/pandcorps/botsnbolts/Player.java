@@ -1226,7 +1226,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         } else if (boardSlope == SLOPE_UP ) {
             final long boardJumpTime = getBoardJumpTime();
             if (boardJumpTime < KICKFLIP_FRAME1) {
-                renderer.render(layer, pi.boardDiagImageTop = Animal.getAnimalImage(pi.boardDiagImageTop, pi, "BoardDiagTop"),
+                renderer.render(layer, pi.boardDiagImageBottom = Animal.getAnimalImage(pi.boardDiagImageBottom, pi, "BoardDiagBottom"),
                         x - (m * 7) - (mirror ? 31 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 0, mirror, false);
             } else if (boardJumpTime < KICKFLIP_FRAME2) {
@@ -1234,7 +1234,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                         x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 3, mirror, true);
             } else if (boardJumpTime < KICKFLIP_FRAME3) {
-                renderer.render(layer, pi.boardDiagImageBottom = Animal.getAnimalImage(pi.boardDiagImageBottom, pi, "BoardDiagBottom"),
+                renderer.render(layer, pi.boardDiagImageTop = Animal.getAnimalImage(pi.boardDiagImageTop, pi, "BoardDiagTop"),
                         x - (m * 7) - (mirror ? 31 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 0, mirror, false);
             } else {
