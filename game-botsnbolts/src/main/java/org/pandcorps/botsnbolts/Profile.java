@@ -478,7 +478,7 @@ public class Profile {
         
         @Override
         public final String[] getTutorial() {
-            return new String[] { "Double-jump to use", "Jump higher from ramps", "Grind rails" };
+            return new String[] { "Double-jump to use", "Grind rails" };
         }
     }
     

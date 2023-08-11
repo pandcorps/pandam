@@ -78,6 +78,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int KICKFLIP_FRAME3 = KICKFLIP_FRAME1 * 3;
     protected final static int VEL_JUMP = 8;
     protected final static float VEL_BOUNCE_BOMB = 7.5f;
+    protected final static float VEL_BOARD_JUMP = 8.75f;
     protected final static int VEL_SPRING = 10;
     protected final static int VEL_BOARD_BUMP = 5;
     private final static int VEL_FALL_PROTECTION = 15;
@@ -428,8 +429,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final boolean onJumpNormal() {
+        return onJumpNormal(VEL_JUMP);
+    }
+    
+    private final boolean onJumpNormal(final float velJump) {
         if (isGrounded()) {
-            startJump();
+            startJump(null, velJump);
             return true;
         } else {
             stateHandler.onAirJump(this);
@@ -448,11 +453,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void startJump(final Carrier jumpStartedOnCarrier) {
+        startJump(jumpStartedOnCarrier, VEL_JUMP);
+    }
+    
+    private final void startJump(final Carrier jumpStartedOnCarrier, final float velJump) {
         this.jumpStartedOnCarrier = jumpStartedOnCarrier;
         if (isOnFallProtectionRow()) {
             v = VEL_FALL_PROTECTION;
         } else {
-            v = VEL_JUMP;
+            v = velJump;
             if (sanded) {
                 v -= 2;
             }
@@ -3141,15 +3150,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static StateHandler BOARD_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
-            /* //TODO
-            if (ascending or just finished ascending) {
-                jumpHigher;
-            } else {
-            */
-                if (player.onJumpNormal()) {
-                    player.lastBoardJump = getClock();
-                }
-            //}
+            if (player.onJumpNormal(VEL_BOARD_JUMP)) {
+                player.lastBoardJump = getClock() + 1;
+            }
         }
         
         @Override
