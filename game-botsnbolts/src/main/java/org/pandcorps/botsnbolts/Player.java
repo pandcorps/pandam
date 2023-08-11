@@ -73,6 +73,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int FROZEN_TIME = 60;
     private final static int BUBBLE_TIME = 60;
     private final static int RUN_TIME = 5;
+    private final static int KICKFLIP_FRAME1 = 3;
+    private final static int KICKFLIP_FRAME2 = KICKFLIP_FRAME1 * 2;
+    private final static int KICKFLIP_FRAME3 = KICKFLIP_FRAME1 * 3;
     protected final static int VEL_JUMP = 8;
     protected final static float VEL_BOUNCE_BOMB = 7.5f;
     protected final static int VEL_SPRING = 10;
@@ -124,6 +127,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastBall = NULL_CLOCK;
     private long lastRightStart = NULL_CLOCK;
     private long lastLeftStart = NULL_CLOCK;
+    private long lastBoardJump = NULL_CLOCK;
     private float hvForced = 0;
     private int wrappedJumps = 0;
     protected Carrier jumpStartedOnCarrier = null;
@@ -423,11 +427,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
-    private final void onJumpNormal() {
+    private final boolean onJumpNormal() {
         if (isGrounded()) {
             startJump();
+            return true;
         } else {
             stateHandler.onAirJump(this);
+            return false;
         }
     }
     
@@ -1218,9 +1224,24 @@ public class Player extends Chr implements Warpable, StepEndListener {
                     x - (m * (17 - boardX)) - (mirror ? 31 : 0), y + 1 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                     0, 0, 32, 32, 0, mirror, false);
         } else if (boardSlope == SLOPE_UP ) {
-            renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
-                    x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
-                    0, 0, 32, 32, 0, mirror, false);
+            final long boardJumpTime = getBoardJumpTime();
+            if (boardJumpTime < KICKFLIP_FRAME1) {
+                renderer.render(layer, pi.boardDiagImageTop = Animal.getAnimalImage(pi.boardDiagImageTop, pi, "BoardDiagTop"),
+                        x - (m * 7) - (mirror ? 31 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        0, 0, 32, 32, 0, mirror, false);
+            } else if (boardJumpTime < KICKFLIP_FRAME2) {
+                renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
+                        x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        0, 0, 32, 32, 3, mirror, true);
+            } else if (boardJumpTime < KICKFLIP_FRAME3) {
+                renderer.render(layer, pi.boardDiagImageBottom = Animal.getAnimalImage(pi.boardDiagImageBottom, pi, "BoardDiagBottom"),
+                        x - (m * 7) - (mirror ? 31 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        0, 0, 32, 32, 0, mirror, false);
+            } else {
+                renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
+                        x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        0, 0, 32, 32, 0, mirror, false);
+            }
         } else if (boardSlope == SLOPE_DOWN ) {
             renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
                     x - (m * 18) - (mirror ? 31 : 0), y - 11, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
@@ -2014,9 +2035,23 @@ public class Player extends Chr implements Warpable, StepEndListener {
         stateHandler = BOARD_HANDLER;
     }
     
+    private final long getBoardJumpTime() {
+        return getClock() - lastBoardJump;
+    }
+    
+    // Called when isGrounded()
+    private final boolean isOnHorizontalRail() {
+        final TileMap tm = BotsnBoltsGame.tm;
+        final Panple pos = getPosition();
+        final float x = pos.getX(), y = pos.getY() - 15;
+        return (Tile.getBehavior(tm.getTile(tm.getContainer(x + getOffLeft(), y))) == BotsnBoltsGame.TILE_RAIL)
+                || (Tile.getBehavior(tm.getTile(tm.getContainer(x + getOffRight(), y))) == BotsnBoltsGame.TILE_RAIL);
+    }
+    
     protected final void endBoard() {
         clearRun();
         offY = 0;
+        lastBoardJump = NULL_CLOCK;
         setH(PLAYER_H);
         if (stateHandler == BOARD_HANDLER) {
             stateHandler = NORMAL_HANDLER;
@@ -3111,7 +3146,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 jumpHigher;
             } else {
             */
-                player.onJumpNormal();
+                if (player.onJumpNormal()) {
+                    player.lastBoardJump = getClock();
+                }
             //}
         }
         
@@ -3187,7 +3224,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
             player.boardX = player.boardY = 0;
             final Panmage view;
             final int slope;
-            if (grounded) {
+            final long boardJumpTime = player.getBoardJumpTime();
+            if (boardJumpTime < KICKFLIP_FRAME3) {
+                slope = SLOPE_UP;
+            } else if (grounded) {
                 slope = player.getMirrorMultiplier() * player.getCurrentSlope();
             } else {
                 if (player.v > 2.75f) {
@@ -3204,8 +3244,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 view = set.jump;
             } else if (slope == SLOPE_DOWN ) {
                 view = set.descend;
+            } else if (grounded) {
+                if (player.isOnHorizontalRail()) {
+                    view = set.jump;
+                    player.boardX = 3;
+                    player.boardY = 2;
+                } else {
+                    view = set.stand;
+                }
             } else {
-                view = grounded ? set.stand : set.jump;
+                view = set.jump;
             }
             player.boardSlope = slope;
             player.changeView(view);
@@ -3522,6 +3570,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final String birdName;
         protected Panmage boardImage = null;
         protected Panmage boardDiagImage = null;
+        protected Panmage boardDiagImageTop = null;
+        protected Panmage boardDiagImageBottom = null;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final PlayerImagesSubSet throwSet,
                                final PlayerImagesSubSet[] wieldSets,

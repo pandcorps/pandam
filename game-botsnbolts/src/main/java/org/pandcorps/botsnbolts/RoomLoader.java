@@ -1474,57 +1474,33 @@ public abstract class RoomLoader {
                     final int endX = vertex.intValue(0), endY = vertex.intValue(1);
                     final int lastX = endX - 1;
                     final int deltaY = (endY > startY) ? 1 : ((endY < startY) ? -1 : 0);
-                    final Integer prevPrevY = (prevPrevVertex == null) ? null : Integer.valueOf(prevPrevVertex.intValue(1));
-                    final Integer nextY = (nextVertex == null) ? null : Integer.valueOf(nextVertex.intValue(1));
                     if ((deltaY != 0) && ((endX - startX) != Math.abs(endY - startY))) {
                         throw new IllegalStateException("Bad rail");
                     }
                     if (prevPrevVertex == null) {
                         final int startCapX = startX - 1;
                         if (!Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(startCapX, startY)))) {
-                            if (deltaY > 0) {
-                                sections.add(new RailSection(startCapX, startY, 16, 48, false));
-                            } else {
-                                sections.add(new RailSection(startCapX, startY, 48, 0, false));
-                            }
+                            sections.add(new RailSection(startCapX, startY, 48, 0, false));
                         }
                     }
                     if (nextVertex == null) {
                         if (!Chr.isAnySolidBehavior(Tile.getBehavior(tm.getTile(endX, endY)))) {
-                            if (deltaY < 0) {
-                                sections.add(new RailSection(endX, endY, 32, 48, false));
-                            } else {
-                                sections.add(new RailSection(endX, endY, 16, 0, false));
-                            }
+                            sections.add(new RailSection(endX, endY, 16, 0, false));
                         }
                     }
                     for (int x = startX, y = startY; x < endX; x++, y += deltaY) {
                         final int iyOff = ((x == startX) || (x == lastX)) ? -16 : 0;
                         if (deltaY == 0) {
                             tm.setBehavior(x, y, BotsnBoltsGame.TILE_RAIL);
-                            if ((x == startX) && (prevPrevY != null) && (prevPrevY.intValue() > startY)) {
-                                sections.add(new RailSection(x, y, 16, 32 + iyOff, true));
-                            } else if ((x == lastX) && (nextY != null) && (nextY.intValue() > endY)) {
-                                sections.add(new RailSection(x, y, 16, 32 + iyOff, false));
-                            } else {
-                                sections.add(new RailSection(x, y, 0, 32 + iyOff, false));
-                            }
+                            sections.add(new RailSection(x, y, 0, 32 + iyOff, false));
                         } else if (deltaY > 0) {
                             tm.setBehavior(x, y + 1, BotsnBoltsGame.TILE_UPSLOPE_RAIL);
                             sections.add(new RailSection(x, y, 32, 32, false));
-                            if (x == lastX) {
-                                sections.add(new RailSection(x, y + 1, 48, 48 + iyOff, false));
-                            } else {
-                                sections.add(new RailSection(x, y + 1, 32, 16 + iyOff, false));
-                            }
+                            sections.add(new RailSection(x, y + 1, 32, 16 + iyOff, false));
                         } else {
                             tm.setBehavior(x, y, BotsnBoltsGame.TILE_DOWNSLOPE_RAIL);
                             sections.add(new RailSection(x, y - 1, 32, 32, true));
-                            if (x == startX) {
-                                sections.add(new RailSection(x, y, 48, 48 + iyOff, true));
-                            } else {
-                                sections.add(new RailSection(x, y, 32, 16 + iyOff, true));
-                            }
+                            sections.add(new RailSection(x, y, 32, 16 + iyOff, true));
                         }
                     }
                 }
@@ -1559,7 +1535,7 @@ public abstract class RoomLoader {
         
         private RailSection(final int x, final int y, final int ix, final int iy, final boolean mirror) {
             this.x = x * BotsnBoltsGame.DIM;
-            this.y = (y * BotsnBoltsGame.DIM) + 4;
+            this.y = (y * BotsnBoltsGame.DIM) + 5;
             this.ix = ix;
             this.iy = iy;
             this.mirror = mirror;
