@@ -742,6 +742,10 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img playerProjectile = null;
     private static Img playerProjectile2 = null;
     private static Img[] playerProjectile3 = null;
+    private static Img playerExhaust1 = null;
+    private static Img playerExhaust2 = null;
+    private static Img playerExhaustDiag1 = null;
+    private static Img playerExhaustDiag2 = null;
     private static Img[] playerBurst = null;
     private static Img[] playerCharge = null;
     private static Img[] playerChargeVert = null;
@@ -777,6 +781,10 @@ public final class BotsnBoltsGame extends BaseGame {
         playerProjectile = Imtil.load(pre + "Projectile.png", false);
         playerProjectile2 = Imtil.load(pre + "Projectile2.png", false);
         playerProjectile3 = Imtil.loadStrip(pre + "Projectile3.png", 32, false);
+        playerExhaust1 = Imtil.load(pre + "Exhaust1.png", false);
+        playerExhaust2 = Imtil.load(pre + "Exhaust2.png", false);
+        playerExhaustDiag1 = Imtil.load(pre + "ExhaustDiag1.png", false);
+        playerExhaustDiag2 = Imtil.load(pre + "ExhaustDiag2.png", false);
         playerBurst = Imtil.loadStrip(pre + "Burst.png", 16, false);
         playerCharge = Imtil.loadStrip(pre + "Charge.png", 8, false);
         playerChargeVert = Imtil.loadStrip(pre + "ChargeVert.png", 8, false);
@@ -831,6 +839,10 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(playerProjectile, f);
         Imtil.filterImg(playerProjectile2, f);
         filterImgs(playerProjectile3, f);
+        Imtil.filterImg(playerExhaust1, f);
+        Imtil.filterImg(playerExhaust2, f);
+        Imtil.filterImg(playerExhaustDiag1, f);
+        Imtil.filterImg(playerExhaustDiag2, f);
         filterImgs(playerBurst, f);
         filterImgs(playerCharge, f);
         filterImgs(playerChargeVert, f);
@@ -870,6 +882,14 @@ public final class BotsnBoltsGame extends BaseGame {
         playerProjectile2 = null;
         Img.close(playerProjectile3);
         playerProjectile3 = null;
+        playerExhaust1.close();
+        playerExhaust1 = null;
+        playerExhaust2.close();
+        playerExhaust2 = null;
+        playerExhaustDiag1.close();
+        playerExhaustDiag1 = null;
+        playerExhaustDiag2.close();
+        playerExhaustDiag2 = null;
         Img.close(playerBurst);
         playerBurst = null;
         Img.close(playerCharge);
@@ -1007,6 +1027,10 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage basicProjectile = (src == null) ? engine.createImage(pre + "Projectile", new FinPanple2(3, 3), new FinPanple2(-3, -2), new FinPanple2(5, 3), playerProjectile) : src.basicProjectile;
         final Panimation projectile2 = (src == null) ? newFlipper(pre + "Projectile2", playerProjectile2, new FinPanple2(7, 7), new FinPanple2(-4, -5), new FinPanple2(8, 6), 4) : src.projectile2;
         final Panimation projectile3 = (src == null) ? createAnm(pre + "Projectile3", 2, new FinPanple2(23, 7), new FinPanple2(-6, -7), new FinPanple2(8, 8), playerProjectile3) : src.projectile3;
+        final Panmage exhaust1 = (src == null) ? engine.createImage(pre + "Exhaust1", null, null, null, playerExhaust1) : src.exhaust1;
+        final Panmage exhaust2 = (src == null) ? engine.createImage(pre + "Exhaust2", null, null, null, playerExhaust2) : src.exhaust2;
+        final Panmage exhaustDiag1 = (src == null) ? engine.createImage(pre + "ExhaustDiag1", null, null, null, playerExhaustDiag1) : src.exhaustDiag1;
+        final Panmage exhaustDiag2 = (src == null) ? engine.createImage(pre + "ExhaustDiag2", null, null, null, playerExhaustDiag2) : src.exhaustDiag2;
         final Panimation burst = (src == null) ? newAnimation(pre + "Burst", playerBurst, CENTER_16, new FinPanple2(-10, -10), new FinPanple2(10, 10), 2) : src.burst;
         final Panimation charge = (src == null) ? newAnimation(pre + "Charge", playerCharge, null, 1) : src.charge;
         final Panple oChargeVert = new FinPanple2(4, 0);
@@ -1146,7 +1170,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImages pi;
         pi = new PlayerImages(basicSet, shootSet, throwSet, wieldSets, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
-            swordHoriz, swordDiag, swordBack, swordTrails, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
+            swordHoriz, swordDiag, swordBack, swordTrails, exhaust1, exhaust2, exhaustDiag1, exhaustDiag2, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;
     }

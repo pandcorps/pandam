@@ -341,9 +341,11 @@ public class PandScaler extends Scaler {
     
     public final static void main(final String[] args) {
         try {
-            final String name = args[0];
+            final String name = args[0], outName = name + ".Pand.png";
+            System.out.println("Scaling " + name);
             final PandScaler scaler = new PandScaler();
-            Imtil.save(scaler.scale(Imtil.load(name)), name + ".Pand.png");
+            Imtil.save(scaler.scale(Imtil.load(name)), outName);
+            System.out.println("Finished scaling to " + outName);
         } catch (final Throwable e) {
             e.printStackTrace();
         }

@@ -1230,6 +1230,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final boolean mirror = isMirror();
         final int m = getMirrorMultiplier(mirror);
         renderer.render(layer, (Panmage) getCurrentDisplay(), x, y + BOARD_Y_OFF, pos.getZ(), 0, mirror, false);
+        final long exhaustIndex = (getClock() % 6) / 2;
         if (boardSlope == SLOPE_NONE) {
             if (getBoardTime() < BOARD_START_TIME) {
                 renderer.render(layer, pi.materialize.getFrames()[0].getImage(),
@@ -1239,6 +1240,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 renderer.render(layer, pi.boardImage = Animal.getAnimalImage(pi.boardImage, pi, "Board"),
                         x - (m * (17 - boardX)) - (mirror ? 31 : 0), y + 1 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 0, mirror, false);
+                if (exhaustIndex == 1) {
+                    renderer.render(layer, pi.exhaust1, x - (m * (20 - boardX)) - (mirror ? 3 : 0), y + 3 + boardY, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+                } else if (exhaustIndex == 2) {
+                    renderer.render(layer, pi.exhaust2, x - (m * (22 - boardX)) - (mirror ? 7 : 0), y + 1 + boardY, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
+                }
             }
         } else if (boardSlope == SLOPE_UP ) {
             final long boardJumpTime = getBoardJumpTime();
@@ -1246,23 +1252,50 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 renderer.render(layer, pi.boardDiagImageBottom = Animal.getAnimalImage(pi.boardDiagImageBottom, pi, "BoardDiagBottom"),
                         x - (m * 7) - (mirror ? 31 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 0, mirror, false);
+                renderDoubleExhaust(renderer, layer, exhaustIndex, x, y, m, mirror);
             } else if (boardJumpTime < KICKFLIP_FRAME2) {
                 renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
                         x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 3, mirror, true);
+                if (exhaustIndex == 1) {
+                    renderer.render(layer, pi.exhaustDiag1, x - (m * (8 - boardX)) - (mirror ? 3 : 0), y - 2, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+                } else if (exhaustIndex == 2) {
+                    renderer.render(layer, pi.exhaustDiag2, x - (m * (11 - boardX)) - (mirror ? 7 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
+                }
             } else if (boardJumpTime < KICKFLIP_FRAME3) {
                 renderer.render(layer, pi.boardDiagImageTop = Animal.getAnimalImage(pi.boardDiagImageTop, pi, "BoardDiagTop"),
                         x - (m * 7) - (mirror ? 31 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 0, mirror, false);
+                renderDoubleExhaust(renderer, layer, exhaustIndex, x, y, m, mirror);
             } else {
                 renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
                         x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 0, mirror, false);
+                if (exhaustIndex == 1) {
+                    renderer.render(layer, pi.exhaustDiag1, x - (m * (5 - boardX)) - (mirror ? 3 : 0), y - 5, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+                } else if (exhaustIndex == 2) {
+                    renderer.render(layer, pi.exhaustDiag2, x - (m * (7 - boardX)) - (mirror ? 7 : 0), y - 8, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
+                }
             }
         } else if (boardSlope == SLOPE_DOWN ) {
             renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
                     x - (m * 18) - (mirror ? 31 : 0), y - 11, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                     0, 0, 32, 32, 3, mirror, false);
+            if (exhaustIndex == 1) {
+                renderer.render(layer, pi.exhaustDiag1, x - (m * (20 - boardX)) - (mirror ? 3 : 0), y + 16, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 3, mirror, false);
+            } else if (exhaustIndex == 2) {
+                renderer.render(layer, pi.exhaustDiag2, x - (m * (23 - boardX)) - (mirror ? 7 : 0), y + 14, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 3, mirror, false);
+            }
+        }
+    }
+    
+    private final void renderDoubleExhaust(final Panderer renderer, final Panlayer layer, final long exhaustIndex, final float x, final float y, final int m, final boolean mirror) {
+        if (exhaustIndex == 1) {
+            renderer.render(layer, pi.exhaustDiag1, x - (m * (9 - boardX)) - (mirror ? 3 : 0), y - 1, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+            renderer.render(layer, pi.exhaustDiag1, x - (m * (4 - boardX)) - (mirror ? 3 : 0), y - 6, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+        } else if (exhaustIndex == 2) {
+            renderer.render(layer, pi.exhaustDiag2, x - (m * (12 - boardX)) - (mirror ? 7 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
+            renderer.render(layer, pi.exhaustDiag2, x - (m * (6 - boardX)) - (mirror ? 7 : 0), y - 9, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
         }
     }
     
@@ -2048,7 +2081,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         clearDash();
         clearStream();
         offY = BOARD_Y_OFF;
-        boardSlope = 0;
+        boardSlope = SLOPE_NONE;
         lastBoardStart = getClock() + 1;
         stateHandler = BOARD_HANDLER;
     }
@@ -3562,6 +3595,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panmage swordDiag;
         protected final Panmage swordBack;
         protected final Panmage[] swordTrails;
+        protected final Panmage exhaust1;
+        protected final Panmage exhaust2;
+        protected final Panmage exhaustDiag1;
+        protected final Panmage exhaustDiag2;
         protected final Panimation burst;
         private final Panframe[] ball;
         protected final Panmage slide;
@@ -3599,6 +3636,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panmage[] plasma, Panmage shieldVert, Panmage shieldDiag, Panmage shieldCircle,
                                final Panmage swordHoriz, final Panmage swordDiag, final Panmage swordBack, final Panmage[] swordTrails,
+                               final Panmage exhaust1, final Panmage exhaust2, final Panmage exhaustDiag1, final Panmage exhaustDiag2,
                                final Panimation burst, final Panframe[] ball, final Panmage slide,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
@@ -3631,6 +3669,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.swordDiag = swordDiag;
             this.swordBack = swordBack;
             this.swordTrails = swordTrails;
+            this.exhaust1 = exhaust1;
+            this.exhaust2 = exhaust2;
+            this.exhaustDiag1 = exhaustDiag1;
+            this.exhaustDiag2 = exhaustDiag2;
             this.burst = burst;
             this.ball = ball;
             this.slide = slide;
