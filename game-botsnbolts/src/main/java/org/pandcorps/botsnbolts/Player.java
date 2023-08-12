@@ -1894,6 +1894,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void endWallGrab() {
+        setMirror(-getMirrorMultiplier());
         stateHandler = NORMAL_HANDLER;
     }
     
