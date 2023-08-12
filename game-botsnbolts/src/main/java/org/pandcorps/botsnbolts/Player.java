@@ -1232,7 +1232,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         renderer.render(layer, (Panmage) getCurrentDisplay(), x, y + BOARD_Y_OFF, pos.getZ(), 0, mirror, false);
         final long exhaustIndex = (getClock() % 6) / 2;
         if (boardSlope == SLOPE_NONE) {
-            if (getBoardTime() < BOARD_START_TIME) {
+            final long boardTime = getBoardTime();
+            if (boardTime == 0) {
+                Warp.renderWarp(renderer, layer, pi, x + (m * (3 + boardX)) + (mirror ? 3 : 0), y + 43, BotsnBoltsGame.DEPTH_PLAYER_FRONT);
+            } else if (boardTime == 1) {
+                Warp.renderWarp(renderer, layer, pi, x + (m * (3 + boardX)) + (mirror ? 3 : 0), y + 11, BotsnBoltsGame.DEPTH_PLAYER_FRONT);
+            }
+            if (boardTime < BOARD_START_TIME) {
                 renderer.render(layer, pi.materialize.getFrames()[0].getImage(),
                         x - (m * (14 - boardX)) - (mirror ? 31 : 0), y + 3 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
                         0, 0, 32, 32, 0, mirror, false);
@@ -4402,13 +4408,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void renderView(final Panderer renderer) {
-            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            renderWarp(renderer, getLayer(), pi, pos.getX(), pos.getY(), pos.getZ());
+        }
+        
+        protected final static void renderWarp(final Panderer renderer, final Panlayer layer, final PlayerImages pi, final float x, final float y, final float z) {
             if (layer == null) {
                 return;
             }
             final Panmage img = pi.warp;
-            final Panple pos = getPosition();
-            final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
             for (int i = 0; i < 4; i++) {
                 renderer.render(layer, img, x, y + (i * 8), z);
             }
