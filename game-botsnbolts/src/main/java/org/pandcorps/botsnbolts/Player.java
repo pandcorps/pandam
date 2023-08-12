@@ -73,6 +73,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int FROZEN_TIME = 60;
     private final static int BUBBLE_TIME = 60;
     private final static int RUN_TIME = 5;
+    private final static int BOARD_START_TIME = 5;
     private final static int KICKFLIP_FRAME1 = 3;
     private final static int KICKFLIP_FRAME2 = KICKFLIP_FRAME1 * 2;
     private final static int KICKFLIP_FRAME3 = KICKFLIP_FRAME1 * 3;
@@ -128,6 +129,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastBall = NULL_CLOCK;
     private long lastRightStart = NULL_CLOCK;
     private long lastLeftStart = NULL_CLOCK;
+    private long lastBoardStart = NULL_CLOCK;
     private long lastBoardJump = NULL_CLOCK;
     private float hvForced = 0;
     private int wrappedJumps = 0;
@@ -1229,9 +1231,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final int m = getMirrorMultiplier(mirror);
         renderer.render(layer, (Panmage) getCurrentDisplay(), x, y + BOARD_Y_OFF, pos.getZ(), 0, mirror, false);
         if (boardSlope == SLOPE_NONE) {
-            renderer.render(layer, pi.boardImage = Animal.getAnimalImage(pi.boardImage, pi, "Board"),
-                    x - (m * (17 - boardX)) - (mirror ? 31 : 0), y + 1 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
-                    0, 0, 32, 32, 0, mirror, false);
+            if (getBoardTime() < BOARD_START_TIME) {
+                renderer.render(layer, pi.materialize.getFrames()[0].getImage(),
+                        x - (m * (14 - boardX)) - (mirror ? 31 : 0), y + 3 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        0, 0, 32, 32, 0, mirror, false);
+            } else {
+                renderer.render(layer, pi.boardImage = Animal.getAnimalImage(pi.boardImage, pi, "Board"),
+                        x - (m * (17 - boardX)) - (mirror ? 31 : 0), y + 1 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        0, 0, 32, 32, 0, mirror, false);
+            }
         } else if (boardSlope == SLOPE_UP ) {
             final long boardJumpTime = getBoardJumpTime();
             if (boardJumpTime < KICKFLIP_FRAME1) {
@@ -2041,7 +2049,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
         clearStream();
         offY = BOARD_Y_OFF;
         boardSlope = 0;
+        lastBoardStart = getClock() + 1;
         stateHandler = BOARD_HANDLER;
+    }
+    
+    private final long getBoardTime() {
+        return getClock() - lastBoardStart;
     }
     
     private final long getBoardJumpTime() {
@@ -3227,8 +3240,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
             player.boardX = player.boardY = 0;
             final Panmage view;
             final int slope;
-            final long boardJumpTime = player.getBoardJumpTime();
-            if (boardJumpTime < KICKFLIP_FRAME3) {
+            if (player.getBoardTime() < BOARD_START_TIME) {
+                slope = SLOPE_NONE;
+            } else if (player.getBoardJumpTime() < KICKFLIP_FRAME3) {
                 slope = SLOPE_UP;
             } else if (grounded) {
                 slope = player.getMirrorMultiplier() * player.getCurrentSlope();
