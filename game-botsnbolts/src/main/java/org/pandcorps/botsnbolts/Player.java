@@ -143,6 +143,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastSanded = NULL_CLOCK;
     private int queuedX = 0;
     private boolean air = false;
+    private boolean jumping = false;
     private int wallTimer = 0;
     private int slideTimer = 0;
     private boolean wallMirror = false;
@@ -469,6 +470,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
         }
         lastJump = getClock();
+        jumping = true;
         BotsnBoltsGame.fxJump.startSound();
     }
     
@@ -1701,6 +1703,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         jumpStartedOnCarrier = null;
         walkedOffCarrier = null;
         air = false;
+        jumping = false;
     }
     
     private final void onGroundedNormal() {
@@ -2084,6 +2087,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void startBoard() {
+        destroySpring();
         clearDash();
         clearStream();
         offY = BOARD_Y_OFF;
@@ -3209,9 +3213,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onAirJump(final Player player) {
-            //TODO if tapped jump twice very quickly, ignore second jump
-            //TODO otherwise, if was recently grounded (pressed jump right after passing edge), allow an air jump
-            player.endBoard();
+            if (player.jumping) { // Player intentionally jumped and pressed jump again to stop using the board
+                player.endBoard();
+            } else { // Player fell off edge, hasn't jumped yet, so allow the jump
+                player.startJump(null, VEL_BOARD_JUMP);
+            }
         }
         
         @Override
