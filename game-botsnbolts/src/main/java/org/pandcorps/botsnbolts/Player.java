@@ -648,10 +648,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     @Override
     protected final void setMirror(final int v) {
+        setMirror(v, true);
+    }
+    
+    protected final void setMirror(final int v, final boolean onMirrorNeeded) {
         final boolean oldMirror = isMirror();
         super.setMirror(v);
         if (oldMirror != isMirror()) {
-            onMirror();
+            if (onMirrorNeeded) {
+                onMirror();
+            }
             fixX();
         }
     }
@@ -1902,7 +1908,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void endWallGrab() {
-        setMirror(-getMirrorMultiplier());
+        setMirror(-getMirrorMultiplier(), false);
+        setView(getCurrentImagesSubSet().stand);
         stateHandler = NORMAL_HANDLER;
     }
     
