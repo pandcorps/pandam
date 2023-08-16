@@ -1003,6 +1003,177 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    protected final static class Turtle extends Boss implements StepEndListener {
+        private static Panmage still = null;
+        private static Panmage head = null;
+        private static Panmage headAttack = null;
+        private static Panmage sphere = null;
+        private static Panmage foot = null;
+        //bodyPosition = Panctor.getPosition();
+        final Panple farFootPosition = new ImplPanple(); // Can just render feet
+        final Panple nearFootPosition = new ImplPanple();
+        final Panple headOffsets = new ImplPanple(); // Don't just render, use separate actors with own hit boxes to block shots to chest
+        final List<TurtleHeadComponent> headComponents = new ArrayList<TurtleHeadComponent>(3); // Head and neck
+        
+        protected Turtle(final Segment seg) {
+            super(0, 0, seg);
+            setView(getStill());
+            setMirror(false);
+            final Panple pos = getPosition();
+            pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+            addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT); // Neck sphere closest to body
+            addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_2);
+            addHeadComponent(getHead(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_3); // Head
+            final float x = pos.getX(), y = pos.getY();
+            farFootPosition.set(x - 16, y);
+            nearFootPosition.set(x + 20, y);
+            headOffsets.set(-32, 80);
+        }
+        
+        private final void addHeadComponent(final Panmage img, final float z) {
+            final TurtleHeadComponent headComponent = new TurtleHeadComponent(img);
+            headComponent.getPosition().setZ(z);
+            addActor(headComponent);
+            headComponents.add(headComponent);
+        }
+        
+        @Override
+        protected final int getInitialOffsetX() {
+            return 0;
+        }
+        
+        @Override
+        protected final boolean isHealthMeterNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean isDropNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final void onBossDefeat() {
+            //Player.startDefeatTimer(null);
+            Fort.burst(BotsnBoltsGame.enemyBurst, 342, 382, 56, 184, 10); //TODO range
+        }
+        
+        @Override
+        protected final boolean isDefeatOrbNeeded() {
+            return false;
+        }
+        
+        @Override
+        public final void onAward(final Player player) {
+            clearPlayerExtras();
+            player.startScript(new LeftAi(32.0f), new Runnable() {
+                @Override public final void run() {
+                    //new Warp(getNextBoss(20, 3));
+                }});
+        }
+        
+        /*
+        protected AiBoss getNextBoss(final int x, final int y) {
+            return new Transient(x, y);
+        }
+        */
+        
+        @Override
+        protected final boolean onWaiting() {
+            return true;
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            return true;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return true;
+        }
+        
+        @Override
+        protected boolean onStepBoss() {
+            return false;
+        }
+        
+        @Override
+        public final void onStepEnd(final StepEndEvent event) {
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            final float hbx = x + 16, hby = y + 64;
+            final int numHeadComponents = headComponents.size();
+            final float hox = headOffsets.getX(), hoy = headOffsets.getY();
+            for (int i = 0; i < numHeadComponents; i++) {
+                float m = (i + 1);
+                m /= numHeadComponents;
+                headComponents.get(i).getPosition().set(hbx + (hox * m), hby + (hoy * m));
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            final Panlayer layer = getLayer();
+            renderer.render(layer, getFoot(), farFootPosition.getX(), farFootPosition.getY(), BotsnBoltsGame.DEPTH_ENEMY_BACK_3, 0, 0, 32, 32, 0, false, false);
+            renderer.render(layer, getSphere(), farFootPosition.getX() + 8, farFootPosition.getY() + 8, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 32, 32, 1, false, true);
+            renderer.render(layer, getFoot(), nearFootPosition.getX(), nearFootPosition.getY(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_3, 0, 0, 32, 32, 0, false, false);
+            renderer.render(layer, getSphere(), nearFootPosition.getX() + 8, nearFootPosition.getY() + 8, BotsnBoltsGame.DEPTH_ENEMY_FRONT_2, 0, 0, 32, 32, 1, false, true);
+        }
+        
+        @Override
+        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+            return prj.getPosition().getY() < (getPosition().getY() + 48.0f);
+        }
+        
+        @Override
+        protected final Panmage getStill() {
+            if (still != null) {
+                return still;
+            }
+            return (still = getImage(still, "turtle/TurtleBody", null, null, new FinPanple2(128, 88)));
+        }
+        
+        protected final static Panmage getHead() {
+            return (head = getImage(head, "turtle/TurtleHead", BotsnBoltsGame.CENTER_32, BotsnBoltsGame.MIN_32, BotsnBoltsGame.MAX_32));
+        }
+        
+        protected final static Panmage getHeadAttack() {
+            return (headAttack = getImage(headAttack, "turtle/TurtleHeadAttack", BotsnBoltsGame.CENTER_32, BotsnBoltsGame.MIN_32, BotsnBoltsGame.MAX_32));
+        }
+        
+        protected final static Panmage getSphere() {
+            return (sphere = getImage(sphere, "turtle/TurtleSphere", BotsnBoltsGame.CENTER_32, BotsnBoltsGame.MIN_32, BotsnBoltsGame.MAX_32));
+        }
+        
+        protected final static Panmage getFoot() {
+            return (foot = getImage(foot, "turtle/TurtleFoot", BotsnBoltsGame.CENTER_32, BotsnBoltsGame.MIN_32, BotsnBoltsGame.MAX_32)); // Only rendered, not an actor, so max doesn't matter
+        }
+    }
+    
+    protected final static class TurtleHeadComponent extends Enemy {
+        protected TurtleHeadComponent(final Panmage img) {
+            super(0, 32, 0, 0, 1);
+            setView(img);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            return true;
+        }
+        
+        @Override
+        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+            return false;
+        }
+        
+        @Override
+        protected int getDamage() {
+            return DAMAGE;
+        }
+    }
+    
     protected final static int VOLCANO_OFF_X = 20, VOLCANO_H = 40;
     protected final static Panple VOLCANO_O = new FinPanple2(26, 1);
     protected final static Panple VOLCANO_MIN = getMin(VOLCANO_OFF_X);

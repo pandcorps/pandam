@@ -103,21 +103,24 @@ public final class BotsnBoltsGame extends BaseGame {
     protected final static int DEPTH_PLAYER_BACK = 20;
     protected final static int DEPTH_PLAYER = 22;
     protected final static int DEPTH_PLAYER_FRONT = 24;
-    protected final static int DEPTH_ENEMY_BACK_2 = 26;
-    protected final static int DEPTH_ENEMY_BACK = 28;
-    protected final static int DEPTH_ENEMY = 30;
-    protected final static int DEPTH_ENEMY_FRONT = 32;
-    protected final static int DEPTH_PROJECTILE = 34;
-    protected final static int DEPTH_OVERLAY = 36;
-    protected final static int DEPTH_BURST = 74;
-    protected final static int DEPTH_DIALOGUE_BOX = 76;
-    protected final static int DEPTH_DIALOGUE_TEXT = 78;
-    protected final static int DEPTH_HUD = 80;
-    protected final static int DEPTH_HUD_TEXT = 82;
-    protected final static int DEPTH_HUD_OVERLAY = 84;
+    protected final static int DEPTH_ENEMY_BACK_3 = 26;
+    protected final static int DEPTH_ENEMY_BACK_2 = 28;
+    protected final static int DEPTH_ENEMY_BACK = 30;
+    protected final static int DEPTH_ENEMY = 32;
+    protected final static int DEPTH_ENEMY_FRONT = 34;
+    protected final static int DEPTH_ENEMY_FRONT_2 = 36;
+    protected final static int DEPTH_ENEMY_FRONT_3 = 38;
+    protected final static int DEPTH_PROJECTILE = 40;
+    protected final static int DEPTH_OVERLAY = 42;
+    protected final static int DEPTH_BURST = 86;
+    protected final static int DEPTH_DIALOGUE_BOX = 88;
+    protected final static int DEPTH_DIALOGUE_TEXT = 90;
+    protected final static int DEPTH_HUD = 92;
+    protected final static int DEPTH_HUD_TEXT = 94;
+    protected final static int DEPTH_HUD_OVERLAY = 96;
     protected final static byte Z_OFF_OVERLAY = 2;
     protected final static byte Z_OFF_TEXT = 4;
-    protected final static int DEPTH_CURSOR = 86;
+    protected final static int DEPTH_CURSOR = 98;
     
     protected final static int MAX_CAMERA_SPEED = 10;
     
