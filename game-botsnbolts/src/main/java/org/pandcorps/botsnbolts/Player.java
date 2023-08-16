@@ -1881,9 +1881,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return isUpgradeAvailable(Profile.UPGRADE_WALL_GRAB);
     }
     
-    protected final void startWallGrab() {
+    protected final boolean startWallGrab() {
         if (!isWallGrabAvailable()) {
-            return;
+            return false;
         }
         clearRun();
         v = 0.0f;
@@ -1891,6 +1891,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         stateHandler = WALL_GRAB_HANDLER;
         resetStream();
         changeView(pi.basicSet.wallGrab);
+        return true;
+    }
+    
+    protected final boolean startWallGrabIfPossible() {
+        if (isWallGrabAvailable() && !isGrounded() && isWallToGrab()) {
+            return startWallGrab();
+        }
+        return false;
     }
     
     protected final void endWallGrab() {
@@ -2685,8 +2693,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if (player.triggerBossDoor()) {
                 return;
             } else if (player.wallTimer == 0 && xResult == X_WALL) {
-                if (player.isWallGrabAvailable() && !player.isGrounded() && player.isWallToGrab() && player.isReadyToGrabWall() && !player.isTouchingLadder()) {
-                    player.startWallGrab();
+                if (player.isReadyToGrabWall() && !player.isTouchingLadder() && player.startWallGrabIfPossible()) {
                     return;
                 }
                 player.wallTimer = 1;
@@ -3335,6 +3342,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void onWall(final Player player, final byte xResult) {
             player.endBoard();
+            if (player.startWallGrabIfPossible()) {
+                return;
+            } else if (player.isGrounded()) {
+                return;
+            }
             player.v = Math.max(player.v, VEL_BOARD_BUMP);
         }
     };
