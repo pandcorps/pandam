@@ -1007,6 +1007,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_DRAG = 1;
         protected final static byte STATE_STEP_FAR = 2;
         protected final static byte STATE_STEP_NEAR = 3;
+        protected final static byte STATE_EMIT_FROM_POWER_SOURCE = 4; // Emit a simple projectile from the underside's power source
+        protected final static byte STATE_SPAWN_PESTS = 5; // Spawn enemies to distract Player
+        protected final static byte STATE_LOB_TO_LURE = 6; // Lob projectiles to far side of screen, slower each time, to lure Player closer
+        protected final static byte STATE_BITE = 7; // Lunge forward to bite if Player is in range
+        protected final static byte STATE_CRUSH = 8; // Drop down if Player is underneath
+        protected final static byte STATE_BLOCK = 8; // Lower head to defend underside
+        protected final static byte STATE_CHARGE = 9; // Eyes start to glow while gathering energy to charge beam attack
+        protected final static byte STATE_BEAM = 10;
         protected final static int WAIT_WALK = 24;
         protected final static int SPEED_WALK = 3;
         
@@ -1035,11 +1043,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT); // Neck sphere closest to body
             addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_2);
             addHeadComponent(getHead(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_3); // Head
-            final float x = pos.getX(), y = pos.getY();
-            farFootPosition.set(x - 21, y);
-            nearFootPosition.set(x + 16, y);
+            final float x = pos.getX(), y = pos.getY(), footY = y - 1;
+            farFootPosition.set(x - 21, footY);
+            nearFootPosition.set(x + 16, footY);
             headOffsets.set(-48, 16);
-            pos.addY(26);
+            pos.addY(25);
         }
         
         private final void addHeadComponent(final Panmage img, final float z) {
@@ -1143,6 +1151,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         */
         
         @Override
+        protected final boolean getTauntingReturnValue() {
+            return true;
+        }
+        
+        @Override
         protected final boolean onWaiting() {
             if (state == STATE_DRAG) {
                 onDragging();
@@ -1150,13 +1163,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 onSteppingFar();
             } else if (state == STATE_STEP_NEAR) {
                 onSteppingNear();
+            } else if ((state == STATE_EMIT_FROM_POWER_SOURCE) && (waitCounter == 1)) {
+                CyanEnemy.shoot(this, 17, 24, false);
             }
             return true;
         }
         
         @Override
         protected final boolean pickState() {
+            startEmitFromPowerSource();
             return true;
+        }
+        
+        protected final void startEmitFromPowerSource() {
+            startState(STATE_EMIT_FROM_POWER_SOURCE, 15, getStill());
         }
 
         @Override
@@ -1177,13 +1197,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
                         startDrag();
                     } else {
                         setPlayerActive(true);
-                        finishTaunt();
+                        tauntState = TAUNT_FINISHED;
+                        health = HudMeter.MAX_VALUE;
+                        startStill();
                     }
                     break;
                 default :
-                    throw new IllegalStateException("Unexpected state " + state);
+                    startStill();
             }
             return true;
+        }
+        
+        @Override
+        protected int getDamage() {
+            return (state == STATE_CRUSH) ? 8 : DAMAGE;
         }
         
         @Override
@@ -1220,9 +1247,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 final float mx = (i + 1.0f) / 3.0f;
                 final float my = (i + 1.0f) * 2.0f / 5.0f;
                 renderer.render(layer, sphere, farShoulderX + ((farFootX - farShoulderX) * mx), shoulderY + ((farFootY - shoulderY) * my),
-                        BotsnBoltsGame.DEPTH_ENEMY_BACK - (2 * i), 0, 0, 32, 32, 1, false, true);
+                        BotsnBoltsGame.DEPTH_ENEMY_BG - (2 * i), 0, 0, 32, 32, 1, false, true);
             }
-            renderer.render(layer, foot, farFootX, farFootY, BotsnBoltsGame.DEPTH_ENEMY_BACK_3, 0, 0, 32, 32, 0, false, false);
+            renderer.render(layer, foot, farFootX, farFootY, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 32, 32, 0, false, false);
             
             final float nearFootX = nearFootPosition.getX(), nearFootY = nearFootPosition.getY();
             final float nearShoulderX = x + 41;
