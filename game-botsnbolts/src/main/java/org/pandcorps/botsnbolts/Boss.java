@@ -1004,6 +1004,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static class Turtle extends Boss implements StepEndListener {
+        protected final static byte STATE_DRAG = 1;
+        protected final static byte STATE_STEP_FAR = 2;
+        protected final static byte STATE_STEP_NEAR = 3;
+        protected final static int WAIT_WALK = 24;
+        protected final static int SPEED_WALK = 3;
+        
         private static Panmage still = null;
         private static Panmage head = null;
         private static Panmage headAttack = null;
@@ -1014,6 +1020,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         final Panple nearFootPosition = new ImplPanple();
         final Panple headOffsets = new ImplPanple(); // Don't just render, use separate actors with own hit boxes to block shots to chest
         final List<TurtleHeadComponent> headComponents = new ArrayList<TurtleHeadComponent>(3); // Head and neck
+        private Panple stepPosition = null;
+        private float stepMinY = 0;
+        private float stepVerticalVelocity = 0;
+        private final float stepVerticalAcceleration = -0.325f;
+        private int initialStepsRequired = 2;
         
         protected Turtle(final Segment seg) {
             super(0, 0, seg);
@@ -1025,9 +1036,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_2);
             addHeadComponent(getHead(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_3); // Head
             final float x = pos.getX(), y = pos.getY();
-            farFootPosition.set(x - 17, y);
-            nearFootPosition.set(x + 20, y);
-            headOffsets.set(-32, 32);
+            farFootPosition.set(x - 21, y);
+            nearFootPosition.set(x + 16, y);
+            headOffsets.set(-48, 16);
+            pos.addY(26);
         }
         
         private final void addHeadComponent(final Panmage img, final float z) {
@@ -1050,6 +1062,58 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean isDropNeeded() {
             return false;
+        }
+        
+        @Override
+        protected final void taunt() {
+            setPlayerActive(false);
+            startDrag();
+        }
+        
+        protected final void startWalk(final byte state, final Panple stepPosition) {
+            startState(state, WAIT_WALK, getStill());
+            this.stepPosition = stepPosition;
+            stepMinY = stepPosition.getY();
+            stepVerticalVelocity = 4;
+        }
+        
+        protected final void onWalking() {
+            stepPosition.addX(-SPEED_WALK);
+            float y = stepPosition.getY() + stepVerticalVelocity;
+            if (y < stepMinY) {
+                y = stepMinY;
+            } else {
+                stepVerticalVelocity += stepVerticalAcceleration;
+            }
+            stepPosition.setY(y);
+        }
+        
+        protected final void startDrag() {
+            startWalk(STATE_DRAG, getPosition());
+        }
+        
+        protected final void onDragging() {
+            onWalking();
+        }
+        
+        protected final void startStepFar() {
+            startWalk(STATE_STEP_FAR, farFootPosition);
+        }
+        
+        protected final void onSteppingFar() {
+            onWalking();
+        }
+        
+        protected final void startStepNear() {
+            startWalk(STATE_STEP_NEAR, nearFootPosition);
+        }
+        
+        protected final void onSteppingNear() {
+            onWalking();
+        }
+        
+        protected final void finishWalkingStep() {
+            stepPosition.setY(stepMinY);
         }
         
         @Override
@@ -1080,6 +1144,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean onWaiting() {
+            if (state == STATE_DRAG) {
+                onDragging();
+            } else if (state == STATE_STEP_FAR) {
+                onSteppingFar();
+            } else if (state == STATE_STEP_NEAR) {
+                onSteppingNear();
+            }
             return true;
         }
         
@@ -1090,6 +1161,28 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final boolean continueState() {
+            switch (state) {
+                case STATE_DRAG :
+                    finishWalkingStep();
+                    startStepFar();
+                    break;
+                case STATE_STEP_FAR :
+                    finishWalkingStep();
+                    startStepNear();
+                    break;
+                case STATE_STEP_NEAR :
+                    finishWalkingStep();
+                    initialStepsRequired--;
+                    if (initialStepsRequired > 0) {
+                        startDrag();
+                    } else {
+                        setPlayerActive(true);
+                        finishTaunt();
+                    }
+                    break;
+                default :
+                    throw new IllegalStateException("Unexpected state " + state);
+            }
             return true;
         }
         
