@@ -1025,9 +1025,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
             addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_2);
             addHeadComponent(getHead(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_3); // Head
             final float x = pos.getX(), y = pos.getY();
-            farFootPosition.set(x - 16, y);
+            farFootPosition.set(x - 17, y);
             nearFootPosition.set(x + 20, y);
-            headOffsets.set(-32, 80);
+            headOffsets.set(-32, 32);
         }
         
         private final void addHeadComponent(final Panmage img, final float z) {
@@ -1102,7 +1102,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         public final void onStepEnd(final StepEndEvent event) {
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
-            final float hbx = x + 16, hby = y + 64;
+            final float hbx = x + 22, hby = y + 64;
             final int numHeadComponents = headComponents.size();
             final float hox = headOffsets.getX(), hoy = headOffsets.getY();
             for (int i = 0; i < numHeadComponents; i++) {
@@ -1116,10 +1116,30 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void renderView(final Panderer renderer) {
             super.renderView(renderer);
             final Panlayer layer = getLayer();
-            renderer.render(layer, getFoot(), farFootPosition.getX(), farFootPosition.getY(), BotsnBoltsGame.DEPTH_ENEMY_BACK_3, 0, 0, 32, 32, 0, false, false);
-            renderer.render(layer, getSphere(), farFootPosition.getX() + 8, farFootPosition.getY() + 8, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 32, 32, 1, false, true);
-            renderer.render(layer, getFoot(), nearFootPosition.getX(), nearFootPosition.getY(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_3, 0, 0, 32, 32, 0, false, false);
-            renderer.render(layer, getSphere(), nearFootPosition.getX() + 8, nearFootPosition.getY() + 8, BotsnBoltsGame.DEPTH_ENEMY_FRONT_2, 0, 0, 32, 32, 1, false, true);
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            final Panmage foot = getFoot();
+            final Panmage sphere = getSphere();
+            
+            final float farFootX = farFootPosition.getX(), farFootY = farFootPosition.getY();
+            final float farShoulderX = x + 4, shoulderY = y + 12;
+            for (int i = 0; i < 2; i++) {
+                final float mx = (i + 1.0f) / 3.0f;
+                final float my = (i + 1.0f) * 2.0f / 5.0f;
+                renderer.render(layer, sphere, farShoulderX + ((farFootX - farShoulderX) * mx), shoulderY + ((farFootY - shoulderY) * my),
+                        BotsnBoltsGame.DEPTH_ENEMY_BACK - (2 * i), 0, 0, 32, 32, 1, false, true);
+            }
+            renderer.render(layer, foot, farFootX, farFootY, BotsnBoltsGame.DEPTH_ENEMY_BACK_3, 0, 0, 32, 32, 0, false, false);
+            
+            final float nearFootX = nearFootPosition.getX(), nearFootY = nearFootPosition.getY();
+            final float nearShoulderX = x + 41;
+            for (int i = 0; i < 2; i++) {
+                final float mx = (i + 1.0f) / 3.0f;
+                final float my = (i + 1.0f) * 2.0f / 5.0f;
+                renderer.render(layer, sphere, nearShoulderX + ((nearFootX - nearShoulderX) * mx), shoulderY + ((nearFootY - shoulderY) * my),
+                        BotsnBoltsGame.DEPTH_ENEMY_FRONT + (2 * i), 0, 0, 32, 32, 1, false, true);
+            }
+            renderer.render(layer, foot, nearFootX, nearFootY, BotsnBoltsGame.DEPTH_ENEMY_FRONT_3, 0, 0, 32, 32, 0, false, false);
         }
         
         @Override
