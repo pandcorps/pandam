@@ -1028,11 +1028,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         final Panple nearFootPosition = new ImplPanple();
         final Panple headOffsets = new ImplPanple(); // Don't just render, use separate actors with own hit boxes to block shots to chest
         final List<TurtleHeadComponent> headComponents = new ArrayList<TurtleHeadComponent>(3); // Head and neck
+        private float floorY;
+        private float defaultY;
+        private final float defaultYSpeed = 2;
         private Panple stepPosition = null;
         private float stepMinY = 0;
         private float stepVerticalVelocity = 0;
         private final float stepVerticalAcceleration = -0.325f;
         private int initialStepsRequired = 2;
+        private float targetY;
+        private float ySpeed = defaultYSpeed;
         
         protected Turtle(final Segment seg) {
             super(0, 0, seg);
@@ -1043,11 +1048,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
             addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT); // Neck sphere closest to body
             addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_2);
             addHeadComponent(getHead(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_3); // Head
-            final float x = pos.getX(), y = pos.getY(), footY = y - 1;
+            floorY = pos.getY();
+            final float x = pos.getX(), footY = floorY - 1;
             farFootPosition.set(x - 21, footY);
             nearFootPosition.set(x + 16, footY);
             headOffsets.set(-48, 16);
-            pos.addY(25);
+            defaultY = floorY + 25;
+            pos.setY(defaultY);
+            targetY = defaultY;
         }
         
         private final void addHeadComponent(final Panmage img, final float z) {
@@ -1157,6 +1165,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final boolean onWaiting() {
+            adjustY();
             if (state == STATE_DRAG) {
                 onDragging();
             } else if (state == STATE_STEP_FAR) {
@@ -1169,14 +1178,39 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return true;
         }
         
+        private final void adjustY() {
+            if (state <= STATE_STEP_NEAR) {
+                return;
+            }
+            final Panple pos = getPosition();
+            final float y = pos.getY();
+            if (targetY > y) {
+                pos.setY(Math.min(targetY, y + ySpeed));
+            } else if (targetY < y) {
+                pos.setY(Math.max(targetY, y - ySpeed));
+            }
+        }
+        
         @Override
         protected final boolean pickState() {
+            targetY = defaultY;
+            ySpeed = defaultYSpeed;
+            if (getNearestPlayerX() > getPosition().getX()) {
+                startCrush();
+                return true;
+            }
             startEmitFromPowerSource();
             return true;
         }
         
         protected final void startEmitFromPowerSource() {
             startState(STATE_EMIT_FROM_POWER_SOURCE, 15, getStill());
+        }
+        
+        protected final void startCrush() {
+            startState(STATE_CRUSH, 15, getStill());
+            targetY = floorY;
+            ySpeed = 5;
         }
 
         @Override
