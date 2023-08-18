@@ -1017,6 +1017,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_BEAM = 10;
         protected final static int WAIT_WALK = 24;
         protected final static int SPEED_WALK = 3;
+        protected final static int SPEED_BITE = 6;
+        protected final static int SPEED_HEAD = 3;
+        protected final static int HEAD_X_MIN = -64;
+        protected final static int HEAD_Y_MIN = -56;
+        protected final static int HEAD_Y_MAX = 56;
         
         private static Panmage still = null;
         private static Panmage head = null;
@@ -1031,6 +1036,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private float floorY;
         private float defaultY;
         private final float defaultYSpeed = 2;
+        private final float defaultHeadOffsetX = -48;
+        private final float defaultHeadOffsetY = 16;
         private Panple stepPosition = null;
         private float stepMinY = 0;
         private float stepVerticalVelocity = 0;
@@ -1038,6 +1045,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int initialStepsRequired = 2;
         private float targetY;
         private float ySpeed = defaultYSpeed;
+        private float targetHeadOffsetX = defaultHeadOffsetX;
+        private float targetHeadOffsetY = defaultHeadOffsetY;
         
         protected Turtle(final Segment seg) {
             super(0, 0, seg);
@@ -1045,24 +1054,28 @@ public abstract class Boss extends Enemy implements SpecBoss {
             setMirror(false);
             final Panple pos = getPosition();
             pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
-            addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT); // Neck sphere closest to body
-            addHeadComponent(getSphere(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_2);
-            addHeadComponent(getHead(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_3); // Head
+            addHeadComponent(false, BotsnBoltsGame.DEPTH_ENEMY_FRONT); // Neck sphere closest to body
+            addHeadComponent(false, BotsnBoltsGame.DEPTH_ENEMY_FRONT_2);
+            addHeadComponent(true, BotsnBoltsGame.DEPTH_ENEMY_FRONT_3); // Head
             floorY = pos.getY();
-            final float x = pos.getX(), footY = floorY - 1;
+            final float x = pos.getX() + 144, footY = floorY - 1;
             farFootPosition.set(x - 21, footY);
             nearFootPosition.set(x + 16, footY);
-            headOffsets.set(-48, 16);
+            headOffsets.set(defaultHeadOffsetX, defaultHeadOffsetY);
             defaultY = floorY + 25;
-            pos.setY(defaultY);
+            pos.set(x, defaultY);
             targetY = defaultY;
         }
         
-        private final void addHeadComponent(final Panmage img, final float z) {
-            final TurtleHeadComponent headComponent = new TurtleHeadComponent(img);
+        private final void addHeadComponent(final boolean head, final float z) {
+            final TurtleHeadComponent headComponent = new TurtleHeadComponent(head);
             headComponent.getPosition().setZ(z);
             addActor(headComponent);
             headComponents.add(headComponent);
+        }
+        
+        private final TurtleHeadComponent getHeadActor() {
+            return headComponents.get(headComponents.size() - 1);
         }
         
         @Override
@@ -1166,12 +1179,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean onWaiting() {
             adjustY();
+            adjustHead();
             if (state == STATE_DRAG) {
                 onDragging();
             } else if (state == STATE_STEP_FAR) {
                 onSteppingFar();
             } else if (state == STATE_STEP_NEAR) {
                 onSteppingNear();
+            } else if (state == STATE_BITE) {
+                onBiting();
             } else if ((state == STATE_EMIT_FROM_POWER_SOURCE) && (waitCounter == 1)) {
                 CyanEnemy.shoot(this, 17, 24, false);
             }
@@ -1191,12 +1207,36 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
         }
         
+        private final void adjustHead() {
+            if (state == STATE_BITE) {
+                return;
+            }
+            headOffsets.setX(adjustHeadOffset(headOffsets.getX(), targetHeadOffsetX));
+            headOffsets.setY(adjustHeadOffset(headOffsets.getY(), targetHeadOffsetY));
+        }
+        
+        private final float adjustHeadOffset(final float curr, final float target) {
+            if (curr < target) {
+                return Math.min(curr + SPEED_HEAD, target);
+            } else if (curr > target) {
+                return Math.max(curr - SPEED_HEAD, target);
+            }
+            return curr;
+        }
+        
         @Override
         protected final boolean pickState() {
             targetY = defaultY;
             ySpeed = defaultYSpeed;
-            if (getNearestPlayerX() > getPosition().getX()) {
+            targetHeadOffsetX = defaultHeadOffsetX;
+            targetHeadOffsetY = defaultHeadOffsetY;
+            getHeadActor().changeView(getHead());
+            final float x = getPosition().getX(), nearestPlayerX = getNearestPlayerX();
+            if (nearestPlayerX > x) {
                 startCrush();
+                return true;
+            } else if (nearestPlayerX > (x - 60)) {
+                startBite();
                 return true;
             }
             startEmitFromPowerSource();
@@ -1205,6 +1245,37 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startEmitFromPowerSource() {
             startState(STATE_EMIT_FROM_POWER_SOURCE, 15, getStill());
+        }
+        
+        protected final void startBite() {
+            startState(STATE_BITE, 30, getStill());
+            targetY = floorY + 12;
+            ySpeed = 3;
+            final TurtleHeadComponent head = getHeadActor();
+            head.setView(getHeadAttack());
+            head.attacked = false;
+        }
+        
+        protected final void onBiting() {
+            final TurtleHeadComponent head = getHeadActor();
+            if (head.attacked) {
+                startStill();
+                return;
+            }
+            final Player player = getNearestPlayer();
+            if (player == null) {
+                return;
+            }
+            final Panple playerPos = player.getPosition(), headPos = head.getPosition();
+            if (playerPos.getX() < headPos.getX()) {
+                headOffsets.setX(Math.max(HEAD_X_MIN, headOffsets.getX() - SPEED_BITE));
+            }
+            final float playerY = playerPos.getY(), headY = headPos.getY();
+            if (playerY < (headY - 16)) {
+                headOffsets.setY(Math.max(HEAD_Y_MIN, headOffsets.getY() - SPEED_BITE));
+            } else if (playerY > (headY + 16)) {
+                headOffsets.setY(Math.min(HEAD_Y_MAX, headOffsets.getY() + SPEED_BITE));
+            }
         }
         
         protected final void startCrush() {
@@ -1327,9 +1398,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static class TurtleHeadComponent extends Enemy {
-        protected TurtleHeadComponent(final Panmage img) {
+        private final boolean head;
+        private boolean attacked = false;
+        
+        protected TurtleHeadComponent(final boolean head) {
             super(0, 32, 0, 0, 1);
-            setView(img);
+            setView(head ? Turtle.getHead() : Turtle.getSphere());
+            this.head = head;
         }
         
         @Override
@@ -1345,6 +1420,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected int getDamage() {
             return DAMAGE;
+        }
+        
+        @Override
+        public void onAttack(final Player player) {
+            super.onAttack(player);
+            if (head) {
+                changeView(Turtle.getHead());
+                attacked = true;
+            }
         }
     }
     
