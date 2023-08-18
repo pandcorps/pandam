@@ -51,7 +51,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static int DAMAGE = 4;
     private final static int LEFT_X = 16;
     private final static int RIGHT_X = 367;
-    private final static int MID_X = 192;
     private final static float DROP_X = MID_X;
     private final static byte TAUNT_NEEDED = 0;
     private final static byte TAUNT_STARTED = 1;
@@ -778,22 +777,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
         });
     }
     
-    protected final float getNearestPlayerX() {
-        return getPlayerX(getNearestPlayer());
-    }
-    
-    protected final static float getPlayerX(final Player player) {
-        return (player == null) ? MID_X : player.getPosition().getX();
-    }
-    
-    protected final float getNearestPlayerY() {
-        return getPlayerY(getNearestPlayer());
-    }
-    
-    protected final static float getPlayerY(final Player player) {
-        return (player == null) ? 112 : player.getPosition().getY();
-    }
-    
     protected final static boolean isPlayerBetween(final int xMin, final int yMin, final int xMax, final int yMax) {
         for (final PlayerContext pc : BotsnBoltsGame.pcs) {
             final Player player = PlayerContext.getPlayer(pc);
@@ -1007,7 +990,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_DRAG = 1;
         protected final static byte STATE_STEP_FAR = 2;
         protected final static byte STATE_STEP_NEAR = 3;
-        protected final static byte STATE_EMIT_FROM_POWER_SOURCE = 4; // Emit a simple projectile from the underside's power source
+        //protected final static byte STATE_EMIT_FROM_POWER_SOURCE = 4; // Emit a simple projectile from the underside's power source, happens randomly during any state
         protected final static byte STATE_SPAWN_PESTS = 5; // Spawn enemies to distract Player
         protected final static byte STATE_LOB_TO_LURE = 6; // Lob projectiles to far side of screen, slower each time, to lure Player closer
         protected final static byte STATE_BITE = 7; // Lunge forward to bite if Player is in range
@@ -1048,6 +1031,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private float targetHeadOffsetX = defaultHeadOffsetX;
         private float targetHeadOffsetY = defaultHeadOffsetY;
         private float headSpeed = defaultHeadSpeed;
+        private int emitTimer = 60;
         private int damageScore = 0;
         
         protected Turtle(final Segment seg) {
@@ -1078,6 +1062,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final TurtleHeadComponent getHeadActor() {
             return headComponents.get(headComponents.size() - 1);
+        }
+        
+        private final void setHeadAttack() {
+            final TurtleHeadComponent head = getHeadActor();
+            head.changeView(getHeadAttack());
+            head.attacked = false;
+        }
+        
+        private final void setHeadMouthClosed() {
+            getHeadActor().changeView(getHead());
         }
         
         @Override
@@ -1184,16 +1178,24 @@ public abstract class Boss extends Enemy implements SpecBoss {
             adjustHead();
             if (state == STATE_DRAG) {
                 onDragging();
+                return true;
             } else if (state == STATE_STEP_FAR) {
                 onSteppingFar();
+                return true;
             } else if (state == STATE_STEP_NEAR) {
                 onSteppingNear();
+                return true;
             } else if (state == STATE_BITE) {
                 onBiting();
             } else if (state == STATE_BLOCK) {
                 onBlocking();
-            } else if ((state == STATE_EMIT_FROM_POWER_SOURCE) && (waitCounter == 1)) {
+            } else if (state == STATE_SPAWN_PESTS) {
+                onSpawningPests();
+            }
+            emitTimer--;
+            if (emitTimer <= 0) {
                 CyanEnemy.shoot(this, 17, 24, false);
+                emitTimer = Mathtil.randi(15, 60);
             }
             return true;
         }
@@ -1235,7 +1237,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             targetHeadOffsetX = defaultHeadOffsetX;
             targetHeadOffsetY = defaultHeadOffsetY;
             headSpeed = defaultHeadSpeed;
-            getHeadActor().changeView(getHead());
+            setHeadMouthClosed();
             final float x = getPosition().getX(), nearestPlayerX = getNearestPlayerX();
             if (nearestPlayerX > x) {
                 startCrush();
@@ -1247,21 +1249,36 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startBlock();
                 return true;
             }
-            startEmitFromPowerSource();
+            startSpawnPests();
             return true;
         }
         
-        protected final void startEmitFromPowerSource() {
-            startState(STATE_EMIT_FROM_POWER_SOURCE, 15, getStill());
+        protected final void startSpawnPests() {
+            startState(STATE_SPAWN_PESTS, 60, getStill());
+            targetHeadOffsetX = -24;
+            targetHeadOffsetY = 24;
+        }
+        
+        protected final void onSpawningPests() {
+            setHeadAttack();
+            if ((waitCounter % 20) == 1) {
+                final Panple pos = getHeadActor().getPosition();
+                final WingedEnemy pest = new WingedEnemy(pos.getX() - 8, pos.getY() - 1);
+                addActor(pest);
+                pest.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
+                if (waitCounter > 10) {
+                    targetHeadOffsetX = Mathtil.randi(-32, -16);
+                    targetHeadOffsetY = Mathtil.randi(16, 32);
+                    headSpeed = 1;
+                }
+            }
         }
         
         protected final void startBite() {
             startState(STATE_BITE, 30, getStill());
             targetY = floorY + 12;
             ySpeed = 3;
-            final TurtleHeadComponent head = getHeadActor();
-            head.setView(getHeadAttack());
-            head.attacked = false;
+            setHeadAttack();
         }
         
         protected final void onBiting() {
@@ -1308,6 +1325,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final boolean continueState() {
+            setHeadMouthClosed();
             switch (state) {
                 case STATE_DRAG :
                     finishWalkingStep();

@@ -47,6 +47,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     protected final static String RES_ENEMY = BotsnBoltsGame.RES + "enemy/";
     protected final static int VEL_PROJECTILE = 6;
     protected final static float VEL_PROJECTILE_45;
+    protected final static int MID_X = 192;
     
     protected static boolean intro = false;
     protected int health;
@@ -331,6 +332,22 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             }
         }
         return (nearest == null) ? BotsnBoltsGame.getPrimaryPlayer() : nearest;
+    }
+    
+    protected final float getNearestPlayerX() {
+        return getPlayerX(getNearestPlayer());
+    }
+    
+    protected final static float getPlayerX(final Player player) {
+        return (player == null) ? MID_X : player.getPosition().getX();
+    }
+    
+    protected final float getNearestPlayerY() {
+        return getPlayerY(getNearestPlayer());
+    }
+    
+    protected final static float getPlayerY(final Player player) {
+        return (player == null) ? 112 : player.getPosition().getY();
     }
     
     protected final float getDistanceX(final Panctor other) {
@@ -2247,6 +2264,80 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         protected final static int getCurrentIndex() {
             return ((int) (Pangine.getEngine().getClock() % 9)) / 3;
+        }
+    }
+    
+    private final static Panple WINGED_O = new FinPanple2(10, 1);
+    
+    protected final static class WingedEnemy extends Enemy {
+        private final static Panmage[] images = new Panmage[2];
+        private int timer = 0;
+        
+        protected WingedEnemy(final float x, final float y) {
+            super(PROP_OFF_X, PROP_H, 0, 0, 1);
+            getPosition().set(x, y);
+            setView(getCurrentImage());
+            setMirror(true);
+            hv = getMirrorMultiplier();
+            v = 1;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            changeView(getCurrentImage());
+            timer++;
+            if (timer == 20) {
+                final float x = getPosition().getX(), px = getNearestPlayerX();
+                if (px < (x - 4)) {
+                    hv = -1;
+                } else if (px > (x + 4)) {
+                    hv = 1;
+                } else if (v != 0) {
+                    hv = 0;
+                }
+            } else if (timer >= 40) {
+                final float y = getPosition().getY(), py = getNearestPlayerY();
+                if (py < (y - 4)) {
+                    v = -1;
+                } else if (py > (y + 4)) {
+                    v = 1;
+                } else if (hv != 0) {
+                    v = 0;
+                }
+                timer = 0;
+            }
+            addX(hv);
+            addY(v);
+            return true;
+        }
+        
+        @Override
+        protected boolean onFell() {
+            return true;
+        }
+        
+        @Override
+        protected final void onLanded() {
+            // Skip parent logic of clearing v
+        }
+        
+        protected final static Panmage getImage(final int i) {
+            Panmage image = images[i];
+            if (image != null) {
+                return image;
+            }
+            final Panmage ref = BotsnBoltsGame.propEnemy.getFrames()[0].getImage();
+            image = getImage(image, "WingedEnemy" + (i + 1), WINGED_O, ref.getBoundingMinimum(), ref.getBoundingMaximum());
+            images[i] = image;
+            return image;
+        }
+        
+        private final static Panmage getCurrentImage() {
+            return getImage(getCurrentIndex());
+        }
+        
+        protected final static int getCurrentIndex() {
+            return ((int) (Pangine.getEngine().getClock() % 4)) / 2;
         }
     }
     
