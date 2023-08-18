@@ -1018,7 +1018,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static int WAIT_WALK = 24;
         protected final static int SPEED_WALK = 3;
         protected final static int SPEED_BITE = 6;
-        protected final static int SPEED_HEAD = 3;
         protected final static int HEAD_X_MIN = -64;
         protected final static int HEAD_Y_MIN = -56;
         protected final static int HEAD_Y_MAX = 56;
@@ -1036,8 +1035,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private float floorY;
         private float defaultY;
         private final float defaultYSpeed = 2;
-        private final float defaultHeadOffsetX = -48;
+        private final float defaultHeadOffsetX = -32;
         private final float defaultHeadOffsetY = 16;
+        private final float defaultHeadSpeed = 3;
         private Panple stepPosition = null;
         private float stepMinY = 0;
         private float stepVerticalVelocity = 0;
@@ -1047,6 +1047,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private float ySpeed = defaultYSpeed;
         private float targetHeadOffsetX = defaultHeadOffsetX;
         private float targetHeadOffsetY = defaultHeadOffsetY;
+        private float headSpeed = defaultHeadSpeed;
+        private int damageScore = 0;
         
         protected Turtle(final Segment seg) {
             super(0, 0, seg);
@@ -1188,6 +1190,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 onSteppingNear();
             } else if (state == STATE_BITE) {
                 onBiting();
+            } else if (state == STATE_BLOCK) {
+                onBlocking();
             } else if ((state == STATE_EMIT_FROM_POWER_SOURCE) && (waitCounter == 1)) {
                 CyanEnemy.shoot(this, 17, 24, false);
             }
@@ -1217,9 +1221,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final float adjustHeadOffset(final float curr, final float target) {
             if (curr < target) {
-                return Math.min(curr + SPEED_HEAD, target);
+                return Math.min(curr + headSpeed, target);
             } else if (curr > target) {
-                return Math.max(curr - SPEED_HEAD, target);
+                return Math.max(curr - headSpeed, target);
             }
             return curr;
         }
@@ -1230,6 +1234,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             ySpeed = defaultYSpeed;
             targetHeadOffsetX = defaultHeadOffsetX;
             targetHeadOffsetY = defaultHeadOffsetY;
+            headSpeed = defaultHeadSpeed;
             getHeadActor().changeView(getHead());
             final float x = getPosition().getX(), nearestPlayerX = getNearestPlayerX();
             if (nearestPlayerX > x) {
@@ -1237,6 +1242,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return true;
             } else if (nearestPlayerX > (x - 60)) {
                 startBite();
+                return true;
+            } else if (damageScore > 60) {
+                startBlock();
                 return true;
             }
             startEmitFromPowerSource();
@@ -1283,6 +1291,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
             targetY = floorY;
             ySpeed = 5;
         }
+        
+        protected final void startBlock() {
+            startState(STATE_BLOCK, 60, getStill());
+            targetY = floorY + 8;
+            ySpeed = 3;
+            targetHeadOffsetX = -40;
+            targetHeadOffsetY = -56;
+            headSpeed = SPEED_BITE;
+            damageScore = 0;
+        }
+        
+        protected final void onBlocking() {
+            damageScore = 0;
+        }
 
         @Override
         protected final boolean continueState() {
@@ -1319,12 +1341,23 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected void onHurt(final Projectile prj) {
+            final int oldHealth = health;
+            super.onHurt(prj);
+            final int damage = oldHealth - health;
+            damageScore += (damage * 20);
+        }
+        
+        @Override
         protected boolean onStepBoss() {
             return false;
         }
         
         @Override
         public final void onStepEnd(final StepEndEvent event) {
+            if (damageScore > 0) {
+                damageScore--;
+            }
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
             final float hbx = x + 22, hby = y + 64;
