@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -40,8 +40,8 @@ import org.pandcorps.pandax.text.Fonts.*;
 
 public class BoardGame extends BaseGame {
     protected final static String TITLE = "2-Player Games For 1 Device";
-    protected final static String VERSION = "1.0.2";
-    protected final static String YEAR = "2022";
+    protected final static String VERSION = "1.0.3";
+    protected final static String YEAR = "2023";
     protected final static String AUTHOR = "Andrew M. Martin";
     protected final static String COPYRIGHT = "Copyright " + Pantext.CHAR_COPYRIGHT + " " + YEAR;
     
