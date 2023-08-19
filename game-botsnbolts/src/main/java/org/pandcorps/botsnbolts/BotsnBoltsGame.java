@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.Map.*;
 import java.util.concurrent.*;
 
-import org.pandcorps.botsnbolts.Boss.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.Profile.*;
@@ -195,6 +194,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panimation crawlEnemy = null;
     protected static Panimation shieldedEnemy = null;
     protected static Panimation unshieldedEnemy = null;
+    protected static Panimation bounceEnemy = null;
     protected static Panmage[] fireballEnemy = null;
     protected static Panmage[] flamethrowerEnemy = null;
     protected static Panmage[] henchbotEnemy = null;
@@ -612,6 +612,18 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panple shieldedO = new FinPanple2(8, 2), shieldedMax = propMax;
         shieldedEnemy = newAnimation("shielded.enemy", RES + "enemy/ShieldedEnemy.png", 16, shieldedO, new FinPanple2(propMin.getX(), -2), shieldedMax, 3);
         unshieldedEnemy = newAnimation("unshielded.enemy", RES + "enemy/UnshieldedEnemy.png", 16, shieldedO, propMin, shieldedMax, 3);
+        final Panframe bounceEnemyFrames[] = new Panframe[8];
+        final Panmage bounceEnemyImg1 = engine.createImage("bounce.enemy.1", propO, propMin, propMax, RES + "enemy/BounceEnemy1.png");
+        final Panmage bounceEnemyImg2 = engine.createImage("bounce.enemy.2", propO, propMin, propMax, RES + "enemy/BounceEnemy2.png");
+        final Rotator rots = new Rotator(4) {
+            @Override protected final Panmage getImage1() {
+                return bounceEnemyImg1; }
+            @Override protected final Panmage getImage2() {
+                return bounceEnemyImg2; }};
+        for (int i = 0; i < 8; i++) {
+            rots.getFrame(bounceEnemyFrames, i);
+        }
+        bounceEnemy = engine.createAnimation("bounce.enemy", bounceEnemyFrames);
         fireballEnemy = newSheet("fireball.enemy", RES + "enemy/FireballEnemy.png", 16, propO, propMin, crawlMax);
         final Panple henchO = new FinPanple2(15, 1), henchMin = Chr.getMin(Enemy.HENCHBOT_OFF_X), henchMax = Chr.getMax(Enemy.HENCHBOT_OFF_X, Enemy.HENCHBOT_H);
         final Img[] henchImgs = Imtil.loadStrip(RES + "enemy/Henchbot.png", 32, false);

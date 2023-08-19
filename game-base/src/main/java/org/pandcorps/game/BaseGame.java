@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -629,5 +629,92 @@ public abstract class BaseGame extends Pangame {
             this.base = base;
             this.pressed = pressed;
         }
+    }
+	
+	protected final static Panframe getFrame(final Panframe[] frames, final Rotator rots, final int frameIndex) {
+        Panframe frame = frames[frameIndex];
+        if (frame == null) {
+            final boolean basedOnImg1 = ((frameIndex % 2) == 0);
+            final Panmage img = basedOnImg1 ? rots.getImage1() : rots.getImage2();
+            final int rot = (4 - (frameIndex / 2)) % 4;
+            final Panple o, min, max;
+            if (basedOnImg1) {
+                final Panple oBase = img.getOrigin();
+                final Panple minBase = img.getBoundingMinimum();
+                final Panple maxBase = img.getBoundingMaximum();
+                final int end = rots.getDim(img) - 1;
+                if (rot == 0) {
+                    o = oBase;
+                    min = minBase;
+                    max = maxBase;
+                } else if (rot == 3) {
+                    o = new FinPanple2(end - oBase.getY(), oBase.getX());
+                    min = new FinPanple2(-maxBase.getY(), minBase.getX());
+                    max = new FinPanple2(-minBase.getY(), maxBase.getX());
+                } else if (rot == 2) {
+                    o = new FinPanple2(end - oBase.getX(), end - oBase.getY());
+                    min = new FinPanple2(-maxBase.getX(), -maxBase.getY());
+                    max = new FinPanple2(-minBase.getX(), -minBase.getY());
+                } else if (rot == 1) {
+                    o = new FinPanple2(oBase.getY(), end - oBase.getX());
+                    min = new FinPanple2(minBase.getY(), -maxBase.getX());
+                    max = new FinPanple2(maxBase.getY(), -minBase.getX());
+                } else {
+                    throw new IllegalStateException("Unexpected rotation " + rot);
+                }
+            } else {
+                final Panframe prev = frames[frameIndex - 1];
+                o = prev.getOrigin();
+                min = prev.getBoundingMinimum();
+                max = prev.getBoundingMaximum();
+            }
+            frame = Pangine.getEngine().createFrame(PRE_FRM + rots.getClass().getSimpleName() + "." + frameIndex, img, rots.frameDuration, rot, false, false, o, min, max);
+            frames[frameIndex] = frame;
+        }
+        return frame;
+    }
+	
+	public abstract static class Rotator {
+        public final static int numFrames = 8;
+        private final int frameDuration;
+        private int frameIndex = 0;
+        private int frameTimer = 0;
+        
+        protected Rotator(final int frameDuration) {
+            this.frameDuration = frameDuration;
+        }
+        
+        public void init() {
+            frameIndex = 0;
+            frameTimer = 0;
+        }
+        
+        public final void onStep(final Panctor actor, final Panframe[] frames) {
+            frameTimer++;
+            if (frameTimer >= frameDuration) {
+                frameTimer = 0;
+                frameIndex++;
+                if (frameIndex >= numFrames) {
+                    frameIndex = 0;
+                }
+                actor.setView(getFrame(frames));
+            }
+        }
+        
+        public final Panframe getFrame(final Panframe[] frames) {
+            return getFrame(frames, frameIndex);
+        }
+        
+        public final Panframe getFrame(final Panframe[] frames, final int frameIndex) {
+            return BaseGame.getFrame(frames, this, frameIndex);
+        }
+        
+        protected int getDim(final Panmage img) {
+            return Math.round(img.getSize().getX());
+        }
+        
+        protected abstract Panmage getImage1();
+        
+        protected abstract Panmage getImage2();
     }
 }

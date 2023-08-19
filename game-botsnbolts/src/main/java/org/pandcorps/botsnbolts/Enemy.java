@@ -2349,11 +2349,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     protected final static class BounceEnemy extends Enemy {
-        private static Panmage image = null;
-        
         protected BounceEnemy(final int hv, final float v) {
             super(PROP_OFF_X, PROP_H, 0, 0, 1);
-            setView(getImage());
+            setView(BotsnBoltsGame.bounceEnemy);
             setMirror(true);
             this.hv = hv;
             this.v = v;
@@ -2384,14 +2382,6 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             EnemyProjectile.burstEnemy(this);
             destroy();
             return ret;
-        }
-        
-        protected final static Panmage getImage() {
-            if (image != null) {
-                return image;
-            }
-            image = getImage(image, "BounceEnemy", BotsnBoltsGame.propEnemy.getFrames()[0].getImage());
-            return image;
         }
     }
     
