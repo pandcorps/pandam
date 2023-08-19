@@ -2288,18 +2288,18 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             if (timer == 20) {
                 final float x = getPosition().getX(), px = getNearestPlayerX();
                 if (px < (x - 4)) {
-                    hv = -1;
+                    hv = (v == 0) ? -1 : ((hv > 0) ? 0 : -1);
                 } else if (px > (x + 4)) {
-                    hv = 1;
+                    hv = (v == 0) ? 1 : ((hv < 0) ? 0 : 1);
                 } else if (v != 0) {
                     hv = 0;
                 }
             } else if (timer >= 40) {
                 final float y = getPosition().getY(), py = getNearestPlayerY();
                 if (py < (y - 4)) {
-                    v = -1;
+                    v = (hv == 0) ? -1 : ((v > 0) ? 0 : -1);
                 } else if (py > (y + 4)) {
-                    v = 1;
+                    v = (hv == 0) ? 1 : ((v < 0) ? 0 : 1);
                 } else if (hv != 0) {
                     v = 0;
                 }
@@ -2317,7 +2317,12 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final void onLanded() {
-            // Skip parent logic of clearing v
+            v = -v;
+        }
+        
+        @Override
+        protected final void onWall(final byte xResult) {
+            hv = -hv;
         }
         
         @Override
@@ -2373,7 +2378,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final void onWall(final byte xResult) {
-            hv *= -1;
+            hv = -hv;
         }
         
         @Override
