@@ -1012,6 +1012,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private static Panmage headAttack = null;
         private static Panmage sphere = null;
         private static Panmage foot = null;
+        private final static Panmage[] eyes = new Panmage[9];
+        private static Panmage beamStart = null;
+        private static Panmage beam = null;
         //bodyPosition = Panctor.getPosition();
         final Panple farFootPosition = new ImplPanple(); // Can just render feet
         final Panple nearFootPosition = new ImplPanple();
@@ -1073,7 +1076,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void setHeadMouthClosed() {
-            getHeadActor().changeView(getHead());
+            final TurtleHeadComponent head = getHeadActor();
+            head.changeView(getHead());
+            head.eye = null;
         }
         
         @Override
@@ -1195,6 +1200,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 onSpawningPests();
             } else if (state == STATE_LOB_TO_LURE) {
                 onLobbingToLure();
+            } else if (state == STATE_CHARGE) {
+                onCharging();
             }
             emitTimer--;
             if (emitTimer <= 0) {
@@ -1257,11 +1264,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startBlock();
                 return true;
             }
-            final int r = rand(2);
+            final int r = rand(3);
             if (r == 0) {
                 startSpawnPests();
             } else if (r == 1) {
                 startLobToLure();
+            } else if (r == 2) {
+                startCharge();
             }
             return true;
         }
@@ -1365,6 +1374,24 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void onBlocking() {
             damageScore = 0;
         }
+        
+        protected final void startCharge() {
+            startState(STATE_CHARGE, 64, getStill());
+            targetHeadOffsetX = -48;
+            targetHeadOffsetY = -48;
+        }
+        
+        protected final void onCharging() {
+            final int i = waitCounter - 1;
+            final TurtleHeadComponent head = getHeadActor();
+            if (i < 32) {
+                head.eye = getEye(i / 4);
+            } else if (i < 48) {
+                head.eye = getEye(7);
+            } else {
+                head.eye = getEye((i % 2) < 1 ? 8 : 7);
+            }
+        }
 
         @Override
         protected final boolean continueState() {
@@ -1424,6 +1451,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final float hbx = x + 22, hby = y + 64;
             final int numHeadComponents = headComponents.size();
             final float hox = headOffsets.getX(), hoy = headOffsets.getY();
+            //TODO Pieces move relative to each other while walking, tweak order of floating point operations and use rounding to get consistent offsets
             for (int i = 0; i < numHeadComponents; i++) {
                 float m = (i + 1);
                 m /= numHeadComponents;
@@ -1489,11 +1517,29 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static Panmage getFoot() {
             return (foot = getImage(foot, "turtle/TurtleFoot", BotsnBoltsGame.CENTER_32, BotsnBoltsGame.MIN_32, BotsnBoltsGame.MAX_32)); // Only rendered, not an actor, so max doesn't matter
         }
+        
+        protected final static Panmage getEye(final int i) {
+            Panmage img = eyes[i];
+            if (img == null) {
+                img = getImage(img, "turtle/TurtleEye" + (i + 1), BotsnBoltsGame.CENTER_8, BotsnBoltsGame.MIN_8, BotsnBoltsGame.MAX_8);
+                eyes[i] = img;
+            }
+            return img;
+        }
+        
+        protected final static Panmage getBeamStart() {
+            return (beamStart = getImage(beamStart, "turtle/TurtleBeamStart", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
+        }
+        
+        protected final static Panmage getBeam() {
+            return (beam = getImage(beam, "turtle/TurtleBeam", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
+        }
     }
     
     protected final static class TurtleHeadComponent extends Enemy {
         private final boolean head;
         private boolean attacked = false;
+        private Panmage eye = null;
         
         protected TurtleHeadComponent(final boolean head) {
             super(0, 32, 0, 0, 1);
@@ -1521,11 +1567,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (!super.onAttack(player)) {
                 return false;
             }
-            if (head) {
+            if (head && (eye == null)) {
                 changeView(Turtle.getHead());
                 attacked = true;
             }
             return true;
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            if (eye == null) {
+                return;
+            }
+            final Panple pos = getPosition();
+            renderer.render(getLayer(), eye, pos.getX() - 4, pos.getY() + 1, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4, 0, 0, 8, 8, 0, false, false);
         }
     }
     
