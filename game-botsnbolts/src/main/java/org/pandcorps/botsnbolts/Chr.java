@@ -145,7 +145,7 @@ public abstract class Chr extends GuyPlatform {
         
         public boolean isHarmful();
         
-        public void onAttack(final Player player);
+        public boolean onAttack(final Player player);
         
         public int getHealth();
         

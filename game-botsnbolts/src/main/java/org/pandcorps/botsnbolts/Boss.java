@@ -1191,6 +1191,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 onBlocking();
             } else if (state == STATE_SPAWN_PESTS) {
                 onSpawningPests();
+            } else if (state == STATE_LOB_TO_LURE) {
+                onLobbingToLure();
             }
             emitTimer--;
             if (emitTimer <= 0) {
@@ -1230,14 +1232,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return curr;
         }
         
-        @Override
-        protected final boolean pickState() {
+        protected final void reset() {
             targetY = defaultY;
             ySpeed = defaultYSpeed;
             targetHeadOffsetX = defaultHeadOffsetX;
             targetHeadOffsetY = defaultHeadOffsetY;
             headSpeed = defaultHeadSpeed;
             setHeadMouthClosed();
+        }
+        
+        @Override
+        protected final boolean pickState() {
+            reset();
             final float x = getPosition().getX(), nearestPlayerX = getNearestPlayerX();
             if (nearestPlayerX > x) {
                 startCrush();
@@ -1249,7 +1255,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startBlock();
                 return true;
             }
-            startSpawnPests();
+            final int r = rand(2);
+            if (r == 0) {
+                startSpawnPests();
+            } else if (r == 1) {
+                startLobToLure();
+            }
             return true;
         }
         
@@ -1262,16 +1273,46 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void onSpawningPests() {
             setHeadAttack();
             if ((waitCounter % 20) == 1) {
-                final Panple pos = getHeadActor().getPosition();
-                final WingedEnemy pest = new WingedEnemy(pos.getX() - 8, pos.getY() - 1);
-                addActor(pest);
-                pest.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
+                addActorFromMouth(new WingedEnemy());
                 if (waitCounter > 10) {
                     targetHeadOffsetX = Mathtil.randi(-32, -16);
                     targetHeadOffsetY = Mathtil.randi(16, 32);
                     headSpeed = 1;
                 }
             }
+        }
+        
+        private final void addActorFromMouth(final Panctor actor) {
+            final Panple pos = getHeadActor().getPosition();
+            actor.getPosition().set(pos.getX() - 8, pos.getY() - 1, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
+            addActor(actor);
+        }
+        
+        protected final void startLobToLure() {
+            startState(STATE_LOB_TO_LURE, 60, getStill());
+            targetHeadOffsetX = -38;
+            targetHeadOffsetY = 10;
+            headSpeed = 5;
+        }
+        
+        protected final void onLobbingToLure() {
+            setHeadAttack();
+            if (waitCounter == 10) {
+                headSpeed = 1;
+                lob(-6, 5);
+            } else if (waitCounter == 25) {
+                lob(-5, 5.5f);
+            } else if (waitCounter == 40) {
+                lob(-4, 6);
+            } else if (waitCounter == 55) {
+                lob(-3, 7);
+            }
+        }
+        
+        private final void lob(final int hv, final float v) {
+            addActorFromMouth(new BounceEnemy(hv, v));
+            targetHeadOffsetX += 6;
+            targetHeadOffsetY += 6;
         }
         
         protected final void startBite() {
@@ -1325,7 +1366,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final boolean continueState() {
-            setHeadMouthClosed();
+            reset();
             switch (state) {
                 case STATE_DRAG :
                     finishWalkingStep();
@@ -1474,12 +1515,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public void onAttack(final Player player) {
-            super.onAttack(player);
+        public boolean onAttack(final Player player) {
+            if (!super.onAttack(player)) {
+                return false;
+            }
             if (head) {
                 changeView(Turtle.getHead());
                 attacked = true;
             }
+            return true;
         }
     }
     
@@ -4691,11 +4735,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public void onAttack(final Player player) {
+        public boolean onAttack(final Player player) {
             if ((state == STATE_SAND) && !player.isInvincible()) { // Check invincibility before hurting Player
                 startWrap(player);
             }
-            super.onAttack(player);
+            return super.onAttack(player);
         }
         
         private final boolean isFirstLaunchNeeded() {
@@ -5968,7 +6012,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onAttack(final Player player) {
+        public final boolean onAttack(final Player player) {
             if ((state == STATE_DASH) && (player == target)) {
                 final int tx = Math.round(target.getPosition().getX());
                 final int dx = tx + (22 * ((hv < 0) ? 1 : -1));
@@ -5976,8 +6020,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 hv = 0;
                 hurt(false);
                 startState(STATE_WAIT_AFTER_DASH, 3, getStill());
+                return true;
             } else {
-                super.onAttack(player);
+                return super.onAttack(player);
             }
         }
         
@@ -8021,8 +8066,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onAttack(final Player player) {
-            player.hurt(getDamage());
+        public final boolean onAttack(final Player player) {
+            return player.hurt(getDamage());
         }
         
         public int getDamage() {
@@ -9414,10 +9459,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public void onAttack(final Player player) {
-            super.onAttack(player);
+        public boolean onAttack(final Player player) {
+            final boolean ret = super.onAttack(player);
             EnemyProjectile.burstEnemy(this, 4);
             destroy();
+            return ret;
         }
         
         @Override

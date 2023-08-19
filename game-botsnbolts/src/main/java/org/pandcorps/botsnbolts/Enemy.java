@@ -232,8 +232,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     @Override
-    public void onAttack(final Player player) {
-        player.hurt(getDamage());
+    public boolean onAttack(final Player player) {
+        return player.hurt(getDamage());
     }
     
     protected int getDamage() {
@@ -2273,9 +2273,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         private final static Panmage[] images = new Panmage[2];
         private int timer = 0;
         
-        protected WingedEnemy(final float x, final float y) {
+        protected WingedEnemy() {
             super(PROP_OFF_X, PROP_H, 0, 0, 1);
-            getPosition().set(x, y);
             setView(getCurrentImage());
             setMirror(true);
             hv = getMirrorMultiplier();
@@ -2321,6 +2320,14 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             // Skip parent logic of clearing v
         }
         
+        @Override
+        public boolean onAttack(final Player player) {
+            final boolean ret = super.onAttack(player);
+            EnemyProjectile.burstEnemy(this, 5);
+            destroy();
+            return ret;
+        }
+        
         protected final static Panmage getImage(final int i) {
             Panmage image = images[i];
             if (image != null) {
@@ -2338,6 +2345,53 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         protected final static int getCurrentIndex() {
             return ((int) (Pangine.getEngine().getClock() % 4)) / 2;
+        }
+    }
+    
+    protected final static class BounceEnemy extends Enemy {
+        private static Panmage image = null;
+        
+        protected BounceEnemy(final int hv, final float v) {
+            super(PROP_OFF_X, PROP_H, 0, 0, 1);
+            setView(getImage());
+            setMirror(true);
+            this.hv = hv;
+            this.v = v;
+        }
+        
+        @Override
+        protected final void onLanded() {
+            v = -v * 0.8f;
+            if (v < 1.25f) {
+                EnemyProjectile.burstEnemy(this);
+                destroy();
+            }
+            if (hv > 1) {
+                hv--;
+            } else if (hv < -1) {
+                hv++;
+            }
+        }
+        
+        @Override
+        protected final void onWall(final byte xResult) {
+            hv *= -1;
+        }
+        
+        @Override
+        public boolean onAttack(final Player player) {
+            final boolean ret = super.onAttack(player);
+            EnemyProjectile.burstEnemy(this);
+            destroy();
+            return ret;
+        }
+        
+        protected final static Panmage getImage() {
+            if (image != null) {
+                return image;
+            }
+            image = getImage(image, "BounceEnemy", BotsnBoltsGame.propEnemy.getFrames()[0].getImage());
+            return image;
         }
     }
     
@@ -2993,10 +3047,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public void onAttack(final Player player) {
-            super.onAttack(player);
+        public boolean onAttack(final Player player) {
+            final boolean ret = super.onAttack(player);
             burst();
             destroy();
+            return ret;
         }
         
         private final void setView(final int i) {
@@ -3094,10 +3149,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public void onAttack(final Player player) {
-            super.onAttack(player);
+        public boolean onAttack(final Player player) {
+            final boolean ret = super.onAttack(player);
             burst();
             destroy();
+            return ret;
         }
         
         private final static Panmage getImage() {
