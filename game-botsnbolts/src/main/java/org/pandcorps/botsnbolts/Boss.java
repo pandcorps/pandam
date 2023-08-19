@@ -1001,9 +1001,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static int WAIT_WALK = 24;
         protected final static int SPEED_WALK = 3;
         protected final static int SPEED_BITE = 6;
-        protected final static int HEAD_X_MIN = -64;
-        protected final static int HEAD_Y_MIN = -56;
-        protected final static int HEAD_Y_MAX = 56;
+        protected final static int BITE_X_MIN = -86;
+        protected final static int BITE_Y_MIN = -32;
+        protected final static int BITE_Y_MAX = 56;
         
         private static Panmage still = null;
         private static Panmage head = null;
@@ -1248,7 +1248,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (nearestPlayerX > x) {
                 startCrush();
                 return true;
-            } else if (nearestPlayerX > (x - 60)) {
+            } else if (nearestPlayerX > (x + BITE_X_MIN + 4)) {
                 startBite();
                 return true;
             } else if (damageScore > 60) {
@@ -1317,7 +1317,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startBite() {
             startState(STATE_BITE, 30, getStill());
-            targetY = floorY + 12;
+            targetY = floorY;
             ySpeed = 3;
             setHeadAttack();
         }
@@ -1334,13 +1334,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             final Panple playerPos = player.getPosition(), headPos = head.getPosition();
             if (playerPos.getX() < headPos.getX()) {
-                headOffsets.setX(Math.max(HEAD_X_MIN, headOffsets.getX() - SPEED_BITE));
+                headOffsets.setX(Math.max(BITE_X_MIN, headOffsets.getX() - SPEED_BITE));
             }
             final float playerY = playerPos.getY(), headY = headPos.getY();
             if (playerY < (headY - 16)) {
-                headOffsets.setY(Math.max(HEAD_Y_MIN, headOffsets.getY() - SPEED_BITE));
+                headOffsets.setY(Math.max(BITE_Y_MIN, headOffsets.getY() - SPEED_BITE));
             } else if (playerY > (headY + 16)) {
-                headOffsets.setY(Math.min(HEAD_Y_MAX, headOffsets.getY() + SPEED_BITE));
+                headOffsets.setY(Math.min(BITE_Y_MAX, headOffsets.getY() + SPEED_BITE));
             }
         }
         
