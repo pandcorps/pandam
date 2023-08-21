@@ -1000,6 +1000,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_BLOCK = 8; // Lower head to defend underside
         protected final static byte STATE_CHARGE = 9; // Eyes start to glow while gathering energy to charge beam attack
         protected final static byte STATE_BEAM = 10;
+        protected final static int WAIT_BEAM = 48;
         protected final static int WAIT_WALK = 24;
         protected final static int SPEED_WALK = 3;
         protected final static int SPEED_BITE = 6;
@@ -1073,6 +1074,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final TurtleHeadComponent head = getHeadActor();
             head.changeView(getHeadAttack());
             head.attacked = false;
+            head.eye = null;
         }
         
         private final void setHeadMouthClosed() {
@@ -1202,6 +1204,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 onLobbingToLure();
             } else if (state == STATE_CHARGE) {
                 onCharging();
+                return true; // Don't emit during this attack
+            } else if (state == STATE_BEAM) {
+                onBeaming();
+                return true; // Don't emit during this attack
             }
             emitTimer--;
             if (emitTimer <= 0) {
@@ -1377,8 +1383,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startCharge() {
             startState(STATE_CHARGE, 64, getStill());
-            targetHeadOffsetX = -48;
-            targetHeadOffsetY = -48;
+            targetHeadOffsetX = -46;
+            targetHeadOffsetY = -50;
         }
         
         protected final void onCharging() {
@@ -1392,10 +1398,23 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 head.eye = getEye((i % 2) < 1 ? 8 : 7);
             }
         }
+        
+        protected final void startBeam() {
+            startState(STATE_BEAM, WAIT_BEAM, getStill());
+            setHeadAttack();
+        }
+        
+        protected final void onBeaming() {
+            if (waitCounter == 1) {
+                final TurtleHeadComponent head = getHeadActor();
+                head.setMirror(true);
+                new TurtleRayProjectile(head, 11, -9);
+                head.setMirror(false);
+            }
+        }
 
         @Override
         protected final boolean continueState() {
-            reset();
             switch (state) {
                 case STATE_DRAG :
                     finishWalkingStep();
@@ -1417,10 +1436,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
                         startStill();
                     }
                     break;
+                case STATE_CHARGE :
+                    startBeam();
+                    break;
                 default :
+                    reset();
                     startStill();
             }
             return true;
+        }
+        
+        @Override
+        protected final void startStill() {
+            startStill(initStillTimer(30, 45));
         }
         
         @Override
@@ -1582,6 +1610,43 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             final Panple pos = getPosition();
             renderer.render(getLayer(), eye, pos.getX() - 4, pos.getY() + 1, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4, 0, 0, 8, 8, 0, false, false);
+        }
+    }
+    
+    protected final static class TurtleRayProjectile extends RayProjectile {
+        private static Panmage head1 = null, head2 = null;
+        private static Panmage tail1 = null, tail2 = null;
+        
+        protected TurtleRayProjectile(final Enemy src, final int ox, final int oy) {
+            super(src, ox, oy, Turtle.WAIT_BEAM - 2, 16);
+            BotsnBoltsGame.fxEnemyAttack.startSound();
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 7;
+        }
+        
+        private final boolean isFrame1() {
+            return (index % 4) < 2;
+        }
+        
+        @Override
+        protected final Panmage getHead() {
+            if (isFrame1()) {
+                return (head1 = getImage(head1, "turtle/TurtleBeam1", null, null, null));
+            } else {
+                return (head2 = getImage(head2, "turtle/TurtleBeam2", null, null, null));
+            }
+        }
+        
+        @Override
+        protected final Panmage getTail() {
+            if (isFrame1()) {
+                return (tail1 = getImage(tail1, "turtle/TurtleBeamStart1", null, null, null));
+            } else {
+                return (tail2 = getImage(tail2, "turtle/TurtleBeamStart2", null, null, null));
+            }
         }
     }
     

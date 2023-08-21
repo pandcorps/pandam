@@ -677,25 +677,20 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
     }
     
-    protected final static class FreezeRayProjectile extends TimedEnemyProjectile {
-        private final static int DURATION_FREEZE = 20;
-        private final static int MAX_FADE = 6;
-        private static Panmage freezeRayHead = null;
-        private static Panmage freezeRayTail = null;
+    protected abstract static class RayProjectile extends TimedEnemyProjectile {
+        protected final static int MAX_FADE = 6;
         
-        private int index = 0;
+        private final int duration;
+        private final int dim;
+        protected int index = 0;
         private int start = 0;
         private int end = 0;
         private Pansplay display; // If initialized here, that's too late for super constructor, so do it in getCurrentDisplay()
         
-        protected FreezeRayProjectile(final Enemy src, final int ox, final int oy) {
-            super(src, ox, oy, DURATION_FREEZE);
-            BotsnBoltsGame.fxEnemyAttack.startSound();
-        }
-        
-        @Override
-        protected final boolean hurt(final Player player) {
-            return player.freeze();
+        protected RayProjectile(final Enemy src, final int ox, final int oy, final int duration, final int dim) {
+            super(src, ox, oy, duration);
+            this.duration = duration;
+            this.dim = dim;
         }
         
         @Override
@@ -710,10 +705,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public final void onStep(final StepEvent event) {
+        public void onStep(final StepEvent event) {
             super.onStep(event);
-            index = DURATION_FREEZE - timer;
-            start = getOffset(index - (DURATION_FREEZE - MAX_FADE));
+            index = duration - timer;
+            start = getOffset(index - (duration - MAX_FADE));
             end = getOffset(index - 2);
         }
         
@@ -755,7 +750,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 return;
             }
             final Panmage head = getHead();
-            final int off = getMirrorMultiplier() * 4;
+            final int off = getMirrorMultiplier() * dim;
             for (int i = 0; i < end; i++) {
                 x += off;
                 if (i < start) {
@@ -768,15 +763,15 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         public Pansplay getCurrentDisplay() {
             if (display == null) {
-                display = new OriginPansplay(new FreezeRayMinimum(), new FreezeRayMaximum());
+                display = new OriginPansplay(new RayMinimum(), new RayMaximum());
             }
             return display;
         }
         
-        private final class FreezeRayMinimum extends UnmodPanple2 {
+        private final class RayMinimum extends UnmodPanple2 {
             @Override
             public final float getX() {
-                return start * 4;
+                return start * dim;
             }
 
             @Override
@@ -785,23 +780,45 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             }
         }
         
-        private final class FreezeRayMaximum extends UnmodPanple2 {
+        private final class RayMaximum extends UnmodPanple2 {
             @Override
             public final float getX() {
-                return (end + 1) * 4;
+                return (end + 1) * dim;
             }
 
             @Override
             public final float getY() {
-                return 4;
+                return dim;
             }
         }
         
-        protected final static Panmage getHead() {
+        protected abstract Panmage getHead();
+        
+        protected abstract Panmage getTail();
+    }
+    
+    protected final static class FreezeRayProjectile extends RayProjectile {
+        private final static int DURATION_FREEZE = 20;
+        private static Panmage freezeRayHead = null;
+        private static Panmage freezeRayTail = null;
+        
+        protected FreezeRayProjectile(final Enemy src, final int ox, final int oy) {
+            super(src, ox, oy, DURATION_FREEZE, 4);
+            BotsnBoltsGame.fxEnemyAttack.startSound();
+        }
+        
+        @Override
+        protected final boolean hurt(final Player player) {
+            return player.freeze();
+        }
+        
+        @Override
+        protected final Panmage getHead() {
             return (freezeRayHead = getFreezeRayImage(freezeRayHead, "FreezeRayHead"));
         }
         
-        protected final static Panmage getTail() {
+        @Override
+        protected final Panmage getTail() {
             return (freezeRayTail = getFreezeRayImage(freezeRayTail, "FreezeRayTail"));
         }
         
