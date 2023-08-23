@@ -85,6 +85,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int VEL_FALL_PROTECTION = 15;
     private final static int VEL_WALK = 3;
     private final static int VEL_BOARD = 5;
+    private final static int VEL_GLIDE_START = 5;
+    private final static int VEL_GLIDE_DIVE = 0;
+    private final static float GLIDE_BOOST_THRESHOLD = 8;
     private final static int VEL_SLIDE = 6;
     private final static float VEL_DASH = 8.5f;
     private final static float DASH_SLOWDOWN = 0.1875f;
@@ -131,6 +134,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastLeftStart = NULL_CLOCK;
     private long lastBoardStart = NULL_CLOCK;
     private long lastBoardJump = NULL_CLOCK;
+    private long lastGlideDirectionChange = NULL_CLOCK;
     private float hvForced = 0;
     private int wrappedJumps = 0;
     protected Carrier jumpStartedOnCarrier = null;
@@ -138,6 +142,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean jumpAllowed = true;
     private float minX = Integer.MIN_VALUE;
     private float maxX = Integer.MAX_VALUE;
+    private float prevV = 0;
     private boolean prevUnderwater = false;
     private boolean sanded = false;
     private long lastSanded = NULL_CLOCK;
@@ -1313,6 +1318,28 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
+    protected final void renderViewGlider(final Panderer renderer) {
+        final Panlayer layer = getLayer();
+        final Panple pos = getPosition();
+        final float x = pos.getX(), y = pos.getY();
+        final boolean mirror = isMirror();
+        final int m = getMirrorMultiplier(mirror);
+        if ((getClock() - lastGlideDirectionChange) < 3) {
+            setView(pi.glideHoriz);
+            renderer.render(layer, pi.gliderHorizImage = Animal.getBirdImage(pi.gliderHorizImage, pi, "GlideHoriz"),
+                    x - (m * 35) - (mirror ? 63 : 0), y - 10, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 64, 64, 0, mirror, false);
+        } else if (v < 0) {
+            setView(pi.glideDown);
+            renderer.render(layer, pi.gliderDownImage = Animal.getBirdImage(pi.gliderDownImage, pi, "GlideDown"),
+                    x - (m * 35) - (mirror ? 63 : 0), y - 14, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 64, 64, 0, mirror, false);
+        } else {
+            setView(pi.glideUp);
+            renderer.render(layer, pi.gliderUpImage = Animal.getBirdImage(pi.gliderUpImage, pi, "GlideUp"),
+                    x - (m * 34) - (mirror ? 63 : 0), y - 11, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 64, 64, 0, mirror, false);
+        }
+        renderViewNormal(renderer);
+    }
+    
     protected final void setHidden(final boolean hidden) {
         this.hidden = hidden;
         if (hidden) {
@@ -2145,6 +2172,45 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
+    private final void startGlider() {
+        if (isUnderWater()) {
+            return;
+        }
+        destroySpring();
+        clearDash();
+        clearStream();
+        prevV = 0;
+        v = VEL_GLIDE_START;
+        stateHandler = GLIDER_HANDLER;
+    }
+    
+    private final void onGlidePullUp() {
+        if (v > -4.0f) {
+            return;
+        }
+        prevV = 0;
+        v = -v;
+        if (v < GLIDE_BOOST_THRESHOLD) {
+            v = Math.min(v * 1.2f, GLIDE_BOOST_THRESHOLD);
+        }
+        lastGlideDirectionChange = getClock();
+    }
+    
+    private final void onGlideDive() {
+        if (v < 0) {
+            return;
+        }
+        v = VEL_GLIDE_DIVE;
+        lastGlideDirectionChange = getClock();
+    }
+    
+    protected final void endGlider() {
+        if (stateHandler == GLIDER_HANDLER) {
+            clearRun();
+            stateHandler = NORMAL_HANDLER;
+        }
+    }
+    
     private final void startState(final StateHandler stateHandler) {
         destroyGrapplingHook();
         if (this.stateHandler == BALL_HANDLER) {
@@ -2323,6 +2389,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         endBoardIfNeeded();
         if (changeRoom(0, -1)) {
             v = 0;
+            return true;
+        } else if (stateHandler.preventFall(this)) {
             return true;
         } else if ((availableRescues > 0) && (safeX != NULL_COORD) && ((getClock() - lastSanded) > 7)) {
             final String rescueDisabled = RoomLoader.variables.get("rescueDisabled");
@@ -2616,6 +2684,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         //@OverrideMe
         protected void onWall(final Player player, final byte xResult) {
+        }
+        
+        //@OverrideMe
+        protected boolean preventFall(final Player player) {
+            return false;
         }
     }
     
@@ -3358,6 +3431,98 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
+    protected final static StateHandler GLIDER_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+            player.endGlider();
+        }
+        
+        @Override
+        protected final void onAirJump(final Player player) {
+            player.endGlider();
+        }
+        
+        @Override
+        protected float getG(final Player player) {
+            return gGlide;
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+            //TODO Drop a bomb (if enough time has passed since last one) using Shift Ball Bomb art, but it explodes when colliding with Enemy or when it hits the ground
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+            if (player.isMirror()) {
+                player.onGlidePullUp();
+            } else {
+                player.onGlideDive();
+            }
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+            if (player.isMirror()) {
+                player.onGlideDive();
+            } else {
+                player.onGlidePullUp();
+            }
+        }
+        
+        @Override
+        protected final void renderView(final Player player, final Panderer renderer) {
+            player.renderViewGlider(renderer);
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            if (player.isUnderWater()) {
+                player.endGlider();
+                return false;
+            } else if ((player.prevV > 0) && (player.v <= 0)) {
+                player.lastGlideDirectionChange = getClock();
+            }
+            player.prevV = player.v;
+            return false;
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+            player.endGlider();
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return false;
+        }
+        
+        @Override
+        protected final void onWall(final Player player, final byte xResult) {
+            player.endGlider();
+            if (player.startWallGrabIfPossible()) {
+                return;
+            } else if (player.isGrounded()) {
+                return;
+            }
+            player.v = Math.max(player.v, VEL_BOARD_BUMP);
+        }
+        
+        @Override
+        protected final boolean preventFall(final Player player) {
+            player.onGlidePullUp();
+            return true;
+        }
+    };
+    
     /*
     As Player enters level, will warp through ceiling.
     So don't use a Player object that could get stuck.
@@ -3611,6 +3776,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         private final Panmage climbTop;
         private final Panmage jumpAimDiag;
         private final Panmage jumpAimUp;
+        private final Panmage glideUp;
+        private final Panmage glideHoriz;
+        private final Panmage glideDown;
         protected final Panmage talk;
         protected final Panmage basicProjectile;
         protected final Panimation projectile2;
@@ -3658,12 +3826,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected Panmage boardDiagImage = null;
         protected Panmage boardDiagImageTop = null;
         protected Panmage boardDiagImageBottom = null;
+        protected Panmage gliderUpImage = null;
+        protected Panmage gliderHorizImage = null;
+        protected Panmage gliderDownImage = null;
         
         protected PlayerImages(final PlayerImagesSubSet basicSet, final PlayerImagesSubSet shootSet, final PlayerImagesSubSet throwSet,
                                final PlayerImagesSubSet[] wieldSets,
                                final Panmage hurt, final Panmage frozen, final Panimation defeat,
                                final Panmage climbTop,
-                               final Panmage jumpAimDiag, final Panmage jumpAimUp, final Panmage talk,
+                               final Panmage jumpAimDiag, final Panmage jumpAimUp,
+                               final Panmage glideUp, final Panmage glideHoriz, final Panmage glideDown, final Panmage talk,
                                final Panmage basicProjectile, final Panimation projectile2, final Panimation projectile3,
                                final Panimation charge, final Panimation chargeVert, final Panimation charge2, final Panimation chargeVert2,
                                final Panmage[] plasma, Panmage shieldVert, Panmage shieldDiag, Panmage shieldCircle,
@@ -3685,6 +3857,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.climbTop = climbTop;
             this.jumpAimDiag = jumpAimDiag;
             this.jumpAimUp = jumpAimUp;
+            this.glideUp = glideUp;
+            this.glideHoriz = glideHoriz;
+            this.glideDown = glideDown;
             this.talk = talk;
             this.basicProjectile = basicProjectile;
             this.projectile2 = projectile2;
@@ -4325,7 +4500,24 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
-    private final static JumpMode[] JUMP_MODES = { JUMP_NORMAL, JUMP_BALL, JUMP_SPRING, JUMP_GRAPPLING_HOOK, JUMP_BOARD };
+    protected final static JumpMode JUMP_GLIDER = new JumpMode(Profile.UPGRADE_GLIDER) {
+        @Override
+        protected final int getRequiredStamina(final Player player) {
+            return 1;
+        }
+        
+        @Override
+        protected final void airJump(final Player player) {
+            player.startGlider();
+        }
+        
+        @Override
+        protected final void onDeselect(final Player player) {
+            player.endGlider();
+        }
+    };
+    
+    private final static JumpMode[] JUMP_MODES = { JUMP_NORMAL, JUMP_BALL, JUMP_SPRING, JUMP_GRAPPLING_HOOK, JUMP_BOARD, JUMP_GLIDER };
     
     protected final static class Bubble extends Panctor implements StepListener {
         private int dir;

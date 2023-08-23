@@ -1038,6 +1038,12 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img[] jumpAimImgsMirror = loadPlayerMirrorStrip(pre + "JumpAimMirror.png");
         final Panmage jumpAimDiag = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 0);
         final Panmage jumpAimUp = newPlayerImage(pre + "Jump.Aim.Diag", ojs, jumpAimImgs, jumpAimImgsMirror, 1);
+        final Img imgGlideUp = Imtil.load(pre + "GlideUp.png"), imgGlideUpMirror = playerMirror ? Imtil.load(pre + "GlideUpMirror.png") : null;
+        final Panmage glideUp = newPlayerImage(PRE_IMG + "." + name + ".glide.up", oj, imgGlideUp, imgGlideUpMirror);
+        final Img imgGlideHoriz = Imtil.load(pre + "GlideHoriz.png"), imgGlideHorizMirror = playerMirror ? Imtil.load(pre + "GlideHorizMirror.png") : null;
+        final Panmage glideHoriz = newPlayerImage(PRE_IMG + "." + name + ".glide.horiz", oj, imgGlideHoriz, imgGlideHorizMirror);
+        final Img imgGlideDown = Imtil.load(pre + "GlideDown.png"), imgGlideDownMirror = playerMirror ? Imtil.load(pre + "GlideDownMirror.png") : null;
+        final Panmage glideDown = newPlayerImage(PRE_IMG + "." + name + ".glide.down", oj, imgGlideDown, imgGlideDownMirror);
         final Img imgTalk = Imtil.load(pre + "Talk.png"), imgTalkMirror = playerMirror ? Imtil.load(pre + "TalkMirror.png") : null;
         final Panmage talk = newPlayerImage(PRE_IMG + "." + name + ".talk", og, imgTalk, imgTalkMirror);
         final Img imgSlide = Imtil.load(pre + "Slide.png"), imgSlideMirror = playerMirror ? Imtil.load(pre + "SlideMirror.png") : null;
@@ -1188,7 +1194,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final HudMeterImages hudMeterImages = (src == null) ? newHudMeterImages(pre + "Meter", hudMeterImgs) : src.hudMeterImages;
         
         final PlayerImages pi;
-        pi = new PlayerImages(basicSet, shootSet, throwSet, wieldSets, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
+        pi = new PlayerImages(basicSet, shootSet, throwSet, wieldSets, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, glideUp, glideHoriz, glideDown, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
             swordHoriz, swordDiag, swordBack, swordTrails, exhaust1, exhaust2, exhaustDiag1, exhaustDiag2, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
         playerImages.put(portraitLoc, pi);
         return pi;

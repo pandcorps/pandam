@@ -64,6 +64,13 @@ public class Animal {
         return getBirdImage(pi.birdName);
     }
     
+    protected final static Panmage getBirdImage(final Panmage img, final PlayerImages pi, final String name) {
+        if (img != null) {
+            return img;
+        }
+        return getImage(pi.birdName + name);
+    }
+    
     private final static Panmage getImage(final String name) {
         return getImage(name, ANM_O, ANM_MIN, ANM_MAX);
     }

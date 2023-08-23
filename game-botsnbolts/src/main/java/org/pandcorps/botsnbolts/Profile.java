@@ -264,7 +264,8 @@ public class Profile {
     }
     
     /*package*/ final boolean isJumpUpgradeAvailable() {
-        return isUpgradeAvailable(UPGRADE_BALL) || isUpgradeAvailable(UPGRADE_GRAPPLING_BEAM) || isUpgradeAvailable(UPGRADE_SPRING) || isUpgradeAvailable(UPGRADE_BOARD);
+        return isUpgradeAvailable(UPGRADE_BALL) || isUpgradeAvailable(UPGRADE_GRAPPLING_BEAM) || isUpgradeAvailable(UPGRADE_SPRING)
+                || isUpgradeAvailable(UPGRADE_BOARD) || isUpgradeAvailable(UPGRADE_GLIDER);
     }
     
     /*package*/ final boolean isAvailable(final String name) {
@@ -310,6 +311,8 @@ public class Profile {
     
     protected final static Upgrade UPGRADE_BOARD = new BoardUpgrade();
     
+    protected final static Upgrade UPGRADE_GLIDER = new GliderUpgrade();
+    
     protected final static Upgrade UPGRADE_RESCUE = new Upgrade("Rescue") {
         @Override public final String getDisplayName(final PlayerContext pc) {
             return pc.pi.birdName + " Rescue";
@@ -341,7 +344,7 @@ public class Profile {
         }};
     
     protected final static Upgrade[] UPGRADES = { UPGRADE_BALL, UPGRADE_RAPID, UPGRADE_SPREAD, UPGRADE_CHARGE, UPGRADE_BOMB, UPGRADE_GRAPPLING_BEAM, UPGRADE_SPRING,
-            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, UPGRADE_DASH, UPGRADE_STREAM, UPGRADE_SHIELD, UPGRADE_SWORD, UPGRADE_BOARD, BASIC_ATTACK, BASIC_JUMP };
+            UPGRADE_RESCUE, UPGRADE_SLIDE, UPGRADE_WALL_GRAB, UPGRADE_DASH, UPGRADE_STREAM, UPGRADE_SHIELD, UPGRADE_SWORD, UPGRADE_BOARD, UPGRADE_GLIDER, BASIC_ATTACK, BASIC_JUMP };
     
     protected abstract static class Upgrade {
         protected final String name;
@@ -479,6 +482,27 @@ public class Profile {
         @Override
         public final String[] getTutorial() {
             return new String[] { "Double-jump to use", "Grind rails" };
+        }
+    }
+    
+    protected final static class GliderUpgrade extends JumpUpgrade {
+        protected GliderUpgrade() {
+            super("Glider");
+        }
+        
+        @Override
+        protected final JumpMode getJumpMode() {
+            return Player.JUMP_GLIDER;
+        }
+        
+        @Override
+        public final String getDisplayName(final PlayerContext pc) {
+            return pc.pi.animalName + " Glider";
+        }
+        
+        @Override
+        public final String[] getTutorial() {
+            return new String[] { "Double-jump to use", "Back to pull up", "Forward to dive" };
         }
     }
     
