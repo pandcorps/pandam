@@ -1041,9 +1041,9 @@ public final class BotsnBoltsGame extends BaseGame {
         final Img imgGlideUp = Imtil.load(pre + "GlideUp.png"), imgGlideUpMirror = playerMirror ? Imtil.load(pre + "GlideUpMirror.png") : null;
         final Panmage glideUp = newPlayerImage(PRE_IMG + "." + name + ".glide.up", oj, imgGlideUp, imgGlideUpMirror);
         final Img imgGlideHoriz = Imtil.load(pre + "GlideHoriz.png"), imgGlideHorizMirror = playerMirror ? Imtil.load(pre + "GlideHorizMirror.png") : null;
-        final Panmage glideHoriz = newPlayerImage(PRE_IMG + "." + name + ".glide.horiz", oj, imgGlideHoriz, imgGlideHorizMirror);
+        final Panmage glideHoriz = newPlayerImage(PRE_IMG + "." + name + ".glide.horiz", oj, new FinPanple2(ng.getX(), ng.getY() + 8), new FinPanple2(xg.getX(), xg.getY() - 8), imgGlideHoriz, imgGlideHorizMirror);
         final Img imgGlideDown = Imtil.load(pre + "GlideDown.png"), imgGlideDownMirror = playerMirror ? Imtil.load(pre + "GlideDownMirror.png") : null;
-        final Panmage glideDown = newPlayerImage(PRE_IMG + "." + name + ".glide.down", oj, imgGlideDown, imgGlideDownMirror);
+        final Panmage glideDown = newPlayerImage(PRE_IMG + "." + name + ".glide.down", oj, new FinPanple2(ng.getX(), ng.getY() + 4), new FinPanple2(xg.getX(), xg.getY() - 4), imgGlideDown, imgGlideDownMirror);
         final Img imgTalk = Imtil.load(pre + "Talk.png"), imgTalkMirror = playerMirror ? Imtil.load(pre + "TalkMirror.png") : null;
         final Panmage talk = newPlayerImage(PRE_IMG + "." + name + ".talk", og, imgTalk, imgTalkMirror);
         final Img imgSlide = Imtil.load(pre + "Slide.png"), imgSlideMirror = playerMirror ? Imtil.load(pre + "SlideMirror.png") : null;

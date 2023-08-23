@@ -88,6 +88,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int VEL_GLIDE_START = 5;
     private final static int VEL_GLIDE_DIVE = 0;
     private final static float GLIDE_BOOST_THRESHOLD = 8;
+    private final static byte GLIDE_HORIZONTAL = 0;
+    private final static byte GLIDE_UP = 1;
+    private final static byte GLIDE_DOWN = -1;
     private final static int VEL_SLIDE = 6;
     private final static float VEL_DASH = 8.5f;
     private final static float DASH_SLOWDOWN = 0.1875f;
@@ -135,6 +138,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastBoardStart = NULL_CLOCK;
     private long lastBoardJump = NULL_CLOCK;
     private long lastGlideDirectionChange = NULL_CLOCK;
+    private byte glideAngle = GLIDE_UP;
     private float hvForced = 0;
     private int wrappedJumps = 0;
     protected Carrier jumpStartedOnCarrier = null;
@@ -1324,16 +1328,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final float x = pos.getX(), y = pos.getY();
         final boolean mirror = isMirror();
         final int m = getMirrorMultiplier(mirror);
-        if ((getClock() - lastGlideDirectionChange) < 3) {
-            setView(pi.glideHoriz);
+        if (glideAngle == GLIDE_HORIZONTAL) {
             renderer.render(layer, pi.gliderHorizImage = Animal.getBirdImage(pi.gliderHorizImage, pi, "GlideHoriz"),
                     x - (m * 35) - (mirror ? 63 : 0), y - 10, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 64, 64, 0, mirror, false);
-        } else if (v < 0) {
-            setView(pi.glideDown);
+        } else if (glideAngle == GLIDE_DOWN) {
             renderer.render(layer, pi.gliderDownImage = Animal.getBirdImage(pi.gliderDownImage, pi, "GlideDown"),
                     x - (m * 35) - (mirror ? 63 : 0), y - 14, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 64, 64, 0, mirror, false);
         } else {
-            setView(pi.glideUp);
             renderer.render(layer, pi.gliderUpImage = Animal.getBirdImage(pi.gliderUpImage, pi, "GlideUp"),
                     x - (m * 34) - (mirror ? 63 : 0), y - 11, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 64, 64, 0, mirror, false);
         }
@@ -2181,6 +2182,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         clearStream();
         prevV = 0;
         v = VEL_GLIDE_START;
+        glideAngle = GLIDE_UP;
         stateHandler = GLIDER_HANDLER;
     }
     
@@ -3492,6 +3494,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 player.lastGlideDirectionChange = getClock();
             }
             player.prevV = player.v;
+            if ((getClock() - player.lastGlideDirectionChange) < 3) {
+                player.setView(player.pi.glideHoriz);
+                player.glideAngle = GLIDE_HORIZONTAL;
+            } else if (player.v < 0) {
+                player.setView(player.pi.glideDown);
+                player.glideAngle = GLIDE_DOWN;
+            } else {
+                player.setView(player.pi.glideUp);
+                player.glideAngle = GLIDE_UP;
+            }
             return false;
         }
         
