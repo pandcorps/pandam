@@ -85,12 +85,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int VEL_FALL_PROTECTION = 15;
     private final static int VEL_WALK = 3;
     private final static int VEL_BOARD = 5;
-    private final static int VEL_GLIDE_START = 5;
+    private final static int VEL_GLIDE_START = 4;
     private final static int VEL_GLIDE_DIVE = 0;
     private final static int GLIDE_MAX_SPEED = 5;
     private final static float GLIDE_ACCELERATION = 0.1875f;
     private final static float GLIDE_DECELERATION = 0.125f;
-    private final static float GLIDE_BOOST_THRESHOLD = 8;
+    private final static float GLIDE_BOOST_THRESHOLD = 7;
+    private final static float GLIDE_DIVE_INITIAL_ACCELERATION_BOOST = gGlide / 4.0f;
+    private final static float GLIDE_DIVE_ACCELERATION_BOOST = gGlide / 2.0f;
+    private final static float GLIDE_PULL_UP_ACCELERATION_BOOST = -gGlide * 3.0f / 8.0f;
     private final static byte GLIDE_HORIZONTAL = 0;
     private final static byte GLIDE_UP = 1;
     private final static byte GLIDE_DOWN = -1;
@@ -143,7 +146,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastGlideDirectionChange = NULL_CLOCK;
     private byte glideAngle = GLIDE_UP;
     private boolean pulledUpDuringThisGlide = false;
-    private boolean activelyFalling = false;
+    private boolean anyGlidingDuringThisJump = false;
     private float hvForced = 0;
     private int wrappedJumps = 0;
     protected Carrier jumpStartedOnCarrier = null;
@@ -476,6 +479,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void startJump(final Carrier jumpStartedOnCarrier, final float velJump) {
+        final boolean wasGrounded = isGrounded();
         this.jumpStartedOnCarrier = jumpStartedOnCarrier;
         if (isOnFallProtectionRow()) {
             v = VEL_FALL_PROTECTION;
@@ -487,6 +491,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         lastJump = getClock();
         jumping = true;
+        if (wasGrounded || (jumpStartedOnCarrier != null)) {
+            anyGlidingDuringThisJump = false;
+        }
         BotsnBoltsGame.fxJump.startSound();
     }
     
@@ -724,6 +731,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         pos.setX((Math.round(pos.getX()) / 16) * 16 + 7);
         stateHandler = LADDER_HANDLER;
         clearDash();
+        endBoardIfNeeded();
+        endGlider();
     }
     
     private final static int OFF_LADDER_TOP = 20;
@@ -1757,6 +1766,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         walkedOffCarrier = null;
         air = false;
         jumping = false;
+        anyGlidingDuringThisJump = false;
     }
     
     private final void onGroundedNormal() {
@@ -2192,9 +2202,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
-    private final void startGlider() {
+    private final boolean startGlider() {
         if (isUnderWater()) {
-            return;
+            return false;
         }
         destroySpring();
         clearDash();
@@ -2203,14 +2213,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         v = VEL_GLIDE_START;
         glideAngle = GLIDE_UP;
         pulledUpDuringThisGlide = false;
-        activelyFalling = false;
+        anyGlidingDuringThisJump = true;
         stateHandler = GLIDER_HANDLER;
+        return true;
     }
     
     private final void onGlidePullUp() {
-        if (onGlidePullUp(false)) {
-            activelyFalling = false;
-        }
+        onGlidePullUp(false);
     }
     
     private final boolean onGlidePullUp(final boolean forced) {
@@ -2228,6 +2237,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
         }
         if (!forced && (v > -4.0f)) {
+            if (v > 0) {
+                addV(GLIDE_PULL_UP_ACCELERATION_BOOST);
+            }
             return false;
         }
         prevV = 0;
@@ -2246,7 +2258,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         } else {
             chv = Math.min(chv + GLIDE_ACCELERATION, GLIDE_MAX_SPEED);
         }
-        if (!pulledUpDuringThisGlide || (v < 0)) {
+        if (!pulledUpDuringThisGlide) {
+            addV(GLIDE_DIVE_INITIAL_ACCELERATION_BOOST);
+            return;
+        } else if (v < 0) {
+            addV(GLIDE_DIVE_ACCELERATION_BOOST); // In addition to gravity applied elsewhere
             return;
         }
         v = VEL_GLIDE_DIVE;
@@ -2268,6 +2284,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         } else if (this.stateHandler == BOARD_HANDLER) {
             endBoard();
         }
+        endGlider();
         this.stateHandler = stateHandler;
     }
     
@@ -2460,6 +2477,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return true;
     }
     
+    protected final boolean preventFallNormal() {
+        if (anyGlidingDuringThisJump && (prf.jumpMode == JUMP_GLIDER)) {
+            return startGlider();
+        }
+        return false;
+    }
+    
     private final void startRescue() {
         clearDash();
         hv = 0;
@@ -2536,6 +2560,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         initAvailableRescues();
         endGrapple();
         endBoardIfNeeded();
+        endGlider();
         safeX = safeY = NULL_COORD;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
@@ -2857,6 +2882,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             return true;
         }
+        
+        @Override
+        protected final boolean preventFall(final Player player) {
+            return player.preventFallNormal();
+        }
     };
     
     protected final static StateHandler LADDER_HANDLER = new StateHandler() {
@@ -3171,6 +3201,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final boolean onAir(final Player player) {
             return false;
         }
+        
+        @Override
+        protected final boolean preventFall(final Player player) {
+            player.endWallGrab();
+            return player.preventFallNormal();
+        }
     };
     
     protected final static StateHandler CARRIED_HANDLER = new StateHandler() {
@@ -3421,6 +3457,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final void onUp(final Player player) {
+            player.onUpNormal();
+        }
+        
+        @Override
         protected final void renderView(final Player player, final Panderer renderer) {
             player.renderViewBoard(renderer);
         }
@@ -3551,6 +3592,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final void onUp(final Player player) {
+            player.onUpNormal();
+        }
+        
+        @Override
         protected final void renderView(final Player player, final Panderer renderer) {
             player.renderViewGlider(renderer);
         }
@@ -3611,22 +3657,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final boolean preventFall(final Player player) {
-            // If actively diving, then allow the fall
-            if (player.isMirror()) {
-                if (player.pc.ctrl.getLeft().isActive()) {
-                    if (player.activelyFalling) {
-                        return false;
-                    }
-                    player.activelyFalling = true;
-                }
-            } else {
-                if (player.pc.ctrl.getRight().isActive()) {
-                    if (player.activelyFalling) {
-                        return false;
-                    }
-                    player.activelyFalling = true;
-                }
-            }
             player.onGlidePullUp(true);
             player.pulledUpDuringThisGlide = false;
             return true;

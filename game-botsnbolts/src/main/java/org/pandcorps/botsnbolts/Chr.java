@@ -33,7 +33,7 @@ public abstract class Chr extends GuyPlatform {
     public final static float gWater = -0.3f;
     public final static float gWallSlide = -0.1f;
     public final static float gWallSlideWater = -0.05f;
-    public final static float gGlide = -0.5f;
+    public final static float gGlide = -0.4f;
     protected final static long NULL_CLOCK = -1000;
     
     protected Chr(final int offX, final int h) {

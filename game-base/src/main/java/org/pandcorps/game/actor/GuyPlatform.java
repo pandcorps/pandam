@@ -118,7 +118,8 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     }
     
     protected final boolean isJumpPossible() {
-        return getSolid(1, false) == -1;
+        final float y = getPosition().getY();
+        return getSolid(((y < 0) ? -y : 0) + 1, false) == -1;
     }
     
     protected final byte addY(final float v) {
@@ -429,7 +430,7 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         return getSolid(off, true);
     }
     
-    protected int getSolid(final int off, final boolean eventTriggeringAllowed) {
+    protected int getSolid(final float off, final boolean eventTriggeringAllowed) {
         final TileMap tm = getTileMap();
         final Panple pos = getPosition();
         final float x = pos.getX(), y = pos.getY() + off, x1 = x + getOffLeft(), x2 = x + getOffRight();
