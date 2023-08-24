@@ -143,6 +143,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastGlideDirectionChange = NULL_CLOCK;
     private byte glideAngle = GLIDE_UP;
     private boolean pulledUpDuringThisGlide = false;
+    private boolean activelyFalling = false;
     private float hvForced = 0;
     private int wrappedJumps = 0;
     protected Carrier jumpStartedOnCarrier = null;
@@ -421,6 +422,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     private final void updateSafeCoordinates() {
         if (sanded) {
+            return;
+        } else if (!stateHandler.isSafePositionAllowed(this)) {
             return;
         }
         final Panple pos = getPosition();
@@ -2200,21 +2203,32 @@ public class Player extends Chr implements Warpable, StepEndListener {
         v = VEL_GLIDE_START;
         glideAngle = GLIDE_UP;
         pulledUpDuringThisGlide = false;
+        activelyFalling = false;
         stateHandler = GLIDER_HANDLER;
     }
     
     private final void onGlidePullUp() {
-        onGlidePullUp(false);
+        if (onGlidePullUp(false)) {
+            activelyFalling = false;
+        }
     }
     
-    private final void onGlidePullUp(final boolean forced) {
+    private final boolean onGlidePullUp(final boolean forced) {
         if (isMirror()) {
-            chv = Math.min(chv + GLIDE_DECELERATION, 0);
+            //chv = Math.min(chv + GLIDE_DECELERATION, 0);
+            chv += GLIDE_DECELERATION;
+            if (chv > 0) {
+                setMirror(false);
+            }
         } else {
-            chv = Math.max(chv - GLIDE_DECELERATION, 0);
+            //chv = Math.max(chv - GLIDE_DECELERATION, 0);
+            chv -= GLIDE_DECELERATION;
+            if (chv < 0) {
+                setMirror(true);
+            }
         }
         if (!forced && (v > -4.0f)) {
-            return;
+            return false;
         }
         prevV = 0;
         v = -v;
@@ -2223,6 +2237,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         lastGlideDirectionChange = getClock();
         pulledUpDuringThisGlide = true;
+        return true;
     }
     
     private final void onGlideDive() {
@@ -2734,6 +2749,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         //@OverrideMe
         protected int initCurrentHorizontalVelocity(final Player player) {
             return player.initCurrentHorizontalVelocityNormal();
+        }
+        
+        //@OverrideMe
+        protected boolean isSafePositionAllowed(final Player player) {
+            return true;
         }
     }
     
@@ -3548,14 +3568,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
                         player.chv = 1.25f;
                     }
                 }
-                /*
-                player.chv = player.chv + player.getMirrorMultiplier();
-                if (player.chv > GLIDE_MAX_SPEED) {
-                    player.chv = GLIDE_MAX_SPEED;
-                } else if (player.chv < -GLIDE_MAX_SPEED) {
-                    player.chv = -GLIDE_MAX_SPEED;
-                }
-                */
             //} else if ((player.v > 0) && (player.prevV <= 0)) {
             //    player.lastGlideDirectionChange = getClock(); // Handled in onGlidePullUp, never happens automatically
             }
@@ -3594,13 +3606,35 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final boolean preventFall(final Player player) {
+            // If actively diving, then allow the fall
+            if (player.isMirror()) {
+                if (player.pc.ctrl.getLeft().isActive()) {
+                    if (player.activelyFalling) {
+                        return false;
+                    }
+                    player.activelyFalling = true;
+                }
+            } else {
+                if (player.pc.ctrl.getRight().isActive()) {
+                    if (player.activelyFalling) {
+                        return false;
+                    }
+                    player.activelyFalling = true;
+                }
+            }
             player.onGlidePullUp(true);
+            player.pulledUpDuringThisGlide = false;
             return true;
         }
         
         @Override
         protected final int initCurrentHorizontalVelocity(final Player player) {
             return player.initCurrentHorizontalVelocityGlider();
+        }
+        
+        @Override
+        protected final boolean isSafePositionAllowed(final Player player) {
+            return false;
         }
     };
     
