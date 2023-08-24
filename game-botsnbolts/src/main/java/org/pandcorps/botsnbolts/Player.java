@@ -2247,7 +2247,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (v < GLIDE_BOOST_THRESHOLD) {
             v = Math.min(v * 1.2f, GLIDE_BOOST_THRESHOLD);
         }
-        lastGlideDirectionChange = getClock();
+        lastGlideDirectionChange = getClock() + 1;
         pulledUpDuringThisGlide = true;
         return true;
     }
