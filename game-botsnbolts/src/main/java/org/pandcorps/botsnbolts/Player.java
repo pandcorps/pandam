@@ -2340,8 +2340,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     @Override
-    protected void onWall(final byte xResult) {
-        stateHandler.onWall(this, xResult);
+    protected boolean onWall(final byte xResult) {
+        return stateHandler.onWall(this, xResult);
     }
     
     protected final boolean triggerBossDoor() {
@@ -2738,7 +2738,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         //@OverrideMe
-        protected void onWall(final Player player, final byte xResult) {
+        protected boolean onWall(final Player player, final byte xResult) {
+            return true;
         }
         
         //@OverrideMe
@@ -2834,12 +2835,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final void onWall(final Player player, final byte xResult) {
+        protected final boolean onWall(final Player player, final byte xResult) {
             if (player.triggerBossDoor()) {
-                return;
+                return true;
             } else if (player.wallTimer == 0 && xResult == X_WALL) {
                 if (player.isReadyToGrabWall() && !player.isTouchingLadder() && player.startWallGrabIfPossible()) {
-                    return;
+                    return true;
                 }
                 player.wallTimer = 1;
                 if (player.chv > 0) { // Player could be sliding opposite of direction Player is facing; movement direction is what matters
@@ -2854,6 +2855,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                     player.wallMirror = player.isMirror();
                 }
             }
+            return true;
         }
     };
     
@@ -3485,14 +3487,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final void onWall(final Player player, final byte xResult) {
+        protected final boolean onWall(final Player player, final byte xResult) {
             player.endBoard();
             if (player.startWallGrabIfPossible()) {
-                return;
+                return true;
             } else if (player.isGrounded()) {
-                return;
+                return true;
             }
             player.v = Math.max(player.v, VEL_BOARD_BUMP);
+            return true;
         }
     };
     
@@ -3596,12 +3599,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
-        protected final void onWall(final Player player, final byte xResult) {
+        protected final boolean onWall(final Player player, final byte xResult) {
             if (player.v > 0) {
-                return;
+                return false;
             } else if (player.startWallGrabIfPossible()) {
                 player.endGlider();
+                return true;
             }
+            return false;
         }
         
         @Override

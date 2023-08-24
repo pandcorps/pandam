@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -554,9 +554,10 @@ public class Enemy extends Character {
 	}
 	
 	@Override
-	protected final void onWall(final byte xResult) {
+	protected final boolean onWall(final byte xResult) {
 		hv *= -1;
 		Pansound.startSound(def.wallSound);
+		return true;
 	}
 
 	@Override

@@ -345,8 +345,9 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
         
         final byte xResult = addX(initCurrentHorizontalVelocity(), true);
         if (xResult != X_NORMAL) {
-            onWall(xResult);
-            chv = 0;
+            if (onWall(xResult)) {
+                chv = 0;
+            }
         }
         
         onStepping();
@@ -686,7 +687,8 @@ public abstract class GuyPlatform extends Panctor implements StepListener, Colli
     
     // This instance bumped into any horizontal barrier (solid tile, far-left, far-right)
     //@OverrideMe
-    protected void onWall(final byte xResult) {
+    protected boolean onWall(final byte xResult) {
+        return true;
     }
 
     // This instance bumped into a solid tile with the given index

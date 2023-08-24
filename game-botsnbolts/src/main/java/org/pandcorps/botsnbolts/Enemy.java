@@ -2338,8 +2338,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void onWall(final byte xResult) {
+        protected final boolean onWall(final byte xResult) {
             hv = -hv;
+            return true;
         }
         
         @Override
@@ -2394,8 +2395,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void onWall(final byte xResult) {
+        protected final boolean onWall(final byte xResult) {
             hv = -hv;
+            return true;
         }
         
         @Override
@@ -2846,8 +2848,9 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void onWall(final byte xResult) {
+        protected final boolean onWall(final byte xResult) {
             hv *= -1;
+            return true;
         }
         
         @Override
@@ -2933,9 +2936,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void onWall(final byte xResult) {
+        protected final boolean onWall(final byte xResult) {
             setMirror(!isMirror());
             hv *= -1;
+            return true;
         }
         
         @Override

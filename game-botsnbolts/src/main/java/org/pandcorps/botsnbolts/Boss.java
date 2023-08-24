@@ -2554,8 +2554,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onWall(final byte xResult) {
+        protected final boolean onWall(final byte xResult) {
             shatter();
+            return true;
         }
         
         protected final void shatter() {
@@ -8106,10 +8107,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onWall(final byte xResult) {
+        protected final boolean onWall(final byte xResult) {
             super.onWall(xResult);
             needMirror = true;
             startStill();
+            return true;
         }
         
         @Override
