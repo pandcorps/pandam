@@ -87,6 +87,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int VEL_BOARD = 5;
     private final static int VEL_GLIDE_START = 5;
     private final static int VEL_GLIDE_DIVE = 0;
+    private final static int GLIDE_MAX_SPEED = 5;
+    private final static float GLIDE_ACCELERATION = 0.1875f;
+    private final static float GLIDE_DECELERATION = 0.125f;
     private final static float GLIDE_BOOST_THRESHOLD = 8;
     private final static byte GLIDE_HORIZONTAL = 0;
     private final static byte GLIDE_UP = 1;
@@ -139,6 +142,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastBoardJump = NULL_CLOCK;
     private long lastGlideDirectionChange = NULL_CLOCK;
     private byte glideAngle = GLIDE_UP;
+    private boolean pulledUpDuringThisGlide = false;
     private float hvForced = 0;
     private int wrappedJumps = 0;
     protected Carrier jumpStartedOnCarrier = null;
@@ -484,6 +488,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void releaseJump() {
+        stateHandler.releaseJump(this);
+    }
+    
+    protected final void releaseJumpNormal() {
         if ((v > 0) && (getClock() > (lastLift + 1))) {
             v = 0;
         }
@@ -1618,6 +1626,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     @Override
     protected final int initCurrentHorizontalVelocity() {
+        return stateHandler.initCurrentHorizontalVelocity(this);
+    }
+    
+    private final int initCurrentHorizontalVelocityNormal() {
         sanded = false;
         final int thv;
         if (v == 0) {
@@ -1650,6 +1662,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
             thv = hv;
         }
         return thv;
+    }
+    
+    private final int initCurrentHorizontalVelocityGlider() {
+        return Math.round(chv);
     }
     
     protected final float getMinX() {
@@ -2183,11 +2199,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
         prevV = 0;
         v = VEL_GLIDE_START;
         glideAngle = GLIDE_UP;
+        pulledUpDuringThisGlide = false;
         stateHandler = GLIDER_HANDLER;
     }
     
     private final void onGlidePullUp() {
-        if (v > -4.0f) {
+        onGlidePullUp(false);
+    }
+    
+    private final void onGlidePullUp(final boolean forced) {
+        if (isMirror()) {
+            chv = Math.min(chv + GLIDE_DECELERATION, 0);
+        } else {
+            chv = Math.max(chv - GLIDE_DECELERATION, 0);
+        }
+        if (!forced && (v > -4.0f)) {
             return;
         }
         prevV = 0;
@@ -2196,10 +2222,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
             v = Math.min(v * 1.2f, GLIDE_BOOST_THRESHOLD);
         }
         lastGlideDirectionChange = getClock();
+        pulledUpDuringThisGlide = true;
     }
     
     private final void onGlideDive() {
-        if (v < 0) {
+        if (isMirror()) {
+            chv = Math.max(chv - GLIDE_ACCELERATION, -GLIDE_MAX_SPEED);
+        } else {
+            chv = Math.min(chv + GLIDE_ACCELERATION, GLIDE_MAX_SPEED);
+        }
+        if (!pulledUpDuringThisGlide || (v < 0)) {
             return;
         }
         v = VEL_GLIDE_DIVE;
@@ -2208,6 +2240,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected final void endGlider() {
         if (stateHandler == GLIDER_HANDLER) {
+            chv = 0;
             clearRun();
             stateHandler = NORMAL_HANDLER;
         }
@@ -2599,6 +2632,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         //@OverrideMe
+        protected void releaseJump(final Player player) {
+            player.releaseJumpNormal();
+        }
+        
+        //@OverrideMe
         protected boolean isFloorBehavior(final byte b) {
             return false;
         }
@@ -2691,6 +2729,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         //@OverrideMe
         protected boolean preventFall(final Player player) {
             return false;
+        }
+        
+        //@OverrideMe
+        protected int initCurrentHorizontalVelocity(final Player player) {
+            return player.initCurrentHorizontalVelocityNormal();
         }
     }
     
@@ -3445,6 +3488,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final void releaseJump(final Player player) {
+        }
+        
+        @Override
         protected float getG(final Player player) {
             return gGlide;
         }
@@ -3492,6 +3539,25 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 return false;
             } else if ((player.prevV > 0) && (player.v <= 0)) {
                 player.lastGlideDirectionChange = getClock();
+                if (player.isMirror()) {
+                    if (player.chv > -1.25f) {
+                        player.chv = -1.25f;
+                    }
+                } else {
+                    if (player.chv < 1.25f) {
+                        player.chv = 1.25f;
+                    }
+                }
+                /*
+                player.chv = player.chv + player.getMirrorMultiplier();
+                if (player.chv > GLIDE_MAX_SPEED) {
+                    player.chv = GLIDE_MAX_SPEED;
+                } else if (player.chv < -GLIDE_MAX_SPEED) {
+                    player.chv = -GLIDE_MAX_SPEED;
+                }
+                */
+            //} else if ((player.v > 0) && (player.prevV <= 0)) {
+            //    player.lastGlideDirectionChange = getClock(); // Handled in onGlidePullUp, never happens automatically
             }
             player.prevV = player.v;
             if ((getClock() - player.lastGlideDirectionChange) < 3) {
@@ -3519,19 +3585,22 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onWall(final Player player, final byte xResult) {
-            player.endGlider();
-            if (player.startWallGrabIfPossible()) {
+            if (player.v > 0) {
                 return;
-            } else if (player.isGrounded()) {
-                return;
+            } else if (player.startWallGrabIfPossible()) {
+                player.endGlider();
             }
-            player.v = Math.max(player.v, VEL_BOARD_BUMP);
         }
         
         @Override
         protected final boolean preventFall(final Player player) {
-            player.onGlidePullUp();
+            player.onGlidePullUp(true);
             return true;
+        }
+        
+        @Override
+        protected final int initCurrentHorizontalVelocity(final Player player) {
+            return player.initCurrentHorizontalVelocityGlider();
         }
     };
     
