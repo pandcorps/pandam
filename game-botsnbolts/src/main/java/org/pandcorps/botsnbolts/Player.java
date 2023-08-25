@@ -143,6 +143,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private long lastLeftStart = NULL_CLOCK;
     private long lastBoardStart = NULL_CLOCK;
     private long lastBoardJump = NULL_CLOCK;
+    private long lastGlideStart = NULL_CLOCK;
     private long lastGlideDirectionChange = NULL_CLOCK;
     private byte glideAngle = GLIDE_UP;
     private boolean pulledUpDuringThisGlide = false;
@@ -1348,7 +1349,20 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final float x = pos.getX(), y = pos.getY();
         final boolean mirror = isMirror();
         final int m = getMirrorMultiplier(mirror);
-        if (glideAngle == GLIDE_HORIZONTAL) {
+        final long glideTime = getClock() - lastGlideStart;
+        if (glideTime == 0) {
+            renderer.render(layer, Animal.getBirdImage(pi),
+                    x - (m * 80) - (mirror ? 31 : 0), y - 64, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 32, 32, 0, mirror, false);
+        } else if (glideTime == 1) {
+            renderer.render(layer, Animal.getBirdImage(pi),
+                    x - (m * 64) - (mirror ? 31 : 0), y - 48, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 32, 32, 0, mirror, false);
+        } else if (glideTime == 2) {
+            renderer.render(layer, pi.gliderUpImage = Animal.getBirdImage(pi.gliderUpImage, pi, "GlideUp"),
+                    x - (m * 66) - (mirror ? 63 : 0), y - 43, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 64, 64, 0, mirror, false);
+        } else if (glideTime == 3) {
+            renderer.render(layer, pi.gliderUpImage = Animal.getBirdImage(pi.gliderUpImage, pi, "GlideUp"),
+                    x - (m * 50) - (mirror ? 63 : 0), y - 27, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 64, 64, 0, mirror, false);
+        } else if (glideAngle == GLIDE_HORIZONTAL) {
             renderer.render(layer, pi.gliderHorizImage = Animal.getBirdImage(pi.gliderHorizImage, pi, "GlideHoriz"),
                     x - (m * 35) - (mirror ? 63 : 0), y - 10, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 64, 64, 0, mirror, false);
         } else if (glideAngle == GLIDE_DOWN) {
@@ -2206,6 +2220,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (isUnderWater()) {
             return false;
         }
+        //TODO Only allow if falling at least some high speed? Show player in glide/dive position once that speed is reached? Also allow if anyGlidingDuringThisJump?
+        // Auto-start if falling fast enough when reach bottom of screen if glider jump mode enabled?
         destroySpring();
         clearDash();
         clearStream();
@@ -2215,6 +2231,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         pulledUpDuringThisGlide = false;
         anyGlidingDuringThisJump = true;
         stateHandler = GLIDER_HANDLER;
+        lastGlideStart = getClock() + 1;
         return true;
     }
     
