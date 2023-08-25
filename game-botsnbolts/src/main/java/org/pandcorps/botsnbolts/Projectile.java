@@ -34,7 +34,8 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 
-public class Projectile extends Pandy implements Collidable, AllOobListener, SpecProjectile, StepEndListener {
+public class Projectile extends Pandy implements AllOobListener, SpecPlayerProjectile, StepEndListener {
+    protected final static int POWER_BOMB = 1;
     protected final static int POWER_MEDIUM = 3;
     protected final static int POWER_MAXIMUM = 5;
     protected final static int POWER_IMPOSSIBLE = Integer.MAX_VALUE;
@@ -86,6 +87,16 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         prj.getVelocity().set(xm * vx, vy);
     }
     
+    @Override
+    public final Player getSource() {
+        return src;
+    }
+    
+    @Override
+    public final int getPower() {
+        return power;
+    }
+    
     protected final void setPower(final int power) {
         setPower(this, power);
     }
@@ -128,11 +139,11 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         burst(this, pi.burst, loc);
     }
     
-    protected final static void burst(final Panctor src, final Panimation anm, final Panple loc) {
+    protected final static void burst(final SpecPanctor src, final Panimation anm, final Panple loc) {
         burst(src, anm, loc.getX(), loc.getY());
     }
     
-    protected final static void burst(final Panctor src, final Panimation anm, final float x, final float y) {
+    protected final static void burst(final SpecPanctor src, final Panimation anm, final float x, final float y) {
         final Burst burst = new Burst(anm);
         final Panple pos = burst.getPosition();
         pos.set(x, y, BotsnBoltsGame.DEPTH_BURST);
@@ -140,8 +151,14 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         BotsnBoltsGame.addActor(burst);
     }
     
-    protected void bounce() {
+    @Override
+    public void bounce() {
         new Bounce(this);
+    }
+    
+    @Override
+    public float getVelocityX() {
+        return getVelocity().getX();
     }
 
     @Override
@@ -217,7 +234,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         }
         
         protected Explosion(final Player src, final Panctor ref) {
-            super(src, src.pi, Player.SHOOT_BOMB, ref, 0, 0, 1);
+            super(src, src.pi, Player.SHOOT_BOMB, ref, 0, 0, POWER_BOMB);
             init(this, src, ref);
         }
         
@@ -246,6 +263,85 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         }
     }
     
+    public abstract static class ChrProjectile extends Chr implements SpecProjectile {
+        protected final Player src;
+        private int power;
+        
+        protected ChrProjectile(final Player src, final int offX, final int h) {
+            super(offX, h);
+            this.src = src;
+            getPosition().setZ(BotsnBoltsGame.DEPTH_PROJECTILE);
+        }
+        
+        public final Player getSource() {
+            return src;
+        }
+        
+        public int getPower() {
+            return power;
+        }
+        
+        @Override
+        public void assignPower(final int power) {
+            this.power = power;
+        }
+
+        @Override
+        public PlayerImages getPlayerImages() {
+            return src.pi;
+        }
+        
+        public float getVelocityX() {
+            return hv;
+        }
+
+        @Override
+        public ShootMode getShootMode() {
+            return Player.SHOOT_BOMB;
+        }
+    }
+    
+    public abstract static class FallingBomb extends ChrProjectile {
+        protected FallingBomb(final Player src) {
+            super(src, 3, 3);
+            setMirror(src.isMirror());
+            setView(src.pi.bomb);
+            src.getLayer().addActor(this);
+            assignPower(POWER_BOMB);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            if (!isJumpPossible()) {
+                burst();
+            }
+            return false;
+        }
+        
+        @Override
+        protected final void onLanded() {
+            burst();
+        }
+        
+        @Override
+        public final void burst() {
+            BotsnBoltsGame.fxAttack.startSound();
+            Projectile.burst(this, src.pi.burst, getPosition());
+            destroy();
+        }
+    }
+    
+    public final static class PlayerFallingBomb extends FallingBomb implements SpecPlayerProjectile {
+        protected PlayerFallingBomb(final Player src) {
+            super(src);
+        }
+        
+        @Override
+        public final void bounce() {
+            burst();
+        }
+    }
+    
     public static class StreamProjectile extends Projectile {
         private final int ox;
         protected boolean srcMirror;
@@ -260,7 +356,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         }
         
         @Override
-        protected final void bounce() {
+        public final void bounce() {
             boolean detaching = false;
             for (final StreamProjectile prj : src.streamProjectiles) {
                 if (prj == this) {
@@ -435,7 +531,7 @@ public class Projectile extends Pandy implements Collidable, AllOobListener, Spe
         }
         
         @Override
-        protected final void bounce() {
+        public final void bounce() {
             startReturnToPlayer();
         }
         

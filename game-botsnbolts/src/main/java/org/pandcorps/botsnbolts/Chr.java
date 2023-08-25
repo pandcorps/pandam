@@ -22,6 +22,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 package org.pandcorps.botsnbolts;
 
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
 import org.pandcorps.pandam.event.*;
@@ -142,7 +143,7 @@ public abstract class Chr extends GuyPlatform {
     protected static interface SpecEnemy extends CollisionListener {
         public boolean isVulnerable();
         
-        public void onShot(final Projectile prj);
+        public void onShot(final SpecPlayerProjectile prj);
         
         public boolean isHarmful();
         

@@ -114,7 +114,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     public static void onCollision(final SpecEnemy enemy, final CollisionEvent event) {
         final Collidable collider = event.getCollider();
-        if (collider instanceof Projectile) { // Projectile can have sub-classes like Explosion
+        if (collider instanceof SpecPlayerProjectile) {
             if (collider instanceof StreamProjectile) {
                 final long clock = getClock();
                 if (clock <= (enemy.getLastStreamCollision() + 2)) {
@@ -123,7 +123,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 enemy.setLastStreamCollision(clock);
             }
             if (enemy.isVulnerable()) {
-                enemy.onShot((Projectile) collider);
+                enemy.onShot((SpecPlayerProjectile) collider);
             }
         } else if (collider.getClass() == Player.class) {
             if (enemy.isHarmful()) {
@@ -143,8 +143,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     @Override
-    public void onShot(final Projectile prj) {
-        if (prj.power <= 0) {
+    public void onShot(final SpecPlayerProjectile prj) {
+        if (prj.getPower() <= 0) {
             return;
         } else if (!isVulnerableToProjectile(prj)) {
             prj.bounce();
@@ -153,23 +153,23 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         onHurt(prj);
     }
     
-    protected void onHurt(final Projectile prj) {
+    protected void onHurt(final SpecPlayerProjectile prj) {
         onHurt(this, prj);
     }
     
-    protected final static void onHurt(final SpecEnemy enemy, final Projectile prj) {
+    protected final static void onHurt(final SpecEnemy enemy, final SpecPlayerProjectile prj) {
         int health = enemy.getHealth();
-        final int oldHealth = health, oldPower = prj.power;
+        final int oldHealth = health, oldPower = prj.getPower();
         health -= oldPower;
         enemy.setHealth(health);
-        final Player src = prj.src;
+        final Player src = prj.getSource();
         if ((src != null) && (src.stamina < HudMeter.MAX_VALUE)) {
             src.stamina++;
         }
         BotsnBoltsGame.fxImpact.startSound();
         if (health <= 0) {
             if (enemy.isBurstNeeded()) {
-                prj.burst(enemy);
+                Projectile.burst(prj, prj.getPlayerImages().burst, enemy.getPosition());
             }
             enemy.award(src);
             enemy.onDefeat(src);
@@ -178,7 +178,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             }
         }
         if (oldHealth > 0) {
-            prj.setPower(oldPower - oldHealth);
+            Projectile.setPower(prj, oldPower - oldHealth);
         }
     }
     
@@ -216,7 +216,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         this.lastStreamCollision = lastStreamCollision;
     }
     
-    protected boolean isVulnerableToProjectile(final Projectile prj) {
+    protected boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
         return true;
     }
     
@@ -1770,15 +1770,15 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
 
         @Override
-        protected final boolean isVulnerableToProjectile(final Projectile prj) {
-            return (prj.power >= Projectile.POWER_MAXIMUM) || isExposedToProjectile(prj);
+        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+            return (prj.getPower() >= Projectile.POWER_MAXIMUM) || isExposedToProjectile(prj);
         }
         
-        protected final boolean isExposedToProjectile(final Projectile prj) {
+        protected final boolean isExposedToProjectile(final SpecPlayerProjectile prj) {
             if (!shielded) {
                 return true;
             }
-            final float pvx = prj.getVelocity().getX();
+            final float pvx = prj.getVelocityX();
             if (pvx < 0) {
                 return isMirror();
             } else if (pvx > 0) {
@@ -1788,11 +1788,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected void onHurt(final Projectile prj) {
+        protected void onHurt(final SpecPlayerProjectile prj) {
             if (shielded && !isExposedToProjectile(prj)) {
                 shielded = false;
-                prj.burst(this);
-                prj.setPower(0);
+                Projectile.burst(prj, prj.getPlayerImages().burst, getPosition());
+                Projectile.setPower(prj, 0);
                 setView(BotsnBoltsGame.unshieldedEnemy);
             } else {
                 super.onHurt(prj);
@@ -2700,7 +2700,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return (frame > 1) && (prj.isMirror() != isMirror());
         }
         
@@ -2859,7 +2859,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void onHurt(final Projectile prj) {
+        protected final void onHurt(final SpecPlayerProjectile prj) {
             super.onHurt(prj);
             lastHurt = Pangine.getEngine().getClock();
         }
@@ -3257,11 +3257,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             if (mode == MODE_WAIT) {
                 startWait();
             }
-            return (prj.power >= Projectile.POWER_MAXIMUM) || (mode == MODE_HOVER);
+            return (prj.getPower() >= Projectile.POWER_MAXIMUM) || (mode == MODE_HOVER);
         }
         
         private final void setView(final int i) {

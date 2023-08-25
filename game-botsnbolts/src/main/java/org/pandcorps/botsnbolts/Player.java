@@ -2290,6 +2290,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (stateHandler == GLIDER_HANDLER) {
             chv = 0;
             clearRun();
+            lastShotPosed = NULL_CLOCK;
             stateHandler = NORMAL_HANDLER;
         }
     }
@@ -3579,7 +3580,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onShootStart(final Player player) {
-            //TODO Drop a bomb (if enough time has passed since last one) using Shift Ball Bomb art, but it explodes when colliding with Enemy or when it hits the ground
+            final long clock = getClock();
+            if (clock - player.lastShotFired > SHOOT_DELAY_DEFAULT) {
+                final Panple pos = player.getPosition();
+                new PlayerFallingBomb(player).getPosition().set(pos.getX() + (12 * player.getMirrorMultiplier()), pos.getY() + 8);
+                player.afterShoot(clock);
+                player.lastShotPosed = NULL_CLOCK;
+            }
         }
         
         @Override
@@ -5074,7 +5081,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
-    public static interface SpecProjectile extends SpecPanctor {
+    // A Player-like projectile (from an actual Player or an AiBoss)
+    public static interface SpecProjectile extends SpecPanctor, Collidable {
         public void assignPower(final int power);
         
         public PlayerImages getPlayerImages();
@@ -5082,6 +5090,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
         public ShootMode getShootMode();
         
         public void burst();
+    }
+    
+    public static interface SpecPlayerProjectile extends SpecProjectile {
+        public Player getSource();
+        
+        public int getPower();
+        
+        public void bounce();
+        
+        public float getVelocityX();
     }
     
     protected static interface RoomChangeListener extends SpecPanctor {

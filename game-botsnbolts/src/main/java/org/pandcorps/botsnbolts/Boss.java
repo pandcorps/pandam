@@ -692,7 +692,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected abstract Panmage getStill();
     
     @Override
-    protected void onHurt(final Projectile prj) {
+    protected void onHurt(final SpecPlayerProjectile prj) {
         final int oldHealth = health;
         super.onHurt(prj);
         handleHurtIfDangerous(this);
@@ -1457,7 +1457,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected void onHurt(final Projectile prj) {
+        protected void onHurt(final SpecPlayerProjectile prj) {
             final int oldHealth = health;
             super.onHurt(prj);
             final int damage = oldHealth - health;
@@ -1518,7 +1518,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return prj.getPosition().getY() < (getPosition().getY() + 48.0f);
         }
         
@@ -1581,7 +1581,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return false;
         }
         
@@ -8138,7 +8138,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onShot(final Projectile prj) {
+        public final void onShot(final SpecPlayerProjectile prj) {
             Enemy.onHurt(this, prj);
         }
         
@@ -9273,9 +9273,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        public final void onShot(final Projectile prj) {
+        public final void onShot(final SpecPlayerProjectile prj) {
             if (state == STATE_DEFEATED) {
-                if (prj.getVelocity().getX() == 0f) {
+                if (prj.getVelocityX() == 0f) {
                     final Panple pos = prj.getPosition();
                     burst(pos.getX() - 1, pos.getY());
                     prj.destroy();
@@ -9293,7 +9293,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final Projectile prj) {
+        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return state == STATE_DEFEATED;
         }
         
@@ -9716,7 +9716,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onHurt(final Projectile prj) {
+        protected final void onHurt(final SpecPlayerProjectile prj) {
             wagon.onHurt(prj);
         }
         

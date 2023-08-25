@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.Map.*;
 
 import org.pandcorps.botsnbolts.Enemy.*;
+import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
 import org.pandcorps.core.col.*;
@@ -602,7 +603,7 @@ public abstract class BlockPuzzle {
         }
 
         @Override
-        public final void onShot(final Projectile prj) {
+        public final void onShot(final SpecPlayerProjectile prj) {
         }
         
         @Override
