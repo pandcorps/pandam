@@ -1261,6 +1261,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         super.renderView(renderer);
     }
     
+    private final static long getExhaustIndex() {
+        return (getClock() % 6) / 2;
+    }
+    
     protected final void renderViewBoard(final Panderer renderer) {
         final Panlayer layer = getLayer();
         final Panple pos = getPosition();
@@ -1268,7 +1272,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final boolean mirror = isMirror();
         final int m = getMirrorMultiplier(mirror);
         renderer.render(layer, (Panmage) getCurrentDisplay(), x, y + BOARD_Y_OFF, pos.getZ(), 0, mirror, false);
-        final long exhaustIndex = (getClock() % 6) / 2;
+        final long exhaustIndex = getExhaustIndex();
         if (boardSlope == SLOPE_NONE) {
             final long boardTime = getBoardTime();
             if (boardTime == 0) {
@@ -1350,6 +1354,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final boolean mirror = isMirror();
         final int m = getMirrorMultiplier(mirror);
         final long glideTime = getClock() - lastGlideStart;
+        final long exhaustIndex = getExhaustIndex();
         if (glideTime == 0) {
             renderer.render(layer, Animal.getBirdImage(pi),
                     x - (m * 80) - (mirror ? 31 : 0), y - 64, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 32, 32, 0, mirror, false);
@@ -1367,10 +1372,20 @@ public class Player extends Chr implements Warpable, StepEndListener {
                     x - (m * 35) - (mirror ? 63 : 0), y - 10, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 64, 64, 0, mirror, false);
         } else if (glideAngle == GLIDE_DOWN) {
             renderer.render(layer, pi.gliderDownImage = Animal.getBirdImage(pi.gliderDownImage, pi, "GlideDown"),
-                    x - (m * 35) - (mirror ? 63 : 0), y - 14, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 64, 64, 0, mirror, false);
+                    x - (m * 35) - (mirror ? 63 : 0), y - 14, BotsnBoltsGame.DEPTH_PLAYER_FRONT_2, 0, 0, 64, 64, 0, mirror, false);
+            if (exhaustIndex == 1) {
+                renderer.render(layer, pi.exhaustDiag1, x - (m * 5) - (mirror ? 3 : 0), y + 27, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 4, 4, 0, mirror, true);
+            } else if (exhaustIndex == 2) {
+                renderer.render(layer, pi.exhaustDiag2, x - (m * 7) - (mirror ? 7 : 0), y + 26, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 8, 8, 0, mirror, true);
+            }
         } else {
             renderer.render(layer, pi.gliderUpImage = Animal.getBirdImage(pi.gliderUpImage, pi, "GlideUp"),
                     x - (m * 34) - (mirror ? 63 : 0), y - 11, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 64, 64, 0, mirror, false);
+            if (exhaustIndex == 1) {
+                // pi.exhaustDiag1 // Blocked by Player
+            } else if (exhaustIndex == 2) {
+                renderer.render(layer, pi.exhaustDiag2, x - (m * 7) - (mirror ? 7 : 0), y + 5, BotsnBoltsGame.DEPTH_PLAYER_BACK_2, 0, 0, 8, 8, 0, mirror, false);
+            }
         }
         renderViewNormal(renderer);
     }
@@ -5092,6 +5107,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         public void burst();
     }
     
+    // A projectile from an actual Player that could hurt an Enemy
     public static interface SpecPlayerProjectile extends SpecProjectile {
         public Player getSource();
         
