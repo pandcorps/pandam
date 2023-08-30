@@ -223,6 +223,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static Panmage iconDisk = null;
     protected static Panmage iconBoss = null;
     protected static Panmage black = null;
+    protected static Panmage grey64 = null;
     protected static Panmage pupil = null;
     protected static Panimation defeatOrbBoss = null;
     protected static Panmage diskGrey = null;
@@ -417,6 +418,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private final static void loadMisc() {
         final Pangine engine = Pangine.getEngine();
         black = engine.createImage("black", RES + "misc/Black.png");
+        grey64 = engine.createImage("grey64", RES + "misc/Grey64.png");
         pupil = engine.createImage("pupil", new FinPanple2(1, 0), null, null, RES + "misc/Pupil.png");
         hudMeterBlank = newHudMeterImages("meter.blank", RES + "misc/MeterBlank.png");
         final Img[] blockImgs = Imtil.loadStrip(RES + "bg/BlockCyan.png", 16, false);

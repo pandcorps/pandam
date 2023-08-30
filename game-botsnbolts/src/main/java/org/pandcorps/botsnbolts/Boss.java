@@ -9611,6 +9611,100 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    protected final static class FinalHead extends Boss {
+        private static Panmage still = null;
+        private static Panmage corner = null;
+        private static Panmage shoulder = null;
+        
+        private boolean facingMirror = true;
+
+        protected FinalHead(final Segment seg) {
+            super(56, 96, 0, 0);
+            setMirror(false);
+            getPosition().set(128, 112, BotsnBoltsGame.DEPTH_ENEMY);
+        }
+        
+        @Override
+        protected final boolean isDropNeeded() {
+            return false;
+        }
+        
+        @Override
+        protected final void taunt() {
+            super.taunt();
+            //setPlayerActive(false);
+        }
+        
+        @Override
+        protected final boolean isDefeatOrbNeeded() {
+            return false;
+        }
+        
+        @Override
+        public final void onAward(final Player player) {
+            clearPlayerExtras();
+            /*player.startScript(new LeftAi(32.0f), new Runnable() {
+                @Override public final void run() {
+                    //new Warp(getNextBoss(20, 3));
+                }});*/
+        }
+        
+        @Override
+        protected final boolean getTauntingReturnValue() {
+            return true;
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            facingMirror = getNearestPlayerX() < MID_X;
+            return true;
+        }
+
+        @Override
+        protected final boolean pickState() {
+            return true;
+        }
+
+        @Override
+        protected final boolean continueState() {
+            return true;
+        }
+
+        @Override
+        protected final Panmage getStill() {
+            if (still != null) {
+                return still;
+            }
+            return (still = getImage(still, "final/Head", null, new FinPanple2(24, 8), new FinPanple2(104, 88)));
+        }
+        
+        protected final Panmage getCorner() {
+            return (corner = getImage(corner, "final/HeadCorner", null, null, null));
+        }
+        
+        protected final Panmage getShoulder() {
+            return (shoulder = getImage(shoulder, "final/HeadShoulder", null, null, null));
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            final Panlayer layer = getLayer();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            getCorner();
+            getShoulder();
+            renderer.render(layer, Final.getCoat(), x + 63, y + 51, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, facingMirror, false);
+            renderer.render(layer, BotsnBoltsGame.grey64, x + 32, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 64, 40, 0, false, false);
+            renderer.render(layer, corner, x - 16, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, false, false);
+            renderer.render(layer, corner, x + 128, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, true, false);
+            renderer.render(layer, corner, x - 48, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, true, false);
+            renderer.render(layer, corner, x + 160, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, false, false);
+            renderer.render(layer, shoulder, x - 112, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 64, 64, 0, false, false);
+            renderer.render(layer, shoulder, x + 176, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 64, 64, 0, true, false);
+        }
+    }
+    
     protected final static int SAUCER_OFF_X = 16, SAUCER_H = 43;
     protected final static Panple SAUCER_O = new FinPanple2(32, 0);
     protected final static Panple SAUCER_MIN = getMin(SAUCER_OFF_X);
