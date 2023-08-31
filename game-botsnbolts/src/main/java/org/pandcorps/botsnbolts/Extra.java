@@ -429,6 +429,22 @@ public abstract class Extra extends Panctor {
             }
             timer = 0;
             clawIndex++;
+            if (clawIndex < 3) {
+                BotsnBoltsGame.fxCrumble.startSound();
+                if (clawIndex == 1) {
+                    shatter(180, 124);
+                    shatter(180, 149);
+                } else {
+                    shatter(204, 108);
+                    shatter(204, 133);
+                }
+            } else {
+                BotsnBoltsGame.fxThunder.startSound();
+            }
+        }
+        
+        private final void shatter(final float x, final float y) {
+            Player.shatter(new FinPanple2(x, y), FinalHead.getShatter());
         }
         
         private final void onStepOpen() {

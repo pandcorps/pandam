@@ -9626,6 +9626,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private static Panmage shoulder = null;
         private static Panmage clawRip = null;
         private static Panmage wall = null;
+        private static Panmage shatter = null;
         
         protected int visibleSize = 0;
         private boolean facingMirror = true;
@@ -9718,6 +9719,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getWall() {
             return (wall = getImage(wall, "final/HeadWall", null, null, null));
+        }
+        
+        protected final static Panmage getShatter() {
+            return (shatter = getImage(shatter, "final/HeadShatter", BotsnBoltsGame.CENTER_8, null, null));
         }
         
         @Override
