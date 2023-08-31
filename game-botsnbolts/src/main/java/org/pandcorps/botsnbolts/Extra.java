@@ -457,24 +457,32 @@ public abstract class Extra extends Panctor {
             final Panmage wall = FinalHead.getWall();
             final int off = (head == null) ? 0 : (head.visibleSize * 2);
             final float z = BotsnBoltsGame.DEPTH_CARRIER;
+            renderer.render(layer, wall, 16 - off, 32, z, 80, 0, 48, 48, 0, false, false);
+            renderer.render(layer, wall, 16 - off, 80, z, 0, 80, 48, 48, 0, false, false);
+            renderer.render(layer, wall, 16 - off, 128, z, 80, 0, 48, 48, 0, false, false);
+            renderer.render(layer, wall, 16 - off, 176, z, 0, 80, 48, 48, 3, true, false);
             renderer.render(layer, wall, 64 - off, 32, z, 0, 0, 128, 128, 0, false, false);
             renderer.render(layer, wall, 64 - off, 160, z, 0, 0, 128, 64, 0, false, false);
             renderer.render(layer, wall, 192 + off, 32, z, 0, 64, 128, 64, 0, false, false);
-            renderer.render(layer, wall, 192 + off, 96, z, 0, 0, 128, 128, 0, false, false);
+            renderer.render(layer, wall, 192 + off, 96, z, 0, 0, 128, 128, 3, true, false);
+            renderer.render(layer, wall, 320 + off, 32, z, 80, 0, 48, 48, 0, false, false);
+            renderer.render(layer, wall, 320 + off, 80, z, 0, 80, 48, 48, 3, true, false);
+            renderer.render(layer, wall, 320 + off, 128, z, 0, 80, 48, 48, 0, false, false);
+            renderer.render(layer, wall, 320 + off, 176, z, 80, 0, 48, 48, 0, false, false);
             if (clawIndex < 1) {
                 return;
             }
             final Panmage claw = FinalHead.getClawRip();
             final float zc = BotsnBoltsGame.DEPTH_POWER_UP;
-            final int clawLeftX = 174 - off, clawBottomY = 112, clawTopY = 144;
-            renderer.render(layer, claw, clawLeftX, clawBottomY, zc, 0, 0, 16, 16, 0, false, false);
-            renderer.render(layer, claw, clawLeftX, clawTopY, zc, 0, 0, 16, 16, 0, false, false);
+            final int clawLeftX = 172 - off;
+            renderer.render(layer, claw, clawLeftX, 116, zc, 0, 0, 16, 16, 0, false, false);
+            renderer.render(layer, claw, clawLeftX, 141, zc, 0, 0, 16, 16, 0, false, false);
             if (clawIndex < 2) {
                 return;
             }
-            final int clawRightX = 194 + off;
-            renderer.render(layer, claw, clawRightX, clawBottomY, zc, 0, 0, 16, 16, 0, true, false);
-            renderer.render(layer, claw, clawRightX, clawTopY, zc, 0, 0, 16, 16, 0, true, false);
+            final int clawRightX = 196 + off;
+            renderer.render(layer, claw, clawRightX, 100, zc, 0, 0, 16, 16, 0, true, false);
+            renderer.render(layer, claw, clawRightX, 125, zc, 0, 0, 16, 16, 0, true, false);
         }
     }
     
