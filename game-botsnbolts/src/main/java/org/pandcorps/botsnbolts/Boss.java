@@ -9615,13 +9615,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private static Panmage still = null;
         private static Panmage corner = null;
         private static Panmage shoulder = null;
+        private static Panmage clawRip = null;
+        private static Panmage wall = null;
         
+        protected int visibleSize = 0;
         private boolean facingMirror = true;
 
         protected FinalHead(final Segment seg) {
             super(56, 96, 0, 0);
             setMirror(false);
-            getPosition().set(128, 112, BotsnBoltsGame.DEPTH_ENEMY);
+            getPosition().set(128, 112, BotsnBoltsGame.DEPTH_ENEMY_BG);
         }
         
         @Override
@@ -9678,30 +9681,50 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return (still = getImage(still, "final/Head", null, new FinPanple2(24, 8), new FinPanple2(104, 88)));
         }
         
-        protected final Panmage getCorner() {
+        protected final static Panmage getCorner() {
             return (corner = getImage(corner, "final/HeadCorner", null, null, null));
         }
         
-        protected final Panmage getShoulder() {
+        protected final static Panmage getShoulder() {
             return (shoulder = getImage(shoulder, "final/HeadShoulder", null, null, null));
+        }
+        
+        protected final static Panmage getClawRip() {
+            return (clawRip = getImage(clawRip, "final/HeadClawRip", null, null, null));
+        }
+        
+        protected final static Panmage getWall() {
+            return (wall = getImage(wall, "final/HeadWall", null, null, null));
         }
         
         @Override
         protected final void renderView(final Panderer renderer) {
+            if (visibleSize <= 0) {
+                return;
+            }
             super.renderView(renderer);
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
+            renderer.render(layer, Final.getCoat(), x + 63, y + 51, BotsnBoltsGame.DEPTH_ENEMY_BG_2, 0, facingMirror, false);
+            renderer.render(layer, BotsnBoltsGame.grey64, x + 32, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 64, 40, 0, false, false);
+            if (visibleSize <= 1) {
+                return;
+            }
             getCorner();
+            renderer.render(layer, corner, x - 16, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 16, 16, 0, false, false);
+            renderer.render(layer, corner, x + 128, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 16, 16, 0, true, false);
+            if (visibleSize <= 3) {
+                return;
+            }
+            renderer.render(layer, corner, x - 48, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 16, 16, 0, true, false);
+            renderer.render(layer, corner, x + 160, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 16, 16, 0, false, false);
+            if (visibleSize <= 4) {
+                return;
+            }
             getShoulder();
-            renderer.render(layer, Final.getCoat(), x + 63, y + 51, BotsnBoltsGame.DEPTH_ENEMY_BACK, 0, facingMirror, false);
-            renderer.render(layer, BotsnBoltsGame.grey64, x + 32, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 64, 40, 0, false, false);
-            renderer.render(layer, corner, x - 16, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, false, false);
-            renderer.render(layer, corner, x + 128, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, true, false);
-            renderer.render(layer, corner, x - 48, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, true, false);
-            renderer.render(layer, corner, x + 160, y + 96, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 16, 16, 0, false, false);
-            renderer.render(layer, shoulder, x - 112, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 64, 64, 0, false, false);
-            renderer.render(layer, shoulder, x + 176, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, 0, 0, 64, 64, 0, true, false);
+            renderer.render(layer, shoulder, x - 112, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 64, 64, 0, false, false);
+            renderer.render(layer, shoulder, x + 176, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 64, 64, 0, true, false);
         }
     }
     

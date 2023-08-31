@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2022, Andrew M. Martin
+Copyright (c) 2009-2023, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -343,31 +343,138 @@ public abstract class Extra extends Panctor {
         }
     }
     
-    protected final static class FinalWagonSpawner extends Extra implements StepListener {
-        private final Segment seg;
+    protected abstract static class FinalBossSpawner extends Extra implements StepListener {
+        protected final Segment seg;
+        protected boolean spawned = false;
         
-        protected FinalWagonSpawner(final Segment seg) {
+        protected FinalBossSpawner(final Segment seg) {
             super(seg, 0);
             this.seg = seg;
         }
 
         @Override
         public final void onStep(final StepEvent event) {
+            onStepSpawner();
+            if (spawned) {
+                return;
+            }
             BotsnBoltsGame.runPlayers(new PlayerRunnable() {
                 @Override
                 public final void run(final Player player) {
-                    onStep(player);
+                    if (spawned) {
+                        return;
+                    }
+                    spawnIfNeeded(player);
                 }
             });
         }
+
+        //@OverrideMe
+        protected void onStepSpawner() {
+        }
         
-        private final void onStep(final Player player) {
+        private final void spawnIfNeeded(final Player player) {
             if (player.getPosition().getX() <= 32) {
-                BotsnBoltsGame.addActor(new FinalWagon(seg));
+                spawn();
+                spawned = true;
                 player.setMirror(false);
                 Boss.setPlayerActive(false);
+            }
+        }
+        
+        protected abstract void spawn();
+    }
+    
+    protected final static class FinalWagonSpawner extends FinalBossSpawner {
+        protected FinalWagonSpawner(final Segment seg) {
+            super(seg);
+        }
+        
+        @Override
+        protected final void spawn() {
+            BotsnBoltsGame.addActor(new FinalWagon(seg));
+            destroy();
+        }
+    }
+    
+    protected final static class FinalHeadSpawner extends FinalBossSpawner {
+        private FinalHead head = null;
+        private int timer = 0;
+        private int clawIndex = 0;
+        
+        protected FinalHeadSpawner(final Segment seg) {
+            super(seg);
+        }
+        
+        @Override
+        protected final boolean isVisibleWhileRoomChanging() {
+            return true;
+        }
+        
+        @Override
+        protected final void onStepSpawner() {
+            if (!spawned) {
+                return;
+            } else if (clawIndex < 3) {
+                onStepClaw();
+                return;
+            }
+            onStepOpen();
+        }
+        
+        private final void onStepClaw() {
+            if (timer < 30) {
+                timer++;
+                return;
+            }
+            timer = 0;
+            clawIndex++;
+        }
+        
+        private final void onStepOpen() {
+            head.visibleSize++;
+            if (head.visibleSize > 87) {
+                for (int y = 0; y < BotsnBoltsGame.GAME_ROWS; y++) {
+                    ShootableDoor.disableOverlay(0, y);
+                    ShootableDoor.disableOverlay(23, y);
+                }
                 destroy();
             }
+        }
+        
+        @Override
+        protected final void spawn() {
+            for (int y = 0; y < BotsnBoltsGame.GAME_ROWS; y++) {
+                ShootableDoor.enableOverlay(0, y);
+                ShootableDoor.enableOverlay(23, y);
+            }
+            BotsnBoltsGame.addActor(head = new FinalHead(seg));
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            final Panlayer layer = getLayer();
+            final Panmage wall = FinalHead.getWall();
+            final int off = (head == null) ? 0 : (head.visibleSize * 2);
+            final float z = BotsnBoltsGame.DEPTH_CARRIER;
+            renderer.render(layer, wall, 64 - off, 32, z, 0, 0, 128, 128, 0, false, false);
+            renderer.render(layer, wall, 64 - off, 160, z, 0, 0, 128, 64, 0, false, false);
+            renderer.render(layer, wall, 192 + off, 32, z, 0, 64, 128, 64, 0, false, false);
+            renderer.render(layer, wall, 192 + off, 96, z, 0, 0, 128, 128, 0, false, false);
+            if (clawIndex < 1) {
+                return;
+            }
+            final Panmage claw = FinalHead.getClawRip();
+            final float zc = BotsnBoltsGame.DEPTH_POWER_UP;
+            final int clawLeftX = 174 - off, clawBottomY = 112, clawTopY = 144;
+            renderer.render(layer, claw, clawLeftX, clawBottomY, zc, 0, 0, 16, 16, 0, false, false);
+            renderer.render(layer, claw, clawLeftX, clawTopY, zc, 0, 0, 16, 16, 0, false, false);
+            if (clawIndex < 2) {
+                return;
+            }
+            final int clawRightX = 194 + off;
+            renderer.render(layer, claw, clawRightX, clawBottomY, zc, 0, 0, 16, 16, 0, true, false);
+            renderer.render(layer, claw, clawRightX, clawTopY, zc, 0, 0, 16, 16, 0, true, false);
         }
     }
     

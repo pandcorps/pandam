@@ -144,32 +144,42 @@ public class ShootableDoor extends Panctor implements StepListener, CollisionLis
         for (int j = 0; j < n; j++) {
             tm.setBackground(x, y + j, doorTunnelOverlay[base + j], Tile.BEHAVIOR_OPEN);
         }
-        enableAdjacentOverlay(x, y - 1);
-        enableAdjacentOverlay(x, y + n);
+        enableOverlay(x, y - 1);
+        enableOverlay(x, y + n);
         return n;
     }
     
-    private final void enableAdjacentOverlay(final int x, final int y) {
+    protected final static void enableOverlay(final int x, final int y) {
         final TileMap tm = BotsnBoltsGame.tm;
         final int index = tm.getIndex(x, y);
-        final Object bgRaw = DynamicTileMap.getRawBackground(tm.getTile(index));
-        if ((bgRaw == null) || (bgRaw.getClass() != TileMapImage.class)) {
-            return;
+        final Tile tile = tm.getTile(index);
+        final Object bgRaw = DynamicTileMap.getRawBackground(tile);
+        if ((bgRaw != null) && (bgRaw.getClass() == TileMapImage.class)) {
+            final TileMapImage bg = (TileMapImage) bgRaw;
+            // Use DEPTH_OVERLAY for tunnel (so player and projectiles go behind it); adjacent tiles should only hide player; should still see projectiles
+            tm.setBackground(index, new AdjustedTileMapImage(bg, BotsnBoltsGame.DEPTH_ENEMY_FRONT - BotsnBoltsGame.DEPTH_BG, 0, false, false));
         }
-        final TileMapImage bg = (TileMapImage) bgRaw;
-        // Use DEPTH_OVERLAY for tunnel (so player and projectiles go behind it); adjacent tiles should only hide player; should still see projectiles
-        tm.setBackground(index, new AdjustedTileMapImage(bg, BotsnBoltsGame.DEPTH_ENEMY_FRONT - BotsnBoltsGame.DEPTH_BG, 0, false, false));
+        final Object fgRaw = DynamicTileMap.getRawForeground(tile);
+        if ((fgRaw != null) && (fgRaw.getClass() == TileMapImage.class)) {
+            final TileMapImage fg = (TileMapImage) fgRaw;
+            tm.setForeground(index, new AdjustedTileMapImage(fg, BotsnBoltsGame.DEPTH_ENEMY_FRONT - BotsnBoltsGame.DEPTH_FG, 0, false, false));
+        }
     }
     
-    protected final void disableOverlay(final int x, final int y) {
+    protected final static void disableOverlay(final int x, final int y) {
         final TileMap tm = BotsnBoltsGame.tm;
         final int index = tm.getIndex(x, y);
-        final Object bgRaw = DynamicTileMap.getRawBackground(tm.getTile(index));
-        if ((bgRaw == null) || (bgRaw.getClass() != AdjustedTileMapImage.class)) {
-            return;
+        final Tile tile = tm.getTile(index);
+        final Object bgRaw = DynamicTileMap.getRawBackground(tile);
+        if ((bgRaw != null) && (bgRaw.getClass() == AdjustedTileMapImage.class)) {
+            final AdjustedTileMapImage bg = (AdjustedTileMapImage) bgRaw;
+            tm.setBackground(index, bg.getRaw());
         }
-        final AdjustedTileMapImage bg = (AdjustedTileMapImage) bgRaw;
-        tm.setBackground(index, bg.getRaw());
+        final Object fgRaw = DynamicTileMap.getRawForeground(tile);
+        if ((fgRaw != null) && (fgRaw.getClass() == AdjustedTileMapImage.class)) {
+            final AdjustedTileMapImage fg = (AdjustedTileMapImage) fgRaw;
+            tm.setForeground(index, fg.getRaw());
+        }
     }
     
     protected void openDoor() {
