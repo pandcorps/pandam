@@ -438,6 +438,7 @@ public abstract class Extra extends Panctor {
                     ShootableDoor.disableOverlay(0, y);
                     ShootableDoor.disableOverlay(23, y);
                 }
+                head.finishOpen();
                 destroy();
             }
         }

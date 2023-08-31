@@ -136,6 +136,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         stopMusic();
         if (isHealthMeterNeeded() && isDuringGameplay()) {
             healthMeter = addHealthMeter();
+            if (isHealthMeterInitiallyHidden()) {
+                healthMeter.setVisible(false);
+            }
         }
     }
     
@@ -145,6 +148,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected boolean isHealthMeterNeeded() {
         return true;
+    }
+    
+    protected boolean isHealthMeterInitiallyHidden() {
+        return false;
     }
     
     protected boolean isDropNeeded() {
@@ -9612,6 +9619,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static class FinalHead extends Boss {
+        private final static byte STATE_OPEN_DOORS = 1;
+        
         private static Panmage still = null;
         private static Panmage corner = null;
         private static Panmage shoulder = null;
@@ -9628,6 +9637,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final boolean isHealthMeterInitiallyHidden() {
+            return true;
+        }
+        
+        @Override
         protected final boolean isDropNeeded() {
             return false;
         }
@@ -9635,7 +9649,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void taunt() {
             super.taunt();
-            //setPlayerActive(false);
+            startStateIndefinite(STATE_OPEN_DOORS, getStill());
+        }
+        
+        protected final void finishOpen() {
+            Pangine.getEngine().addTimer(this, 30, new TimerListener() {
+                @Override public final void onTimer(final TimerEvent event) {
+                    finishTaunt();
+                    startStill();
+                    healthMeter.setVisible(true);
+                }});
         }
         
         @Override
