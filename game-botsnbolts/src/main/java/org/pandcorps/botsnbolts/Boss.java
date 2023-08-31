@@ -9620,16 +9620,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static class FinalHead extends Boss {
         private final static byte STATE_OPEN_DOORS = 1;
+        private final static byte STATE_OPEN_MOUTH = 2;
+        private final static byte STATE_SPAWN = 3;
+        private final static byte STATE_CLOSE_MOUTH = 4;
         
         private static Panmage still = null;
         private static Panmage corner = null;
         private static Panmage shoulder = null;
+        private static Panmage[] mouths = new Panmage[3];
         private static Panmage clawRip = null;
         private static Panmage wall = null;
         private static Panmage shatter = null;
         
         protected int visibleSize = 0;
         private boolean facingMirror = true;
+        private Panmage currentMouth = null;
 
         protected FinalHead(final Segment seg) {
             super(56, 96, 0, 0);
@@ -9684,16 +9689,45 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean onWaiting() {
             facingMirror = getNearestPlayerX() < MID_X;
+            if (state == STATE_OPEN_MOUTH) {
+                if (waitCounter == 1) {
+                    currentMouth = getMouth(0);
+                } else if (waitCounter == 11) {
+                    currentMouth = getMouth(1);
+                } else if (waitCounter == 21) {
+                    currentMouth = getMouth(2);
+                }
+            } else if (state == STATE_CLOSE_MOUTH) {
+                if (waitCounter == 1) {
+                    currentMouth = getMouth(1);
+                } else if (waitCounter == 11) {
+                    currentMouth = getMouth(0);
+                } else if (waitCounter == 21) {
+                    currentMouth = null;
+                }
+            } else if ((state == STATE_SPAWN) && ((waitCounter % 20) == 1)) {
+                final BounceEnemy bounceEnemy = new BounceEnemy(getMirrorMultiplier(facingMirror) * Mathtil.randi(1, 4), Mathtil.randi(2, 7));
+                bounceEnemy.getPosition().set(191, 127, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
+                addActor(bounceEnemy);
+            }
             return true;
         }
 
         @Override
         protected final boolean pickState() {
+            startState(STATE_OPEN_MOUTH, 30, getStill());
             return true;
         }
 
         @Override
         protected final boolean continueState() {
+            if (state == STATE_OPEN_MOUTH) {
+                startState(STATE_SPAWN, 60, getStill());
+            } else if (state == STATE_SPAWN) {
+                startState(STATE_CLOSE_MOUTH, 30, getStill());
+            } else {
+                startStill();
+            }
             return true;
         }
 
@@ -9711,6 +9745,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getShoulder() {
             return (shoulder = getImage(shoulder, "final/HeadShoulder", null, null, null));
+        }
+        
+        protected final static Panmage getMouth(final int i) {
+            Panmage img = mouths[i];
+            if (img == null) {
+                img = getImage(img, "final/HeadMouth" + (i + 1), null, null, null);
+                mouths[i] = img;
+            }
+            return img;
         }
         
         protected final static Panmage getClawRip() {
@@ -9734,8 +9777,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final Panlayer layer = getLayer();
             final Panple pos = getPosition();
             final float x = pos.getX(), y = pos.getY();
-            renderer.render(layer, Final.getCoat(), x + 63, y + 51, BotsnBoltsGame.DEPTH_ENEMY_BG_2, 0, facingMirror, false);
+            renderer.render(layer, Final.getCoat(), x + (facingMirror ? 63 : 65), y + 51, BotsnBoltsGame.DEPTH_ENEMY_BG_2, 0, facingMirror, false);
             renderer.render(layer, BotsnBoltsGame.grey64, x + 32, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 64, 40, 0, false, false);
+            if (currentMouth != null) {
+                renderer.render(layer, currentMouth, x + 56, y + 7, BotsnBoltsGame.DEPTH_ENEMY_BACK_3, 0, false, false);
+            }
             if (visibleSize <= 1) {
                 return;
             }

@@ -2375,7 +2375,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected BounceEnemy(final int hv, final float v) {
             super(PROP_OFF_X, PROP_H, 0, 0, 1);
             setView(BotsnBoltsGame.bounceEnemy);
-            setMirror(true);
+            setMirror(hv <= 0);
             this.hv = hv;
             this.v = v;
         }
