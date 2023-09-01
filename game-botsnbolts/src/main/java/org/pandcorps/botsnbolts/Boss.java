@@ -9736,7 +9736,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     currentEyeRightOffset = 94;
                 }
             } else if ((state == STATE_ENERGY_BALL) && (waitCounter == 2)) {
-                //TODO new HeadEnergyBall()
+                BotsnBoltsGame.fxEnemyAttack.startSound();
+                final int energyBallHv = HeadEnergyBall.ENERGY_BALL_SPEED * getMirrorMultiplier(facingMirror);
+                new HeadEnergyBall(174, 148, energyBallHv);
+                new HeadEnergyBall(210, 148, energyBallHv);
                 currentEyeLeft = null;
                 currentEyeRight = null;
             }
@@ -9869,6 +9872,54 @@ public abstract class Boss extends Enemy implements SpecBoss {
             getShoulder();
             renderer.render(layer, shoulder, x - 112, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 64, 64, 0, false, false);
             renderer.render(layer, shoulder, x + 176, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 64, 64, 0, true, false);
+        }
+    }
+    
+    protected final static class HeadEnergyBall extends Enemy {
+        protected final static int ENERGY_BALL_SPEED = 3;
+        
+        private int bounces = 0;
+        private int timer = 0;
+        
+        protected HeadEnergyBall(final float x, final float y, final int hv) {
+            super(7, 15, 0, 0, 1);
+            setView(FinalHead.getEnergyBall());
+            getPosition().set(x, y);
+            this.hv = hv;
+            v = -ENERGY_BALL_SPEED;
+            addActor(this);
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            timer++;
+            if (timer > 3) {
+                setRot(Mathtil.randi(0, 3));
+                setMirror(Mathtil.rand());
+                setFlip(Mathtil.rand());
+                timer = 0;
+            }
+            if (addX(hv) != X_NORMAL) {
+                hv *= -1;
+                bounces++;
+            }
+            if (addY(v) != Y_NORMAL) {
+                v *= -1;
+                bounces++;
+            }
+            if (bounces >= 4) {
+                destroy();
+            }
+            return true;
+        }
+        
+        @Override
+        protected final void onLanded() {
+            // Skip parent logic of clearing v
+        }
+        
+        @Override
+        protected final void award(final PowerUp powerUp) {
         }
     }
     

@@ -2378,6 +2378,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             setMirror(hv <= 0);
             this.hv = hv;
             this.v = v;
+            BotsnBoltsGame.fxEnemyAttack.startSound();
         }
         
         @Override
