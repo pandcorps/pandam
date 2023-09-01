@@ -9625,6 +9625,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final static byte STATE_CLOSE_MOUTH = 4;
         private final static byte STATE_CHARGE = 5;
         private final static byte STATE_ENERGY_BALL = 6;
+        private final static byte STATE_BASIC_PROJECTILE = 7;
+        
+        protected final static int BASE_Y = 96;
         
         private static Panmage still = null;
         private static Panmage corner = null;
@@ -9652,7 +9655,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected FinalHead(final Segment seg) {
             super(56, 96, 0, 0);
             setMirror(false);
-            getPosition().set(128, 112, BotsnBoltsGame.DEPTH_ENEMY_BG);
+            getPosition().set(128, BASE_Y, BotsnBoltsGame.DEPTH_ENEMY_BG);
         }
         
         @Override
@@ -9702,6 +9705,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean onWaiting() {
             facingMirror = getNearestPlayerX() < MID_X;
+            if (visibleSize == 6) {
+                final float handY = 36 + getPosition().getY();
+                new HeadHand(56, handY, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4, false);
+                new HeadHand(327, handY, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4, true);
+            }
             if (state == STATE_OPEN_MOUTH) {
                 if (waitCounter == 1) {
                     currentMouth = getMouth(0);
@@ -9720,7 +9728,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 }
             } else if ((state == STATE_SPAWN) && ((waitCounter % 20) == 1)) {
                 final BounceEnemy bounceEnemy = new BounceEnemy(getMirrorMultiplier(facingMirror) * Mathtil.randi(1, 4), Mathtil.randi(2, 7));
-                bounceEnemy.getPosition().set(191, 127, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
+                bounceEnemy.getPosition().set(191, 15 + getPosition().getY(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
                 addActor(bounceEnemy);
             } else if (state == STATE_CHARGE) {
                 if (waitCounter == 1) {
@@ -9738,22 +9746,28 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if ((state == STATE_ENERGY_BALL) && (waitCounter == 2)) {
                 BotsnBoltsGame.fxEnemyAttack.startSound();
                 final int energyBallHv = HeadEnergyBall.ENERGY_BALL_SPEED * getMirrorMultiplier(facingMirror);
-                new HeadEnergyBall(174, 148, energyBallHv);
-                new HeadEnergyBall(210, 148, energyBallHv);
+                final float energyBallY = 36 + getPosition().getY();
+                new HeadEnergyBall(174, energyBallY, energyBallHv);
+                new HeadEnergyBall(210, energyBallY, energyBallHv);
                 currentEyeLeft = null;
                 currentEyeRight = null;
+            } else if ((state == STATE_BASIC_PROJECTILE) && ((waitCounter % 20) == 1)) {
+                
             }
             return true;
         }
 
         @Override
         protected final boolean pickState() {
-            final int r = rand(2);
+            final int r = rand(3);
             if (r == 0) {
                 //startState(STATE_OPEN_MOUTH, 30, getStill());
-                startState(STATE_CHARGE, 30, getStill());
+                startState(STATE_BASIC_PROJECTILE, 60, getStill());
+            } else if (r == 1) {
+                //startState(STATE_CHARGE, 30, getStill());
+                startState(STATE_BASIC_PROJECTILE, 60, getStill());
             } else {
-                startState(STATE_CHARGE, 30, getStill());
+                startState(STATE_BASIC_PROJECTILE, 60, getStill());
             }
             return true;
         }
@@ -9907,7 +9921,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 v *= -1;
                 bounces++;
             }
-            if (bounces >= 4) {
+            if (bounces >= 5) {
                 destroy();
             }
             return true;
@@ -9920,6 +9934,55 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void award(final PowerUp powerUp) {
+        }
+    }
+    
+    protected static class HeadArm extends Enemy {
+        protected HeadArm(final float x, final float y, final int z, final boolean mirror) {
+            this(x, y, z, mirror, FinalHead.getArm());
+        }
+        
+        protected HeadArm(final float x, final float y, final int z, final boolean mirror, final Panmage image) {
+            super(15, 31, 0, 0, 1);
+            setView(image);
+            getPosition().set(x, y, z);
+            setMirror(mirror);
+            addActor(this);
+        }
+        
+        @Override
+        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+            return false;
+        }
+        
+        @Override
+        protected int getDamage() {
+            return DAMAGE;
+        }
+        
+        @Override
+        protected final boolean onStepCustom() {
+            return true;
+        }
+    }
+    
+    protected final static class HeadHand extends HeadArm {
+        protected HeadHand(final float x, final float y, final int z, final boolean mirror) {
+            super(x, y, z, mirror, FinalHead.getHand());
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            final Panlayer layer = getLayer();
+            final Panmage claw = FinalHead.getClaw();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
+            final boolean mirror = isMirror();
+            final int m = getMirrorMultiplier(mirror), moff = mirror ? -15 : 0;
+            renderer.render(layer, claw, x + (m * -26) + moff, y - 11, z + 2, 0, 0, 16, 16, 0, mirror, false);
+            renderer.render(layer, claw, x + (m * -11) + moff, y - 26, z + 2, 0, 0, 16, 16, 1, !mirror, false);
+            renderer.render(layer, claw, x + (m * 8) + moff, y - 5, z - 2, 0, 0, 16, 16, 0, !mirror, true);
         }
     }
     
