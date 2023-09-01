@@ -378,6 +378,10 @@ public abstract class Extra extends Panctor {
                 spawn();
                 spawned = true;
                 player.setMirror(false);
+                Pangine.getEngine().addTimer(player, 2, new TimerListener() {
+                    @Override public final void onTimer(final TimerEvent event) {
+                        player.setMirror(false);
+                    }});
                 Boss.setPlayerActive(false);
             }
         }

@@ -9623,11 +9623,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final static byte STATE_OPEN_MOUTH = 2;
         private final static byte STATE_SPAWN = 3;
         private final static byte STATE_CLOSE_MOUTH = 4;
+        private final static byte STATE_CHARGE = 5;
+        private final static byte STATE_ENERGY_BALL = 6;
         
         private static Panmage still = null;
         private static Panmage corner = null;
         private static Panmage shoulder = null;
         private static Panmage[] mouths = new Panmage[3];
+        private static Panmage eyeChargingLeft = null;
+        private static Panmage eyeChargingRight = null;
+        private static Panmage eyeCharged = null;
+        private static Panmage energyBall = null;
+        private static Panmage arm = null;
+        private static Panmage hand = null;
+        private static Panmage claw = null;
         private static Panmage clawRip = null;
         private static Panmage wall = null;
         private static Panmage shatter = null;
@@ -9635,6 +9644,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected int visibleSize = 0;
         private boolean facingMirror = true;
         private Panmage currentMouth = null;
+        private Panmage currentEyeLeft = null;
+        private Panmage currentEyeRight = null;
+        private boolean currentEyeRightMirror = false;
+        private int currentEyeRightOffset = 0;
 
         protected FinalHead(final Segment seg) {
             super(56, 96, 0, 0);
@@ -9709,13 +9722,36 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 final BounceEnemy bounceEnemy = new BounceEnemy(getMirrorMultiplier(facingMirror) * Mathtil.randi(1, 4), Mathtil.randi(2, 7));
                 bounceEnemy.getPosition().set(191, 127, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
                 addActor(bounceEnemy);
+            } else if (state == STATE_CHARGE) {
+                if (waitCounter == 1) {
+                    getEyeChargingLeft();
+                } else if (waitCounter == 2) {
+                    currentEyeLeft = getEyeChargingLeft();
+                    currentEyeRight = getEyeChargingRight();
+                    currentEyeRightMirror = false;
+                    currentEyeRightOffset = 69;
+                } else if (waitCounter == 5) {
+                    currentEyeLeft = currentEyeRight = getEyeCharged();
+                    currentEyeRightMirror = true;
+                    currentEyeRightOffset = 94;
+                }
+            } else if ((state == STATE_ENERGY_BALL) && (waitCounter == 2)) {
+                //TODO new HeadEnergyBall()
+                currentEyeLeft = null;
+                currentEyeRight = null;
             }
             return true;
         }
 
         @Override
         protected final boolean pickState() {
-            startState(STATE_OPEN_MOUTH, 30, getStill());
+            final int r = rand(2);
+            if (r == 0) {
+                //startState(STATE_OPEN_MOUTH, 30, getStill());
+                startState(STATE_CHARGE, 30, getStill());
+            } else {
+                startState(STATE_CHARGE, 30, getStill());
+            }
             return true;
         }
 
@@ -9725,6 +9761,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 startState(STATE_SPAWN, 60, getStill());
             } else if (state == STATE_SPAWN) {
                 startState(STATE_CLOSE_MOUTH, 30, getStill());
+            } else if (state == STATE_CHARGE) {
+                startState(STATE_ENERGY_BALL, 60, getStill());
             } else {
                 startStill();
             }
@@ -9756,6 +9794,34 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return img;
         }
         
+        protected final static Panmage getEyeChargingLeft() {
+            return (eyeChargingLeft = getImage(eyeChargingLeft, "final/HeadEyeChargingLeft", null, null, null));
+        }
+        
+        protected final static Panmage getEyeChargingRight() {
+            return (eyeChargingRight = getImage(eyeChargingRight, "final/HeadEyeChargingRight", null, null, null));
+        }
+        
+        protected final static Panmage getEyeCharged() {
+            return (eyeCharged = getImage(eyeCharged, "final/HeadEyeCharged", null, null, null));
+        }
+        
+        protected final static Panmage getEnergyBall() {
+            return (energyBall = getImage(energyBall, "final/HeadEnergyBall", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
+        }
+        
+        protected final static Panmage getArm() {
+            return (arm = getImage(arm, "final/HeadArm", BotsnBoltsGame.CENTER_32, BotsnBoltsGame.MIN_32, BotsnBoltsGame.MAX_32));
+        }
+        
+        protected final static Panmage getHand() {
+            return (hand = getImage(hand, "final/HeadHand", BotsnBoltsGame.CENTER_32, BotsnBoltsGame.MIN_32, BotsnBoltsGame.MAX_32));
+        }
+        
+        protected final static Panmage getClaw() {
+            return (claw = getImage(claw, "final/HeadClaw", null, null, null));
+        }
+        
         protected final static Panmage getClawRip() {
             return (clawRip = getImage(clawRip, "final/HeadClawRip", null, null, null));
         }
@@ -9781,6 +9847,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             renderer.render(layer, BotsnBoltsGame.grey64, x + 32, y + 48, BotsnBoltsGame.DEPTH_ENEMY_BG_3, 0, 0, 64, 40, 0, false, false);
             if (currentMouth != null) {
                 renderer.render(layer, currentMouth, x + 56, y + 7, BotsnBoltsGame.DEPTH_ENEMY_BACK_3, 0, false, false);
+            }
+            if (currentEyeLeft != null) {
+                renderer.render(layer, currentEyeLeft, x + 33, y + 29, BotsnBoltsGame.DEPTH_ENEMY_BACK_3, 0, false, false);
+                renderer.render(layer, currentEyeRight, x + currentEyeRightOffset, y + 29, BotsnBoltsGame.DEPTH_ENEMY_BACK_3, 0, currentEyeRightMirror, false);
             }
             if (visibleSize <= 1) {
                 return;
