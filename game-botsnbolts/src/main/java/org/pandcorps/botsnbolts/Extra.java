@@ -437,11 +437,11 @@ public abstract class Extra extends Panctor {
             if (clawIndex < 3) {
                 BotsnBoltsGame.fxCrumble.startSound();
                 if (clawIndex == 1) {
-                    shatter(180, 124 + yoff);
-                    shatter(180, 149 + yoff);
+                    shatter(180, 128 + yoff);
+                    shatter(180, 145 + yoff);
                 } else {
-                    shatter(204, 108 + yoff);
-                    shatter(204, 133 + yoff);
+                    shatter(204, 112 + yoff);
+                    shatter(204, 129 + yoff);
                 }
             } else {
                 BotsnBoltsGame.fxThunder.startSound();
@@ -455,11 +455,7 @@ public abstract class Extra extends Panctor {
         private final void onStepOpen() {
             head.visibleSize++;
             if (head.visibleSize > 87) {
-                for (int y = 0; y < BotsnBoltsGame.GAME_ROWS; y++) {
-                    ShootableDoor.disableOverlay(0, y);
-                    ShootableDoor.disableOverlay(23, y);
-                }
-                head.finishOpen();
+                head.startMovingArmsToInitialPositions();
                 destroy();
             }
         }
@@ -497,14 +493,14 @@ public abstract class Extra extends Panctor {
             final Panmage claw = FinalHead.getClawRip();
             final float zc = BotsnBoltsGame.DEPTH_POWER_UP;
             final int clawLeftX = 172 - off;
-            renderer.render(layer, claw, clawLeftX, 116 + yoff, zc, 0, 0, 16, 16, 0, false, false);
-            renderer.render(layer, claw, clawLeftX, 141 + yoff, zc, 0, 0, 16, 16, 0, false, false);
+            renderer.render(layer, claw, clawLeftX, 120 + yoff, zc, 0, 0, 16, 16, 0, false, false);
+            renderer.render(layer, claw, clawLeftX, 137 + yoff, zc, 0, 0, 16, 16, 0, false, false);
             if (clawIndex < 2) {
                 return;
             }
             final int clawRightX = 196 + off;
-            renderer.render(layer, claw, clawRightX, 100 + yoff, zc, 0, 0, 16, 16, 0, true, false);
-            renderer.render(layer, claw, clawRightX, 125 + yoff, zc, 0, 0, 16, 16, 0, true, false);
+            renderer.render(layer, claw, clawRightX, 104 + yoff, zc, 0, 0, 16, 16, 0, true, false);
+            renderer.render(layer, claw, clawRightX, 121 + yoff, zc, 0, 0, 16, 16, 0, true, false);
         }
     }
     

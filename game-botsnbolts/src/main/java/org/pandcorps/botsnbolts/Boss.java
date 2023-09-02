@@ -9620,12 +9620,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
     
     protected final static class FinalHead extends Boss {
         private final static byte STATE_OPEN_DOORS = 1;
-        private final static byte STATE_OPEN_MOUTH = 2;
-        private final static byte STATE_SPAWN = 3;
-        private final static byte STATE_CLOSE_MOUTH = 4;
-        private final static byte STATE_CHARGE = 5;
-        private final static byte STATE_ENERGY_BALL = 6;
-        private final static byte STATE_BASIC_PROJECTILE = 7;
+        private final static byte STATE_MOVE_ARMS_TO_INITIAL_POSITIONS = 2;
+        private final static byte STATE_OPEN_MOUTH = 3;
+        private final static byte STATE_SPAWN = 4;
+        private final static byte STATE_CLOSE_MOUTH = 5;
+        private final static byte STATE_CHARGE = 6;
+        private final static byte STATE_ENERGY_BALL = 7;
+        private final static byte STATE_BASIC_PROJECTILE = 8;
         
         protected final static int BASE_Y = 96;
         
@@ -9651,6 +9652,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private Panmage currentEyeRight = null;
         private boolean currentEyeRightMirror = false;
         private int currentEyeRightOffset = 0;
+        private HeadHand handLeft = null;
+        private HeadHand handRight = null;
 
         protected FinalHead(final Segment seg) {
             super(56, 96, 0, 0);
@@ -9674,7 +9677,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
             startStateIndefinite(STATE_OPEN_DOORS, getStill());
         }
         
+        protected final void startMovingArmsToInitialPositions() {
+            startStateIndefinite(STATE_MOVE_ARMS_TO_INITIAL_POSITIONS, getStill());
+        }
+        
         protected final void finishOpen() {
+            for (int y = 0; y < BotsnBoltsGame.GAME_ROWS; y++) {
+                ShootableDoor.disableOverlay(0, y);
+                ShootableDoor.disableOverlay(23, y);
+            }
             Pangine.getEngine().addTimer(this, 30, new TimerListener() {
                 @Override public final void onTimer(final TimerEvent event) {
                     finishTaunt();
@@ -9707,10 +9718,32 @@ public abstract class Boss extends Enemy implements SpecBoss {
             facingMirror = getNearestPlayerX() < MID_X;
             if (visibleSize == 6) {
                 final float handY = 36 + getPosition().getY();
-                new HeadHand(56, handY, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4, false);
-                new HeadHand(327, handY, BotsnBoltsGame.DEPTH_ENEMY_FRONT_4, true);
+                handLeft = new HeadHand(-8, handY, BotsnBoltsGame.DEPTH_ENEMY_BG, false);
+                handRight = new HeadHand(391, handY, BotsnBoltsGame.DEPTH_ENEMY_BG, true);
+            } else if (visibleSize == 7) {
+                final float armY = 52 + getPosition().getY();
+                handLeft.setPrevious(new HeadArm(8, armY, BotsnBoltsGame.DEPTH_ENEMY_BG_2, false));
+                handRight.setPrevious(new HeadArm(375, armY, BotsnBoltsGame.DEPTH_ENEMY_BG_2, true));
             }
-            if (state == STATE_OPEN_MOUTH) {
+            if (state == STATE_MOVE_ARMS_TO_INITIAL_POSITIONS) {
+                final Panple handLeftPos = handLeft.getPosition(), handRightPos = handRight.getPosition();
+                final float handLeftX = handLeftPos.getX() + 2;
+                handLeft.previous.getPosition().addX(1);
+                handRight.previous.getPosition().addX(-1);
+                if (handLeftX >= 56) {
+                    handLeftPos.setX(56);
+                    handLeftPos.setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
+                    handRightPos.setX(327);
+                    handRightPos.setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
+                    handLeft.previous.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_3);
+                    handRight.previous.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_3);
+                    state = STATE_OPEN_DOORS;
+                    finishOpen();
+                } else {
+                    handLeftPos.setX(handLeftX);
+                    handRightPos.addX(-2);
+                }
+            } else if (state == STATE_OPEN_MOUTH) {
                 if (waitCounter == 1) {
                     currentMouth = getMouth(0);
                 } else if (waitCounter == 11) {
@@ -9938,6 +9971,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected static class HeadArm extends Enemy {
+        protected HeadArm previous = null;
+        
         protected HeadArm(final float x, final float y, final int z, final boolean mirror) {
             this(x, y, z, mirror, FinalHead.getArm());
         }
@@ -9963,6 +9998,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean onStepCustom() {
             return true;
+        }
+        
+        protected final void setPrevious(final HeadArm previous) {
+            this.previous = previous;
         }
     }
     
