@@ -9801,11 +9801,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean pickState() {
             final int r = rand(3);
             if (r == 0) {
-                //startState(STATE_OPEN_MOUTH, 30, getStill());
-                startState(STATE_BASIC_PROJECTILE, 135, getStill());
+                startState(STATE_OPEN_MOUTH, 30, getStill());
             } else if (r == 1) {
-                //startState(STATE_CHARGE, 30, getStill());
-                startState(STATE_BASIC_PROJECTILE, 135, getStill());
+                startState(STATE_CHARGE, 30, getStill());
             } else {
                 startState(STATE_BASIC_PROJECTILE, 135, getStill());
             }
@@ -9938,7 +9936,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected HeadEnergyBall(final float x, final float y, final int hv) {
             super(7, 15, 0, 0, 1);
             setView(FinalHead.getEnergyBall());
-            getPosition().set(x, y);
+            getPosition().set(x, y, BotsnBoltsGame.DEPTH_PROJECTILE);
             this.hv = hv;
             v = -ENERGY_BALL_SPEED;
             addActor(this);
@@ -9962,7 +9960,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 bounces++;
             }
             if (bounces >= 5) {
-                //TODO burst using Final's burst
+                Projectile.burst(this, BotsnBoltsGame.finalImages.burst, getPosition());
                 destroy();
             }
             return true;
@@ -9971,6 +9969,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void onLanded() {
             // Skip parent logic of clearing v
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return Projectile.POWER_MEDIUM;
         }
         
         @Override
