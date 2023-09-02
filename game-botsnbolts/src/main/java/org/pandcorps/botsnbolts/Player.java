@@ -4229,10 +4229,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if (diff > CHARGE_TIME_MEDIUM) {
                 player.blinkTimer = 0;
                 final PlayerImages pi = player.pi;
+                final int ox = 0, oy = 12;
                 if (diff > CHARGE_TIME_BIG) {
-                    charge(player, pi.charge2, pi.chargeVert2, diff - CHARGE_TIME_BIG, BotsnBoltsGame.fxSuperCharge);
+                    charge(player, ox, oy, pi.charge2, pi.chargeVert2, diff - CHARGE_TIME_BIG, BotsnBoltsGame.fxSuperCharge);
                 } else {
-                    charge(player, pi.charge, pi.chargeVert, diff - CHARGE_TIME_MEDIUM, BotsnBoltsGame.fxCharge);
+                    charge(player, ox, oy, pi.charge, pi.chargeVert, diff - CHARGE_TIME_MEDIUM, BotsnBoltsGame.fxCharge);
                 }
             }
         }
@@ -4242,42 +4243,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
             if (player.prf.autoCharge) {
                 onCharging(player);
             }
-        }
-        
-        private final void charge(final Player player, final Panimation diag, final Panimation vert, final long i, final Pansound sound) {
-            final long c = getClock() % 8;
-            if (c == 0) {
-                chargeDiag(player, diag, 1, 1, 0);
-            } else if (c == 1) {
-                chargeDiag(player, diag, -1, -1, 2);
-            } else if (c == 2) {
-                charge(player, vert, 1, -4, 4, 1, 8, 16, 0);
-            } else if (c == 3) {
-                charge(player, vert, -1, 8, 16, 1, -4, 4, 1);
-            } else if (c == 4) {
-                chargeDiag(player, diag, -1, 1, 1);
-            } else if (c == 5) {
-                chargeDiag(player, diag, 1, -1, 3);
-            } else if (c == 6) {
-                charge(player, vert, 1, -4, 4, -1, 8, 16, 2);
-            } else {
-                charge(player, vert, 1, 8, 16, 1, -4, 4, 3);
-            }
-            if ((i < 30) && ((i % 10) == 1)) {
-                sound.startSound();
-            }
-        }
-        
-        private final void chargeDiag(final Player player, final Panimation anm, final int xdir, final int ydir, final int rot) {
-            charge(player, anm, xdir, 4, 12, ydir, 4, 12, rot);
-        }
-        
-        private final void charge(final Player player, final Panimation anm, final int xdir, final int xmin, final int xmax, final int ydir, final int ymin, final int ymax, final int rot) {
-            final Burst burst = new Burst(anm);
-            final Panple ppos = player.getPosition();
-            burst.getPosition().set(ppos.getX() + (xdir * Mathtil.randi(xmin, xmax)), ppos.getY() + 12 + (ydir * Mathtil.randi(ymin, ymax)), BotsnBoltsGame.DEPTH_BURST);
-            burst.setRot(rot);
-            player.addActor(burst);
         }
         
         @Override
@@ -4320,6 +4285,44 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
         }
     };
+    
+    protected final static void charge(final Panctor player, final int ox, final int oy, final Panimation diag, final Panimation vert, final long i, final Pansound sound) {
+        final long c = getClock() % 8;
+        if (c == 0) {
+            chargeDiag(player, ox, oy, diag, 1, 1, 0);
+        } else if (c == 1) {
+            chargeDiag(player, ox, oy, diag, -1, -1, 2);
+        } else if (c == 2) {
+            charge(player, ox, oy, vert, 1, -4, 4, 1, 8, 16, 0);
+        } else if (c == 3) {
+            charge(player, ox, oy, vert, -1, 8, 16, 1, -4, 4, 1);
+        } else if (c == 4) {
+            chargeDiag(player, ox, oy, diag, -1, 1, 1);
+        } else if (c == 5) {
+            chargeDiag(player, ox, oy, diag, 1, -1, 3);
+        } else if (c == 6) {
+            charge(player, ox, oy, vert, 1, -4, 4, -1, 8, 16, 2);
+        } else {
+            charge(player, ox, oy, vert, 1, 8, 16, 1, -4, 4, 3);
+        }
+        if ((i < 30) && ((i % 10) == 1)) {
+            sound.startSound();
+        }
+    }
+    
+    private final static void chargeDiag(final Panctor player, final int ox, final int oy, final Panimation anm, final int xdir, final int ydir, final int rot) {
+        charge(player, ox, oy, anm, xdir, 4, 12, ydir, 4, 12, rot);
+    }
+    
+    private final static void charge(final Panctor player, final int ox, final int oy, final Panimation anm,
+            final int xdir, final int xmin, final int xmax, final int ydir, final int ymin, final int ymax, final int rot) {
+        final Burst burst = new Burst(anm);
+        final Panple ppos = player.getPosition();
+        final int oxm = ox * player.getMirrorMultiplier();
+        burst.getPosition().set(ppos.getX() + oxm + (xdir * Mathtil.randi(xmin, xmax)), ppos.getY() + oy + (ydir * Mathtil.randi(ymin, ymax)), BotsnBoltsGame.DEPTH_BURST);
+        burst.setRot(rot);
+        addActor(player, burst);
+    }
     
     protected final static ShootMode SHOOT_STREAM = new ShootMode(Profile.UPGRADE_STREAM, SHOOT_DELAY_STREAM) {
         @Override

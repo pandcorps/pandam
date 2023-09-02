@@ -9605,12 +9605,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void onOutOfView() {
         }
         
-        private final Panimation getAnim() {
+        protected final static Panimation getAnim() {
             if (anim != null) {
                 return anim;
             }
             final Pangine engine = Pangine.getEngine();
-            final Panimation base = (Panimation) getView();
+            final Panimation base = BotsnBoltsGame.finalImages.projectile2;
             final Panframe frames[] = base.getFrames(), frame1 = frames[1];
             final Panframe flip = engine.createFrame(frame1.getId() + ".rot", frame1.getImage(), frame1.getDuration(), 0, true, false);
             anim = engine.createAnimation(base.getId() + ".rot", frames[0], flip);
@@ -9735,8 +9735,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     handLeftPos.setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
                     handRightPos.setX(327);
                     handRightPos.setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
-                    handLeft.previous.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_3);
-                    handRight.previous.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_3);
+                    handLeft.init();
+                    handRight.init();
                     state = STATE_OPEN_DOORS;
                     finishOpen();
                 } else {
@@ -9784,8 +9784,15 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 new HeadEnergyBall(210, energyBallY, energyBallHv);
                 currentEyeLeft = null;
                 currentEyeRight = null;
-            } else if ((state == STATE_BASIC_PROJECTILE) && ((waitCounter % 20) == 1)) {
-                
+            } else if (state == STATE_BASIC_PROJECTILE) {
+                final int chargeTime = waitCounter % 45;
+                if (chargeTime > 15 && chargeTime < 43) {
+                    handLeft.charge(waitCounter);
+                    handRight.charge(waitCounter);
+                } else if (chargeTime == 43) {
+                    handLeft.emitBasicProjectiles();
+                    handRight.emitBasicProjectiles();
+                }
             }
             return true;
         }
@@ -9795,12 +9802,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final int r = rand(3);
             if (r == 0) {
                 //startState(STATE_OPEN_MOUTH, 30, getStill());
-                startState(STATE_BASIC_PROJECTILE, 60, getStill());
+                startState(STATE_BASIC_PROJECTILE, 135, getStill());
             } else if (r == 1) {
                 //startState(STATE_CHARGE, 30, getStill());
-                startState(STATE_BASIC_PROJECTILE, 60, getStill());
+                startState(STATE_BASIC_PROJECTILE, 135, getStill());
             } else {
-                startState(STATE_BASIC_PROJECTILE, 60, getStill());
+                startState(STATE_BASIC_PROJECTILE, 135, getStill());
             }
             return true;
         }
@@ -9955,6 +9962,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 bounces++;
             }
             if (bounces >= 5) {
+                //TODO burst using Final's burst
                 destroy();
             }
             return true;
@@ -10010,6 +10018,37 @@ public abstract class Boss extends Enemy implements SpecBoss {
             super(x, y, z, mirror, FinalHead.getHand());
         }
         
+        protected final void init() {
+            final boolean mirror = isMirror();
+            final Panple pos = getPosition();
+            final float x = pos.getX() - (24 * getMirrorMultiplier(mirror)), y = pos.getY() + 28;
+            final int[] zs = { BotsnBoltsGame.DEPTH_ENEMY_FRONT_2, BotsnBoltsGame.DEPTH_ENEMY_FRONT, BotsnBoltsGame.DEPTH_ENEMY,
+                    BotsnBoltsGame.DEPTH_ENEMY_BACK, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, BotsnBoltsGame.DEPTH_ENEMY_BACK_3, BotsnBoltsGame.DEPTH_CARRIER,
+                    BotsnBoltsGame.DEPTH_ENEMY_BG, BotsnBoltsGame.DEPTH_ENEMY_BG_2 }; // ENEMY_BG_3 used by shoulder
+            previous.getPosition().setZ(BotsnBoltsGame.DEPTH_ENEMY_FRONT_3);
+            HeadArm curr = previous;
+            for (final int z : zs) {
+                curr.setPrevious(new HeadArm(x, y, z, mirror));
+                curr = curr.previous;
+            }
+        }
+        
+        protected final void charge(final int waitCounter) {
+            final PlayerImages pi = BotsnBoltsGame.finalImages;
+            Player.charge(this, 7, 7, pi.charge, pi.chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
+        }
+        
+        protected final void emitBasicProjectiles() {
+            BotsnBoltsGame.fxChargedAttack.startSound();
+            emitBasicProjectile(-VEL_PROJECTILE_45, -VEL_PROJECTILE_45);
+            emitBasicProjectile(0, -VEL_PROJECTILE);
+            emitBasicProjectile(VEL_PROJECTILE_45, -VEL_PROJECTILE_45);
+        }
+        
+        protected final void emitBasicProjectile(final float vx, final float vy) {
+            new HeadBasicProjectile(this, vx, vy);
+        }
+        
         @Override
         protected final void renderView(final Panderer renderer) {
             super.renderView(renderer);
@@ -10022,6 +10061,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
             renderer.render(layer, claw, x + (m * -26) + moff, y - 11, z + 2, 0, 0, 16, 16, 0, mirror, false);
             renderer.render(layer, claw, x + (m * -11) + moff, y - 26, z + 2, 0, 0, 16, 16, 1, !mirror, false);
             renderer.render(layer, claw, x + (m * 8) + moff, y - 5, z - 2, 0, 0, 16, 16, 0, !mirror, true);
+        }
+    }
+    
+    protected final static class HeadBasicProjectile extends EnemyProjectile {
+        protected HeadBasicProjectile(final Panctor src, final float vx, final float vy) {
+            super(null, src, 7, 7, vx, vy);
+            setView(WagonMortar.getAnim());
+            setRot(3);
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return Projectile.POWER_MEDIUM;
         }
     }
     
