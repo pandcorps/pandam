@@ -344,6 +344,8 @@ public abstract class Extra extends Panctor {
     }
     
     protected abstract static class FinalBossSpawner extends Extra implements StepListener {
+        protected final static float TRIGGER_X = 32.0f;
+        
         protected final Segment seg;
         protected boolean spawned = false;
         
@@ -374,16 +376,22 @@ public abstract class Extra extends Panctor {
         }
         
         private final void spawnIfNeeded(final Player player) {
-            if (player.getPosition().getX() <= 32) {
+            if (player.getPosition().getX() <= TRIGGER_X) {
                 spawn();
                 spawned = true;
-                player.setMirror(false);
+                initPlayer(player);
                 Pangine.getEngine().addTimer(player, 2, new TimerListener() {
                     @Override public final void onTimer(final TimerEvent event) {
-                        player.setMirror(false);
+                        initPlayer(player);
                     }});
                 Boss.setPlayerActive(false);
             }
+        }
+        
+        private final void initPlayer(final Player player) {
+            player.setMirror(false);
+            player.getPosition().setX(TRIGGER_X);
+            player.prepareForScript();
         }
         
         protected abstract void spawn();

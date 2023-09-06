@@ -384,6 +384,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (!hidden) {
             setVisible(true);
         }
+        if ((stateHandler == BALL_HANDLER) || (stateHandler == SLIDE_HANDLER)) {
+            endSlide(); // Also calls endBall
+        }
+        endStatesIncompatibleWithRoomChange();
     }
     
     protected final void startScript(final Ai ai, final Runnable scriptFinisher) {
@@ -2583,6 +2587,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
         lastHurt = getClock();
     }
     
+    private final void endStatesIncompatibleWithRoomChange() {
+        endGrapple();
+        endBoardIfNeeded();
+        endGlider();
+    }
+    
     private final boolean changeRoom(final int dirX, final int dirY) {
         final BotRoomCell roomCell = RoomLoader.getAdjacentRoom(this, dirX, dirY);
         if (roomCell == null) {
@@ -2591,9 +2601,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         dematerializeOthers(null);
         lastShotByAnyPlayer = NULL_CLOCK;
         initAvailableRescues();
-        endGrapple();
-        endBoardIfNeeded();
-        endGlider();
+        endStatesIncompatibleWithRoomChange();
         safeX = safeY = NULL_COORD;
         final BotRoom room = roomCell.room;
         final int nextX = (roomCell.cell.x - room.x) * BotsnBoltsGame.GAME_W;
