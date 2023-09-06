@@ -9764,6 +9764,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 bounceEnemy.getPosition().set(191, 15 + getPosition().getY(), BotsnBoltsGame.DEPTH_ENEMY_FRONT_4);
                 addActor(bounceEnemy);
             } else if (state == STATE_CHARGE) {
+                final PlayerImages pi = BotsnBoltsGame.finalImages;
+                Player.charge(this, 46, 39, pi.charge, pi.chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
+                Player.charge(this, 82, 39, pi.charge, pi.chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
                 if (waitCounter == 1) {
                     getEyeChargingLeft();
                 } else if (waitCounter == 2) {
@@ -9803,7 +9806,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (r == 0) {
                 startState(STATE_OPEN_MOUTH, 30, getStill());
             } else if (r == 1) {
-                startState(STATE_CHARGE, 30, getStill());
+                startState(STATE_CHARGE, 60, getStill());
             } else {
                 startState(STATE_BASIC_PROJECTILE, 135, getStill());
             }
