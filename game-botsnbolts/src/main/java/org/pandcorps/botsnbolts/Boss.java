@@ -10075,24 +10075,29 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return true;
             }
             pos.add(vx, vy);
-            adjustFollowers();
+            if (!adjustFollowers()) {
+                state = STATE_NONE;
+            }
             return true;
         }
         
-        protected final void adjustFollowers() {
+        protected final boolean adjustFollowers() {
             if (state == STATE_ADVANCE) {
-                adjustPrevious();
+                return adjustPrevious();
             } else if (state == STATE_RETRACT) {
                 adjustNext();
+                return true;
             }
+            return true;
         }
         
-        protected final void adjustPrevious() {
+        protected final boolean adjustPrevious() {
             if (previous == null) {
-                return;
+                return getPosition().getDistance2(hand.shoulderX, hand.shoulderY) < (FOLLOW_THRESHOLD - SPEED);
             } else if (previous.follow(this)) {
-                previous.adjustPrevious();
+                return previous.adjustPrevious();
             }
+            return true;
         }
         
         protected final void adjustNext() {
