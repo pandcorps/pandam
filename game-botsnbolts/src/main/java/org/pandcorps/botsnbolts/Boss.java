@@ -9640,6 +9640,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final static byte STATE_REACH_FOR_PLAYER = 11;
         private final static byte STATE_DELAY_BEFORE_RETRACT_HANDS = 12;
         private final static byte STATE_RETRACT_HANDS = 13;
+        private final static byte STATE_RETRACT_BEFORE_SWIPE = 14;
+        private final static byte STATE_SWIPE = 15;
         
         protected final static int BASE_Y = 96;
         
@@ -9762,8 +9764,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     handLeftPos.setX(handLeftX);
                     handRightPos.addX(-2);
                 }
-            } else if (state == STATE_REACH_FOR_PLAYER) {
-                if (!(handLeft.isAdvancing() || handRight.isAdvancing())) {
+            } else if ((state == STATE_REACH_FOR_PLAYER) || (state == STATE_SWIPE)) {
+                if (!isAdvancing()) {
                     startDelayBeforeRetractHands();
                 }
             } else if (state == STATE_RETRACT_HANDS) {
@@ -9779,6 +9781,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (state == STATE_RETRACT_BEFORE_REACH) {
                 if (isRetractFinished()) {
                     startReachForPlayer(1);
+                }
+            } else if (state == STATE_RETRACT_BEFORE_SWIPE) {
+                if (isRetractFinished()) {
+                    startSwipe();
                 }
             } else if (state == STATE_RETRACT_BEFORE_BASIC_PROJECTILE) {
                 if (isRetractFinished()) {
@@ -9852,10 +9858,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 if (Mathtil.rand()) {
                     startRetractHands(STATE_RETRACT_BEFORE_BASIC_PROJECTILE);
                 } else {
-                    startRetractHands(STATE_RETRACT_BEFORE_REACH);
+                    if (Mathtil.rand()) {
+                        startRetractHands(STATE_RETRACT_BEFORE_REACH);
+                    } else {
+                        startRetractHands(STATE_RETRACT_BEFORE_SWIPE);
+                    }
                 }
             }
             return true;
+        }
+        
+        protected final boolean isAdvancing() {
+            return handLeft.isAdvancing() || handRight.isAdvancing();
         }
         
         protected final boolean isRetractFinished() {
@@ -9870,8 +9884,27 @@ public abstract class Boss extends Enemy implements SpecBoss {
             this.maxFollowerDepth = maxFollowerDepth;
             startStateIndefinite(STATE_REACH_FOR_PLAYER, getStill());
             final float targetX = getNearestPlayerX(), targetY = getNearestPlayerY();
-            handLeft.startAdvance(targetX - 22, targetY);
-            handRight.startAdvance(targetX + 22, targetY);
+            handLeft.startAdvance(targetX - 22, targetY, HeadHand.SPEED_REACH);
+            handRight.startAdvance(targetX + 22, targetY, HeadHand.SPEED_REACH);
+        }
+        
+        protected final void startSwipe() {
+            this.maxFollowerDepth = Integer.MAX_VALUE;
+            startStateIndefinite(STATE_SWIPE, getStill());
+            final float y = getPosition().getY();
+            final HeadHand handUpper, handLower;
+            final int m;
+            if (Mathtil.rand()) {
+                handUpper = handLeft;
+                handLower = handRight;
+                m = -1;
+            } else {
+                handUpper = handRight;
+                handLower = handLeft;
+                m = 1;
+            }
+            handLower.startAdvance(MID_X - (m * 144), y - 60, HeadHand.SPEED_SWIPE); handLower.nextTarget = new FinPanple2(MID_X + (m * 144), y - 60);
+            handUpper.startAdvance(MID_X + (m * 64), y - 20, HeadHand.SPEED_SWIPE); handUpper.nextTarget = new FinPanple2(MID_X - (m * 64), y - 20);
         }
         
         protected final void startDelayBeforeRetractHands() {
@@ -10069,12 +10102,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_ADVANCE = 1;
         protected final static byte STATE_RETRACT = 2;
         protected final static byte STATE_ROAM = 3;
-        protected final static float SPEED = 4.0f;
-        protected final static float TARGET_THRESHOLD = SPEED + 0.2f;
+        protected final static float SPEED_REACH = 4.0f;
+        protected final static float SPEED_SWIPE = 2.0f;
         protected final static float FOLLOW_THRESHOLD = 28.0f;
         
         protected byte state = STATE_NONE;
         protected final ImplPanple target = new ImplPanple();
+        protected Panple nextTarget = null;
+        protected float speed = SPEED_REACH;
         protected float vx, vy;
         
         protected final HeadHand hand;
@@ -10117,21 +10152,30 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return true;
             }
             final Panple pos = getPosition();
-            if (pos.getDistance2(target) < TARGET_THRESHOLD) {
+            if (pos.getDistance2(target) < (speed + 0.2f)) {
                 pos.set2(target);
                 adjustFollowers();
                 vx = vy = 0;
                 if ((state == STATE_RETRACT) && (next != null)) {
                     next.startRetractComponent();
                 }
-                state = STATE_NONE;
+                finishMove();
                 return true;
             }
             pos.add(vx, vy);
             if (!adjustFollowers()) {
-                state = STATE_NONE;
+                finishMove();
             }
             return true;
+        }
+        
+        protected void finishMove() {
+            if ((state == STATE_ADVANCE) && (nextTarget != null)) {
+                startMove(STATE_ADVANCE, nextTarget.getX(), nextTarget.getY());
+                nextTarget = null;
+                return;
+            }
+            state = STATE_NONE;
         }
         
         //@OverrideMe
@@ -10140,7 +10184,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final boolean adjustFollowers() {
             if (state == STATE_ADVANCE) {
-                return adjustPrevious(FOLLOW_THRESHOLD, SPEED, 0);
+                return adjustPrevious(FOLLOW_THRESHOLD, speed, 0);
             } else if (state == STATE_RETRACT) {
                 adjustNext();
                 return true;
@@ -10189,7 +10233,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (distance < 0) {
                 return; // The move process will see that the target has been reached
             }
-            scratchPanple.multiply(SPEED / distance);
+            scratchPanple.multiply(speed / distance);
             vx = scratchPanple.getX();
             vy = scratchPanple.getY();
         }
@@ -10325,7 +10369,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             new HeadBasicProjectile(this, vx, vy);
         }
         
-        protected final void startAdvance(final float targetX, final float targetY) {
+        protected final void startAdvance(final float targetX, final float targetY, final float speed) {
+            this.speed = speed;
             startMove(STATE_ADVANCE, targetX, targetY);
         }
         
@@ -10334,6 +10379,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 state = STATE_NONE;
             }
             attacked = false;
+            speed = SPEED_REACH;
             getShoulder().startRetractComponent();
         }
         
