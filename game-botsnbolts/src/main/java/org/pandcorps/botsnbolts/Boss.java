@@ -10208,6 +10208,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return (state == STATE_ADVANCE) && !isDestroyed();
         }
         
+        protected final boolean isRetracting() {
+            HeadArm arm = hand;
+            while (arm != null) {
+                if (arm.state == STATE_RETRACT) {
+                    return true;
+                }
+                arm = arm.previous;
+            }
+            return false;
+        }
+        
         protected final HeadArm getShoulder() {
             HeadArm shoulder = this;
             while (shoulder.previous != null) {
@@ -10231,6 +10242,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private float roamY;
         private float shoulderX = 0;
         private float shoulderY = 0;
+        private boolean attacked = false;
         
         protected HeadHand(final FinalHead head, final float x, final float y, final int z, final boolean mirror) {
             super(null, x, y, z, mirror, FinalHead.getHand());
@@ -10255,6 +10267,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 curr.setPrevious(new HeadArm(this, shoulderX, shoulderY, z, mirror));
                 curr = curr.previous;
             }
+        }
+        
+        @Override
+        public boolean onAttack(final Player player) {
+            if (!super.onAttack(player)) {
+                return false;
+            } else if ((state == STATE_ADVANCE) || ((state == STATE_NONE) && !isRetracting())) {
+                attacked = true;
+            }
+            return true;
         }
         
         @Override
@@ -10311,6 +10333,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (state == STATE_ROAM) {
                 state = STATE_NONE;
             }
+            attacked = false;
             getShoulder().startRetractComponent();
         }
         
@@ -10334,6 +10357,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final float x = pos.getX(), y = pos.getY(), z = pos.getZ();
             final boolean mirror = isMirror();
             final int m = getMirrorMultiplier(mirror), moff = mirror ? -15 : 0;
+            if (attacked) {
+                renderer.render(layer, claw, x + (m * -15) + moff, y - 12, z + 2, 0, 0, 16, 16, 0, !mirror, true);
+                renderer.render(layer, claw, x + (m * -12) + moff, y - 15, z + 2, 0, 0, 16, 16, 1, mirror, true);
+                renderer.render(layer, claw, x + (m * -2) + moff, y, z + 2, 0, 0, 16, 16, 0, mirror, false);
+                return;
+            }
             renderer.render(layer, claw, x + (m * -26) + moff, y - 11, z + 2, 0, 0, 16, 16, 0, mirror, false);
             renderer.render(layer, claw, x + (m * -11) + moff, y - 26, z + 2, 0, 0, 16, 16, 1, !mirror, false);
             renderer.render(layer, claw, x + (m * 8) + moff, y - 5, z - 2, 0, 0, 16, 16, 0, !mirror, true);
