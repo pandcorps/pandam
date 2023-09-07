@@ -9618,6 +9618,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    protected final static FinPanple2 HEAD_HAND_MIN = new FinPanple2(-16, -16);
+    protected final static FinPanple2 HEAD_HAND_MAX = new FinPanple2(16, 16);
+    
     protected final static class FinalHead extends Boss {
         private final static byte STATE_OPEN_DOORS = 1;
         private final static byte STATE_MOVE_ARMS_TO_INITIAL_POSITIONS = 2;
@@ -9814,7 +9817,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean pickState() {
             /*
-            final int r = rand(4);
+            final int r = rand(isEitherArmRemaining() ? 4 : 3);
             if (r == 0) {
                 startState(STATE_OPEN_MOUTH, 30, getStill());
             } else if (r == 1) {
@@ -9827,6 +9830,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             */
             startReachForPlayer();
             return true;
+        }
+        
+        protected final boolean isEitherArmRemaining() {
+            return !(Panctor.isDestroyed(handLeft) && Panctor.isDestroyed(handRight));
         }
         
         protected final void startReachForPlayer() {
@@ -9908,7 +9915,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final static Panmage getHand() {
-            return (hand = getImage(hand, "final/HeadHand", BotsnBoltsGame.CENTER_32, BotsnBoltsGame.MIN_32, BotsnBoltsGame.MAX_32));
+            return (hand = getImage(hand, "final/HeadHand", BotsnBoltsGame.CENTER_32, HEAD_HAND_MIN, HEAD_HAND_MAX));
         }
         
         protected final static Panmage getClaw() {
@@ -10040,7 +10047,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected HeadArm(final HeadHand hand, final float x, final float y, final int z, final boolean mirror, final Panmage image) {
-            super(15, 31, 0, 0, 1);
+            super(15, 31, 0, 0, HudMeter.MAX_VALUE);
             this.hand = (hand == null) ? ((HeadHand) this) : hand;
             setView(image);
             getPosition().set(x, y, z);
@@ -10049,8 +10056,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
-            return false;
+        protected final void onHurt(final SpecPlayerProjectile prj) {
+            if (this == hand) {
+                super.onHurt(prj);
+            } else {
+                hand.onHurt(prj);
+            }
         }
         
         @Override
@@ -10138,7 +10149,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final boolean isRetracted() {
-            if (state != STATE_NONE) {
+            if (isDestroyed()) {
+                return true;
+            } else if (state != STATE_NONE) {
                 return false;
             }
             final Panple pos = getPosition();
@@ -10146,7 +10159,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final boolean isAdvancing() {
-            return state == STATE_ADVANCE;
+            return (state == STATE_ADVANCE) && !isDestroyed();
         }
         
         protected final HeadArm getShoulder() {
@@ -10209,6 +10222,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final void startRetractWholeArm() {
             getShoulder().startRetractComponent();
+        }
+        
+        @Override
+        public final void onDefeat(final Player player) {
+            HeadArm arm = this;
+            final Panimation burst = BotsnBoltsGame.finalImages.burst;
+            while (arm != null) {
+                Projectile.burst(arm, burst, arm.getPosition());
+                arm.destroy();
+                arm = arm.previous;
+            }
         }
         
         @Override
