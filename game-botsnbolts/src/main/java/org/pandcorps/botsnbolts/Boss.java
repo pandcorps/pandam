@@ -431,6 +431,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         return DAMAGE;
     }
     
+    protected final static int randForceDifferent(final int max) {
+        prevPrevRand = prevRand;
+        return rand(max);
+    }
+    
     protected final static int rand(final int max) {
         if (max <= 1) {
             throw new IllegalArgumentException("Called rand(" + max + "), input must be at least 2");
@@ -9629,10 +9634,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final static byte STATE_CLOSE_MOUTH = 5;
         private final static byte STATE_CHARGE = 6;
         private final static byte STATE_ENERGY_BALL = 7;
-        private final static byte STATE_BASIC_PROJECTILE = 8;
-        private final static byte STATE_REACH_FOR_PLAYER = 9;
-        private final static byte STATE_DELAY_BEFORE_RETRACT_HANDS = 10;
-        private final static byte STATE_RETRACT_HANDS = 11;
+        private final static byte STATE_RETRACT_BEFORE_BASIC_PROJECTILE = 8;
+        private final static byte STATE_BASIC_PROJECTILE = 9;
+        private final static byte STATE_RETRACT_BEFORE_REACH = 10;
+        private final static byte STATE_REACH_FOR_PLAYER = 11;
+        private final static byte STATE_DELAY_BEFORE_RETRACT_HANDS = 12;
+        private final static byte STATE_RETRACT_HANDS = 13;
         
         protected final static int BASE_Y = 96;
         
@@ -9660,6 +9667,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private int currentEyeRightOffset = 0;
         private HeadHand handLeft = null;
         private HeadHand handRight = null;
+        private int maxFollowerDepth = Integer.MAX_VALUE;
 
         protected FinalHead(final Segment seg) {
             super(56, 96, 0, 0);
@@ -9701,6 +9709,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final void onTauntFinished() {
+            startRoam();
+        }
+        
+        @Override
         protected final boolean isDefeatOrbNeeded() {
             return false;
         }
@@ -9724,8 +9737,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             facingMirror = getNearestPlayerX() < MID_X;
             if (visibleSize == 6) {
                 final float handY = 36 + getPosition().getY();
-                handLeft = new HeadHand(-8, handY, BotsnBoltsGame.DEPTH_ENEMY_BG, false);
-                handRight = new HeadHand(391, handY, BotsnBoltsGame.DEPTH_ENEMY_BG, true);
+                handLeft = new HeadHand(this, -8, handY, BotsnBoltsGame.DEPTH_ENEMY_BG, false);
+                handRight = new HeadHand(this, 391, handY, BotsnBoltsGame.DEPTH_ENEMY_BG, true);
             } else if (visibleSize == 7) {
                 final float armY = 52 + getPosition().getY();
                 handLeft.setPrevious(new HeadArm(handLeft, 8, armY, BotsnBoltsGame.DEPTH_ENEMY_BG_2, false));
@@ -9754,8 +9767,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     startDelayBeforeRetractHands();
                 }
             } else if (state == STATE_RETRACT_HANDS) {
-                if (handLeft.isRetracted() && handRight.isRetracted()) {
-                    startStill();
+                if (isRetractFinished()) {
+                    if (maxFollowerDepth == 1) {
+                        startReachForPlayer(2);
+                    } else if (maxFollowerDepth == 2) {
+                        startReachForPlayer(Integer.MAX_VALUE);
+                    } else {
+                        startRoam();
+                    }
+                }
+            } else if (state == STATE_RETRACT_BEFORE_REACH) {
+                if (isRetractFinished()) {
+                    startReachForPlayer(1);
+                }
+            } else if (state == STATE_RETRACT_BEFORE_BASIC_PROJECTILE) {
+                if (isRetractFinished()) {
+                    startState(STATE_BASIC_PROJECTILE, 135, getStill());
                 }
             } else if (state == STATE_OPEN_MOUTH) {
                 if (waitCounter == 1) {
@@ -9816,27 +9843,31 @@ public abstract class Boss extends Enemy implements SpecBoss {
 
         @Override
         protected final boolean pickState() {
-            /*
-            final int r = rand(isEitherArmRemaining() ? 4 : 3);
+            final int r = randForceDifferent(isEitherArmRemaining() ? 3 : 2);
             if (r == 0) {
                 startState(STATE_OPEN_MOUTH, 30, getStill());
             } else if (r == 1) {
                 startState(STATE_CHARGE, 60, getStill());
             } else if (r == 2) {
-                startState(STATE_BASIC_PROJECTILE, 135, getStill());
-            } else {
-                startReachForPlayer();
+                if (Mathtil.rand()) {
+                    startRetractHands(STATE_RETRACT_BEFORE_BASIC_PROJECTILE);
+                } else {
+                    startRetractHands(STATE_RETRACT_BEFORE_REACH);
+                }
             }
-            */
-            startReachForPlayer();
             return true;
+        }
+        
+        protected final boolean isRetractFinished() {
+            return handLeft.isRetracted() && handRight.isRetracted();
         }
         
         protected final boolean isEitherArmRemaining() {
             return !(Panctor.isDestroyed(handLeft) && Panctor.isDestroyed(handRight));
         }
         
-        protected final void startReachForPlayer() {
+        protected final void startReachForPlayer(final int maxFollowerDepth) {
+            this.maxFollowerDepth = maxFollowerDepth;
             startStateIndefinite(STATE_REACH_FOR_PLAYER, getStill());
             final float targetX = getNearestPlayerX(), targetY = getNearestPlayerY();
             handLeft.startAdvance(targetX - 22, targetY);
@@ -9847,8 +9878,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             startState(STATE_DELAY_BEFORE_RETRACT_HANDS, 30, getStill());
         }
         
-        protected final void startRetractHands() {
-            startStateIndefinite(STATE_RETRACT_HANDS, getStill());
+        protected final void startRetractHands(final byte state) {
+            startStateIndefinite(state, getStill());
             handLeft.startRetractWholeArm();
             handRight.startRetractWholeArm();
         }
@@ -9862,11 +9893,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else if (state == STATE_CHARGE) {
                 startState(STATE_ENERGY_BALL, 60, getStill());
             } else if (state == STATE_DELAY_BEFORE_RETRACT_HANDS) {
-                startRetractHands();
+                startRetractHands(STATE_RETRACT_HANDS);
             } else {
-                startStill();
+                startRoam();
             }
             return true;
+        }
+        
+        protected final void startRoam() {
+            maxFollowerDepth = Integer.MAX_VALUE;
+            handLeft.state = HeadArm.STATE_ROAM;
+            handRight.state = HeadArm.STATE_ROAM;
+            startStill();
         }
 
         @Override
@@ -10030,6 +10068,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final static byte STATE_NONE = 0;
         protected final static byte STATE_ADVANCE = 1;
         protected final static byte STATE_RETRACT = 2;
+        protected final static byte STATE_ROAM = 3;
         protected final static float SPEED = 4.0f;
         protected final static float TARGET_THRESHOLD = SPEED + 0.2f;
         protected final static float FOLLOW_THRESHOLD = 28.0f;
@@ -10073,6 +10112,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final boolean onStepCustom() {
             if (state == STATE_NONE) {
                 return true;
+            } else if (state == STATE_ROAM) {
+                roam();
+                return true;
             }
             final Panple pos = getPosition();
             if (pos.getDistance2(target) < TARGET_THRESHOLD) {
@@ -10092,9 +10134,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return true;
         }
         
+        //@OverrideMe
+        protected void roam() {
+        }
+        
         protected final boolean adjustFollowers() {
             if (state == STATE_ADVANCE) {
-                return adjustPrevious();
+                return adjustPrevious(FOLLOW_THRESHOLD, SPEED, 0);
             } else if (state == STATE_RETRACT) {
                 adjustNext();
                 return true;
@@ -10102,11 +10148,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return true;
         }
         
-        protected final boolean adjustPrevious() {
-            if (previous == null) {
-                return getPosition().getDistance2(hand.shoulderX, hand.shoulderY) < (FOLLOW_THRESHOLD - SPEED);
-            } else if (previous.follow(this)) {
-                return previous.adjustPrevious();
+        protected final boolean adjustPrevious(final float followThreshold, final float speed, final int depth) {
+            if ((previous == null) || (depth >= hand.head.maxFollowerDepth)) {
+                return getPosition().getDistance2(hand.shoulderX, hand.shoulderY) < (followThreshold - speed);
+            } else if (previous.follow(this, followThreshold)) {
+                return previous.adjustPrevious(followThreshold, speed, depth + 1);
             }
             return true;
         }
@@ -10114,19 +10160,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void adjustNext() {
             if (next == null) {
                 return;
-            } else if (next.follow(this)) {
+            } else if (next.follow(this, FOLLOW_THRESHOLD)) {
                 next.adjustNext();
             }
         }
         
-        protected final boolean follow(final HeadArm leader) {
+        protected final boolean follow(final HeadArm leader, final float followThreshold) {
             final Panple pos = getPosition(), leaderPos = leader.getPosition();
             Panple.subtract(scratchPanple, leaderPos, pos);
             final float distance = (float) scratchPanple.getMagnitude2();
-            if (distance <= FOLLOW_THRESHOLD) {
+            if (distance <= followThreshold) {
                 return false;
             }
-            scratchPanple.multiply(FOLLOW_THRESHOLD / distance);
+            scratchPanple.multiply(followThreshold / distance);
             pos.set(leaderPos.getX() - scratchPanple.getX(), leaderPos.getY() - scratchPanple.getY());
             return true;
         }
@@ -10177,18 +10223,29 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static class HeadHand extends HeadArm {
+        private final static float ROAM_SPEED = 1.0f;
+        private final FinalHead head;
+        private float startX;
+        private float startY;
+        private float roamX;
+        private float roamY;
         private float shoulderX = 0;
         private float shoulderY = 0;
         
-        protected HeadHand(final float x, final float y, final int z, final boolean mirror) {
+        protected HeadHand(final FinalHead head, final float x, final float y, final int z, final boolean mirror) {
             super(null, x, y, z, mirror, FinalHead.getHand());
+            this.head = head;
         }
         
         protected final void init() {
             final boolean mirror = isMirror();
             final Panple pos = getPosition();
-            shoulderX = pos.getX() - (24 * getMirrorMultiplier(mirror));
-            shoulderY = pos.getY() + 28;
+            startX = pos.getX();
+            startY = pos.getY();
+            shoulderX = startX - (24 * getMirrorMultiplier(mirror));
+            shoulderY = startY + 28;
+            roamX = startX + Mathtil.randi(6, 16);
+            roamY = startY + Mathtil.randi(6, 16);
             final int[] zs = { BotsnBoltsGame.DEPTH_ENEMY_FRONT_2, BotsnBoltsGame.DEPTH_ENEMY_FRONT, BotsnBoltsGame.DEPTH_ENEMY,
                     BotsnBoltsGame.DEPTH_ENEMY_BACK, BotsnBoltsGame.DEPTH_ENEMY_BACK_2, BotsnBoltsGame.DEPTH_ENEMY_BACK_3, BotsnBoltsGame.DEPTH_CARRIER,
                     BotsnBoltsGame.DEPTH_ENEMY_BG, BotsnBoltsGame.DEPTH_ENEMY_BG_2 }; // ENEMY_BG_3 used by shoulder
@@ -10198,6 +10255,36 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 curr.setPrevious(new HeadArm(this, shoulderX, shoulderY, z, mirror));
                 curr = curr.previous;
             }
+        }
+        
+        @Override
+        protected final void roam() {
+            final Panple pos = getPosition();
+            float x = pos.getX(), y = pos.getY();
+            if (roamX < x) {
+                x -= ROAM_SPEED;
+                if (x <= roamX) {
+                    roamX = startX + Mathtil.randi(8, isMirror() ? 20 : 56);
+                }
+            } else {
+                x += ROAM_SPEED;
+                if (x >= roamX) {
+                    roamX = startX - Mathtil.randi(8, isMirror() ? 56 : 20);
+                }
+            }
+            if (roamY < y) {
+                y -= ROAM_SPEED;
+                if (y <= roamY) {
+                    roamY = startY + Mathtil.randi(8, 56);
+                }
+            } else {
+                y += ROAM_SPEED;
+                if (y >= roamY) {
+                    roamY = startY - Mathtil.randi(8, 20);
+                }
+            }
+            pos.set(x, y);
+            adjustPrevious(21.0f, ROAM_SPEED, 0);
         }
         
         protected final void charge(final int waitCounter) {
@@ -10221,6 +10308,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startRetractWholeArm() {
+            if (state == STATE_ROAM) {
+                state = STATE_NONE;
+            }
             getShoulder().startRetractComponent();
         }
         
