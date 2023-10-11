@@ -59,11 +59,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int SHOOT_DELAY_RAPID = 3;
     private final static int SHOOT_DELAY_SPREAD = 15;
     private final static int SHOOT_DELAY_WIELD_SHORT = 9;
+    private final static int SHOOT_DELAY_WIELD_MEDIUM = 21;
     private final static int SHOOT_DELAY_WIELD_LONG = 28;
     private final static int SHOOT_DELAY_STREAM = 0;
     private final static int SHOOT_STAMINA_TIMER_STREAM = 4;
     protected final static int SHOOT_TIME = 12;
     protected final static int WIELD_TIME_SHORT = 16;
+    protected final static int WIELD_TIME_MEDIUM = 18;
     protected final static int WIELD_TIME_LONG = 25;
     private final static int CHARGE_TIME_MEDIUM = 30;
     private final static int CHARGE_TIME_BIG = 60;
@@ -4019,6 +4021,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final String name;
         protected final String animalName;
         protected final String birdName;
+        protected final MeleeMode meleeMode;
         protected Panmage boardImage = null;
         protected Panmage boardDiagImage = null;
         protected Panmage boardDiagImageTop = null;
@@ -4043,7 +4046,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
                                final Panmage powerBox, final Map<String, Panmage> boltBoxes, final Panmage diskBox, final Panmage highlightBox,
-                               final Panmage portrait, final HudMeterImages hudMeterImages, final String name, final String animalName, final String birdName) {
+                               final Panmage portrait, final HudMeterImages hudMeterImages,
+                               final String name, final String animalName, final String birdName,
+                               final MeleeMode meleeMode) {
             this.basicSet = basicSet;
             this.shootSet = shootSet;
             this.throwSet = throwSet;
@@ -4100,6 +4105,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.name = name;
             this.animalName = animalName;
             this.birdName = birdName;
+            this.meleeMode = meleeMode;
         }
     }
     
@@ -4540,6 +4546,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onShootStart(final Player player) {
+            if (player.pi.meleeMode != null) {
+                player.pi.meleeMode.onShootStart(this, player);
+                return;
+            }
             final PlayerImagesSubSet currentShootSet = player.getCurrentImagesSubSet(); // Cleared by shoot method below, so read it first
             if (shoot(player)) {
                 final PlayerImagesSubSet[] wieldSets = player.pi.wieldSets;
@@ -4609,7 +4619,66 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
-    private final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID, SHOOT_STREAM, SHOOT_SHIELD, SHOOT_SWORD }; //TODO separate list per episode
+    protected final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID, SHOOT_STREAM, SHOOT_SHIELD, SHOOT_SWORD }; //TODO separate list per episode
+    
+    protected abstract static class MeleeMode {
+        protected abstract String getName();
+        
+        protected abstract int getHorizontalOffsetX();
+        
+        protected abstract int getHorizontalOffsetY();
+        
+        protected abstract String getAttackImageSuffix();
+        
+        protected abstract int getAttackOffsetX();
+        
+        protected abstract int getAttackOffsetY();
+        
+        protected abstract void onShootStart(final ShootMode shootMode, final Player player);
+    }
+    
+    protected final static MeleeMode MELEE_WHIP = new MeleeMode() {
+        @Override
+        protected final String getName() {
+            return "Whip";
+        }
+        
+        @Override
+        protected final int getHorizontalOffsetX() {
+            return -1;
+        }
+        
+        @Override
+        protected final int getHorizontalOffsetY() {
+            return -4;
+        }
+        
+        @Override
+        protected final String getAttackImageSuffix() {
+            return "WhipAttack.png";
+        }
+        
+        @Override
+        protected final int getAttackOffsetX() {
+            return 5;
+        }
+        
+        @Override
+        protected final int getAttackOffsetY() {
+            return 1;
+        }
+        
+        @Override
+        protected final void onShootStart(final ShootMode shootMode, final Player player) {
+            if (shootMode.shoot(player)) {
+                final PlayerImagesSubSet[] wieldSets = player.pi.wieldSets;
+                player.currentShootSet = wieldSets[3];
+                player.currentShootTime = WIELD_TIME_MEDIUM;
+                player.lastShotDelay = SHOOT_DELAY_WIELD_MEDIUM;
+                player.lastSwordProjectile.setView(BotsnBoltsGame.getWhipHitBox());
+            }
+        }};
+        
     
     protected abstract static class JumpMode extends InputMode {
         protected JumpMode(final Upgrade requiredUpgrade) {

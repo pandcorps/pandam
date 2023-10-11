@@ -158,6 +158,7 @@ public final class BotsnBoltsGame extends BaseGame {
     protected static PlayerImages voidImages = null;
     protected static PlayerImages nullImages = null;
     protected static PlayerImages volatileImages = null;
+    protected static PlayerImages transientImages = null;
     protected static PlayerImages finalImages = null;
     protected final static Map<String, PlayerImages> playerImages = new HashMap<String, PlayerImages>();
     protected static Panframe[] doorTunnel = null;
@@ -234,6 +235,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Panmage empty16 = null;
     private static Panmage swordHitBox = null;
     private static Panmage swordFullHitBox = null;
+    private static Panmage whipHitBox = null;
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicIntro = null;
     protected static Pansound musicLevelSelect = null;
@@ -355,6 +357,7 @@ public final class BotsnBoltsGame extends BaseGame {
         doorCyan = newDoorDefinition("door.cyan", imgsClosed, imgsOpening, null, 0, null, null, imgsBarrier, null, null);
         final short s0 = 0, s48 = 48, s64 = 64, s96 = 96, s128 = 128, s144 = 144, s192 = 192, smax = Pancolor.MAX_VALUE;
         final Pancolor cyan = Pancolor.CYAN, silver = Pancolor.GREY, darkCyan = new FinPancolor(s0, s192, s192), darkSilver = Pancolor.DARK_GREY;
+        //TODO Whip should open silver door even though power isn't maximum
         doorSilver = filterDoor("door.silver", imgsClosed, imgsOpening, cyan, silver, darkCyan, darkSilver, null, 0, null,
             Integer.valueOf(Projectile.POWER_MAXIMUM), imgsBarrier, Player.SHOOT_CHARGE, null);
         final Pancolor blue = newColorBlue(), darkBlue = newColorBlueDark();
@@ -574,6 +577,13 @@ public final class BotsnBoltsGame extends BaseGame {
         return swordFullHitBox;
     }
     
+    protected final static Panmage getWhipHitBox() {
+        if (whipHitBox == null) {
+            whipHitBox = Pangine.getEngine().createEmptyImage("whipHitBox", FinPanple.ORIGIN, new FinPanple2(0, 10), new FinPanple2(78, 18));
+        }
+        return whipHitBox;
+    }
+    
     private final static Pancolor newColorHidden() {
         final short s0 = 0, s192 = 192;
         return new FinPancolor(s192, s0, s192);
@@ -746,18 +756,19 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor skin0 = new FinPancolor(s240, s160, s120), skin1 = new FinPancolor(s192, s128, s96), skin2 = new FinPancolor(s144, s96, s72);
         lastPlayerImagesPrimary1 = lastPlayerImagesEnergy1 = Pancolor.GREEN; lastPlayerImagesPrimary2 = lastPlayerImagesEnergy2 = new FinPancolor(s0, s192, s0);
         lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
-        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true, 0);
+        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true, 0, 1, 3, null);
         final Pancolor darkCyan = new FinPancolor(s0, s192, s192);
         filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), darkCyan);
         lastPlayerImagesSkin1 = skin0; lastPlayerImagesSkin2 = skin1;
         playerMirror = false;
-        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true, 0);
+        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true, 0, 1, 3, null);
+        transientImages = loadPlayerImages("transient", "Transient", "Byte", "Baud", null, true, 1, 4, 4, Player.MELEE_WHIP);
         lastPlayerImagesSkin1 = new FinPancolor(s96, s128, s192); lastPlayerImagesSkin2 = new FinPancolor(s72, s96, s144);
-        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false, 0);
+        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false, 0, 1, 3, null);
         filterPlayerImages(Pancolor.CYAN, new FinPancolor(s176, s144, Pancolor.MAX_VALUE), darkCyan, new FinPancolor(s128, s64, Pancolor.MAX_VALUE));
         lastPlayerImagesPrimary1 = lastPlayerImagesEnergy2; lastPlayerImagesPrimary2 = new FinPancolor(s96, s48, s192);
         lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
-        nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true, 1);
+        nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true, 1, 1, 3, null);
         closePlayerImages();
         prf0 = new Profile();
     }
@@ -974,7 +985,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName, final PlayerImages src, final boolean pupilNeeded,
-            final int shieldRunOffsetX) {
+            final int shieldRunOffsetX, final int wieldIndexMin, final int wieldIndexMax, final MeleeMode meleeMode) {
         final String pre = getCharacterPrefix(dir, name);
         final int slideX = Player.PLAYER_X + 2;
         final Panple nSlide = GuyPlatform.getMin(slideX), xSlide = GuyPlatform.getMax(slideX, 19);
@@ -1007,8 +1018,8 @@ public final class BotsnBoltsGame extends BaseGame {
         final PlayerImagesSubSet basicSet = loadPlayerImagesSubSet(pre, name, true, og, og, oj, climb, wallGrab, dash, descend);
         final PlayerImagesSubSet shootSet = loadPlayerImagesSubSet(pre + "Shoot", name + ".shoot", false, oss, os, ojs, climbAim, wallGrabAim, dashAim, descendAim);
         final PlayerImagesSubSet throwSet = loadPlayerImagesSubSet(pre + "Throw", name + ".throw", false, oss, os, ojs, climbThrow, wallGrabThrow, dashThrow, descendThrow);
-        final PlayerImagesSubSet[] wieldSets = new PlayerImagesSubSet[3];
-        for (int i = 1; i <= 3; i++) {
+        final PlayerImagesSubSet[] wieldSets = new PlayerImagesSubSet[4];
+        for (int i = wieldIndexMin; i <= wieldIndexMax; i++) {
             final Panmage climbWield = newPlayerImage(PRE_IMG + "." + name + ".climb.wield" + i, oClimb, ng, xg,
                     Imtil.load(pre + "ClimbWield" + i + ".png"), playerMirror ? Imtil.load(pre + "ClimbWield" + i + "Mirror.png") : null);
             final Panmage wallGrabWield = newPlayerImage(PRE_IMG + "." + name + ".wall.wield" + i, oj, ng, xg,
@@ -1078,9 +1089,25 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage shieldVert = (src == null) ? engine.createImage(pre + "ShieldVert", playerShieldVert) : src.shieldVert;
         final Panmage shieldDiag = (src == null) ? engine.createImage(pre + "ShieldDiag", playerShieldDiag) : src.shieldDiag;
         final Panmage shieldCircle = (src == null) ? engine.createImage(pre + "ShieldCircle", playerShieldCircle) : src.shieldCircle;
-        final Panmage swordHoriz = (src == null) ? engine.createImage(pre + "SwordHoriz", playerSwordHoriz) : src.swordHoriz;
-        final Panmage swordDiag = (src == null) ? engine.createImage(pre + "SwordDiag", playerSwordDiag) : src.swordDiag;
-        final Panmage swordBack = (src == null) ? engine.createImage(pre + "SwordBack", playerSwordBack) : src.swordBack;
+        final String meleeWeaponName = (meleeMode == null) ? null : meleeMode.getName();
+        final Panmage swordHoriz, swordDiag, swordBack;
+        int wox = 0, woy = 0, whox = 0, whoy = 0;
+        if (meleeWeaponName == null) {
+            swordHoriz = (src == null) ? engine.createImage(pre + "SwordHoriz", playerSwordHoriz) : src.swordHoriz;
+            swordDiag = (src == null) ? engine.createImage(pre + "SwordDiag", playerSwordDiag) : src.swordDiag;
+            swordBack = (src == null) ? engine.createImage(pre + "SwordBack", playerSwordBack) : src.swordBack;
+        } else {
+            final String meleeHorizImageLocation = pre + meleeWeaponName + "Horiz.png";
+            swordHoriz = engine.createImage(meleeHorizImageLocation, meleeHorizImageLocation);
+            final String meleeDiagImageLocation = pre + meleeWeaponName + "Diag.png";
+            swordDiag = engine.createImage(meleeDiagImageLocation, meleeDiagImageLocation);
+            final String meleeBackImageLocation = pre + meleeWeaponName + "Back.png";
+            swordBack = engine.createImage(meleeBackImageLocation, meleeBackImageLocation);
+            wox = meleeMode.getAttackOffsetX();
+            woy = meleeMode.getAttackOffsetY();
+            whox = meleeMode.getHorizontalOffsetX();
+            whoy = meleeMode.getHorizontalOffsetY();
+        }
         final Panmage[] swordTrails = (src == null)
                 ? new Panmage[] {
                         engine.createImage(pre + "SwordTrail1", playerSwordTrails[0]),
@@ -1091,7 +1118,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImageExtra stillExtra = new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null),
-                new HeldExtra(swordHoriz, -13, 4, DEPTH_PLAYER_FRONT, false, false, 0, null)); //TODO x - 1 for Void
+                new HeldExtra(swordHoriz, -13 + whox, 4 + whoy, DEPTH_PLAYER_FRONT, false, false, 0, null)); //TODO x - 1 for Void
         basicSet.stand.setExtra(stillExtra);
         basicSet.blink.setExtra(stillExtra);
         talk.setExtra(stillExtra);
@@ -1128,33 +1155,46 @@ public final class BotsnBoltsGame extends BaseGame {
         throwSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
         slide.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
         basicSet.crouch[0].setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null), null));
-        for (int wi = 0; wi < 3; wi++) {
-            final int wx, wy, trail = wi + 1;
+        final String meleeDiagonalImageSuffix = (meleeMode == null) ? null : meleeMode.getAttackImageSuffix();
+        Panmage meleeAttack = swordDiag;
+        if (meleeDiagonalImageSuffix != null) {
+            final String meleeDiagonalImageLocation = pre + meleeDiagonalImageSuffix;
+            meleeAttack = engine.createImage(meleeDiagonalImageLocation, meleeDiagonalImageLocation);
+        }
+        for (int wieldIndex = wieldIndexMin; wieldIndex <= wieldIndexMax; wieldIndex++) {
+            final int wi = wieldIndex - 1;
+            int wx, wy, trail = wi + 1;
             final boolean wm, wf;
             if (wi == 0) {
                 wx = 7; wy = 14; wm = false; wf = false;
             } else if (wi == 1) {
                 wx = 6; wy = 8; wm = false; wf = true;
-            } else {
+            } else if (wi == 2) {
                 wx = -10; wy = 12; wm = true; wf = false;
+            } else if (wi == 3) {
+                wx = 8; wy = 9; wm = false; wf = false;
+            } else {
+                throw new IllegalStateException("Unexpected wield array index " + wi);
             }
+            wx += wox;
+            wy += woy;
             final PlayerImagesSubSet wieldSet = wieldSets[wi];
             wieldSet.stand.setExtra(new PlayerImageExtra(0, trail, null,
-                    new HeldExtra(swordDiag, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+                    new HeldExtra(meleeAttack, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
             final PlayerImageExtra wieldRunExtra = new PlayerImageExtra(0, trail, null,
-                    new HeldExtra(swordDiag, wx - 1, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null));
+                    new HeldExtra(meleeAttack, wx - 1, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null));
             wieldSet.run[0].setExtra(wieldRunExtra);
             wieldSet.run[1].setExtra(wieldRunExtra);
             wieldSet.run[2].setExtra(wieldRunExtra);
             final PlayerImageExtra wieldJumpExtra = new PlayerImageExtra(0, trail, null,
-                    new HeldExtra(swordDiag, wx, wy + 3, DEPTH_PLAYER_FRONT, wm, wf, 0, null));
+                    new HeldExtra(meleeAttack, wx, wy + 3, DEPTH_PLAYER_FRONT, wm, wf, 0, null));
             wieldSet.jump.setExtra(wieldJumpExtra);
             wieldSet.climb.setExtra(new PlayerImageExtra(1, trail, null,
-                    new HeldExtra(swordDiag, wx + 3, wy + 1, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+                    new HeldExtra(meleeAttack, wx + 3, wy + 1, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
             wieldSet.wallGrab.setExtra(new PlayerImageExtra(0, trail, null,
-                    new HeldExtra(swordDiag, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+                    new HeldExtra(meleeAttack, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
             wieldSet.dash.setExtra(new PlayerImageExtra(0, trail, null,
-                    new HeldExtra(swordDiag, wx + 2, wy - 2, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
+                    new HeldExtra(meleeAttack, wx + 2, wy - 2, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
             wieldSet.descend.setExtra(wieldJumpExtra);
         }
         
@@ -1201,7 +1241,8 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImages pi;
         pi = new PlayerImages(basicSet, shootSet, throwSet, wieldSets, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, glideUp, glideHoriz, glideDown, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
-            swordHoriz, swordDiag, swordBack, swordTrails, exhaust1, exhaust2, exhaustDiag1, exhaustDiag2, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages, name, animalName, birdName);
+            swordHoriz, swordDiag, swordBack, swordTrails, exhaust1, exhaust2, exhaustDiag1, exhaustDiag2, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages,
+            name, animalName, birdName, meleeMode);
         playerImages.put(portraitLoc, pi);
         return pi;
     }
@@ -1516,7 +1557,8 @@ public final class BotsnBoltsGame extends BaseGame {
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     //addPlayerContext(prf0, voidImages, event);
-                    addPlayerContext(prf0, nullImages, event);
+                    //addPlayerContext(prf0, nullImages, event);
+                    addPlayerContext(prf0, transientImages, event);
                     startGame();
                 }});
         }

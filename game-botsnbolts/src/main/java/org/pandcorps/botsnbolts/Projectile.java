@@ -512,6 +512,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         }
         
         private final void onCaught() {
+            //TODO If didn't travel far, Player could still be in the throw image (which does not have Extra for rendering shield); end throw image or render shield
             for (final PowerUp powerUp : Coltil.unnull(collectedPowerUps)) {
                 powerUp.getPosition().set2(src.getPosition());
             }
@@ -554,6 +555,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         
         @Override
         protected final void onStepEndProjectile() {
+            //TODO Keep for a couple more frames (but destroy immediately if it hits something)
             if (firstStep) {
                 firstStep = false;
             } else {
