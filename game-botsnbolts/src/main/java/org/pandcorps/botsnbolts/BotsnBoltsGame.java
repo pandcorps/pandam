@@ -1091,6 +1091,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage shieldCircle = (src == null) ? engine.createImage(pre + "ShieldCircle", playerShieldCircle) : src.shieldCircle;
         final String meleeWeaponName = (meleeMode == null) ? null : meleeMode.getName();
         final Panmage swordHoriz, swordDiag, swordBack;
+        final Map<String, Panmage> boltBoxes = new HashMap<String, Panmage>(Profile.UPGRADES.length + 1);
         int wox = 0, woy = 0, whox = 0, whoy = 0;
         if (meleeWeaponName == null) {
             swordHoriz = (src == null) ? engine.createImage(pre + "SwordHoriz", playerSwordHoriz) : src.swordHoriz;
@@ -1103,6 +1104,8 @@ public final class BotsnBoltsGame extends BaseGame {
             swordDiag = engine.createImage(meleeDiagImageLocation, meleeDiagImageLocation);
             final String meleeBackImageLocation = pre + meleeWeaponName + "Back.png";
             swordBack = engine.createImage(meleeBackImageLocation, meleeBackImageLocation);
+            final String meleeBoxImageLocation = pre + meleeWeaponName + "Box.png";
+            boltBoxes.put(meleeWeaponName, engine.createImage(meleeBoxImageLocation, meleeBoxImageLocation));
             wox = meleeMode.getAttackOffsetX();
             woy = meleeMode.getAttackOffsetY();
             whox = meleeMode.getHorizontalOffsetX();
@@ -1223,7 +1226,6 @@ public final class BotsnBoltsGame extends BaseGame {
         final Panmage bolt = (src == null) ? engine.createImage(pre + "Bolt", oBattery, minBatteryBig, maxBatteryBig, playerBolt) : src.bolt;
         final Panmage disk = (src == null) ? engine.createImage(pre + "Disk", oBattery, minBatteryBig, maxBatteryBig, playerDisk) : src.disk;
         final Panmage powerBox = (src == null) ? engine.createImage(pre + "PowerBox", CENTER_16, minCube, maxCube, playerPowerBox) : src.powerBox;
-        final Map<String, Panmage> boltBoxes = new HashMap<String, Panmage>(Profile.UPGRADES.length);
         for (final Entry<String, Img> entry : playerBoltBoxes.entrySet()) {
             final String boltName = entry.getKey();
             boltBoxes.put(boltName, (src == null) ? engine.createImage(pre + boltName + "Box", CENTER_16, minCube, maxCube, entry.getValue()) : src.boltBoxes.get(boltName));

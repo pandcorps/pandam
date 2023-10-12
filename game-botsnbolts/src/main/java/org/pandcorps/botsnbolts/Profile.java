@@ -370,7 +370,11 @@ public class Profile {
         }
         
         protected final Panmage getBoxImage(final PlayerContext pc) {
-            return pc.pi.boltBoxes.get(name);
+            return pc.pi.boltBoxes.get(getIconName(pc));
+        }
+        
+        protected String getIconName(final PlayerContext pc) {
+            return name;
         }
         
         @Override
@@ -602,6 +606,12 @@ public class Profile {
         @Override
         protected final ShootMode getShootMode() {
             return Player.SHOOT_SWORD;
+        }
+        
+        @Override
+        protected final String getIconName(final PlayerContext pc) {
+            final MeleeMode meleeMode = pc.pi.meleeMode;
+            return (meleeMode == null) ? super.getIconName(pc) : meleeMode.getName();
         }
     }
 }
