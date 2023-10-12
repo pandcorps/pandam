@@ -579,7 +579,8 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static Panmage getWhipHitBox() {
         if (whipHitBox == null) {
-            whipHitBox = Pangine.getEngine().createEmptyImage("whipHitBox", FinPanple.ORIGIN, new FinPanple2(0, 10), new FinPanple2(78, 18));
+            // Placed at player.y - 7
+            whipHitBox = Pangine.getEngine().createEmptyImage("whipHitBox", FinPanple.ORIGIN, new FinPanple2(0, 17), new FinPanple2(78, 25));
         }
         return whipHitBox;
     }
@@ -1092,7 +1093,7 @@ public final class BotsnBoltsGame extends BaseGame {
         final String meleeWeaponName = (meleeMode == null) ? null : meleeMode.getName();
         final Panmage swordHoriz, swordDiag, swordBack;
         final Map<String, Panmage> boltBoxes = new HashMap<String, Panmage>(Profile.UPGRADES.length + 1);
-        int wox = 0, woy = 0, whox = 0, whoy = 0;
+        int wox = 0, woy = 0, whox = 0, whoy = 0, wbox = 0, wboy = 0;
         if (meleeWeaponName == null) {
             swordHoriz = (src == null) ? engine.createImage(pre + "SwordHoriz", playerSwordHoriz) : src.swordHoriz;
             swordDiag = (src == null) ? engine.createImage(pre + "SwordDiag", playerSwordDiag) : src.swordDiag;
@@ -1110,6 +1111,8 @@ public final class BotsnBoltsGame extends BaseGame {
             woy = meleeMode.getAttackOffsetY();
             whox = meleeMode.getHorizontalOffsetX();
             whoy = meleeMode.getHorizontalOffsetY();
+            wbox = meleeMode.getBackOffsetX();
+            wboy = meleeMode.getBackOffsetY();
         }
         final Panmage[] swordTrails = (src == null)
                 ? new Panmage[] {
@@ -1150,10 +1153,10 @@ public final class BotsnBoltsGame extends BaseGame {
                 new HeldExtra(swordDiag, 6, 20, DEPTH_PLAYER_BACK, true, true, 0, null)));
         basicSet.climb.setExtra(new PlayerImageExtra(1, 0,
                 new HeldExtra(shieldDiag, -10, 2, DEPTH_PLAYER_FRONT, false, false, 0, null),
-                new HeldExtra(swordBack, -6, -8, DEPTH_PLAYER_FRONT, false, false, 0, null)));
+                new HeldExtra(swordBack, -6 + wbox, -8 + wboy, DEPTH_PLAYER_FRONT, false, false, 0, null)));
         climbTop.setExtra(new PlayerImageExtra(1, 0,
                 new HeldExtra(shieldDiag, -8, 5, DEPTH_PLAYER_FRONT, true, false, 1, null),
-                new HeldExtra(swordBack, -6, -6, DEPTH_PLAYER_FRONT, false, false, 0, null)));
+                new HeldExtra(swordBack, -6 + wbox, -6 + wboy, DEPTH_PLAYER_FRONT, false, false, 0, null)));
         shootSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
         throwSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
         slide.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));

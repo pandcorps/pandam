@@ -4628,6 +4628,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         protected abstract int getHorizontalOffsetY();
         
+        protected abstract int getBackOffsetX();
+        
+        protected abstract int getBackOffsetY();
+        
         protected abstract String getAttackImageSuffix();
         
         protected abstract int getAttackOffsetX();
@@ -4651,6 +4655,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final int getHorizontalOffsetY() {
             return -4;
+        }
+        
+        @Override
+        protected final int getBackOffsetX() {
+            return 4;
+        }
+        
+        @Override
+        protected final int getBackOffsetY() {
+            return 12;
         }
         
         @Override
