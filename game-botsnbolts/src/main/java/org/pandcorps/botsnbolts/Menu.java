@@ -512,7 +512,7 @@ public class Menu {
             if (centerLevel == null) {
                 final int x = 176, y = 96;
                 addPortrait(layer, x, y, pc.pi.portrait, true);
-                grid.pupils = new Pupils(layer, x, y);
+                grid.pupils = addPupils(pc.pi.portrait, layer, x, y);
             } else {
                 addLevelButton(room, 2, 1, centerLevel);
             }
@@ -590,15 +590,20 @@ public class Menu {
             layer.addActor(portrait);
         }
         
+        private final static Pupils addPupils(final Panmage portrait, final Panlayer layer, final int portraitX, final int portraitY) {
+            if (Story.isPupilNeeded(portrait)) {
+                return new Pupils(layer, portraitX, portraitY);
+            }
+            return null;
+        }
+        
         private final static LevelSelectCell addLevelButton(final Panlayer layer, final int selectX, final int selectY, final BotLevel level) {
             final int x = LEVEL_SELECT_X + (selectX * LEVEL_W), y = LEVEL_SELECT_Y + (selectY * LEVEL_H), x24 = x + 24;
             BotsnBoltsGame.addText(layer, level.name1, x24, y - 8);
             BotsnBoltsGame.addText(layer, level.name2, x24, y - 16);
             final int portraitX = x + 8, portraitY = y + 8;
             addPortrait(layer, portraitX, portraitY, level);
-            if (Story.isPupilNeeded(level.portrait)) {
-                new Pupils(layer, portraitX, portraitY);
-            }
+            addPupils(level.portrait, layer, portraitX, portraitY);
             final Pangine engine = Pangine.getEngine();
             final TouchButton btn = new TouchButton(engine.getInteraction(), layer, "level." + x + "." + y, x, y, BotsnBoltsGame.DEPTH_FG, imgEmpty, null, true);
             levelButtons.add(btn);
