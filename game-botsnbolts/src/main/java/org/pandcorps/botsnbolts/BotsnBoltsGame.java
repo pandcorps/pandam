@@ -757,19 +757,19 @@ public final class BotsnBoltsGame extends BaseGame {
         final Pancolor skin0 = new FinPancolor(s240, s160, s120), skin1 = new FinPancolor(s192, s128, s96), skin2 = new FinPancolor(s144, s96, s72);
         lastPlayerImagesPrimary1 = lastPlayerImagesEnergy1 = Pancolor.GREEN; lastPlayerImagesPrimary2 = lastPlayerImagesEnergy2 = new FinPancolor(s0, s192, s0);
         lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
-        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true, 0, 1, 3, null);
+        voidImages = loadPlayerImages(dir, name, "Byte", "Baud", null, true, 0, -1, 1, 3, null);
         final Pancolor darkCyan = new FinPancolor(s0, s192, s192);
         filterPlayerImages(Pancolor.GREEN, Pancolor.CYAN, new FinPancolor(s0, s192, s0), darkCyan);
         lastPlayerImagesSkin1 = skin0; lastPlayerImagesSkin2 = skin1;
         playerMirror = false;
-        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true, 0, 1, 3, null);
-        transientImages = loadPlayerImages("transient", "Transient", "Byte", "Baud", null, true, 1, 4, 4, Player.MELEE_WHIP);
+        volatileImages = loadPlayerImages("volatile", "Volatile", "Byte", "Baud", null, true, 0, -1, 1, 3, null);
+        transientImages = loadPlayerImages("transient", "Transient", "Byte", "Baud", null, true, 1, 0, 4, 4, Player.MELEE_WHIP);
         lastPlayerImagesSkin1 = new FinPancolor(s96, s128, s192); lastPlayerImagesSkin2 = new FinPancolor(s72, s96, s144);
-        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false, 0, 1, 3, null);
+        finalImages = loadPlayerImages("final", "Final", "Byte", "Baud", volatileImages, false, 0, -1, 1, 3, null);
         filterPlayerImages(Pancolor.CYAN, new FinPancolor(s176, s144, Pancolor.MAX_VALUE), darkCyan, new FinPancolor(s128, s64, Pancolor.MAX_VALUE));
         lastPlayerImagesPrimary1 = lastPlayerImagesEnergy2; lastPlayerImagesPrimary2 = new FinPancolor(s96, s48, s192);
         lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
-        nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true, 1, 1, 3, null);
+        nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true, 1, 0, 1, 3, null);
         closePlayerImages();
         prf0 = new Profile();
     }
@@ -986,7 +986,7 @@ public final class BotsnBoltsGame extends BaseGame {
     }
     
     private final static PlayerImages loadPlayerImages(final String dir, final String name, final String animalName, final String birdName, final PlayerImages src, final boolean pupilNeeded,
-            final int shieldRunOffsetX, final int wieldIndexMin, final int wieldIndexMax, final MeleeMode meleeMode) {
+            final int shieldRunOffsetX, final int wieldStillOffsetX, final int wieldIndexMin, final int wieldIndexMax, final MeleeMode meleeMode) {
         final String pre = getCharacterPrefix(dir, name);
         final int slideX = Player.PLAYER_X + 2;
         final Panple nSlide = GuyPlatform.getMin(slideX), xSlide = GuyPlatform.getMax(slideX, 19);
@@ -1124,12 +1124,12 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImageExtra stillExtra = new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null),
-                new HeldExtra(swordHoriz, -13 + whox, 4 + whoy, DEPTH_PLAYER_FRONT, false, false, 0, null)); //TODO x - 1 for Void
+                new HeldExtra(swordHoriz, -13 + whox + wieldStillOffsetX, 4 + whoy, DEPTH_PLAYER_FRONT, false, false, 0, null));
         basicSet.stand.setExtra(stillExtra);
         basicSet.blink.setExtra(stillExtra);
         talk.setExtra(stillExtra);
         basicSet.start.setExtra(stillExtra);
-        final HeldExtra jumpExtraSword = new HeldExtra(swordDiag, -9, 21, DEPTH_PLAYER_BACK, true, false, 0, null);
+        final HeldExtra jumpExtraSword = new HeldExtra(swordDiag, -9, 21, DEPTH_PLAYER_FRONT, true, false, 0, null);
         basicSet.jump.setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump),
                 jumpExtraSword));
@@ -1562,8 +1562,7 @@ public final class BotsnBoltsGame extends BaseGame {
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     //addPlayerContext(prf0, voidImages, event);
-                    //addPlayerContext(prf0, nullImages, event);
-                    addPlayerContext(prf0, transientImages, event);
+                    addPlayerContext(prf0, nullImages, event);
                     startGame();
                 }});
         }
