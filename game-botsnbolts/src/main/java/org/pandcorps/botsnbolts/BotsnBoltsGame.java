@@ -1124,7 +1124,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImageExtra stillExtra = new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null),
-                new HeldExtra(swordHoriz, -13 + whox + wieldStillOffsetX, 4 + whoy, DEPTH_PLAYER_FRONT, false, false, 0, null));
+                new HeldExtra(swordHoriz, -13 + whox + wieldStillOffsetX, 4 + whoy, DEPTH_PLAYER_FRONT_2, false, false, 0, null));
         basicSet.stand.setExtra(stillExtra);
         basicSet.blink.setExtra(stillExtra);
         talk.setExtra(stillExtra);
@@ -1159,7 +1159,10 @@ public final class BotsnBoltsGame extends BaseGame {
                 new HeldExtra(swordBack, -6 + wbox, -6 + wboy, DEPTH_PLAYER_FRONT, false, false, 0, null)));
         shootSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
         throwSet.climb.setExtra(new PlayerImageExtra(1, 0, null, null));
-        slide.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
+        shootSet.stand.setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldVert, -12, 19, DEPTH_PLAYER_BACK, false, true, 0, null), null));
+        slide.setExtra(new PlayerImageExtra(0, 0,
+                new HeldExtra(shieldDiag, -3, 19, DEPTH_PLAYER_BACK, false, true, 0, null),
+                new HeldExtra(swordBack, 9, 13, DEPTH_PLAYER_BACK_2, false, true, 1, null)));
         basicSet.crouch[0].setExtra(new PlayerImageExtra(0, 0, new HeldExtra(shieldDiag, 12, 16, DEPTH_PLAYER_BACK, true, true, 0, null), null));
         final String meleeDiagonalImageSuffix = (meleeMode == null) ? null : meleeMode.getAttackImageSuffix();
         Panmage meleeAttack = swordDiag;

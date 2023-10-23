@@ -1757,6 +1757,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         updateWrapper();
         updateFollowers();
         prf.shootMode.onStepEnd(this);
+        if ((prf.shootMode != SHOOT_SHIELD) && isPassiveShieldEnabled()) {
+            SHOOT_SHIELD.onStepEnd(this);
+        }
     }
     
     private final void updateWrapper() {
@@ -2036,8 +2039,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return Math.abs(hvForced) > VEL_WALK;
     }
     
+    protected final boolean isPassiveShieldEnabled() {
+        return true; //TODO
+    }
+    
+    protected final boolean isShieldEnabled() {
+        return (prf.shootMode == SHOOT_SHIELD) || isPassiveShieldEnabled();
+    }
+    
     protected final boolean isBlocking(final EnemyProjectile prj) {
-        if (prf.shootMode != SHOOT_SHIELD) {
+        if (!isShieldEnabled()) {
             return false;
         } else if (!isInBlockingPose()) {
             return false;
