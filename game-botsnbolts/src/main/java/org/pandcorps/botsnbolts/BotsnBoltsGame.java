@@ -1188,13 +1188,19 @@ public final class BotsnBoltsGame extends BaseGame {
             wx += wox;
             wy += woy;
             final PlayerImagesSubSet wieldSet = wieldSets[wi];
-            final HeldExtra wieldShieldExtra, wieldShieldRunExtra;
+            final HeldExtra wieldShieldExtra, wieldShieldRunExtra, wieldShieldJumpExtra, wieldShieldWallGrabExtra, wieldShieldDashExtra;
             if (wi == 2) {
                 wieldShieldExtra = new HeldExtra(shieldVert, 6, 5, DEPTH_PLAYER_FRONT, false, false, 0, null);
                 wieldShieldRunExtra = new HeldExtra(shieldVert, 5, 5, DEPTH_PLAYER_FRONT, false, false, 0, null);
+                wieldShieldJumpExtra = new HeldExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, null);
+                wieldShieldWallGrabExtra = wieldShieldExtra;
+                wieldShieldDashExtra = new HeldExtra(shieldVert, 8, 3, DEPTH_PLAYER_FRONT, false, false, 0, null);
             } else {
                 wieldShieldExtra = new HeldExtra(shieldDiag, -1, 17, DEPTH_PLAYER_BACK, false, true, 0, null);
                 wieldShieldRunExtra = new HeldExtra(shieldDiag, -2, 17, DEPTH_PLAYER_BACK, false, true, 0, null);
+                wieldShieldJumpExtra = new HeldExtra(shieldDiag, -1, 20, DEPTH_PLAYER_BACK, false, true, 0, null);
+                wieldShieldWallGrabExtra = new HeldExtra(shieldDiag, -3, 17, DEPTH_PLAYER_BACK, false, true, 0, null);
+                wieldShieldDashExtra = new HeldExtra(shieldDiag, -1, 15, DEPTH_PLAYER_BACK, false, true, 0, null);
             }
             wieldSet.stand.setExtra(new PlayerImageExtra(0, trail,
                     wieldShieldExtra,
@@ -1205,14 +1211,17 @@ public final class BotsnBoltsGame extends BaseGame {
             wieldSet.run[0].setExtra(wieldRunExtra);
             wieldSet.run[1].setExtra(wieldRunExtra);
             wieldSet.run[2].setExtra(wieldRunExtra);
-            final PlayerImageExtra wieldJumpExtra = new PlayerImageExtra(0, trail, null,
+            final PlayerImageExtra wieldJumpExtra = new PlayerImageExtra(0, trail,
+                    wieldShieldJumpExtra,
                     new HeldExtra(meleeAttack, wx, wy + 3, DEPTH_PLAYER_FRONT, wm, wf, 0, null));
             wieldSet.jump.setExtra(wieldJumpExtra);
             wieldSet.climb.setExtra(new PlayerImageExtra(1, trail, null,
                     new HeldExtra(meleeAttack, wx + 3, wy + 1, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
-            wieldSet.wallGrab.setExtra(new PlayerImageExtra(0, trail, null,
+            wieldSet.wallGrab.setExtra(new PlayerImageExtra(0, trail,
+                    wieldShieldWallGrabExtra,
                     new HeldExtra(meleeAttack, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
-            wieldSet.dash.setExtra(new PlayerImageExtra(0, trail, null,
+            wieldSet.dash.setExtra(new PlayerImageExtra(0, trail,
+                    wieldShieldDashExtra,
                     new HeldExtra(meleeAttack, wx + 2, wy - 2, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
             wieldSet.descend.setExtra(wieldJumpExtra);
         }
