@@ -1188,9 +1188,19 @@ public final class BotsnBoltsGame extends BaseGame {
             wx += wox;
             wy += woy;
             final PlayerImagesSubSet wieldSet = wieldSets[wi];
-            wieldSet.stand.setExtra(new PlayerImageExtra(0, trail, null,
+            final HeldExtra wieldShieldExtra, wieldShieldRunExtra;
+            if (wi == 2) {
+                wieldShieldExtra = new HeldExtra(shieldVert, 6, 5, DEPTH_PLAYER_FRONT, false, false, 0, null);
+                wieldShieldRunExtra = new HeldExtra(shieldVert, 5, 5, DEPTH_PLAYER_FRONT, false, false, 0, null);
+            } else {
+                wieldShieldExtra = new HeldExtra(shieldDiag, -1, 17, DEPTH_PLAYER_BACK, false, true, 0, null);
+                wieldShieldRunExtra = new HeldExtra(shieldDiag, -2, 17, DEPTH_PLAYER_BACK, false, true, 0, null);
+            }
+            wieldSet.stand.setExtra(new PlayerImageExtra(0, trail,
+                    wieldShieldExtra,
                     new HeldExtra(meleeAttack, wx, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null)));
-            final PlayerImageExtra wieldRunExtra = new PlayerImageExtra(0, trail, null,
+            final PlayerImageExtra wieldRunExtra = new PlayerImageExtra(0, trail,
+                    wieldShieldRunExtra,
                     new HeldExtra(meleeAttack, wx - 1, wy, DEPTH_PLAYER_FRONT, wm, wf, 0, null));
             wieldSet.run[0].setExtra(wieldRunExtra);
             wieldSet.run[1].setExtra(wieldRunExtra);
