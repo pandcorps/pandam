@@ -769,7 +769,7 @@ public final class BotsnBoltsGame extends BaseGame {
         filterPlayerImages(Pancolor.CYAN, new FinPancolor(s176, s144, Pancolor.MAX_VALUE), darkCyan, new FinPancolor(s128, s64, Pancolor.MAX_VALUE));
         lastPlayerImagesPrimary1 = lastPlayerImagesEnergy2; lastPlayerImagesPrimary2 = new FinPancolor(s96, s48, s192);
         lastPlayerImagesSkin1 = skin1; lastPlayerImagesSkin2 = skin2;
-        nullImages = loadPlayerImages("alphabot", "Null", "Byte", "Baud", null, true, 1, 0, 1, 3, null);
+        nullImages = loadPlayerImages("alphabot", "Null", "Fetch", "Baud", null, true, 1, 0, 1, 3, null);
         closePlayerImages();
         prf0 = new Profile();
     }
