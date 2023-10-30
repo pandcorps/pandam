@@ -8885,7 +8885,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean onWaiting() {
             if (state == STATE_HAMMER_CHARGE) {
-                //TODO fx
+                final PlayerImages pi = BotsnBoltsGame.finalImages;
+                final Panimation charge, chargeVert;
+                if (waitCounter < 30) {
+                    charge = pi.charge; chargeVert = pi.chargeVert;
+                } else {
+                    charge = pi.charge2; chargeVert = pi.chargeVert2;
+                }
+                Player.charge(this, -40, 121, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
+                Player.charge(this, -38, 153, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
+                Player.charge(this, -12, 128, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
+                Player.charge(this, 15, 104, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
+                Player.charge(this, 17, 136, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
             }
             return super.onWaiting();
         }
@@ -8909,7 +8920,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void startHammer() {
-            startState(STATE_HAMMER_CHARGE, 30, getStill());
+            startState(STATE_HAMMER_CHARGE, 60, getStill());
         }
         
         @Override
