@@ -8746,9 +8746,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static Panple TITAN_MIN = getMin(TITAN_OFF_X);
     protected final static Panple TITAN_MAX = getMax(TITAN_OFF_X, TITAN_H);
     
-    protected final static class CyanTitan extends Boss {
+    protected static class CyanTitan extends Boss {
         protected final static byte STATE_ATTACK = 1;
         protected final static byte STATE_JUMPS = 2;
+        protected final static byte STATE_HAMMER_CHARGE = 3;
+        protected final static byte STATE_HAMMER_SMASH = 4;
         protected static Panmage still = null;
         protected static Panmage jump = null;
         
@@ -8759,9 +8761,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean pickState() {
             final int r = Mathtil.randi(0, 999);
-            final int attackThreshold = scaleByHealthInt(100, 500);
-            if ((r < attackThreshold) && !isPlayerDangerous()) {
-                startAttack();
+            final int attackThreshold = isPlayerDangerous() ? scaleByHealthInt(10, 200) : scaleByHealthInt(100, 500);
+            if ((r < attackThreshold)) {
+                startRandomAttack();
             } else {
                 setH(TITAN_JUMP_H);
                 startJumps();
@@ -8772,12 +8774,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean continueState() {
             setH(TITAN_H);
+            return pickNextState();
+        }
+        
+        protected boolean pickNextState() {
             startStill();
             return false;
         }
         
         @Override
-        protected final boolean onWaiting() {
+        protected boolean onWaiting() {
             if (state == STATE_ATTACK) {
                 onAttacking();
             }
@@ -8813,6 +8819,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final int getJumpsHv() {
             return scaleByHealthInt(3, 7);
+        }
+        
+        protected void startRandomAttack() {
+            startAttack();
         }
         
         protected final void startAttack() {
@@ -8860,6 +8870,80 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 jump = getImage(null, "cyantitan/CyanTitanJump", new FinPanple2(44, 11), getMin(jumpOffX), getMax(jumpOffX, TITAN_JUMP_H));
             }
             return jump;
+        }
+    }
+    
+    protected static class CyanTitan2 extends CyanTitan {
+        protected static Panmage wield = null;
+        protected static Panmage hammer = null;
+        
+        protected CyanTitan2(final Segment seg) {
+            super(seg);
+            getHammer();
+        }
+        
+        @Override
+        protected final boolean onWaiting() {
+            if (state == STATE_HAMMER_CHARGE) {
+                //TODO fx
+            }
+            return super.onWaiting();
+        }
+        
+        @Override
+        protected final boolean pickNextState() {
+            if (state == STATE_HAMMER_CHARGE) {
+                startState(STATE_HAMMER_SMASH, 30, getWield());
+                return false;
+            }
+            return super.pickNextState();
+        }
+        
+        @Override
+        protected final void startRandomAttack() {
+            if (Mathtil.rand()) {
+                startAttack();
+            } else {
+                startHammer();
+            }
+        }
+        
+        protected final void startHammer() {
+            startState(STATE_HAMMER_CHARGE, 30, getStill());
+        }
+        
+        @Override
+        protected final void renderView(final Panderer renderer) {
+            super.renderView(renderer);
+            final Panlayer layer = getLayer();
+            final Pansplay display = getCurrentDisplay();
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            final boolean mirror = isMirror();
+            final int m = getMirrorMultiplier(mirror);
+            if (display == still) {
+                renderer.render(layer, hammer, x - (m * 46) - (mirror ? 127 : 0), y + 40, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 128, 128, 0, mirror, false);
+            } else if (display == jump) {
+                renderer.render(layer, hammer, x - (m * 41) - (mirror ? 127 : 0), y + 16, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 128, 128, 0, mirror, false);
+            } else if (display == wield) {
+                renderer.render(layer, hammer, x + (m * 67) - (mirror ? 127 : 0), y - 69, BotsnBoltsGame.DEPTH_ENEMY_FRONT, 0, 0, 128, 128, 3, mirror, false);
+            }
+        }
+        
+        protected final static Panmage getWield() {
+            if (wield == null) {
+                wield = getImage(null, "cyantitan/CyanTitanWield", new FinPanple2(5, 1),
+                        new FinPanple2(TITAN_MIN.getX() + 39, TITAN_MIN.getY()),
+                        new FinPanple2(TITAN_MAX.getX() + 39, TITAN_MAX.getY()));
+            }
+            return wield;
+        }
+        
+        protected final static Panmage getHammer() {
+            if (hammer == null) {
+                hammer = getImage(null, "cyantitan/CyanTitanHammer", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(60, 96));
+            }
+            return hammer;
         }
     }
     
