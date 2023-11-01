@@ -8874,6 +8874,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected static class CyanTitan2 extends CyanTitan {
+        protected final static int WAIT_HAMMER_SMASH = 30;
+        protected final static int HAMMER_TRAIL_SIZE = 10;
+        protected final static double HAMMER_TRAIL_MULTIPLIER = (Math.PI / 2.0) / (HAMMER_TRAIL_SIZE - 1.0);
+        protected final static double HAMMER_TRAIL_RADIUS = 70;
+        
         protected static Panmage wield = null;
         protected static Panmage hammer = null;
         
@@ -8897,14 +8902,32 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 Player.charge(this, -12, 128, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
                 Player.charge(this, 15, 104, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
                 Player.charge(this, 17, 136, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
+            } else if (state == STATE_HAMMER_SMASH) {
+                addTrailBursts();
+                //TODO impact fx
             }
             return super.onWaiting();
+        }
+        
+        private final void addTrailBursts() {
+            final int n = waitTimer - (WAIT_HAMMER_SMASH - HAMMER_TRAIL_SIZE);
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            final int m = getMirrorMultiplier();
+            for (int i = 0; i < n; i++) {
+                final double theta = i * HAMMER_TRAIL_MULTIPLIER;
+                final double ox = ((Math.cos(theta) * HAMMER_TRAIL_RADIUS) + 96) * m;
+                final double oy = (Math.sin(theta) * HAMMER_TRAIL_RADIUS) + 64;
+                final float rx = Mathtil.randf(-8.0f, 8.0f);
+                final float ry = Mathtil.randf(-8.0f, 8.0f);
+                FinalWagon.burst(x + (float) ox + rx, y + (float) oy + ry);
+            }
         }
         
         @Override
         protected final boolean pickNextState() {
             if (state == STATE_HAMMER_CHARGE) {
-                startState(STATE_HAMMER_SMASH, 30, getWield());
+                startState(STATE_HAMMER_SMASH, WAIT_HAMMER_SMASH, getWield());
                 return false;
             }
             return super.pickNextState();
@@ -9450,7 +9473,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
         }
         
-        private final static void burst(final float x, final float y) {
+        protected final static void burst(final float x, final float y) {
             final Burst burst = new Burst(BotsnBoltsGame.finalImages.burst);
             burst.getPosition().set(x, y, BotsnBoltsGame.DEPTH_BURST);
             addActor(burst);
