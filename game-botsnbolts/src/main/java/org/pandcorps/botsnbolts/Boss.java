@@ -8904,7 +8904,6 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 Player.charge(this, 17, 136, charge, chargeVert, waitCounter, BotsnBoltsGame.fxCharge);
             } else if (state == STATE_HAMMER_SMASH) {
                 addTrailBursts();
-                //TODO impact fx
             }
             return super.onWaiting();
         }
@@ -8927,6 +8926,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean pickNextState() {
             if (state == STATE_HAMMER_CHARGE) {
+                new TitanHammerImpact(this);
                 startState(STATE_HAMMER_SMASH, WAIT_HAMMER_SMASH, getWield());
                 return false;
             }
@@ -8978,6 +8978,54 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 hammer = getImage(null, "cyantitan/CyanTitanHammer", FinPanple.ORIGIN, FinPanple.ORIGIN, new FinPanple2(60, 96));
             }
             return hammer;
+        }
+    }
+    
+    protected final static class TitanHammerImpact extends EnemyProjectile {
+        private final static float R = 72.0f;
+        private final static float H = 36.0f;
+        private static Panmage box = null;
+        private int timer = 0;
+        
+        protected TitanHammerImpact(final Panctor src) {
+            super(src, 150, 0, 0, 0);
+            if (box == null) {
+                box = Pangine.getEngine().createEmptyImage("titan.hammer.impact", null, new FinPanple2(-R, 0), new FinPanple2(R, H));
+            }
+            setView(box);
+        }
+        
+        @Override
+        protected final int getDamage() {
+            return 8;
+        }
+        
+        @Override
+        protected final void burst(final Player player) {
+        }
+        
+        @Override
+        protected final boolean isDestroyedOnImpact() {
+            return false;
+        }
+        
+        @Override
+        public final void onStep(final StepEvent event) {
+            super.onStep(event);
+            final Panple pos = getPosition();
+            final float x = pos.getX(), y = pos.getY();
+            if (timer >= 8) {
+                destroy();
+                return;
+            }
+            for (int i = timer; i < 8; i++) {
+                for (int m = -1; m <= 1; m += 2) {
+                    final float ry = Mathtil.randf(0.0f, H);
+                    final float rx = Mathtil.randf(-4.0f, 4.0f) + (R * (i + 1.0f) / 8.0f);
+                    FinalWagon.burst(x + (m * rx), y + ry);
+                }
+            }
+            timer++;
         }
     }
     
