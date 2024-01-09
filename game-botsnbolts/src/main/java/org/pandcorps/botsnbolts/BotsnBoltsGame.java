@@ -795,6 +795,8 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img playerSwordDiag = null;
     private static Img playerSwordBack = null;
     private static Img[] playerSwordTrails = null;
+    private static Img playerMech = null;
+    private static Img[] playerMechWalks = null;
     private static Img playerWarp = null;
     private static Img[] playerMaterialize = null;
     private static Img[] playerBomb = null;
@@ -826,23 +828,16 @@ public final class BotsnBoltsGame extends BaseGame {
         playerChargeVert = Imtil.loadStrip(pre + "ChargeVert.png", 8, false);
         playerCharge2 = Imtil.loadStrip(pre + "Charge2.png", 8, false);
         playerChargeVert2 = Imtil.loadStrip(pre + "ChargeVert2.png", 8, false);
-        playerPlasma = new Img[] {
-                Imtil.load(pre + "Plasma1.png", false),
-                Imtil.load(pre + "Plasma2.png", false),
-                Imtil.load(pre + "Plasma3.png", false),
-                Imtil.load(pre + "Plasma4.png", false)
-        };
+        playerPlasma = openPlayerImageArray(pre + "Plasma", 4);
         playerShieldVert = Imtil.load(pre + "ShieldVert.png", false);
         playerShieldDiag = Imtil.load(pre + "ShieldDiag.png", false);
         playerShieldCircle = Imtil.load(pre + "ShieldCircle.png", false);
         playerSwordHoriz = Imtil.load(pre + "SwordHoriz.png", false);
         playerSwordDiag = Imtil.load(pre + "SwordDiag.png", false);
         playerSwordBack = Imtil.load(pre + "SwordBack.png", false);
-        playerSwordTrails = new Img[] {
-                Imtil.load(pre + "SwordTrail1.png", false),
-                Imtil.load(pre + "SwordTrail2.png", false),
-                Imtil.load(pre + "SwordTrail3.png", false)
-        };
+        playerSwordTrails = openPlayerImageArray(pre + "SwordTrail", 3);
+        playerMech = Imtil.load(pre + "Mech.png", false);
+        playerMechWalks = openPlayerImageArray(pre + "MechWalk", 4);
         playerWarp = Imtil.load(pre + "Warp.png", false);
         playerMaterialize = Imtil.loadStrip(pre + "Materialize.png", 32, false);
         playerBomb = Imtil.loadStrip(pre + "Bomb.png", 8, false);
@@ -865,6 +860,14 @@ public final class BotsnBoltsGame extends BaseGame {
         box = Pangine.getEngine().createImage("box", playerHighlightBox);
         final short s0 = 0, s96 = 96, s192 = 192;
         Imtil.filterImg(playerHighlightBox, newFilter(Pancolor.DARK_GREY, Pancolor.GREEN, new Pancolor(s96), new Pancolor(s0, s192, s0)));
+    }
+    
+    private final static Img[] openPlayerImageArray(final String pre, final int n) {
+        final Img[] a = new Img[n];
+        for (int i = 0; i < n; i++) {
+            a[i] = Imtil.load(pre + (i + 1) + ".png", false);
+        }
+        return a;
     }
     
     private final static void filterPlayerImages(final Pancolor s1, final Pancolor d1, final Pancolor s2, final Pancolor d2) {
@@ -892,6 +895,8 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(playerSwordDiag, f);
         Imtil.filterImg(playerSwordBack, f);
         filterImgs(playerSwordTrails, f);
+        Imtil.filterImg(playerMech, f);
+        filterImgs(playerMechWalks, f);
         Imtil.filterImg(playerWarp, f);
         filterImgs(playerMaterialize, f);
         filterImgs(playerBomb, f);
@@ -952,6 +957,8 @@ public final class BotsnBoltsGame extends BaseGame {
         playerSwordBack = null;
         Img.close(playerSwordTrails);
         playerSwordTrails = null;
+        playerMech = null;
+        Img.close(playerMechWalks);
         playerWarp.close();
         playerWarp = null;
         Img.close(playerMaterialize);
@@ -1118,9 +1125,18 @@ public final class BotsnBoltsGame extends BaseGame {
                 ? new Panmage[] {
                         engine.createImage(pre + "SwordTrail1", playerSwordTrails[0]),
                         engine.createImage(pre + "SwordTrail2", playerSwordTrails[1]),
-                        engine.createImage(pre + "SwordTrail3", playerSwordTrails[2]),
+                        engine.createImage(pre + "SwordTrail3", playerSwordTrails[2])
                 }
                 : src.swordTrails;
+        final Panmage mech = (src == null) ? engine.createImage(pre + "Mech", playerMech) : src.mech;
+        final Panmage[] mechWalks = (src == null)
+                ? new Panmage[] {
+                        engine.createImage(pre + "MechWalk1", playerMechWalks[0]),
+                        engine.createImage(pre + "MechWalk2", playerMechWalks[1]),
+                        engine.createImage(pre + "MechWalk3", playerMechWalks[2]),
+                        engine.createImage(pre + "MechWalk4", playerMechWalks[3])
+                }
+                : src.mechWalks;
         
         final PlayerImageExtra stillExtra = new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null),
@@ -1272,7 +1288,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImages pi;
         pi = new PlayerImages(basicSet, shootSet, throwSet, wieldSets, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, glideUp, glideHoriz, glideDown, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
-            swordHoriz, swordDiag, swordBack, swordTrails, exhaust1, exhaust2, exhaustDiag1, exhaustDiag2, burst, ball, slide, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages,
+            swordHoriz, swordDiag, swordBack, swordTrails, exhaust1, exhaust2, exhaustDiag1, exhaustDiag2, burst, ball, slide, mech, mechWalks, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages,
             name, animalName, birdName, meleeMode);
         playerImages.put(portraitLoc, pi);
         return pi;

@@ -2040,7 +2040,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final boolean isPassiveShieldEnabled() {
-        return true; //TODO
+        return false; //TODO
     }
     
     protected final boolean isShieldEnabled() {
@@ -4012,6 +4012,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final Panimation burst;
         private final Panframe[] ball;
         protected final Panmage slide;
+        protected final Panmage mech;
+        protected final Panmage[] mechWalks;
         protected final Panmage warp;
         protected final Panimation materialize;
         protected final Panimation dematerialize;
@@ -4053,6 +4055,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage swordHoriz, final Panmage swordDiag, final Panmage swordBack, final Panmage[] swordTrails,
                                final Panmage exhaust1, final Panmage exhaust2, final Panmage exhaustDiag1, final Panmage exhaustDiag2,
                                final Panimation burst, final Panframe[] ball, final Panmage slide,
+                               final Panmage mech, final Panmage[] mechWalks,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
@@ -4096,6 +4099,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.burst = burst;
             this.ball = ball;
             this.slide = slide;
+            this.mech = mech;
+            this.mechWalks = mechWalks;
             this.warp = warp;
             this.materialize = materialize;
             dematerialize = Pangine.getEngine().createReverseAnimation(materialize.getId() + ".reverse", materialize);
