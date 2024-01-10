@@ -107,6 +107,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static float VEL_DASH = 8.5f;
     private final static float DASH_SLOWDOWN = 0.1875f;
     private final static float DASH_BRAKE = 0.25f;
+    private final static int VEL_MECH = 4;
+    protected final static float VEL_MECH_JUMP = VEL_BOARD_JUMP;
     protected final static int VEL_PROJECTILE = 8;
     protected final static float VX_SPREAD1;
     protected final static float VY_SPREAD1;
@@ -219,6 +221,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private int mechDir = 1;
     private int mechCounter = -1;
     private int mechIndex = MECH_WALK_START_INDEX;
+    private Panmage mechCurrentImage = null;
     private boolean hidden = false;
     protected boolean active = true;
     private boolean scripted = false;
@@ -1410,10 +1413,14 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final float x = pos.getX(), y = pos.getY();
         final boolean mirror = isMirror();
         final int m = getMirrorMultiplier(mirror);
-        final boolean walking = mechCounter >= 0;
+        final boolean walking = (mechCounter >= 0) && (mechCurrentImage == null);
         final int walkOffY = walking && ((mechIndex == 0) || (mechIndex == 2)) ? -2 : 0;
         renderer.render(layer, pi.basicSet.stand, x, y + MECH_DIFF + walkOffY, pos.getZ(), 0, mirror, false);
-        renderer.render(layer, walking ? pi.mechWalks[mechIndex] : pi.mech, x - (22 * m), y - 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, mirror, false);
+        Panmage mechImage = mechCurrentImage;
+        if (mechImage == null) {
+            mechImage = walking ? pi.mechWalks[mechIndex] : pi.mech;
+        }
+        renderer.render(layer, mechImage, x - (22 * m), y - 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, mirror, false);
     }
     
     protected final void setHidden(final boolean hidden) {
@@ -2354,6 +2361,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         mechWalking = false;
         mechCounter = -1;
         mechIndex = MECH_WALK_START_INDEX;
+        mechCurrentImage = null;
     }
     
     private final void endMech() {
@@ -3771,6 +3779,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static StateHandler MECH_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
+            player.onJumpNormal(VEL_MECH_JUMP);
         }
         
         @Override
@@ -3779,6 +3788,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void releaseJump(final Player player) {
+            player.releaseJumpNormal();
         }
         
         @Override
@@ -3824,7 +3834,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 player.setMirror(player.mechDir);
                 player.mechWalking = false;
                 player.mechCounter++;
-                player.addX(4 * player.mechDir);
+                player.addX(VEL_MECH * player.mechDir);
                 if (player.mechCounter >= 5) {
                     player.mechCounter = 0;
                     player.mechIndex++;
@@ -3836,6 +3846,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             } else {
                 player.mechCounter = -1;
                 player.mechIndex = MECH_WALK_START_INDEX;
+            }
+            if (!player.isGrounded()) {
+                player.mechCurrentImage = player.pi.mechJump;
+            } else {
+                player.mechCurrentImage = null;
             }
             return false;
         }
@@ -4135,6 +4150,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         private final Panframe[] ball;
         protected final Panmage slide;
         protected final Panmage mech;
+        protected final Panmage mechJump;
         protected final Panmage[] mechWalks;
         protected final Panmage warp;
         protected final Panimation materialize;
@@ -4177,7 +4193,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                                final Panmage swordHoriz, final Panmage swordDiag, final Panmage swordBack, final Panmage[] swordTrails,
                                final Panmage exhaust1, final Panmage exhaust2, final Panmage exhaustDiag1, final Panmage exhaustDiag2,
                                final Panimation burst, final Panframe[] ball, final Panmage slide,
-                               final Panmage mech, final Panmage[] mechWalks,
+                               final Panmage mech, final Panmage mechJump, final Panmage[] mechWalks,
                                final Panmage warp, final Panimation materialize, final Panimation bomb,
                                final Panmage link, final Panimation batterySmall, final Panimation batteryMedium, final Panimation batteryBig,
                                final Panmage doorBolt, final Panmage bolt, final Panmage disk,
@@ -4222,6 +4238,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             this.ball = ball;
             this.slide = slide;
             this.mech = mech;
+            this.mechJump = mechJump;
             this.mechWalks = mechWalks;
             this.warp = warp;
             this.materialize = materialize;
