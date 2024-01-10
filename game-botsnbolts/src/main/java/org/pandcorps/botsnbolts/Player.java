@@ -54,6 +54,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int BALL_H = 15;
     protected final static int BOARD_Y_OFF = 11;
     protected final static int BOARD_H = PLAYER_H + BOARD_Y_OFF;
+    protected final static int MECH_X = 8;
+    protected final static int MECH_DIFF = 33;
+    protected final static int MECH_H = PLAYER_H + MECH_DIFF;
+    protected final static int MECH_WALK_START_INDEX = 2;
     protected final static int CENTER_Y = 11;
     private final static int SHOOT_DELAY_DEFAULT = 5;
     private final static int SHOOT_DELAY_RAPID = 3;
@@ -211,6 +215,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private HeldShield shield = null;
     private HeldSword sword = null;
     protected ShieldProjectile lastShieldProjectile = null;
+    private boolean mechWalking = false;
+    private int mechDir = 1;
+    private int mechCounter = -1;
+    private int mechIndex = MECH_WALK_START_INDEX;
     private boolean hidden = false;
     protected boolean active = true;
     private boolean scripted = false;
@@ -1396,6 +1404,18 @@ public class Player extends Chr implements Warpable, StepEndListener {
         renderViewNormal(renderer);
     }
     
+    protected final void renderViewMech(final Panderer renderer) {
+        final Panlayer layer = getLayer();
+        final Panple pos = getPosition();
+        final float x = pos.getX(), y = pos.getY();
+        final boolean mirror = isMirror();
+        final int m = getMirrorMultiplier(mirror);
+        final boolean walking = mechCounter >= 0;
+        final int walkOffY = walking && ((mechIndex == 0) || (mechIndex == 2)) ? -2 : 0;
+        renderer.render(layer, pi.basicSet.stand, x, y + MECH_DIFF + walkOffY, pos.getZ(), 0, mirror, false);
+        renderer.render(layer, walking ? pi.mechWalks[mechIndex] : pi.mech, x - (22 * m), y - 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, mirror, false);
+    }
+    
     protected final void setHidden(final boolean hidden) {
         this.hidden = hidden;
         if (hidden) {
@@ -2325,6 +2345,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
             lastShotPosed = NULL_CLOCK;
             stateHandler = NORMAL_HANDLER;
         }
+    }
+    
+    private final void startMech() {
+        stateHandler = MECH_HANDLER;
+        setOffX(MECH_X);
+        setH(MECH_H);
+        mechWalking = false;
+        mechCounter = -1;
+        mechIndex = MECH_WALK_START_INDEX;
+    }
+    
+    private final void endMech() {
+        stateHandler = NORMAL_HANDLER;
+        setOffX(PLAYER_X);
+        setH(PLAYER_H);
     }
     
     private final void startState(final StateHandler stateHandler) {
@@ -3729,6 +3764,93 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final boolean isSafePositionAllowed(final Player player) {
+            return false;
+        }
+    };
+    
+    protected final static StateHandler MECH_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+        }
+        
+        @Override
+        protected final void onAirJump(final Player player) {
+        }
+        
+        @Override
+        protected final void releaseJump(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+        
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+        
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+        
+        @Override
+        protected final void onRight(final Player player) {
+            onMove(player, 1);
+        }
+        
+        @Override
+        protected final void onLeft(final Player player) {
+            onMove(player, -1);
+        }
+        
+        private final void onMove(final Player player, final int dir) {
+            player.mechWalking = true;
+            player.mechDir = dir;
+            player.mechCounter = Math.max(0, player.mechCounter);
+        }
+        
+        @Override
+        protected final void onUp(final Player player) {
+        }
+        
+        @Override
+        protected final void renderView(final Player player, final Panderer renderer) {
+            player.renderViewMech(renderer);
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            if (player.mechWalking) {
+                player.setMirror(player.mechDir);
+                player.mechWalking = false;
+                player.mechCounter++;
+                player.addX(4 * player.mechDir);
+                if (player.mechCounter >= 5) {
+                    player.mechCounter = 0;
+                    player.mechIndex++;
+                    //player.addX(21 * player.mechDir);
+                    if (player.mechIndex >= 4) {
+                        player.mechIndex = 0;
+                    }
+                }
+            } else {
+                player.mechCounter = -1;
+                player.mechIndex = MECH_WALK_START_INDEX;
+            }
+            return false;
+        }
+        
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+        
+        @Override
+        protected final boolean onAir(final Player player) {
+            return false;
+        }
+        
+        @Override
+        protected final boolean onWall(final Player player, final byte xResult) {
             return false;
         }
     };

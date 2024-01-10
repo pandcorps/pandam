@@ -1129,12 +1129,13 @@ public final class BotsnBoltsGame extends BaseGame {
                 }
                 : src.swordTrails;
         final Panmage mech = (src == null) ? engine.createImage(pre + "Mech", playerMech) : src.mech;
+        final FinPanple2 o80 = new FinPanple2(8, 0);
         final Panmage[] mechWalks = (src == null)
                 ? new Panmage[] {
-                        engine.createImage(pre + "MechWalk1", playerMechWalks[0]),
-                        engine.createImage(pre + "MechWalk2", playerMechWalks[1]),
-                        engine.createImage(pre + "MechWalk3", playerMechWalks[2]),
-                        engine.createImage(pre + "MechWalk4", playerMechWalks[3])
+                        engine.createImage(pre + "MechWalk1", o80, null, null, playerMechWalks[0]),
+                        engine.createImage(pre + "MechWalk2", new FinPanple2(14, 0), null, null, playerMechWalks[1]),
+                        engine.createImage(pre + "MechWalk3", o80, null, null, playerMechWalks[2]),
+                        engine.createImage(pre + "MechWalk4", o80, null, null, playerMechWalks[3])
                 }
                 : src.mechWalks;
         
