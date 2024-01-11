@@ -2048,7 +2048,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final long startDashIfNeeded(final long lastStart, final int dir) {
         if (!isGrounded()) {
             return NULL_CLOCK;
-        } else if (!isDashAvailable()) {
+        } else if (!stateHandler.isDashAvailable(this)) {
             return NULL_CLOCK;
         }
         final long clock = getClock();
@@ -2804,6 +2804,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         protected int getAimOffsetY(final Player player) {
             return Projectile.OFF_Y;
+        }
+        
+        protected boolean isDashAvailable(final Player player) {
+            return player.isDashAvailable();
         }
         
         //@OverrideMe
@@ -3804,8 +3808,23 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         @Override
+        protected final boolean isDashAvailable(final Player player) {
+            return true;
+        }
+        
+        @Override
+        protected final void onRightStart(final Player player) {
+            player.onRightStartNormal();
+        }
+        
+        @Override
         protected final void onRight(final Player player) {
             onMove(player, 1);
+        }
+        
+        @Override
+        protected final void onLeftStart(final Player player) {
+            player.onLeftStartNormal();
         }
         
         @Override
@@ -3830,7 +3849,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final boolean onStep(final Player player) {
-            if (player.mechWalking) {
+            final boolean dashing = player.isDashing();
+            if (player.mechWalking && !dashing) {
                 player.setMirror(player.mechDir);
                 player.mechWalking = false;
                 player.mechCounter++;
@@ -3847,7 +3867,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 player.mechCounter = -1;
                 player.mechIndex = MECH_WALK_START_INDEX;
             }
-            if (!player.isGrounded()) {
+            if (dashing) {
+                player.mechCurrentImage = player.pi.mechJump;
+            } else if (!player.isGrounded()) {
                 player.mechCurrentImage = (player.v > 0) ? player.pi.mechJump : player.pi.mechFall;
             } else {
                 player.mechCurrentImage = null;
