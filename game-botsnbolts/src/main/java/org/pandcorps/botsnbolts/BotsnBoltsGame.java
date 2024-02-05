@@ -799,6 +799,10 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Img playerMechJump = null;
     private static Img playerMechFall = null;
     private static Img[] playerMechWalks = null;
+    private static Img playerMechAim = null;
+    private static Img playerMechAimJump = null;
+    private static Img playerMechAimFall = null;
+    private static Img[] playerMechAimWalks = null;
     private static Img playerWarp = null;
     private static Img[] playerMaterialize = null;
     private static Img[] playerBomb = null;
@@ -842,6 +846,10 @@ public final class BotsnBoltsGame extends BaseGame {
         playerMechJump = Imtil.load(pre + "MechJump.png", false);
         playerMechFall = Imtil.load(pre + "MechFall.png", false);
         playerMechWalks = openPlayerImageArray(pre + "MechWalk", 4);
+        playerMechAim = Imtil.load(pre + "MechAim.png", false);
+        playerMechAimJump = Imtil.load(pre + "MechJumpAim.png", false);
+        playerMechAimFall = Imtil.load(pre + "MechFallAim.png", false);
+        playerMechAimWalks = openPlayerImageArray(pre + "MechWalkAim", 4);
         playerWarp = Imtil.load(pre + "Warp.png", false);
         playerMaterialize = Imtil.loadStrip(pre + "Materialize.png", 32, false);
         playerBomb = Imtil.loadStrip(pre + "Bomb.png", 8, false);
@@ -903,6 +911,10 @@ public final class BotsnBoltsGame extends BaseGame {
         Imtil.filterImg(playerMechJump, f);
         Imtil.filterImg(playerMechFall, f);
         filterImgs(playerMechWalks, f);
+        Imtil.filterImg(playerMechAim, f);
+        Imtil.filterImg(playerMechAimJump, f);
+        Imtil.filterImg(playerMechAimFall, f);
+        filterImgs(playerMechAimWalks, f);
         Imtil.filterImg(playerWarp, f);
         filterImgs(playerMaterialize, f);
         filterImgs(playerBomb, f);
@@ -971,6 +983,14 @@ public final class BotsnBoltsGame extends BaseGame {
         playerMechFall = null;
         Img.close(playerMechWalks);
         playerMechWalks = null;
+        playerMechAim.close();
+        playerMechAim = null;
+        playerMechAimJump.close();
+        playerMechAimJump = null;
+        playerMechAimFall.close();
+        playerMechAimFall = null;
+        Img.close(playerMechAimWalks);
+        playerMechAimWalks = null;
         playerWarp.close();
         playerWarp = null;
         Img.close(playerMaterialize);
@@ -1140,18 +1160,33 @@ public final class BotsnBoltsGame extends BaseGame {
                         engine.createImage(pre + "SwordTrail3", playerSwordTrails[2])
                 }
                 : src.swordTrails;
-        final Panmage mech = (src == null) ? engine.createImage(pre + "Mech", playerMech) : src.mech;
-        final FinPanple2 o80 = new FinPanple2(8, 0), o140 = new FinPanple2(14, 0);
-        final Panmage mechJump = (src == null) ? engine.createImage(pre + "MechJump", o140, null, null, playerMechJump) : src.mechJump;
-        final Panmage mechFall = (src == null) ? engine.createImage(pre + "MechFall", playerMechFall) : src.mechFall;
-        final Panmage[] mechWalks = (src == null)
-                ? new Panmage[] {
-                        engine.createImage(pre + "MechWalk1", o80, null, null, playerMechWalks[0]),
-                        engine.createImage(pre + "MechWalk2", o140, null, null, playerMechWalks[1]),
-                        engine.createImage(pre + "MechWalk3", o80, null, null, playerMechWalks[2]),
-                        engine.createImage(pre + "MechWalk4", o80, null, null, playerMechWalks[3])
-                }
-                : src.mechWalks;
+        final MechImagesSubSet mechBasicSet, mechAimSet;
+        if (src == null) {
+            final Panmage mech = engine.createImage(pre + "Mech", playerMech);
+            final FinPanple2 o80 = new FinPanple2(8, 0), o140 = new FinPanple2(14, 0);
+            final Panmage mechJump = engine.createImage(pre + "MechJump", o140, null, null, playerMechJump);
+            final Panmage mechFall = engine.createImage(pre + "MechFall", playerMechFall);
+            final Panmage[] mechWalks = new Panmage[] {
+                            engine.createImage(pre + "MechWalk1", o80, null, null, playerMechWalks[0]),
+                            engine.createImage(pre + "MechWalk2", o140, null, null, playerMechWalks[1]),
+                            engine.createImage(pre + "MechWalk3", o80, null, null, playerMechWalks[2]),
+                            engine.createImage(pre + "MechWalk4", o80, null, null, playerMechWalks[3])
+                    };
+            mechBasicSet = new MechImagesSubSet(mech, mechJump, mechFall, mechWalks);
+            final Panmage mechAim = engine.createImage(pre + "MechAim", playerMechAim);
+            final Panmage mechAimJump = engine.createImage(pre + "MechAimJump", o140, null, null, playerMechAimJump);
+            final Panmage mechAimFall = engine.createImage(pre + "MechAimFall", playerMechAimFall);
+            final Panmage[] mechAimWalks = new Panmage[] {
+                            engine.createImage(pre + "MechAimWalk1", o80, null, null, playerMechAimWalks[0]),
+                            engine.createImage(pre + "MechAimWalk2", o140, null, null, playerMechAimWalks[1]),
+                            engine.createImage(pre + "MechAimWalk3", null, null, null, playerMechAimWalks[2]),
+                            engine.createImage(pre + "MechAimWalk4", null, null, null, playerMechAimWalks[3])
+                    };
+            mechAimSet = new MechImagesSubSet(mechAim, mechAimJump, mechAimFall, mechAimWalks);
+        } else {
+            mechBasicSet = src.mechBasicSet;
+            mechAimSet = src.mechAimSet;
+        }
         
         final PlayerImageExtra stillExtra = new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 2, 1, DEPTH_PLAYER_FRONT, false, false, 0, null),
@@ -1303,7 +1338,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         final PlayerImages pi;
         pi = new PlayerImages(basicSet, shootSet, throwSet, wieldSets, hurt, frozen, defeat, climbTop, jumpAimDiag, jumpAimUp, glideUp, glideHoriz, glideDown, talk, basicProjectile, projectile2, projectile3, charge, chargeVert, charge2, chargeVert2, plasma, shieldVert, shieldDiag, shieldCircle,
-            swordHoriz, swordDiag, swordBack, swordTrails, exhaust1, exhaust2, exhaustDiag1, exhaustDiag2, burst, ball, slide, mech, mechJump, mechFall, mechWalks, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages,
+            swordHoriz, swordDiag, swordBack, swordTrails, exhaust1, exhaust2, exhaustDiag1, exhaustDiag2, burst, ball, slide, mechBasicSet, mechAimSet, warp, materialize, bomb, link, batterySml, batteryMed, batteryBig, doorBolt, bolt, disk, powerBox, boltBoxes, diskBox, highlightBox, portrait, hudMeterImages,
             name, animalName, birdName, meleeMode);
         playerImages.put(portraitLoc, pi);
         return pi;
