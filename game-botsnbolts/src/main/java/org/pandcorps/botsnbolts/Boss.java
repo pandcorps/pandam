@@ -43,6 +43,7 @@ import org.pandcorps.pandam.event.boundary.*;
 import org.pandcorps.pandam.impl.*;
 import org.pandcorps.pandax.*;
 import org.pandcorps.pandax.tile.*;
+import org.pandcorps.pandax.tile.Tile.*;
 import org.pandcorps.pandax.visual.*;
 
 public abstract class Boss extends Enemy implements SpecBoss {
@@ -1095,6 +1096,40 @@ public abstract class Boss extends Enemy implements SpecBoss {
             head.eye = null;
         }
         
+        private final static int getOverlayOffZ() {
+            return BotsnBoltsGame.DEPTH_OVERLAY - BotsnBoltsGame.DEPTH_FG;
+        }
+        
+        private final void burst() {
+            //TODO fx
+            enableOverlay();
+            final TileMap tm = BotsnBoltsGame.tm;
+            final TileMapImage[][] imgMap = BotsnBoltsGame.imgMap;
+            final int overlayOffZ = getOverlayOffZ();
+            final Tile leftEdge = tm.getTile(null, imgMap[2][1], Tile.BEHAVIOR_SOLID);
+            final Tile rightEdge = tm.getTile(imgMap[1][0], new AdjustedTileMapImage(imgMap[2][4], overlayOffZ, 0, false, false), Tile.BEHAVIOR_SOLID);
+            final Tile black = tm.getTile(imgMap[1][0], null, Tile.BEHAVIOR_SOLID);
+            for (int y = 2; y < 8; y++) {
+                tm.setTile(19, y, leftEdge);
+                tm.setTile(20, y, black);
+                tm.setTile(21, y, black);
+                tm.setTile(22, y, rightEdge);
+            }
+        }
+        
+        private final void enableOverlay() {
+            final TileMap tm = BotsnBoltsGame.tm;
+            final int overlayOffZ = getOverlayOffZ();
+            for (int i = 0; i < 3; i++) {
+                final int x = 23 - i;
+                final Object fg = DynamicTileMap.getRawForeground(tm.getTile(x, 3));
+                final Tile tile = tm.getTile(null, new AdjustedTileMapImage((TileMapImage) fg, overlayOffZ, 0, false, false), Tile.BEHAVIOR_SOLID);
+                for (int y = 2; y < 14; y++) {
+                    tm.setTile(x, y, tile);
+                }
+            }
+        }
+        
         @Override
         protected final int getInitialOffsetX() {
             return 0;
@@ -1113,6 +1148,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void taunt() {
             setPlayerActive(false);
+            burst();
             startDrag();
         }
         
@@ -8105,8 +8141,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void newProjectile(final float vx, final float vy, final int power) {
-            new AiProjectile(this, Projectile.OFF_X, Projectile.OFF_Y, getMirrorMultiplier() * vx, vy, pi, prf.shootMode, power);
+        protected final Panctor newProjectile(final float vx, final float vy, final int power) {
+            return new AiProjectile(this, Projectile.OFF_X, Projectile.OFF_Y, getMirrorMultiplier() * vx, vy, pi, prf.shootMode, power);
         }
         
         @Override
@@ -8381,6 +8417,47 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean isAwardNeeded() {
             return false;
+        }
+    }
+    
+    protected final static class Transient extends AiBoss {
+        protected final static Warp newWarp(final Transient boss, final float x, final float y) {
+            boss.getPosition().set(x, y);
+            boss.setMirror(1);
+            boss.stateHandler = WALL_GRAB_HANDLER;
+            return new Warp(boss);
+        }
+        
+        protected Transient() {
+            super(BotsnBoltsGame.transientImages, 12, 7);
+            /*
+            handlers.add(new JumpsHandler()); // 0 (also response to danger)
+            */
+            deactivateCharacters();
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return 0;
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "TODO Transient line",
+                "Null line",
+                "Transient line"
+            };
+        }
+        
+        @Override
+        protected final int initStillTimer() {
+            return Boss.initStillTimer(30, 45);
+        }
+        
+        @Override
+        protected final String[] getDefeatMessages() {
+            return new String[] { "TODO" };
         }
     }
     

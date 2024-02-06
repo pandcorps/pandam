@@ -572,8 +572,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
-    protected void newProjectile(final float vx, final float vy, final int power) {
-        new Projectile(this, vx, vy, power);
+    protected Panctor newProjectile(final float vx, final float vy, final int power) {
+        return new Projectile(this, vx, vy, power);
     }
     
     protected void newBomb() {
@@ -635,6 +635,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final int getAimOffsetX() {
+        return stateHandler.getAimOffsetX(this);
+    }
+    
+    protected final int getAimOffsetXNormal() {
         if ((prf.shootMode != SHOOT_STREAM) && isDashing()) {
             final int off = Math.round(Math.abs(hvForced)) - VEL_WALK;
             if (off > 0) {
@@ -1930,10 +1934,6 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final void startBall() {
-if (getClock() != -1) {
-    startMech();
-    return;
-}
         if (!isBallAvailable()) {
             return;
         }
@@ -2801,6 +2801,10 @@ if (getClock() != -1) {
         
         protected boolean isAimMirrorReversed(final Player player) {
             return false;
+        }
+        
+        protected int getAimOffsetX(final Player player) {
+            return player.getAimOffsetXNormal();
         }
         
         protected int getAimOffsetY(final Player player) {
@@ -3798,17 +3802,27 @@ if (getClock() != -1) {
         
         @Override
         protected final void onShootStart(final Player player) {
-            Player.SHOOT_NORMAL.onShootStart(player); //TODO mech mode
+            Player.SHOOT_MECH.onShootStart(player);
         }
         
         @Override
         protected final void onShooting(final Player player) {
-            Player.SHOOT_NORMAL.onShooting(player);
+            Player.SHOOT_MECH.onShooting(player);
         }
         
         @Override
         protected final void onShootEnd(final Player player) {
-            Player.SHOOT_NORMAL.onShootEnd(player);
+            Player.SHOOT_MECH.onShootEnd(player);
+        }
+        
+        @Override
+        protected final int getAimOffsetX(final Player player) {
+            return 30;
+        }
+        
+        @Override
+        protected final int getAimOffsetY(final Player player) {
+            return 35;
         }
         
         @Override
@@ -4795,6 +4809,33 @@ if (getClock() != -1) {
         @Override
         protected final boolean isAllowedFallbackOption() {
             return false;
+        }
+    };
+    
+    protected final static ShootMode SHOOT_MECH = new ShootMode(null, SHOOT_DELAY_SPREAD) {
+        @Override
+        protected final void onShootStart(final Player player) {
+            shoot(player);
+        }
+        
+        @Override
+        protected final int getRequiredStamina(final Player player) {
+            return 0;
+        }
+        
+        @Override
+        protected final void createProjectile(final Player player) {
+            player.afterShoot(getClock());
+            newProjectile(player, VEL_PROJECTILE, 0);
+            newProjectile(player, VX_SPREAD1, VY_SPREAD1);
+            newProjectile(player, VX_SPREAD1, -VY_SPREAD1);
+            newProjectile(player, VX_SPREAD2, VY_SPREAD2);
+            newProjectile(player, VX_SPREAD2, -VY_SPREAD2);
+        }
+        
+        protected final void newProjectile(final Player player, final float vx, final float vy) {
+            final Panctor prj = player.newProjectile(vx, vy, Projectile.POWER_MEDIUM);
+            prj.changeView(player.pi.projectile2);
         }
     };
     
