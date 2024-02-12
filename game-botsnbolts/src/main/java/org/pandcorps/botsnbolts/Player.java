@@ -1783,6 +1783,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         updateWrapper();
         updateFollowers();
+        stateHandler.onStepEnd(this);
         prf.shootMode.onStepEnd(this);
         if ((prf.shootMode != SHOOT_SHIELD) && isPassiveShieldEnabled()) {
             SHOOT_SHIELD.onStepEnd(this);
@@ -2855,6 +2856,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         
         //@OverrideMe
+        protected void onStepEnd(final Player player) {
+        }
+        
+        //@OverrideMe
         protected boolean isLadderPossible() {
             return false;
         }
@@ -3896,6 +3901,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
                 player.mechCurrentImage = player.mechWalking ? mi.mechWalks[player.mechIndex] : mi.mech;
             }
             return false;
+        }
+        
+        @Override
+        protected final void onStepEnd(final Player player) {
+            player.setView(BotsnBoltsGame.getMechHitBox());
         }
         
         @Override
