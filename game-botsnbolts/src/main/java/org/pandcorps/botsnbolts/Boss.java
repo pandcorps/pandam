@@ -1001,7 +1001,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
-    protected final static class Turtle extends Boss implements StepEndListener {
+    protected final static class Turtle extends Boss implements StepEndListener, RoomAddListener {
         protected final static byte STATE_DRAG = 1;
         protected final static byte STATE_STEP_FAR = 2;
         protected final static byte STATE_STEP_NEAR = 3;
@@ -1070,6 +1070,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             defaultY = floorY + 25;
             pos.set(x, defaultY);
             targetY = defaultY;
+            setVisible(false);
+        }
+        
+        @Override
+        public final void onRoomAdd(final RoomAddEvent event) {
+            enableOverlay();
         }
         
         private final void addHeadComponent(final boolean head, final float z) {
@@ -1102,19 +1108,34 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final void burst() {
             //TODO fx
-            enableOverlay();
+            setVisible(true);
             final TileMap tm = BotsnBoltsGame.tm;
-            final TileMapImage[][] imgMap = BotsnBoltsGame.imgMap;
-            final int overlayOffZ = getOverlayOffZ();
-            final Tile leftEdge = tm.getTile(null, imgMap[2][1], Tile.BEHAVIOR_SOLID);
-            final Tile rightEdge = tm.getTile(imgMap[1][0], new AdjustedTileMapImage(imgMap[2][4], overlayOffZ, 0, false, false), Tile.BEHAVIOR_SOLID);
-            final Tile black = tm.getTile(imgMap[1][0], null, Tile.BEHAVIOR_SOLID);
-            for (int y = 2; y < 8; y++) {
+            final Tile leftEdge = getWallTile(1, 2);
+            final Tile rightEdge = getOverlayTile(4, 2);
+            final Tile black = tm.getTile(BotsnBoltsGame.imgMap[1][0], null, Tile.BEHAVIOR_SOLID);
+            final int vertLimit = 9;
+            for (int y = 2; y < vertLimit; y++) {
                 tm.setTile(19, y, leftEdge);
                 tm.setTile(20, y, black);
                 tm.setTile(21, y, black);
                 tm.setTile(22, y, rightEdge);
             }
+            tm.setTile(21, vertLimit, black);
+            tm.setTile(22, vertLimit, getOverlayTile(4, 1));
+            tm.setTile(21, vertLimit + 1, getOverlayTile(3, 2));
+            tm.setTile(21, vertLimit + 2, getOverlayTile(3, 1));
+            tm.setTile(20, vertLimit + 2, getWallTile(2, 1));
+            tm.setTile(20, vertLimit + 1, getWallTile(2, 2));
+            tm.setTile(19, vertLimit, getWallTile(1, 1));
+            tm.setTile(20, vertLimit, black);
+        }
+        
+        private final static Tile getWallTile(final int fgX, final int fgY) {
+            return BotsnBoltsGame.tm.getTile(null, BotsnBoltsGame.imgMap[fgY][fgX], Tile.BEHAVIOR_SOLID);
+        }
+        
+        private final static Tile getOverlayTile(final int fgX, final int fgY) {
+            return BotsnBoltsGame.tm.getTile(BotsnBoltsGame.imgMap[1][0], new AdjustedTileMapImage(BotsnBoltsGame.imgMap[fgY][fgX], getOverlayOffZ(), 0, false, false), Tile.BEHAVIOR_SOLID);
         }
         
         private final void enableOverlay() {
