@@ -1029,6 +1029,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private final static Panmage[] eyes = new Panmage[9];
         private static Panmage beamStart = null;
         private static Panmage beam = null;
+        private static Panmage shatter = null;
         //bodyPosition = Panctor.getPosition();
         final Panple farFootPosition = new ImplPanple(); // Can just render feet
         final Panple nearFootPosition = new ImplPanple();
@@ -1058,6 +1059,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             setView(getStill());
             setMirror(false);
             final Panple pos = getPosition();
+            pos.addX(-8);
             pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
             addHeadComponent(false, BotsnBoltsGame.DEPTH_ENEMY_FRONT); // Neck sphere closest to body
             addHeadComponent(false, BotsnBoltsGame.DEPTH_ENEMY_FRONT_2);
@@ -1107,7 +1109,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void burst() {
-            //TODO fx
+            addBurstShatterEffects();
+            setBurstBuildingTiles();
+        }
+        
+        private final void addBurstShatterEffects() {
+            BotsnBoltsGame.fxCrumble.startSound();
+            //TODO
+        }
+        
+        private final void setBurstBuildingTiles() {
             setVisible(true);
             final TileMap tm = BotsnBoltsGame.tm;
             final Tile leftEdge = getWallTile(1, 2);
@@ -1118,7 +1129,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 tm.setTile(19, y, leftEdge);
                 tm.setTile(20, y, black);
                 tm.setTile(21, y, black);
-                tm.setTile(22, y, rightEdge);
+                if (y > 4) {
+                    tm.setTile(22, y, rightEdge);
+                }
             }
             tm.setTile(21, vertLimit, black);
             tm.setTile(22, vertLimit, getOverlayTile(4, 1));
@@ -1128,6 +1141,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             tm.setTile(20, vertLimit + 1, getWallTile(2, 2));
             tm.setTile(19, vertLimit, getWallTile(1, 1));
             tm.setTile(20, vertLimit, black);
+            tm.setTile(22, 4, getOverlayTile(4, 3));
+            tm.setTile(23, 4, getOverlayTile(5, 3));
+            tm.setTile(23, 3, getOverlayTile(5, 4));
+            tm.setTile(23, 2, getOverlayTile(5, 5));
+            tm.setTile(22, 3, black);
+            tm.setTile(22, 2, black);
         }
         
         private final static Tile getWallTile(final int fgX, final int fgY) {
@@ -1487,13 +1506,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
             switch (state) {
                 case STATE_DRAG :
                     finishWalkingStep();
-                    startStepFar();
-                    break;
-                case STATE_STEP_FAR :
-                    finishWalkingStep();
                     startStepNear();
                     break;
                 case STATE_STEP_NEAR :
+                    finishWalkingStep();
+                    startStepFar();
+                    break;
+                case STATE_STEP_FAR :
                     finishWalkingStep();
                     initialStepsRequired--;
                     if (initialStepsRequired > 0) {
@@ -1630,6 +1649,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected final static Panmage getBeam() {
             return (beam = getImage(beam, "turtle/TurtleBeam", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
+        }
+        
+        protected final static Panmage getShatter() {
+            return (shatter = getImage(shatter, "turtle/TurtleShatter", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
         }
     }
     
