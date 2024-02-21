@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2023, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -1115,7 +1115,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final void addBurstShatterEffects() {
             BotsnBoltsGame.fxCrumble.startSound();
-            //TODO
+            final Panlayer layer = getLayer();
+            final Panmage img = getShatter();
+            for (int y = 2; y <= 10; y++) {
+                final int xStart, xStop;
+                if (y < 9) {
+                    xStart = 19; xStop = 22;
+                } else {
+                    xStart = 20; xStop = 21;
+                }
+                for (int x = xStart; x <= xStop; x++) {
+                    Player.newDiver(layer, false, img, x * 16, y * 16, -6, 6, false, false, true);
+                }
+            }
         }
         
         private final void setBurstBuildingTiles() {
