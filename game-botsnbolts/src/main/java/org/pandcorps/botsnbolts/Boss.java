@@ -1272,15 +1272,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             clearPlayerExtras();
             player.startScript(new LeftAi(32.0f), new Runnable() {
                 @Override public final void run() {
-                    //new Warp(getNextBoss(20, 3));
+                    final Transient boss = new Transient();
+                    boss.getPosition().set(281, TRANSIENT_DIALOG_Y);
+                    boss.startWallLocked();
+                    new Warp(boss);
                 }});
         }
-        
-        /*
-        protected AiBoss getNextBoss(final int x, final int y) {
-            return new Transient(x, y);
-        }
-        */
         
         @Override
         protected final boolean getTauntingReturnValue() {
@@ -1673,6 +1670,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return (shatter = getImage(shatter, "turtle/TurtleShatter", BotsnBoltsGame.CENTER_16, BotsnBoltsGame.MIN_16, BotsnBoltsGame.MAX_16));
         }
     }
+    
+    private final static float TRANSIENT_DIALOG_Y = 102;
     
     protected final static class TurtleHeadComponent extends Enemy {
         private final boolean head;
@@ -8500,6 +8499,22 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final int pickResponseToDanger() {
+            return 0;
+        }
+        
+        @Override
+        protected final void onBossMaterialized() {
+            startWallLocked();
+        }
+        
+        protected final void startWallLocked() {
+            setMirror(false);
+            getPosition().setY(TRANSIENT_DIALOG_Y);
+            forceWallGrab();
+        }
+        
+        @Override
+        protected float getWallGrabGravity() {
             return 0;
         }
         

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2023, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -2014,13 +2014,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
         if (!isWallGrabAvailable()) {
             return false;
         }
+        forceWallGrab();
+        return true;
+    }
+    
+    protected final void forceWallGrab() {
         clearRun();
         v = 0.0f;
         slideTimer = 0;
         stateHandler = WALL_GRAB_HANDLER;
         resetStream();
         changeView(pi.basicSet.wallGrab);
-        return true;
     }
     
     protected final boolean startWallGrabIfPossible() {
@@ -2028,6 +2032,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
             return startWallGrab();
         }
         return false;
+    }
+    
+    protected float getWallGrabGravity() {
+        return isUnderWater() ? gWallSlideWater : gWallSlide;
     }
     
     protected final void endWallGrab() {
@@ -3254,7 +3262,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final float getG(final Player player) {
-            return player.isUnderWater() ? gWallSlideWater : gWallSlide;
+            return player.getWallGrabGravity();
         }
         
         @Override
@@ -3934,6 +3942,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static StateHandler WARP_HANDLER = new StateHandler() {
         @Override
         protected final void onJump(final Player player) {
+        }
+        
+        @Override
+        protected float getG(final Player player) {
+            return 0;
         }
         
         @Override
