@@ -1138,10 +1138,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             final Tile black = tm.getTile(BotsnBoltsGame.imgMap[1][0], null, Tile.BEHAVIOR_SOLID);
             final int vertLimit = 9;
             for (int y = 2; y < vertLimit; y++) {
-                tm.setTile(19, y, leftEdge);
                 tm.setTile(20, y, black);
                 tm.setTile(21, y, black);
                 if (y > 4) {
+                    tm.setTile(19, y, leftEdge);
                     tm.setTile(22, y, rightEdge);
                 }
             }
@@ -1159,6 +1159,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
             tm.setTile(23, 2, getOverlayTile(5, 5));
             tm.setTile(22, 3, black);
             tm.setTile(22, 2, black);
+            tm.setTile(19, 4, getWallTile(1, 3));
+            tm.setTile(18, 4, getWallTile(0, 3));
+            tm.setTile(18, 3, getWallTile(0, 4));
+            tm.setTile(18, 2, getWallTile(0, 5));
+            tm.setTile(19, 3, black);
+            tm.setTile(19, 2, black);
         }
         
         private final static Tile getWallTile(final int fgX, final int fgY) {
