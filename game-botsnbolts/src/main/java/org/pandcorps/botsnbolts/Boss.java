@@ -8045,20 +8045,24 @@ public abstract class Boss extends Enemy implements SpecBoss {
             super.onMaterialized();
             final String[] introMsgs = getIntroMessages();
             if (introMsgs == null) {
-                finishIntro();
+                finishIntroDialog();
             } else {
                 dialogue(new Runnable() { @Override public final void run() {
-                    finishIntro();
+                    finishIntroDialog();
                 }}, introMsgs);
             }
             onBossMaterialized();
+        }
+        
+        protected void finishIntroDialog() {
+            finishIntro();
         }
         
         protected String[] getIntroMessages() {
             return null;
         }
         
-        private final void finishIntro() {
+        protected final void finishIntro() {
             health = HudMeter.MAX_VALUE;
             finishIntroStatic();
         }
@@ -8224,7 +8228,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onLanded() {
+        protected void onLanded() {
             super.onLanded();
             if (isIndefinite() && handler.isDoneWhenLanded(this)) {
                 startStill();
@@ -8482,6 +8486,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static class Transient extends AiBoss {
+        private boolean droppingInsideMech = false;
+        
         protected final static Warp newWarp(final Transient boss, final float x, final float y) {
             boss.getPosition().set(x, y);
             boss.setMirror(1);
@@ -8525,6 +8531,36 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 "Null line",
                 "Transient line"
             };
+        }
+        
+        @Override
+        protected final void finishIntroDialog() {
+            dematerialize(new Runnable() {
+                @Override public final void run() {
+                    Pangine.getEngine().addTimer(Transient.this, 45, new TimerListener() {
+                        @Override public final void onTimer(final TimerEvent event) {
+                            dropInsideMech();
+                        }});
+                }});
+        }
+        
+        private final void dropInsideMech() {
+            startMech();
+            getPosition().set(249, BotsnBoltsGame.GAME_H + 16);
+            setMirror(true);
+            setHidden(false);
+            setVisible(true);
+            droppingInsideMech = true;
+        }
+        
+        @Override
+        protected final void onLanded() {
+            if (droppingInsideMech) {
+                droppingInsideMech = false;
+                finishIntro();
+            } else {
+                super.onLanded();
+            }
         }
         
         @Override

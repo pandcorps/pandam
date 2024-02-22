@@ -2363,7 +2363,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     }
     
-    private final void startMech() {
+    protected final void startMech() {
         stateHandler = MECH_HANDLER;
         setOffX(MECH_X);
         setH(MECH_H);
@@ -2371,7 +2371,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         mechWalking = false;
         mechCounter = -1;
         mechIndex = MECH_WALK_START_INDEX;
-        mechCurrentImage = null;
+        mechCurrentImage = pi.mechBasicSet.mech;
     }
     
     private final void endMech() {
