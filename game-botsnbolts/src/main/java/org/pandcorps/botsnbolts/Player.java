@@ -2378,6 +2378,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         mechCurrentImage = pi.mechBasicSet.mech;
     }
     
+    protected Panmage getMechHitBox() {
+        return BotsnBoltsGame.getMechHitBox();
+    }
+    
     private final void endMech() {
         stateHandler = NORMAL_HANDLER;
         setOffX(PLAYER_X);
@@ -3917,7 +3921,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void onStepEnd(final Player player) {
-            player.setView(BotsnBoltsGame.getMechHitBox());
+            player.setView(player.getMechHitBox());
         }
         
         @Override

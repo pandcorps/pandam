@@ -8385,6 +8385,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final int getDepthFront() {
             return BotsnBoltsGame.DEPTH_ENEMY_FRONT;
         }
+        
+        @Override
+        protected final Panmage getMechHitBox() {
+            return BotsnBoltsGame.getEnemyMechHitBox();
+        }
     }
     
     protected final static class Volatile extends AiBoss {

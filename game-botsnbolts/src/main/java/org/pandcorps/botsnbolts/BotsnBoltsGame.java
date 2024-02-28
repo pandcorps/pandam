@@ -237,6 +237,7 @@ public final class BotsnBoltsGame extends BaseGame {
     private static Panmage swordFullHitBox = null;
     private static Panmage whipHitBox = null;
     private static Panmage mechHitBox = null;
+    private static Panmage enemyMechHitBox = null;
     private final static Map<String, Pansound> music = new HashMap<String, Pansound>();
     protected static Pansound musicIntro = null;
     protected static Pansound musicLevelSelect = null;
@@ -591,6 +592,13 @@ public final class BotsnBoltsGame extends BaseGame {
             mechHitBox = Pangine.getEngine().createEmptyImage("mechHitBox", FinPanple.ORIGIN, new FinPanple2(-9, 0), new FinPanple2(8, 56));
         }
         return mechHitBox;
+    }
+    
+    protected final static Panmage getEnemyMechHitBox() {
+        if (enemyMechHitBox == null) {
+            enemyMechHitBox = Pangine.getEngine().createEmptyImage("enemyMechHitBox", FinPanple.ORIGIN, new FinPanple2(-14, 0), new FinPanple2(14, 56));
+        }
+        return enemyMechHitBox;
     }
     
     private final static Pancolor newColorHidden() {
