@@ -8214,7 +8214,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final Panctor newProjectile(final float vx, final float vy, final int power) {
-            return new AiProjectile(this, Projectile.OFF_X, Projectile.OFF_Y, getMirrorMultiplier() * vx, vy, pi, prf.shootMode, power);
+            // Was this before Bots 'n Bolts 2:
+            //return new AiProjectile(this, Projectile.OFF_X, Projectile.OFF_Y, getMirrorMultiplier() * vx, vy, pi, prf.shootMode, power);
+            // Projectiles didn't start at correct offsets for Transient in Mech, so tried changing to this:
+            return new AiProjectile(this, pi, prf.shootMode, this, vx, vy, power);
         }
         
         @Override
@@ -8508,7 +8511,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected Transient() {
             super(BotsnBoltsGame.transientImages, 12, 7);
             handlers.add(new WalkAndJumpsHandler()); // 0 (also response to danger)
-            handlers.add(new WalkAndJumpsHandler()); // 1 TODO new handler
+            handlers.add(new MechAttackHandler()); // 1
             deactivateCharacters();
         }
         
@@ -8997,6 +9000,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             boss.extra = 2000; // Not enough room for another jump
             return false;
+        }
+    }
+    
+    private final static class MechAttackHandler extends AiHandler {
+        @Override
+        protected final int initTimer(final AiBoss boss) {
+            return 24;
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            if (boss.waitTimer == 23) {
+                boss.attack();
+            }
         }
     }
     
