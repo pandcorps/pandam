@@ -8510,8 +8510,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         protected Transient() {
             super(BotsnBoltsGame.transientImages, 12, 7);
-            handlers.add(new WalkAndJumpsHandler()); // 0 (also response to danger)
+            handlers.add(new MechWalkAttackJumpHandler()); // 0 (also response to danger)
             handlers.add(new MechAttackHandler()); // 1
+            handlers.add(new AttackJumpHandler()); // 2
             deactivateCharacters();
         }
         
@@ -8948,7 +8949,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
-    private static class WalkAndJumpsHandler extends AiHandler {
+    private static class MechWalkAttackJumpHandler extends AiHandler {
         @Override
         protected final void init(final AiBoss boss) {
             boss.extra = 18;
@@ -9000,6 +9001,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             boss.extra = 2000; // Not enough room for another jump
             return false;
+        }
+        
+        @Override
+        protected final void onJumpPeak(final AiBoss boss) {
+            boss.attack();
         }
     }
     
