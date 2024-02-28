@@ -217,12 +217,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private HeldShield shield = null;
     private HeldSword sword = null;
     protected ShieldProjectile lastShieldProjectile = null;
-    private boolean mechReceivingInput = false;
-    private boolean mechWalking = false;
+    protected boolean mechReceivingInput = false;
+    protected boolean mechWalking = false;
     private int mechDir = 1;
     private int mechCounter = -1;
     private int mechIndex = MECH_WALK_START_INDEX;
-    private Panmage mechCurrentImage = null;
+    protected Panmage mechCurrentImage = null;
     private boolean hidden = false;
     protected boolean active = true;
     private boolean scripted = false;
@@ -1420,7 +1420,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final int m = getMirrorMultiplier(mirror);
         final int walkOffY = mechWalking && ((mechIndex == 0) || (mechIndex == 2)) ? -2 : 0;
         renderer.render(layer, pi.basicSet.stand, x, y + MECH_DIFF + walkOffY, pos.getZ(), 0, mirror, false);
-        renderer.render(layer, mechCurrentImage, x - (22 * m), y - 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, mirror, false);
+        renderer.render(layer, mechCurrentImage, x - (22 * m), y - 1, getDepthFront(), 0, mirror, false);
+    }
+    
+    protected int getDepthFront() {
+        return BotsnBoltsGame.DEPTH_PLAYER_FRONT;
     }
     
     protected final void setHidden(final boolean hidden) {

@@ -1273,7 +1273,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             player.startScript(new LeftAi(32.0f), new Runnable() {
                 @Override public final void run() {
                     final Transient boss = new Transient();
-                    boss.getPosition().set(281, TRANSIENT_DIALOG_Y);
+                    boss.getPosition().set(TRANSIENT_TURTLE_WALL_X, TRANSIENT_DIALOG_Y);
                     boss.startWallLocked();
                     new Warp(boss);
                 }});
@@ -1671,6 +1671,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    private final static float TRANSIENT_MECH_X_MIN = 23;
+    private final static float TRANSIENT_MECH_X_MAX = 264;
+    private final static float TRANSIENT_TURTLE_WALL_X = 281;
     private final static float TRANSIENT_DIALOG_Y = 102;
     
     protected final static class TurtleHeadComponent extends Enemy {
@@ -8170,15 +8173,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void turnTowardPlayer() {
-            if (!isFacingPlayer()) {
+            if (isFacingPlayerNeeded() && !isFacingPlayer()) {
                 mirror();
             }
         }
         
         protected final void setMirrorTowardPlayer() {
-            if (!isFacingPlayer()) {
+            if (isFacingPlayerNeeded() && !isFacingPlayer()) {
                 setMirror(!isMirror());
             }
+        }
+        
+        protected boolean isFacingPlayerNeeded() {
+            return true;
         }
         
         protected final boolean isFacingPlayer() {
@@ -8373,6 +8380,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         public final void setLastStreamCollision(final long lastStreamCollision) {
             this.lastStreamCollision = lastStreamCollision;
         }
+        
+        @Override
+        protected final int getDepthFront() {
+            return BotsnBoltsGame.DEPTH_ENEMY_FRONT;
+        }
     }
     
     protected final static class Volatile extends AiBoss {
@@ -8488,18 +8500,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static class Transient extends AiBoss {
         private boolean droppingInsideMech = false;
         
-        protected final static Warp newWarp(final Transient boss, final float x, final float y) {
-            boss.getPosition().set(x, y);
-            boss.setMirror(1);
-            boss.stateHandler = WALL_GRAB_HANDLER;
-            return new Warp(boss);
-        }
-        
         protected Transient() {
             super(BotsnBoltsGame.transientImages, 12, 7);
-            /*
-            handlers.add(new JumpsHandler()); // 0 (also response to danger)
-            */
+            handlers.add(new WalkAndJumpsHandler()); // 0 (also response to danger)
+            handlers.add(new WalkAndJumpsHandler()); // 1 TODO new handler
             deactivateCharacters();
         }
         
@@ -8546,7 +8550,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final void dropInsideMech() {
             startMech();
-            getPosition().set(249, BotsnBoltsGame.GAME_H + 16);
+            getPosition().set(TRANSIENT_MECH_X_MAX, BotsnBoltsGame.GAME_H + 16);
             setMirror(true);
             setHidden(false);
             setVisible(true);
@@ -8561,6 +8565,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             } else {
                 super.onLanded();
             }
+        }
+        
+        @Override
+        protected final boolean isFacingPlayerNeeded() {
+            return false;
         }
         
         @Override
@@ -8928,6 +8937,61 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 boss.extra = 19;
                 boss.needMirror = true;
             }
+        }
+    }
+    
+    private static class WalkAndJumpsHandler extends AiHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.extra = 18;
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            final Panple pos = boss.getPosition();
+            if (boss.extra < 0) {
+                pos.setX((pos.getX() < 192) ? TRANSIENT_MECH_X_MIN : TRANSIENT_MECH_X_MAX);
+                return;
+            }
+            boss.moveX();
+            if (boss.isMirror()) {
+                if (pos.getX() <= TRANSIENT_MECH_X_MIN) {
+                    endIfGrounded(boss, TRANSIENT_MECH_X_MIN);
+                    return;
+                }
+            } else {
+                if (pos.getX() >= TRANSIENT_MECH_X_MAX) {
+                    endIfGrounded(boss, TRANSIENT_MECH_X_MAX);
+                    return;
+                }
+            }
+            if (boss.extra > 0) {
+                boss.extra--;
+                return;
+            }
+            boss.jump();
+        }
+        
+        private final void endIfGrounded(final AiBoss boss, final float x) {
+            boss.getPosition().setX(x);
+            boss.extra = -1;
+            if (boss.isGrounded()) {
+                boss.setMirror(!boss.isMirror());
+                boss.mechReceivingInput = false;
+                boss.mechWalking = false;
+                boss.mechCurrentImage = boss.pi.mechBasicSet.mech;
+                boss.startStill();
+            }
+        }
+        
+        @Override
+        protected boolean isDoneWhenLanded(final AiBoss boss) {
+            if (boss.extra < 0) {
+                boss.setMirror(!boss.isMirror());
+                return true;
+            }
+            boss.extra = 2000; // Not enough room for another jump
+            return false;
         }
     }
     
