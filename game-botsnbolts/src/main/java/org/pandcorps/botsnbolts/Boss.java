@@ -8592,6 +8592,55 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    protected final static class Transient2 extends AiBoss {
+        protected Transient2() {
+            super(BotsnBoltsGame.transientImages, 12, 7);
+            handlers.add(new StreamAttackHandler()); // 0
+            handlers.add(new StreamAttackJumpsHandler()); // 1 (also a response to danger)
+            /*
+            handlers.add(new WhipAttackRunHandler()); // 2
+            handlers.add(new WhipAttackDashHandler()); // 3
+            handlers.add(new ShieldAttackJumpHandler()); // 4 (also a response to danger)
+            handlers.add(new ShieldAttackWallGrabHandler()); // 5
+            */
+            deactivateCharacters();
+        }
+        
+        @Override
+        public final int pickResponseToDanger() {
+            return Mathtil.rand() ? 1 : 4; // Could also have a ShieldBlockHandler, but probably only in response to danger
+        }
+        
+        @Override
+        protected final String[] getIntroMessages() {
+            return new String[] {
+                "TODO Transient line",
+                "Null line",
+                "Transient line"
+            };
+        }
+        
+        @Override
+        protected final void addUpgrades(final Set<Upgrade> upgrades) {
+            upgrades.add(Profile.UPGRADE_DASH);
+            upgrades.add(Profile.UPGRADE_SHIELD);
+            upgrades.add(Profile.UPGRADE_SLIDE); // Could be interesting, but currently only used to slide through narrow passages
+            upgrades.add(Profile.UPGRADE_STREAM);
+            upgrades.add(Profile.UPGRADE_SWORD);
+            upgrades.add(Profile.UPGRADE_WALL_GRAB);
+        }
+        
+        @Override
+        protected final int initStillTimer() {
+            return Boss.initStillTimer(15, 30);
+        }
+        
+        @Override
+        protected final String[] getDefeatMessages() {
+            return new String[] { "TODO" };
+        }
+    }
+    
     protected final static class BossAi implements Ai {
         @Override
         public final void onStep(final Player player) {
@@ -8852,6 +8901,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 return;
             }
             boss.jump();
+            onStepJumping(boss);
+        }
+        
+        //@OverrideMe
+        protected void onStepJumping(final AiBoss boss) {
         }
         
         @Override
@@ -8884,6 +8938,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
+    private static class StreamAttackJumpsHandler extends JumpsHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.prf.shootMode = Player.SHOOT_STREAM;
+        }
+        
+        @Override
+        protected final void onStepJumping(final AiBoss boss) {
+            if ((boss.shootTimer <= 0) && (boss.v > 0)) {
+                boss.startAttacking(5);
+            }
+        }
+    }
+    
     private final static class AttackHandler extends AiHandler {
         @Override
         protected final int initTimer(final AiBoss boss) {
@@ -8904,6 +8972,20 @@ public abstract class Boss extends Enemy implements SpecBoss {
             boss.prf.shootMode = Player.SHOOT_RAPID;
             boss.startAttacking(16);
             return 22;
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            // AiBoss handles everything based on shootTimer
+        }
+    }
+    
+    private final static class StreamAttackHandler extends AiHandler {
+        @Override
+        protected final int initTimer(final AiBoss boss) {
+            boss.prf.shootMode = Player.SHOOT_STREAM;
+            boss.startAttacking(50);
+            return 64;
         }
         
         @Override
