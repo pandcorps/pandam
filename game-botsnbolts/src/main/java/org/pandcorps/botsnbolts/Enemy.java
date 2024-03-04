@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2023, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -530,12 +530,14 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     protected static class AiProjectile extends EnemyProjectile implements SpecProjectile {
+        protected final Player src;
         private final PlayerImages pi;
         private final ShootMode shootMode;
         private int power;
         
         protected AiProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy, final PlayerImages pi, final ShootMode shootMode, final int power) {
             super(src, ox, oy, vx, vy);
+            this.src = (src instanceof Player) ? (Player) src : null;
             this.pi = pi;
             this.shootMode = shootMode;
             Projectile.setPower(this, power);
@@ -559,6 +561,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         public final void assignPower(final int power) {
             this.power = power;
+        }
+        
+        @Override
+        public final Player getSource() {
+            return src;
         }
         
         @Override
@@ -598,6 +605,41 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         public final void onAnimationEnd(final AnimationEndEvent event) {
             destroy();
+        }
+    }
+    
+    public static class AiStreamProjectile extends AiProjectile implements SpecStreamProjectile {
+        private final int ox;
+        protected boolean srcMirror;
+        
+        protected AiStreamProjectile(final Player src, final int ox) {
+            super(src, src.pi, Player.SHOOT_STREAM, src, 0, 0, 1);
+            this.ox = ox;
+        }
+        
+        @Override
+        public final int getOffsetX() {
+            return ox;
+        }
+        
+        @Override
+        public final void initSourceMirror() {
+            srcMirror = src.getAimMirror();
+        }
+        
+        @Override
+        public final boolean getSourceMirror() {
+            return srcMirror;
+        }
+        
+        @Override
+        protected final void ricochet() {
+            StreamProjectile.bounce(this);
+        }
+        
+        @Override
+        public final void onStepEnd(final float y) {
+            StreamProjectile.onStepEnd(this, y);
         }
     }
     

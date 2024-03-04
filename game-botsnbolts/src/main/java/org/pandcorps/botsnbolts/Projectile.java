@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2023, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -273,6 +273,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
             getPosition().setZ(BotsnBoltsGame.DEPTH_PROJECTILE);
         }
         
+        @Override
         public final Player getSource() {
             return src;
         }
@@ -342,7 +343,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         }
     }
     
-    public static class StreamProjectile extends Projectile {
+    public static class StreamProjectile extends Projectile implements SpecStreamProjectile {
         private final int ox;
         protected boolean srcMirror;
         
@@ -351,15 +352,30 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
             this.ox = ox;
         }
         
-        protected final void initSourceMirror() {
+        @Override
+        public final int getOffsetX() {
+            return ox;
+        }
+        
+        @Override
+        public final void initSourceMirror() {
             srcMirror = src.getAimMirror();
         }
         
         @Override
+        public final boolean getSourceMirror() {
+            return srcMirror;
+        }
+        
+        @Override
         public final void bounce() {
+            bounce(this);
+        }
+        
+        public final static void bounce(final SpecStreamProjectile bounced) {
             boolean detaching = false;
-            for (final StreamProjectile prj : src.streamProjectiles) {
-                if (prj == this) {
+            for (final SpecStreamProjectile prj : bounced.getSource().streamProjectiles) {
+                if (prj == bounced) {
                     detaching = true;
                 }
                 if (detaching) {
@@ -368,21 +384,28 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
             }
         }
         
-        protected final void onStepEnd(final float y) {
-            final boolean mirror = Mathtil.rand(20) ? !isMirror() : isMirror();
+        @Override
+        public final void onStepEnd(final float y) {
+            onStepEnd(this, y);
+        }
+        
+        public final static void onStepEnd(final SpecStreamProjectile prj, final float y) {
+            final boolean mirror = Mathtil.rand(20) ? !prj.isMirror() : prj.isMirror();
             if (y == Player.NULL_COORD) {
-                initSourceMirror();
+                prj.initSourceMirror();
             }
-            initPosition(this, src, src.getPosition(), srcMirror, 0, 0);
-            final int m = getMirrorMultiplier();
-            final Panple pos = getPosition();
-            pos.addX(m * (ox + src.getStreamOffsetX() + ((srcMirror == mirror) ? 0 : (1 + Math.round(getCurrentDisplay().getBoundingMaximum().getX())))));
+            final Player src = prj.getSource();
+            final boolean srcMirror = prj.getSourceMirror();
+            initPosition((Pandy) prj, src, src.getPosition(), srcMirror, 0, 0);
+            final int m = prj.getMirrorMultiplier();
+            final Panple pos = prj.getPosition();
+            pos.addX(m * (prj.getOffsetX() + src.getStreamOffsetX() + ((srcMirror == mirror) ? 0 : (1 + Math.round(prj.getCurrentDisplay().getBoundingMaximum().getX())))));
             if (y == Player.NULL_COORD) {
                 pos.addY(src.getStreamOffsetY());
             } else {
                 pos.setY(y);
             }
-            setMirror(mirror);
+            prj.setMirror(mirror);
         }
         
         @Override

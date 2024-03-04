@@ -188,7 +188,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean grapplingRetractAllowed = false;
     private boolean grapplingAllowed = true;
     private final ImplPanple grapplingPosition = new ImplPanple();
-    protected final StreamProjectile[] streamProjectiles = new StreamProjectile[STREAM_SIZE];
+    protected final SpecStreamProjectile[] streamProjectiles = new SpecStreamProjectile[STREAM_SIZE];
     private int streamStaminaCounter = 0;
     private SwordProjectile lastSwordProjectile = null;
     protected Spring spring = null;
@@ -580,7 +580,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         new Bomb(this);
     }
     
-    protected StreamProjectile newStreamProjectile(final int ox) {
+    protected SpecStreamProjectile newStreamProjectile(final int ox) {
         return new StreamProjectile(this, ox);
     }
     
@@ -4598,15 +4598,15 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final void onStep(final Player player) {
             boolean lastWasAttached = true;
             for (int i = 0; i < STREAM_SIZE; i++) {
-                final StreamProjectile streamProjectile = player.streamProjectiles[i];
+                final SpecStreamProjectile streamProjectile = player.streamProjectiles[i];
                 final boolean attached = isAttached(streamProjectile);
                 if (attached && !lastWasAttached) {
                     player.streamProjectiles[i].detach();
                 }
                 lastWasAttached = attached;
             }
-            final StreamProjectile second = player.streamProjectiles[1];
-            if ((second != null) && (player.getAimMirror() != second.srcMirror)) {
+            final SpecStreamProjectile second = player.streamProjectiles[1];
+            if ((second != null) && (player.getAimMirror() != second.getSourceMirror())) {
                 player.resetStream();
             }
             if ((player.lastShotFired + 1) < getClock()) {
@@ -4617,7 +4617,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void onStepEnd(final Player player) {
             for (int i = STREAM_SIZE - 1; i >= 0; i--) {
-                final StreamProjectile streamProjectile = player.streamProjectiles[i];
+                final SpecStreamProjectile streamProjectile = player.streamProjectiles[i];
                 if (streamProjectile == null) {
                     continue;
                 }
@@ -4643,7 +4643,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         @Override
         protected final void createProjectile(final Player player) {
             for (int i = 0; i < STREAM_SIZE; i++) {
-                StreamProjectile streamProjectile = player.streamProjectiles[i];
+                SpecStreamProjectile streamProjectile = player.streamProjectiles[i];
                 if (isDestroyed(streamProjectile)) {
                     final int ox;
                     final Panmage image;
@@ -4689,7 +4689,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                     streamProjectile.initSourceMirror();
                     break;
                 } else if (streamProjectile.getLayer() == null) {
-                    player.addActor(streamProjectile);
+                    player.addActor((Panctor) streamProjectile);
                     streamProjectile.initSourceMirror();
                     break;
                 }
@@ -5462,6 +5462,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     public static interface SpecProjectile extends SpecPanctor, Collidable {
         public void assignPower(final int power);
         
+        public Player getSource();
+        
         public PlayerImages getPlayerImages();
         
         public ShootMode getShootMode();
@@ -5469,10 +5471,18 @@ public class Player extends Chr implements Warpable, StepEndListener {
         public void burst();
     }
     
+    // A Player-like stream projectile (from an actual Player or an AiBoss)
+    public static interface SpecStreamProjectile extends SpecProjectile {
+        public int getOffsetX();
+        public void initSourceMirror();
+        
+        public boolean getSourceMirror();
+        
+        public void onStepEnd(final float y);
+    }
+    
     // A projectile from an actual Player that could hurt an Enemy
     public static interface SpecPlayerProjectile extends SpecProjectile {
-        public Player getSource();
-        
         public int getPower();
         
         public void bounce();

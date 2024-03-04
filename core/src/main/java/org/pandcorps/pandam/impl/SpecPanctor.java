@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2021, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -57,6 +57,8 @@ public interface SpecPanctor extends Pantity {
 
     public void setMirror(final boolean mirror);
     
+    public int getMirrorMultiplier();
+    
     public boolean isFlip();
 
     public void setFlip(final boolean flip);
@@ -68,4 +70,6 @@ public interface SpecPanctor extends Pantity {
 	public boolean isInView();
 
 	public boolean isDestroyed();
+	
+	public void detach();
 }

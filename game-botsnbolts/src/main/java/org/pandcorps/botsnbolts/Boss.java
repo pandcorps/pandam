@@ -8225,6 +8225,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             new AiBomb(this);
         }
         
+        @Override
+        protected final SpecStreamProjectile newStreamProjectile(final int ox) {
+            return new AiStreamProjectile(this, ox);
+        }
+        
         protected final void startStill() {
             startHandler(stillHandler);
         }

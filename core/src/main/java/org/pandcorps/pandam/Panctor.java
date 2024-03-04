@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2023, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -382,6 +382,7 @@ public class Panctor extends BasePantity implements SpecPanctor {
         impl.setMirror(mirror);
     }
     
+	@Override
     public final int getMirrorMultiplier() {
         return getMirrorMultiplier(isMirror());
     }
@@ -482,6 +483,7 @@ public class Panctor extends BasePantity implements SpecPanctor {
 		return destroyed;
 	}
 	
+	@Override
 	public final void detach() {
 	    onDetach();
 	    detachIntern();
@@ -581,35 +583,35 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	    Coltil.wipe(actors);
 	}
 	
-	public final static boolean isDestroyed(final Panctor actor) {
+	public final static boolean isDestroyed(final SpecPanctor actor) {
 	    return (actor == null) || actor.isDestroyed();
 	}
 	
-	public final static void detach(final Panctor actor) {
+	public final static void detach(final SpecPanctor actor) {
         if (actor != null) {
             actor.detach();
         }
     }
 	
-	public final static void detach(final Collection<? extends Panctor> actors) {
+	public final static void detach(final Collection<? extends SpecPanctor> actors) {
 		if (actors == null) {
 			return;
 		}
-		for (final Panctor actor : actors) {
+		for (final SpecPanctor actor : actors) {
 			detach(actor);
 		}
 	}
 	
-	public final static void detach(final Panctor... actors) {
+	public final static void detach(final SpecPanctor... actors) {
         if (actors == null) {
             return;
         }
-        for (final Panctor actor : actors) {
+        for (final SpecPanctor actor : actors) {
             detach(actor);
         }
     }
 	
-	public final static boolean isAttached(final Panctor actor) {
+	public final static boolean isAttached(final SpecPanctor actor) {
 	    return !isDestroyed(actor) && (actor.getLayer() != null);
 	}
 	
