@@ -8400,6 +8400,26 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final int getDepthFront2() {
+            return BotsnBoltsGame.DEPTH_ENEMY_FRONT_2;
+        }
+        
+        @Override
+        protected final int getDepthBack() {
+            return BotsnBoltsGame.DEPTH_ENEMY_BACK;
+        }
+        
+        @Override
+        protected final int getDepthBack2() {
+            return BotsnBoltsGame.DEPTH_ENEMY_BACK_2;
+        }
+        
+        @Override
+        protected final int getDepthOffset() {
+            return BotsnBoltsGame.DEPTH_ENEMY - BotsnBoltsGame.DEPTH_PLAYER;
+        }
+        
+        @Override
         protected final Panmage getMechHitBox() {
             return BotsnBoltsGame.getEnemyMechHitBox();
         }

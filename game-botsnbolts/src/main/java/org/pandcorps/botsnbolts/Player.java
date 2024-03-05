@@ -1303,77 +1303,80 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final int m = getMirrorMultiplier(mirror);
         renderer.render(layer, (Panmage) getCurrentDisplay(), x, y + BOARD_Y_OFF, pos.getZ(), 0, mirror, false);
         final long exhaustIndex = getExhaustIndex();
+        final int depthFront = getDepthFront();
+        final int depthBack = getDepthBack();
         if (boardSlope == SLOPE_NONE) {
             final long boardTime = getBoardTime();
             if (boardTime == 0) {
-                Warp.renderWarp(renderer, layer, pi, x + (m * (3 + boardX)) + (mirror ? 3 : 0), y + 43, BotsnBoltsGame.DEPTH_PLAYER_FRONT);
+                Warp.renderWarp(renderer, layer, pi, x + (m * (3 + boardX)) + (mirror ? 3 : 0), y + 43, depthFront);
             } else if (boardTime == 1) {
-                Warp.renderWarp(renderer, layer, pi, x + (m * (3 + boardX)) + (mirror ? 3 : 0), y + 11, BotsnBoltsGame.DEPTH_PLAYER_FRONT);
+                Warp.renderWarp(renderer, layer, pi, x + (m * (3 + boardX)) + (mirror ? 3 : 0), y + 11, depthFront);
             }
             if (boardTime < BOARD_START_TIME) {
                 renderer.render(layer, pi.materialize.getFrames()[0].getImage(),
-                        x - (m * (14 - boardX)) - (mirror ? 31 : 0), y + 3 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        x - (m * (14 - boardX)) - (mirror ? 31 : 0), y + 3 + boardY, depthFront,
                         0, 0, 32, 32, 0, mirror, false);
             } else {
                 renderer.render(layer, pi.boardImage = Animal.getAnimalImage(pi.boardImage, pi, "Board"),
-                        x - (m * (17 - boardX)) - (mirror ? 31 : 0), y + 1 + boardY, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        x - (m * (17 - boardX)) - (mirror ? 31 : 0), y + 1 + boardY, depthFront,
                         0, 0, 32, 32, 0, mirror, false);
                 if (exhaustIndex == 1) {
-                    renderer.render(layer, pi.exhaust1, x - (m * (20 - boardX)) - (mirror ? 3 : 0), y + 3 + boardY, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+                    renderer.render(layer, pi.exhaust1, x - (m * (20 - boardX)) - (mirror ? 3 : 0), y + 3 + boardY, depthBack, 0, 0, 4, 4, 0, mirror, false);
                 } else if (exhaustIndex == 2) {
-                    renderer.render(layer, pi.exhaust2, x - (m * (22 - boardX)) - (mirror ? 7 : 0), y + 1 + boardY, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
+                    renderer.render(layer, pi.exhaust2, x - (m * (22 - boardX)) - (mirror ? 7 : 0), y + 1 + boardY, depthBack, 0, 0, 8, 8, 0, mirror, false);
                 }
             }
         } else if (boardSlope == SLOPE_UP ) {
             final long boardJumpTime = getBoardJumpTime();
             if (boardJumpTime < KICKFLIP_FRAME1) {
                 renderer.render(layer, pi.boardDiagImageBottom = Animal.getAnimalImage(pi.boardDiagImageBottom, pi, "BoardDiagBottom"),
-                        x - (m * 7) - (mirror ? 31 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        x - (m * 7) - (mirror ? 31 : 0), y - 4, depthFront,
                         0, 0, 32, 32, 0, mirror, false);
                 renderDoubleExhaust(renderer, layer, exhaustIndex, x, y, m, mirror);
             } else if (boardJumpTime < KICKFLIP_FRAME2) {
                 renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
-                        x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        x - (m * 6) - (mirror ? 31 : 0), y - 3, depthFront,
                         0, 0, 32, 32, 3, mirror, true);
                 if (exhaustIndex == 1) {
-                    renderer.render(layer, pi.exhaustDiag1, x - (m * (8 - boardX)) - (mirror ? 3 : 0), y - 2, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+                    renderer.render(layer, pi.exhaustDiag1, x - (m * (8 - boardX)) - (mirror ? 3 : 0), y - 2, depthBack, 0, 0, 4, 4, 0, mirror, false);
                 } else if (exhaustIndex == 2) {
-                    renderer.render(layer, pi.exhaustDiag2, x - (m * (11 - boardX)) - (mirror ? 7 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
+                    renderer.render(layer, pi.exhaustDiag2, x - (m * (11 - boardX)) - (mirror ? 7 : 0), y - 4, depthBack, 0, 0, 8, 8, 0, mirror, false);
                 }
             } else if (boardJumpTime < KICKFLIP_FRAME3) {
                 renderer.render(layer, pi.boardDiagImageTop = Animal.getAnimalImage(pi.boardDiagImageTop, pi, "BoardDiagTop"),
-                        x - (m * 7) - (mirror ? 31 : 0), y - 4, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        x - (m * 7) - (mirror ? 31 : 0), y - 4, depthFront,
                         0, 0, 32, 32, 0, mirror, false);
                 renderDoubleExhaust(renderer, layer, exhaustIndex, x, y, m, mirror);
             } else {
                 renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
-                        x - (m * 6) - (mirror ? 31 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                        x - (m * 6) - (mirror ? 31 : 0), y - 3, depthFront,
                         0, 0, 32, 32, 0, mirror, false);
                 if (exhaustIndex == 1) {
-                    renderer.render(layer, pi.exhaustDiag1, x - (m * (5 - boardX)) - (mirror ? 3 : 0), y - 5, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+                    renderer.render(layer, pi.exhaustDiag1, x - (m * (5 - boardX)) - (mirror ? 3 : 0), y - 5, depthBack, 0, 0, 4, 4, 0, mirror, false);
                 } else if (exhaustIndex == 2) {
-                    renderer.render(layer, pi.exhaustDiag2, x - (m * (7 - boardX)) - (mirror ? 7 : 0), y - 8, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
+                    renderer.render(layer, pi.exhaustDiag2, x - (m * (7 - boardX)) - (mirror ? 7 : 0), y - 8, depthBack, 0, 0, 8, 8, 0, mirror, false);
                 }
             }
         } else if (boardSlope == SLOPE_DOWN ) {
             renderer.render(layer, pi.boardDiagImage = Animal.getAnimalImage(pi.boardDiagImage, pi, "BoardDiag"),
-                    x - (m * 18) - (mirror ? 31 : 0), y - 11, BotsnBoltsGame.DEPTH_PLAYER_FRONT,
+                    x - (m * 18) - (mirror ? 31 : 0), y - 11, depthFront,
                     0, 0, 32, 32, 3, mirror, false);
             if (exhaustIndex == 1) {
-                renderer.render(layer, pi.exhaustDiag1, x - (m * (20 - boardX)) - (mirror ? 3 : 0), y + 16, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 3, mirror, false);
+                renderer.render(layer, pi.exhaustDiag1, x - (m * (20 - boardX)) - (mirror ? 3 : 0), y + 16, depthBack, 0, 0, 4, 4, 3, mirror, false);
             } else if (exhaustIndex == 2) {
-                renderer.render(layer, pi.exhaustDiag2, x - (m * (23 - boardX)) - (mirror ? 7 : 0), y + 14, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 3, mirror, false);
+                renderer.render(layer, pi.exhaustDiag2, x - (m * (23 - boardX)) - (mirror ? 7 : 0), y + 14, depthBack, 0, 0, 8, 8, 3, mirror, false);
             }
         }
     }
     
     private final void renderDoubleExhaust(final Panderer renderer, final Panlayer layer, final long exhaustIndex, final float x, final float y, final int m, final boolean mirror) {
+        final int depthBack = getDepthBack();
         if (exhaustIndex == 1) {
-            renderer.render(layer, pi.exhaustDiag1, x - (m * (9 - boardX)) - (mirror ? 3 : 0), y - 1, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
-            renderer.render(layer, pi.exhaustDiag1, x - (m * (4 - boardX)) - (mirror ? 3 : 0), y - 6, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 4, 4, 0, mirror, false);
+            renderer.render(layer, pi.exhaustDiag1, x - (m * (9 - boardX)) - (mirror ? 3 : 0), y - 1, depthBack, 0, 0, 4, 4, 0, mirror, false);
+            renderer.render(layer, pi.exhaustDiag1, x - (m * (4 - boardX)) - (mirror ? 3 : 0), y - 6, depthBack, 0, 0, 4, 4, 0, mirror, false);
         } else if (exhaustIndex == 2) {
-            renderer.render(layer, pi.exhaustDiag2, x - (m * (12 - boardX)) - (mirror ? 7 : 0), y - 3, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
-            renderer.render(layer, pi.exhaustDiag2, x - (m * (6 - boardX)) - (mirror ? 7 : 0), y - 9, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 8, 8, 0, mirror, false);
+            renderer.render(layer, pi.exhaustDiag2, x - (m * (12 - boardX)) - (mirror ? 7 : 0), y - 3, depthBack, 0, 0, 8, 8, 0, mirror, false);
+            renderer.render(layer, pi.exhaustDiag2, x - (m * (6 - boardX)) - (mirror ? 7 : 0), y - 9, depthBack, 0, 0, 8, 8, 0, mirror, false);
         }
     }
     
@@ -1385,36 +1388,40 @@ public class Player extends Chr implements Warpable, StepEndListener {
         final int m = getMirrorMultiplier(mirror);
         final long glideTime = getClock() - lastGlideStart;
         final long exhaustIndex = getExhaustIndex();
+        final int depthFront = getDepthFront();
+        final int depthFront2 = getDepthFront2();
+        final int depthBack = getDepthBack();
+        final int depthBack2 = getDepthBack2();
         if (glideTime == 0) {
             renderer.render(layer, Animal.getBirdImage(pi),
-                    x - (m * 80) - (mirror ? 31 : 0), y - 64, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 32, 32, 0, mirror, false);
+                    x - (m * 80) - (mirror ? 31 : 0), y - 64, depthBack, 0, 0, 32, 32, 0, mirror, false);
         } else if (glideTime == 1) {
             renderer.render(layer, Animal.getBirdImage(pi),
-                    x - (m * 64) - (mirror ? 31 : 0), y - 48, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 32, 32, 0, mirror, false);
+                    x - (m * 64) - (mirror ? 31 : 0), y - 48, depthBack, 0, 0, 32, 32, 0, mirror, false);
         } else if (glideTime == 2) {
             renderer.render(layer, pi.gliderUpImage = Animal.getBirdImage(pi.gliderUpImage, pi, "GlideUp"),
-                    x - (m * 66) - (mirror ? 63 : 0), y - 43, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 64, 64, 0, mirror, false);
+                    x - (m * 66) - (mirror ? 63 : 0), y - 43, depthBack, 0, 0, 64, 64, 0, mirror, false);
         } else if (glideTime == 3) {
             renderer.render(layer, pi.gliderUpImage = Animal.getBirdImage(pi.gliderUpImage, pi, "GlideUp"),
-                    x - (m * 50) - (mirror ? 63 : 0), y - 27, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 64, 64, 0, mirror, false);
+                    x - (m * 50) - (mirror ? 63 : 0), y - 27, depthBack, 0, 0, 64, 64, 0, mirror, false);
         } else if (glideAngle == GLIDE_HORIZONTAL) {
             renderer.render(layer, pi.gliderHorizImage = Animal.getBirdImage(pi.gliderHorizImage, pi, "GlideHoriz"),
-                    x - (m * 35) - (mirror ? 63 : 0), y - 10, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 64, 64, 0, mirror, false);
+                    x - (m * 35) - (mirror ? 63 : 0), y - 10, depthFront, 0, 0, 64, 64, 0, mirror, false);
         } else if (glideAngle == GLIDE_DOWN) {
             renderer.render(layer, pi.gliderDownImage = Animal.getBirdImage(pi.gliderDownImage, pi, "GlideDown"),
-                    x - (m * 35) - (mirror ? 63 : 0), y - 14, BotsnBoltsGame.DEPTH_PLAYER_FRONT_2, 0, 0, 64, 64, 0, mirror, false);
+                    x - (m * 35) - (mirror ? 63 : 0), y - 14, depthFront2, 0, 0, 64, 64, 0, mirror, false);
             if (exhaustIndex == 1) {
-                renderer.render(layer, pi.exhaustDiag1, x - (m * 5) - (mirror ? 3 : 0), y + 27, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 4, 4, 0, mirror, true);
+                renderer.render(layer, pi.exhaustDiag1, x - (m * 5) - (mirror ? 3 : 0), y + 27, depthFront, 0, 0, 4, 4, 0, mirror, true);
             } else if (exhaustIndex == 2) {
-                renderer.render(layer, pi.exhaustDiag2, x - (m * 7) - (mirror ? 7 : 0), y + 26, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 8, 8, 0, mirror, true);
+                renderer.render(layer, pi.exhaustDiag2, x - (m * 7) - (mirror ? 7 : 0), y + 26, depthFront, 0, 0, 8, 8, 0, mirror, true);
             }
         } else {
             renderer.render(layer, pi.gliderUpImage = Animal.getBirdImage(pi.gliderUpImage, pi, "GlideUp"),
-                    x - (m * 34) - (mirror ? 63 : 0), y - 11, BotsnBoltsGame.DEPTH_PLAYER_BACK, 0, 0, 64, 64, 0, mirror, false);
+                    x - (m * 34) - (mirror ? 63 : 0), y - 11, depthBack, 0, 0, 64, 64, 0, mirror, false);
             if (exhaustIndex == 1) {
                 // pi.exhaustDiag1 // Blocked by Player
             } else if (exhaustIndex == 2) {
-                renderer.render(layer, pi.exhaustDiag2, x - (m * 7) - (mirror ? 7 : 0), y + 5, BotsnBoltsGame.DEPTH_PLAYER_BACK_2, 0, 0, 8, 8, 0, mirror, false);
+                renderer.render(layer, pi.exhaustDiag2, x - (m * 7) - (mirror ? 7 : 0), y + 5, depthBack2, 0, 0, 8, 8, 0, mirror, false);
             }
         }
         renderViewNormal(renderer);
@@ -1433,6 +1440,22 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected int getDepthFront() {
         return BotsnBoltsGame.DEPTH_PLAYER_FRONT;
+    }
+    
+    protected int getDepthFront2() {
+        return BotsnBoltsGame.DEPTH_PLAYER_FRONT_2;
+    }
+    
+    protected int getDepthBack() {
+        return BotsnBoltsGame.DEPTH_PLAYER_BACK;
+    }
+    
+    protected int getDepthBack2() {
+        return BotsnBoltsGame.DEPTH_PLAYER_BACK_2;
+    }
+    
+    protected int getDepthOffset() {
+        return 0;
     }
     
     protected final void setHidden(final boolean hidden) {
@@ -2111,7 +2134,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final boolean isInBlockingPose() {
-        return Panctor.isAttached(shield) && shield.isVisible() && (shield.getView() == pi.shieldVert) && (shield.getPosition().getZ() > BotsnBoltsGame.DEPTH_PLAYER)
+        return Panctor.isAttached(shield) && shield.isVisible() && (shield.getView() == pi.shieldVert) && (shield.getPosition().getZ() > getPosition().getZ())
                 && (shield.getRot() == 0);
     }
     
@@ -4777,7 +4800,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         held.setVisible(Panctor.isAttached(player) && player.isVisible() && player.stateHandler.isPlayerRendered());
         held.changeView(ext.heldImage);
         final boolean playerMirror = player.getAimMirror();
-        held.getPosition().set(pos.getX() + (Player.getMirrorMultiplier(playerMirror) * ext.heldX) + (playerMirror ? pext.mirrorX : 0), pos.getY() + ext.heldY + player.offY, ext.heldZ);
+        held.getPosition().set(pos.getX() + (Player.getMirrorMultiplier(playerMirror) * ext.heldX) + (playerMirror ? pext.mirrorX : 0), pos.getY() + ext.heldY + player.offY, ext.heldZ + player.getDepthOffset());
         held.setMirror(ext.heldMirror ^ playerMirror);
         held.setFlip(ext.heldFlip);
         held.setRot(ext.heldRot);
@@ -5354,77 +5377,78 @@ public class Player extends Chr implements Warpable, StepEndListener {
             final boolean mirror = src.getAimMirror();
             final int m = getMirrorMultiplier(mirror), o = mirror ? -15 : 0;
             final long t = getClock() - src.lastShotFired;
+            final int depthFront = src.getDepthFront();
             if (trail == 1) {
                 if (t > 6) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y, depthFront, 0, 0, 16, 16, 0, mirror, false);
                 if (t > 4) {
                     return;
                 }
-                renderer.render(layer, swordTrails[0], x + (m * 17) + o, y - 8, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                renderer.render(layer, swordTrails[0], x + (m * 17) + o, y - 8, depthFront, 0, 0, 16, 16, 0, mirror, false);
                 if (t > 2) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y - 24, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, true);
+                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y - 24, depthFront, 0, 0, 16, 16, 0, mirror, true);
             } else if (trail == 2) {
                 if (t > 6) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y - 15, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, true);
+                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y - 15, depthFront, 0, 0, 16, 16, 0, mirror, true);
                 if (t > 4) {
                     return;
                 }
-                renderer.render(layer, swordTrails[0], x + (m * 17) + o, y + 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                renderer.render(layer, swordTrails[0], x + (m * 17) + o, y + 1, depthFront, 0, 0, 16, 16, 0, mirror, false);
                 if (t > 2) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y + 9, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                renderer.render(layer, swordTrails[1], x + (m * 13) + o, y + 9, depthFront, 0, 0, 16, 16, 0, mirror, false);
             } else if (trail == 3) {
                 if (t > 22) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * -23) + o, y - 2, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, !mirror, false);
+                renderer.render(layer, swordTrails[1], x + (m * -23) + o, y - 2, depthFront, 0, 0, 16, 16, 0, !mirror, false);
                 if (t > 20) {
                     return;
                 }
-                renderer.render(layer, swordTrails[0], x + (m * -22) + o, y - 9, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, !mirror, false);
+                renderer.render(layer, swordTrails[0], x + (m * -22) + o, y - 9, depthFront, 0, 0, 16, 16, 0, !mirror, false);
                 if (t > 18) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * -16) + o, y - 23, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, !mirror, true);
+                renderer.render(layer, swordTrails[1], x + (m * -16) + o, y - 23, depthFront, 0, 0, 16, 16, 0, !mirror, true);
                 if (t > 16) {
                     return;
                 }
-                renderer.render(layer, swordTrails[2], x + (m * -9) + o, y - 27, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, !mirror, true);
+                renderer.render(layer, swordTrails[2], x + (m * -9) + o, y - 27, depthFront, 0, 0, 16, 16, 0, !mirror, true);
                 if (t > 14) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * -2) + o, y - 30, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 1, mirror, true);
+                renderer.render(layer, swordTrails[1], x + (m * -2) + o, y - 30, depthFront, 0, 0, 16, 16, 1, mirror, true);
                 if (t > 12) {
                     return;
                 }
-                renderer.render(layer, swordTrails[0], x + (m * 13) + o, y - 31, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 3, mirror, false);
+                renderer.render(layer, swordTrails[0], x + (m * 13) + o, y - 31, depthFront, 0, 0, 16, 16, 3, mirror, false);
                 if (t > 10) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * 20) + o, y - 29, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 1, !mirror, true);
+                renderer.render(layer, swordTrails[1], x + (m * 20) + o, y - 29, depthFront, 0, 0, 16, 16, 1, !mirror, true);
                 if (t > 8) {
                     return;
                 }
-                renderer.render(layer, swordTrails[2], x + (m * 24) + o, y - 22, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, true);
+                renderer.render(layer, swordTrails[2], x + (m * 24) + o, y - 22, depthFront, 0, 0, 16, 16, 0, mirror, true);
                 if (t > 6) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * 28) + o, y - 16, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, true);
+                renderer.render(layer, swordTrails[1], x + (m * 28) + o, y - 16, depthFront, 0, 0, 16, 16, 0, mirror, true);
                 if (t > 4) {
                     return;
                 }
-                renderer.render(layer, swordTrails[0], x + (m * 27) + o, y - 1, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                renderer.render(layer, swordTrails[0], x + (m * 27) + o, y - 1, depthFront, 0, 0, 16, 16, 0, mirror, false);
                 if (t > 2) {
                     return;
                 }
-                renderer.render(layer, swordTrails[1], x + (m * 23) + o, y + 5, BotsnBoltsGame.DEPTH_PLAYER_FRONT, 0, 0, 16, 16, 0, mirror, false);
+                renderer.render(layer, swordTrails[1], x + (m * 23) + o, y + 5, depthFront, 0, 0, 16, 16, 0, mirror, false);
             }
         }
     }
