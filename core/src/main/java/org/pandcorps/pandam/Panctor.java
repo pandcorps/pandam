@@ -140,15 +140,17 @@ public class Panctor extends BasePantity implements SpecPanctor {
     private Panple boundMin;
     private Panple boundMax;
     private long boundClock = -1;
+    private Panview boundView = null;
 	    
     private final void initBound() {
         // Might be better to add modCount to Panple and check for pos/min/max changes
         final long ec = Pangine.getEngine().getClock();
-        if (ec == boundClock) {
+        final Panview view = impl.getView();
+        if ((ec == boundClock) && (view == boundView)) {
             return;
         }
         boundClock = ec;
-        final Panview view = impl.getView();
+        boundView = view;
         final boolean fmir, fflp;
         final int frot;
         final Panple fmin, fmax;

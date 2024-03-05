@@ -8230,6 +8230,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return new AiStreamProjectile(this, ox);
         }
         
+        @Override
+        protected final SpecProjectile newSwordProjectile() {
+            return new AiSwordProjectile(this);
+        }
+        
         protected final void startStill() {
             startHandler(stillHandler);
         }
@@ -8602,8 +8607,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             super(BotsnBoltsGame.transientImages, 12, 7);
             handlers.add(new StreamAttackHandler()); // 0
             handlers.add(new StreamAttackJumpsHandler()); // 1 (also a response to danger)
-            /*
             handlers.add(new WhipAttackRunHandler()); // 2
+            /*
             handlers.add(new WhipAttackDashHandler()); // 3
             handlers.add(new ShieldAttackJumpHandler()); // 4 (also a response to danger)
             handlers.add(new ShieldAttackWallGrabHandler()); // 5
@@ -8954,6 +8959,18 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if ((boss.shootTimer <= 0) && (boss.v > 0)) {
                 boss.startAttacking(5);
             }
+        }
+    }
+    
+    private static class WhipAttackRunHandler extends AttackRunHandler {
+        @Override
+        protected final ShootMode getShootMode() {
+            return Player.SHOOT_SWORD; // Will use whip for Transient
+        }
+        
+        @Override
+        protected final int initShootTimer() {
+            return 32;
         }
     }
     

@@ -571,18 +571,25 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         protected SwordProjectile(final Player src) {
             //TODO Don't draw burst on Player
             super(src, src.pi, Player.SHOOT_SWORD, src, 0, 0, POWER_MEDIUM);
-            setView(BotsnBoltsGame.getSwordHitBox());
+            initSwordProjectile(this, src);
+        }
+        
+        protected final static void initSwordProjectile(final Panctor prj, final Player src) {
+            prj.setView(BotsnBoltsGame.getSwordHitBox());
             final Panple pos = src.getPosition();
-            getPosition().set(pos.getX(), pos.getY() - 7);
+            prj.getPosition().set(pos.getX(), pos.getY() - 7);
         }
         
         @Override
         protected final void onStepEndProjectile() {
+            onStepEndSword(this, firstStep);
+            firstStep = false;
+        }
+        
+        protected final static void onStepEndSword(final Panctor prj, final boolean firstStep) {
             //TODO Keep for a couple more frames (but destroy immediately if it hits something)
-            if (firstStep) {
-                firstStep = false;
-            } else {
-                destroy();
+            if (!firstStep) {
+                prj.destroy();
             }
         }
     }

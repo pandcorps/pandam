@@ -608,7 +608,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
     }
     
-    public static class AiStreamProjectile extends AiProjectile implements SpecStreamProjectile {
+    protected static class AiStreamProjectile extends AiProjectile implements SpecStreamProjectile {
         private final int ox;
         protected boolean srcMirror;
         
@@ -640,6 +640,21 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         public final void onStepEnd(final float y) {
             StreamProjectile.onStepEnd(this, y);
+        }
+    }
+    
+    protected static class AiSwordProjectile extends AiProjectile implements StepEndListener {
+        private boolean firstStep = true;
+        
+        protected AiSwordProjectile(final Player src) {
+            super(src, src.pi, Player.SHOOT_SWORD, src, 0, 0, Projectile.POWER_MEDIUM);
+            SwordProjectile.initSwordProjectile(this, src);
+        }
+        
+        @Override
+        public final void onStepEnd(final StepEndEvent event) {
+            SwordProjectile.onStepEndSword(this, firstStep);
+            firstStep = false;
         }
     }
     

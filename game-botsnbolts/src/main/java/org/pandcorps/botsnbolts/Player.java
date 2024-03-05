@@ -190,7 +190,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected final SpecStreamProjectile[] streamProjectiles = new SpecStreamProjectile[STREAM_SIZE];
     private int streamStaminaCounter = 0;
-    private SwordProjectile lastSwordProjectile = null;
+    private SpecProjectile lastSwordProjectile = null;
     protected Spring spring = null;
     private SlideKick slideKick = null;
     protected Carrier carrier = null;
@@ -582,6 +582,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected SpecStreamProjectile newStreamProjectile(final int ox) {
         return new StreamProjectile(this, ox);
+    }
+    
+    protected SpecProjectile newSwordProjectile() {
+        return new SwordProjectile(this);
     }
     
     protected final int getStreamOffsetX() {
@@ -4798,7 +4802,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
                     player.currentShootSet = wieldSets[2];
                     player.currentShootTime = WIELD_TIME_LONG;
                     player.lastShotDelay = SHOOT_DELAY_WIELD_LONG;
-                    player.lastSwordProjectile.power = Projectile.POWER_MAXIMUM;
+                    player.lastSwordProjectile.assignPower(Projectile.POWER_MAXIMUM);
                     player.lastSwordProjectile.setView(BotsnBoltsGame.getSwordFullHitBox());
                 } else if (currentShootSet == wieldSets[1]) {
                     player.currentShootSet = wieldSets[0];
@@ -4834,7 +4838,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
 
         @Override
         protected final void createProjectile(final Player player) {
-            player.lastSwordProjectile = new SwordProjectile(player);
+            player.lastSwordProjectile = player.newSwordProjectile();
         }
         
         @Override
