@@ -349,8 +349,12 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void toggleJumpMode(final int dir) {
+        setJumpMode(toggleInputMode(JUMP_MODES, prf.jumpMode, dir));
+    }
+    
+    protected final void setJumpMode(final JumpMode jumpMode) {
         prf.jumpMode.onDeselect(this);
-        prf.jumpMode = toggleInputMode(JUMP_MODES, prf.jumpMode, dir);
+        prf.jumpMode = jumpMode;
     }
     
     private final void toggleShootMode(final int dir) {

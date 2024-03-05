@@ -8155,8 +8155,8 @@ public abstract class Boss extends Enemy implements SpecBoss {
             shootTimer = 0;
             extra = 0;
             turnTowardPlayer();
-            prf.shootMode = SHOOT_NORMAL;
-            prf.jumpMode = JUMP_NORMAL;
+            setShootMode(SHOOT_NORMAL);
+            setJumpMode(JUMP_NORMAL);
             this.handler = handler;
             if (handler != null) {
                 handler.init(this);
@@ -8744,7 +8744,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private static class AttackRunHandler extends RunHandler {
         @Override
         protected final void init(final AiBoss boss) {
-            boss.prf.shootMode = getShootMode();
+            boss.setShootMode(getShootMode());
             startAttack(boss);
         }
         
@@ -8803,7 +8803,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private static class RollHandler extends RunHandler {
         @Override
         protected final void init(final AiBoss boss) {
-            boss.prf.jumpMode = Player.JUMP_BALL;
+            boss.setJumpMode(Player.JUMP_BALL);
             boss.startBall();
         }
         
@@ -8880,14 +8880,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class SpreadAttackJumpHandler extends AttackJumpHandler {
         @Override
         protected final void init(final AiBoss boss) {
-            boss.prf.shootMode = Player.SHOOT_SPREAD;
+            boss.setShootMode(Player.SHOOT_SPREAD);
         }
     }
     
     private static class RapidAttackJumpHandler extends JumpHandler {
         @Override
         protected final void init(final AiBoss boss) {
-            boss.prf.shootMode = Player.SHOOT_RAPID;
+            boss.setShootMode(Player.SHOOT_RAPID);
         }
         
         @Override
@@ -8931,7 +8931,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class ChargeAttackJumpsHandler extends JumpsHandler {
         @Override
         protected final void init(final AiBoss boss) {
-            boss.prf.shootMode = Player.SHOOT_CHARGE;
+            boss.setShootMode(Player.SHOOT_CHARGE);
         }
         
         @Override
@@ -8951,7 +8951,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private static class StreamAttackJumpsHandler extends JumpsHandler {
         @Override
         protected final void init(final AiBoss boss) {
-            boss.prf.shootMode = Player.SHOOT_STREAM;
+            boss.setShootMode(Player.SHOOT_STREAM);
         }
         
         @Override
@@ -8991,7 +8991,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class RapidAttackHandler extends AiHandler {
         @Override
         protected final int initTimer(final AiBoss boss) {
-            boss.prf.shootMode = Player.SHOOT_RAPID;
+            boss.setShootMode(Player.SHOOT_RAPID);
             boss.startAttacking(16);
             return 22;
         }
@@ -9005,7 +9005,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class StreamAttackHandler extends AiHandler {
         @Override
         protected final int initTimer(final AiBoss boss) {
-            boss.prf.shootMode = Player.SHOOT_STREAM;
+            boss.setShootMode(Player.SHOOT_STREAM);
             boss.startAttacking(50);
             return 64;
         }
@@ -9019,7 +9019,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     private final static class GrappleHandler extends AiHandler {
         @Override
         protected final void init(final AiBoss boss) {
-            boss.prf.jumpMode = Player.JUMP_GRAPPLING_HOOK;
+            boss.setJumpMode(Player.JUMP_GRAPPLING_HOOK);
             boss.jump();
         }
         
