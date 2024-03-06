@@ -8628,10 +8628,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
             handlers.add(new StreamAttackHandler()); // 0
             handlers.add(new StreamAttackJumpsHandler()); // 1 (also a response to danger)
             handlers.add(new WhipAttackRunHandler()); // 2
-            /*
             handlers.add(new WhipAttackDashHandler()); // 3
+            /*
             handlers.add(new ShieldAttackJumpHandler()); // 4 (also a response to danger)
             handlers.add(new ShieldAttackWallGrabHandler()); // 5
+            handlers.add(new GlideBombHandler()); // 5
             */
             deactivateCharacters();
         }
@@ -8653,6 +8654,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void addUpgrades(final Set<Upgrade> upgrades) {
             upgrades.add(Profile.UPGRADE_DASH);
+            upgrades.add(Profile.UPGRADE_GLIDER);
             upgrades.add(Profile.UPGRADE_SHIELD);
             upgrades.add(Profile.UPGRADE_SLIDE); // Could be interesting, but currently only used to slide through narrow passages
             upgrades.add(Profile.UPGRADE_STREAM);
@@ -8991,6 +8993,27 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final int initShootTimer() {
             return 32;
+        }
+    }
+    
+    private static class WhipAttackDashHandler extends AiHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.setShootMode(Player.SHOOT_SWORD);
+        }
+        
+        @Override
+        protected final int initTimer(final AiBoss boss) {
+            return 30;
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            if (boss.waitTimer == 29) {
+                boss.startDashIfNeeded(Long.MAX_VALUE, boss.getMirrorMultiplier());
+            } else if (boss.waitTimer == 14) {
+                boss.attack();
+            }
         }
     }
     
