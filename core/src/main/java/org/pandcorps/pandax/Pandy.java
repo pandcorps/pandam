@@ -27,7 +27,7 @@ import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.impl.*;
 
 // Pandam Body
-public class Pandy extends Panctor implements StepListener {
+public class Pandy extends Panctor implements StepListener, SpecVelocity {
 	private final Panple vel = new ImplPanple();
 	private final Panple acc;
 
@@ -51,6 +51,7 @@ public class Pandy extends Panctor implements StepListener {
 		vel.add(acc);
 	}
 
+	@Override
 	public final Panple getVelocity() {
 		return vel;
 	}

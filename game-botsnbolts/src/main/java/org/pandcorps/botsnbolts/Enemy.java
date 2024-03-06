@@ -144,16 +144,21 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     
     @Override
     public void onShot(final SpecPlayerProjectile prj) {
+        onShot(this, prj);
+    }
+    
+    protected final static void onShot(final SpecEnemy enemy, final SpecPlayerProjectile prj) {
         if (prj.getPower() <= 0) {
             return;
-        } else if (!isVulnerableToProjectile(prj)) {
+        } else if (!enemy.isVulnerableToProjectile(prj)) {
             prj.bounce();
             return;
         }
-        onHurt(prj);
+        enemy.onHurt(prj);
     }
     
-    protected void onHurt(final SpecPlayerProjectile prj) {
+    @Override
+    public void onHurt(final SpecPlayerProjectile prj) {
         onHurt(this, prj);
     }
     
@@ -216,7 +221,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         this.lastStreamCollision = lastStreamCollision;
     }
     
-    protected boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+    @Override
+    public boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
         return true;
     }
     
@@ -551,6 +557,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         protected final int getDamage() {
             return power;
+        }
+        
+        @Override
+        protected final boolean isBlockable() {
+            return true;
         }
         
         @Override
@@ -1827,7 +1838,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
 
         @Override
-        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+        public final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return (prj.getPower() >= Projectile.POWER_MAXIMUM) || isExposedToProjectile(prj);
         }
         
@@ -1845,7 +1856,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected void onHurt(final SpecPlayerProjectile prj) {
+        public void onHurt(final SpecPlayerProjectile prj) {
             if (shielded && !isExposedToProjectile(prj)) {
                 shielded = false;
                 Projectile.burst(prj, prj.getPlayerImages().burst, getPosition());
@@ -2758,7 +2769,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+        public final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return (frame > 1) && (prj.isMirror() != isMirror());
         }
         
@@ -2917,7 +2928,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void onHurt(final SpecPlayerProjectile prj) {
+        public final void onHurt(final SpecPlayerProjectile prj) {
             super.onHurt(prj);
             lastHurt = Pangine.getEngine().getClock();
         }
@@ -3315,7 +3326,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+        public final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             if (mode == MODE_WAIT) {
                 startWait();
             }

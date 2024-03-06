@@ -27,7 +27,6 @@ import java.util.concurrent.*;
 
 import org.pandcorps.botsnbolts.Animal.*;
 import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
-import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Extra.*;
 import org.pandcorps.botsnbolts.HudMeter.*;
 import org.pandcorps.botsnbolts.Profile.*;
@@ -190,6 +189,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final ImplPanple grapplingPosition = new ImplPanple();
     protected final SpecStreamProjectile[] streamProjectiles = new SpecStreamProjectile[STREAM_SIZE];
     private int streamStaminaCounter = 0;
+    protected long lastStreamBounce = NULL_CLOCK;
     private SpecProjectile lastSwordProjectile = null;
     protected Spring spring = null;
     private SlideKick slideKick = null;
@@ -2118,13 +2118,24 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return (prf.shootMode == SHOOT_SHIELD) || isPassiveShieldEnabled();
     }
     
-    protected final boolean isBlocking(final EnemyProjectile prj) {
+    protected final boolean isBlocking(final SpecVelocity prj) {
         if (!isShieldEnabled()) {
             return false;
         } else if (!isInBlockingPose()) {
             return false;
         }
-        final float prjVelX = prj.getVelocity().getX(), prjX = prj.getPosition().getX(), x = getPosition().getX();
+        float prjVelX = prj.getVelocity().getX(), prjX = prj.getPosition().getX();
+        final float x = getPosition().getX();
+        if ((prjVelX == 0) && (prj instanceof SpecStreamProjectile)) {
+            final Player src = ((SpecStreamProjectile) prj).getSource();
+            final float srcX = src.getPosition().getX();
+            if (x < srcX) {
+                prjVelX = -1;
+            } else if (x > srcX) {
+                prjVelX = 1;
+            }
+            prjX = srcX;
+        }
         if ((prjVelX < 0) && !getAimMirror() && (prjX > x)) {
             return true;
         } else if ((prjVelX > 0) && getAimMirror() && (prjX < x)) {
@@ -4673,6 +4684,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void createProjectile(final Player player) {
+            if (getClock() <= (player.lastStreamBounce + 1)) {
+                return;
+            }
             for (int i = 0; i < STREAM_SIZE; i++) {
                 SpecStreamProjectile streamProjectile = player.streamProjectiles[i];
                 if (isDestroyed(streamProjectile)) {
@@ -5491,7 +5505,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     // A Player-like projectile (from an actual Player or an AiBoss)
-    public static interface SpecProjectile extends SpecPanctor, Collidable {
+    public static interface SpecProjectile extends SpecVelocity, Collidable {
         public void assignPower(final int power);
         
         public Player getSource();

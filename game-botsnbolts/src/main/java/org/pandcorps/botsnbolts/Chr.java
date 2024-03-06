@@ -145,6 +145,8 @@ public abstract class Chr extends GuyPlatform {
         
         public void onShot(final SpecPlayerProjectile prj);
         
+        public void onHurt(final SpecPlayerProjectile prj);
+        
         public boolean isHarmful();
         
         public boolean onAttack(final Player player);
@@ -164,6 +166,8 @@ public abstract class Chr extends GuyPlatform {
         public long getLastStreamCollision();
         
         public void setLastStreamCollision(final long lastStreamCollision);
+        
+        public boolean isVulnerableToProjectile(final SpecPlayerProjectile prj);
     }
     
     protected static interface SpecBoss extends SpecEnemy {

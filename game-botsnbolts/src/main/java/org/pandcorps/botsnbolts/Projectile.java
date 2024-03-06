@@ -266,6 +266,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
     public abstract static class ChrProjectile extends Chr implements SpecProjectile {
         protected final Player src;
         private int power;
+        private Panple velocity = null;
         
         protected ChrProjectile(final Player src, final int offX, final int h) {
             super(offX, h);
@@ -294,6 +295,15 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         
         public float getVelocityX() {
             return hv;
+        }
+        
+        @Override
+        public Panple getVelocity() {
+            if (velocity == null) {
+                velocity = new ImplPanple();
+            }
+            velocity.set(hv, v);
+            return velocity;
         }
 
         @Override
@@ -374,12 +384,13 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         
         public final static void bounce(final SpecStreamProjectile bounced) {
             boolean detaching = false;
+            bounced.getSource().lastStreamBounce = Pangine.getEngine().getClock();
             for (final SpecStreamProjectile prj : bounced.getSource().streamProjectiles) {
                 if (prj == bounced) {
                     detaching = true;
                 }
                 if (detaching) {
-                    prj.detach();
+                    detach(prj);
                 }
             }
         }

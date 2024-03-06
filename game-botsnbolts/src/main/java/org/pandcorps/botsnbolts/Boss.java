@@ -627,8 +627,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected final static boolean isPlayerDangerous() {
         for (final PlayerContext pc : BotsnBoltsGame.pcs) {
             final Profile prf = PlayerContext.getProfile(pc);
-            if ((prf != null) && (prf.shootMode == Player.SHOOT_RAPID)) {
-                return true;
+            if (prf != null) {
+                final ShootMode shootMode = prf.shootMode;
+                if ((shootMode == Player.SHOOT_RAPID) || (shootMode == Player.SHOOT_STREAM)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -705,7 +708,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     protected abstract Panmage getStill();
     
     @Override
-    protected void onHurt(final SpecPlayerProjectile prj) {
+    public void onHurt(final SpecPlayerProjectile prj) {
         final int oldHealth = health;
         super.onHurt(prj);
         handleHurtIfDangerous(this);
@@ -1560,7 +1563,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected void onHurt(final SpecPlayerProjectile prj) {
+        public void onHurt(final SpecPlayerProjectile prj) {
             final int oldHealth = health;
             super.onHurt(prj);
             final int damage = oldHealth - health;
@@ -1621,7 +1624,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+        public final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return prj.getPosition().getY() < (getPosition().getY() + 48.0f);
         }
         
@@ -1693,7 +1696,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+        public final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return false;
         }
         
@@ -8091,7 +8094,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (nextHandler != null) {
                 startHandler(nextHandler);
             } if (handler == null) {
-                startHandler(rand(handlers));
+                startHandler(pickRandomHandler());
             }
             if ((v <= 0) && (lastV > 0)) {
                 handler.onJumpPeak(this);
@@ -8112,6 +8115,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
                     }
                 }
             }
+        }
+        
+        protected AiHandler pickRandomHandler() {
+            return rand(handlers);
         }
         
         protected final boolean isStill() {
@@ -8155,13 +8162,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
             shootTimer = 0;
             extra = 0;
             turnTowardPlayer();
-            setShootMode(SHOOT_NORMAL);
+            setShootMode(getWaitShootMode());
             setJumpMode(JUMP_NORMAL);
             this.handler = handler;
             if (handler != null) {
                 handler.init(this);
                 waitTimer = handler.initTimer(this);
             }
+        }
+        
+        protected ShootMode getWaitShootMode() {
+            return SHOOT_NORMAL;
         }
         
         protected final void mirror() {
@@ -8272,7 +8283,17 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         public final void onShot(final SpecPlayerProjectile prj) {
+            Enemy.onShot(this, prj);
+        }
+        
+        @Override
+        public final void onHurt(final SpecPlayerProjectile prj) {
             Enemy.onHurt(this, prj);
+        }
+        
+        @Override
+        public final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+            return !isBlocking(prj);
         }
         
         @Override
@@ -8626,11 +8647,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected Transient2() {
             super(BotsnBoltsGame.transientImages, 12, 7);
             handlers.add(new StreamAttackHandler()); // 0
-            handlers.add(new StreamAttackJumpsHandler()); // 1 (also a response to danger)
+            handlers.add(new StreamAttackJumpsHandler()); // 1
             handlers.add(new WhipAttackRunHandler()); // 2
             handlers.add(new WhipAttackDashHandler()); // 3
             /*
-            handlers.add(new ShieldAttackJumpHandler()); // 4 (also a response to danger)
+            handlers.add(new ShieldAttackHandler()); // 4
             handlers.add(new ShieldAttackWallGrabHandler()); // 5
             handlers.add(new GlideBombHandler()); // 5
             */
@@ -8638,8 +8659,26 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final AiHandler pickRandomHandler() {
+            if (isPlayerDangerous()) {
+                // or StreamAttackJumpsHandler
+                return new ShieldBlockHandler();
+            }
+            /*
+            If near wall, allow ShieldAttackWallGrabHandler or GlideBombHandler.
+            Else Allow ShieldAttackJumpHandler.
+            */
+            return super.pickRandomHandler();
+        }
+        
+        @Override
         public final int pickResponseToDanger() {
-            return Mathtil.rand() ? 1 : 4; // Could also have a ShieldBlockHandler, but probably only in response to danger
+            return 1; // Overridden by pickRandomHandler
+        }
+        
+        @Override
+        protected final ShootMode getWaitShootMode() {
+            return isPlayerDangerous() ? SHOOT_SHIELD : SHOOT_NORMAL;
         }
         
         @Override
@@ -9056,6 +9095,19 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void onStep(final AiBoss boss) {
             // AiBoss handles everything based on shootTimer
+        }
+    }
+    
+    private final static class ShieldBlockHandler extends AiHandler {
+        @Override
+        protected final int initTimer(final AiBoss boss) {
+            boss.setShootMode(Player.SHOOT_SHIELD);
+            return 30;
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            // Just block
         }
     }
     
@@ -9900,7 +9952,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
+        public final boolean isVulnerableToProjectile(final SpecPlayerProjectile prj) {
             return state == STATE_DEFEATED;
         }
         
@@ -10725,7 +10777,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onHurt(final SpecPlayerProjectile prj) {
+        public final void onHurt(final SpecPlayerProjectile prj) {
             if (this == hand) {
                 super.onHurt(prj);
             } else {
@@ -11128,7 +11180,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onHurt(final SpecPlayerProjectile prj) {
+        public final void onHurt(final SpecPlayerProjectile prj) {
             wagon.onHurt(prj);
         }
         
