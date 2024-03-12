@@ -38,6 +38,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
     protected final static int POWER_BOMB = 1;
     protected final static int POWER_MEDIUM = 3;
     protected final static int POWER_MAXIMUM = 5;
+    protected final static int POWER_SHIELD = 2;
     protected final static int POWER_IMPOSSIBLE = Integer.MAX_VALUE;
     protected final static int OFF_X = 15;
     protected final static int OFF_Y = 13;
@@ -425,7 +426,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         }
     }
     
-    public static class ShieldProjectile extends Projectile {
+    public static class ShieldProjectile extends Projectile implements SpecShieldProjectile {
         private final static byte TARGET_NONE = -1;
         private final static byte TARGET_ENEMY = 0;
         private final static byte TARGET_POWER_UP = 1;
@@ -434,13 +435,22 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         private Panctor target = null;
         private float targetOffsetY = 0;
         private int vel = 0;
+        private float initialHv = 0;
         private List<PowerUp> collectedPowerUps = null;
         
         protected ShieldProjectile(final Player src) {
-            super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, 2);
-            src.lastShieldProjectile = this;
-            getPosition().addY(-12);
-            setView(src.pi.shieldCircle);
+            super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, POWER_SHIELD);
+            initShieldProjectile(this, src);
+            pickTarget();
+        }
+        
+        protected final static void initShieldProjectile(final SpecShieldProjectile prj, final Player src) {
+            src.lastShieldProjectile = prj;
+            prj.getPosition().addY(-12);
+            prj.setView(src.pi.shieldCircle);
+        }
+        
+        private final void pickTarget() {
             Panctor nearestEnemy = null, nearestPowerUp = null, shootableButton = null;
             double nearestEnemyDistance = Float.MAX_VALUE, nearestPowerUpDistance = Float.MAX_VALUE;
             final Panple pos = src.getPosition();
@@ -491,64 +501,126 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
             } else if (shootableButton != null) {
                 setTarget(shootableButton, 0);
             } else {
-                vel = getMirrorMultiplier(src.getAimMirror()) * VEL_SHIELD;
+                setVelocityWithoutTarget(this);
             }
         }
         
-        private final void setTarget(final Panctor target, final float targetOffsetY) {
+        protected final static void setVelocityWithoutTarget(final SpecShieldProjectile prj) {
+            prj.setVel(getMirrorMultiplier(prj.getSource().getAimMirror()) * VEL_SHIELD);
+        }
+        
+        @Override
+        public final int getVel() {
+            return vel;
+        }
+        
+        @Override
+        public final void setVel(final int vel) {
+            this.vel = vel;
+        }
+        
+        @Override
+        public final Panctor getTarget() {
+            return target;
+        }
+        
+        @Override
+        public final float getTargetOffsetY() {
+            return targetOffsetY;
+        }
+        
+        @Override
+        public final void setTarget(final Panctor target, final float targetOffsetY) {
             this.target = target;
             this.targetOffsetY = targetOffsetY;
         }
         
         @Override
+        public final float getInitialHv() {
+            return initialHv;
+        }
+        
+        @Override
+        public final void setInitialHv(final float initialHv) {
+            this.initialHv = initialHv;
+        }
+        
+        @Override
         protected final void onStepEndProjectile() {
-            final Panple pos = getPosition();
-            if (!isInView() && (target != src)) {
-                startReturnToPlayer();
+            onStepEndShieldProjectile(this);
+        }
+        
+        protected final static void onStepEndShieldProjectile(final SpecShieldProjectile prj) {
+            final Panple pos = prj.getPosition();
+            final Player src = prj.getSource();
+            final Panctor target = prj.getTarget();
+            if (!prj.isInView() && (target != src)) {
+                startReturnToPlayer(prj);
             } else if (target == null) {
-                pos.addX(vel);
+                pos.addX(prj.getVel());
             } else if (target.isDestroyed()) {
                 if (target == src) {
-                    onCaught();
-                    destroy();
+                    onCaught(prj);
+                    prj.destroy();
                 } else {
-                    startReturnToPlayer();
+                    startReturnToPlayer(prj);
                 }
             } else {
-                setToTarget(scratch);
+                setToTarget(prj, scratch);
                 Panple.subtract(scratch, scratch, pos);
                 final double mag = scratch.getMagnitude2();
                 if (mag < VEL_SHIELD) {
                     if (target == src) {
                         src.setShootMode(Player.SHOOT_SHIELD);
-                        destroy();
+                        prj.destroy();
                     } else {
-                        setToTarget(pos);
-                        startReturnToPlayer();
+                        setToTarget(prj, pos);
+                        startReturnToPlayer(prj);
                     }
                 } else {
                     scratch.setMagnitude2(VEL_SHIELD);
                     pos.add2(scratch);
+                    final float hv = scratch.getX();
+                    if (hv != 0) {
+                        final float initial = prj.getInitialHv();
+                        if (initial == 0) {
+                            prj.setInitialHv(hv);
+                        } else if ((hv < 0 && initial > 0) || (hv > 0 && initial < 0)) {
+                            startReturnToPlayer(prj);
+                        }
+                    }
                 }
             }
-            for (final PowerUp powerUp : Coltil.unnull(collectedPowerUps)) {
+            if (prj.getClass() != ShieldProjectile.class) {
+                return;
+            }
+            final ShieldProjectile sprj = (ShieldProjectile) prj;
+            for (final PowerUp powerUp : Coltil.unnull(sprj.collectedPowerUps)) {
                 powerUp.getPosition().set2(pos);
             }
         }
         
-        private final void setToTarget(final Panple p) {
-            final Panple tpos = target.getPosition();
-            p.set(tpos.getX(), tpos.getY() + targetOffsetY);
+        protected final static void setToTarget(final SpecShieldProjectile prj, final Panple p) {
+            final Panple tpos = prj.getTarget().getPosition();
+            p.set(tpos.getX(), tpos.getY() + prj.getTargetOffsetY());
         }
         
         private final void startReturnToPlayer() {
-            setTarget(src, 1);
+            startReturnToPlayer(this);
         }
         
-        private final void onCaught() {
+        protected final static void startReturnToPlayer(final SpecShieldProjectile prj) {
+            prj.setTarget(prj.getSource(), 1);
+        }
+        
+        protected final static void onCaught(final SpecShieldProjectile prj) {
             //TODO If didn't travel far, Player could still be in the throw image (which does not have Extra for rendering shield); end throw image or render shield
-            for (final PowerUp powerUp : Coltil.unnull(collectedPowerUps)) {
-                powerUp.getPosition().set2(src.getPosition());
+            if (prj.getClass() != ShieldProjectile.class) {
+                return;
+            }
+            final ShieldProjectile sprj = (ShieldProjectile) prj;
+            for (final PowerUp powerUp : Coltil.unnull(sprj.collectedPowerUps)) {
+                powerUp.getPosition().set2(sprj.src.getPosition());
             }
         }
         
@@ -561,7 +633,6 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         
         @Override
         public final void burst() {
-            //TODO Boss version of this will need same behavior
             startReturnToPlayer();
         }
         

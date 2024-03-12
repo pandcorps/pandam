@@ -216,7 +216,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private int boardY = 0;
     private HeldShield shield = null;
     private HeldSword sword = null;
-    protected ShieldProjectile lastShieldProjectile = null;
+    protected SpecShieldProjectile lastShieldProjectile = null;
     protected boolean mechReceivingInput = false;
     protected boolean mechWalking = false;
     private int mechDir = 1;
@@ -586,6 +586,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     
     protected SpecStreamProjectile newStreamProjectile(final int ox) {
         return new StreamProjectile(this, ox);
+    }
+    
+    protected SpecShieldProjectile newShieldProjectile() {
+        return new ShieldProjectile(this);
     }
     
     protected SpecProjectile newSwordProjectile() {
@@ -2126,8 +2130,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         float prjVelX = prj.getVelocity().getX(), prjX = prj.getPosition().getX();
         final float x = getPosition().getX();
-        if ((prjVelX == 0) && (prj instanceof SpecStreamProjectile)) {
-            final Player src = ((SpecStreamProjectile) prj).getSource();
+        if ((prjVelX == 0) && ((prj instanceof SpecStreamProjectile) || (prj instanceof SpecShieldProjectile))) {
+            final Player src = ((SpecProjectile) prj).getSource();
             final float srcX = src.getPosition().getX();
             if (x < srcX) {
                 prjVelX = -1;
@@ -4797,7 +4801,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         @Override
         protected final void createProjectile(final Player player) {
-            new ShieldProjectile(player);
+            player.newShieldProjectile();
         }
         
         @Override
@@ -5520,11 +5524,29 @@ public class Player extends Chr implements Warpable, StepEndListener {
     // A Player-like stream projectile (from an actual Player or an AiBoss)
     public static interface SpecStreamProjectile extends SpecProjectile {
         public int getOffsetX();
+        
         public void initSourceMirror();
         
         public boolean getSourceMirror();
         
         public void onStepEnd(final float y);
+    }
+    
+    // A Player-like shield projectile (from an actual Player or an AiBoss)
+    public static interface SpecShieldProjectile extends SpecProjectile {
+        public int getVel();
+        
+        public void setVel(final int vel);
+        
+        public Panctor getTarget();
+        
+        public float getTargetOffsetY();
+        
+        public float getInitialHv();
+        
+        public void setInitialHv(final float initialHv);
+        
+        public void setTarget(final Panctor target, final float targetOffsetY);
     }
     
     // A projectile from an actual Player that could hurt an Enemy

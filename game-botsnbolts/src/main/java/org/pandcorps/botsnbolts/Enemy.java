@@ -590,7 +590,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        public final void burst() {
+        public void burst() {
             Projectile.burst(this, pi.burst, getPosition());
             destroy();
         }
@@ -651,6 +651,83 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         @Override
         public final void onStepEnd(final float y) {
             StreamProjectile.onStepEnd(this, y);
+        }
+    }
+    
+    protected static class AiShieldProjectile extends AiProjectile implements SpecShieldProjectile, StepEndListener {
+        private Panctor target = null;
+        private float targetOffsetY = 0;
+        private int vel = 0;
+        private float initialHv = 0;
+        
+        protected AiShieldProjectile(final Player src) {
+            super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, Projectile.POWER_SHIELD);
+            ShieldProjectile.initShieldProjectile(this, src);
+            pickTarget();
+        }
+        
+        private final void pickTarget() {
+            final Player target = getNearestPlayer(src);
+            if (isAttached(target) && (target.health > 0)) {
+                setTarget(target, 0);
+            } else {
+                ShieldProjectile.setVelocityWithoutTarget(this);
+            }
+        }
+        
+        @Override
+        public final void onStepEnd(final StepEndEvent event) {
+            ShieldProjectile.onStepEndShieldProjectile(this);
+        }
+        
+        @Override
+        public final void burst() {
+            ShieldProjectile.startReturnToPlayer(this);
+        }
+        
+        @Override
+        public final void ricochet() {
+            ShieldProjectile.startReturnToPlayer(this);
+        }
+        
+        @Override
+        public final void onAllOob(final AllOobEvent event) {
+        }
+        
+        @Override
+        public final int getVel() {
+            return vel;
+        }
+        
+        @Override
+        public final void setVel(final int vel) {
+            this.vel = vel;
+        }
+        
+        @Override
+        public final Panctor getTarget() {
+            return target;
+        }
+        
+        @Override
+        public final float getTargetOffsetY() {
+            return targetOffsetY;
+        }
+        
+        @Override
+        public final void setTarget(final Panctor target, final float targetOffsetY) {
+            this.target = target;
+            this.targetOffsetY = targetOffsetY;
+        }
+        
+        @Override
+        public final float getInitialHv() {
+            return initialHv;
+        }
+        
+        @Override
+        public final void setInitialHv(final float initialHv) {
+            this.initialHv = initialHv;
         }
     }
     

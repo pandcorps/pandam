@@ -8242,6 +8242,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
+        protected final SpecShieldProjectile newShieldProjectile() {
+            return new AiShieldProjectile(this);
+        }
+        
+        @Override
         protected final SpecProjectile newSwordProjectile() {
             return new AiSwordProjectile(this);
         }
@@ -8644,25 +8649,33 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static class Transient2 extends AiBoss {
+        protected final List<AiHandler> dangerHandlers = new ArrayList<AiHandler>();
+        
         protected Transient2() {
             super(BotsnBoltsGame.transientImages, 12, 7);
+            
             handlers.add(new StreamAttackHandler()); // 0
-            handlers.add(new StreamAttackJumpsHandler()); // 1
+            final StreamAttackJumpsHandler streamAttackJumpsHandler = new StreamAttackJumpsHandler();
+            handlers.add(streamAttackJumpsHandler); // 1
             handlers.add(new WhipAttackRunHandler()); // 2
             handlers.add(new WhipAttackDashHandler()); // 3
+            handlers.add(new ShieldAttackJumpHandler()); // 4
             /*
-            handlers.add(new ShieldAttackHandler()); // 4
             handlers.add(new ShieldAttackWallGrabHandler()); // 5
             handlers.add(new GlideBombHandler()); // 5
             */
+            
+            dangerHandlers.add(streamAttackJumpsHandler);
+            dangerHandlers.add(new ShieldBlockHandler());
+            
             deactivateCharacters();
         }
         
         @Override
         protected final AiHandler pickRandomHandler() {
             if (isPlayerDangerous()) {
-                // or StreamAttackJumpsHandler
-                return new ShieldBlockHandler();
+                overrideRand = -1;
+                return rand(dangerHandlers);
             }
             /*
             If near wall, allow ShieldAttackWallGrabHandler or GlideBombHandler.
@@ -8942,6 +8955,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void init(final AiBoss boss) {
             boss.setShootMode(Player.SHOOT_SPREAD);
+        }
+    }
+    
+    private final static class ShieldAttackJumpHandler extends AttackJumpHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.setShootMode(Player.SHOOT_SHIELD);
         }
     }
     
