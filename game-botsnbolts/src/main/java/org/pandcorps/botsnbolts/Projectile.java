@@ -441,21 +441,22 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         protected ShieldProjectile(final Player src) {
             super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, POWER_SHIELD);
             initShieldProjectile(this, src);
-            pickTarget();
         }
         
         protected final static void initShieldProjectile(final SpecShieldProjectile prj, final Player src) {
             src.lastShieldProjectile = prj;
             prj.getPosition().addY(-12);
             prj.setView(src.pi.shieldCircle);
+            if (!prj.pickTarget()) {
+                setVelocityWithoutTarget(prj);
+            }
         }
         
-        private final void pickTarget() {
+        @Override
+        public final boolean pickTarget() {
             Panctor nearestEnemy = null, nearestPowerUp = null, shootableButton = null;
             double nearestEnemyDistance = Float.MAX_VALUE, nearestPowerUpDistance = Float.MAX_VALUE;
             final Panple pos = src.getPosition();
-            final float x = pos.getX();
-            final boolean mirror = src.isMirror();
             for (final Panctor actor : src.getLayerRequired().getActors()) {
                 final byte targetType;
                 if (actor instanceof Enemy) {
@@ -472,12 +473,11 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
                         continue;
                     }
                     final Panple tpos = actor.getPosition();
-                    final float tx = tpos.getX();
                     //TODO If shield projectile is still in air when changing room, then change mode back to shield
                     //TODO Don't track nearest enemy/powerup/button separately, just track nearest target, but weight by type.
                     // Will shoot enemy if a powerup is a little closer. Will shoot powerup if if it's much closer.
                     final double distance = tpos.getDistance2(pos); //TODO Maybe average total distance with y distance to prioritize enemies directly in front of Player
-                    if (((tx > x) && !mirror) || ((tx < x) && mirror)) {
+                    if (isTargetable(src, actor)) {
                         if (targetType == TARGET_ENEMY) {
                             if ((nearestEnemy == null) || (distance < nearestEnemyDistance)) {
                                 nearestEnemy = actor;
@@ -501,7 +501,16 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
             } else if (shootableButton != null) {
                 setTarget(shootableButton, 0);
             } else {
-                setVelocityWithoutTarget(this);
+                return false;
+            }
+            return true;
+        }
+        
+        protected final static boolean isTargetable(final Panctor src, final Panctor target) {
+            if (src.isMirror()) {
+                return target.getPosition().getX() < src.getPosition().getX();
+            } else {
+                return target.getPosition().getX() > src.getPosition().getX();
             }
         }
         

@@ -5546,6 +5546,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         
         public void setInitialHv(final float initialHv);
         
+        public boolean pickTarget();
+        
         public void setTarget(final Panctor target, final float targetOffsetY);
     }
     

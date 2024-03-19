@@ -8963,6 +8963,21 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void init(final AiBoss boss) {
             boss.setShootMode(Player.SHOOT_SHIELD);
         }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            if (boss.waitTimer > 1000) {
+                boss.jump();
+                boss.waitTimer = 1000;
+            } else if ((boss.waitTimer > 5) && boss.isGrounded() && Player.SHOOT_SHIELD.isCurrentlyAllowed(boss)) {
+                boss.waitTimer = 5;
+            }
+        }
+        
+        @Override
+        protected final boolean isDoneWhenLanded(final AiBoss boss) {
+            return false;
+        }
     }
     
     private static class RapidAttackJumpHandler extends JumpHandler {

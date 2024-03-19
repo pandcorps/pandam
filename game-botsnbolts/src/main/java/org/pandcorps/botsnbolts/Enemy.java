@@ -324,11 +324,17 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     }
     
     protected final static Player getNearestPlayer(final Panctor src) {
+        return getNearestPlayer(src, false);
+    }
+    
+    protected final static Player getNearestPlayer(final Panctor src, final boolean mustBeTargetable) {
         Player nearest = null;
         float nearestDistance = Float.MAX_VALUE;
         for (final PlayerContext pc : BotsnBoltsGame.pcs) {
             final Player player = PlayerContext.getPlayer(pc);
-            if (Panctor.isDestroyed(player)) {
+            if (!isAttached(player) || (player.health <= 0)) { // Could still return a detached/destroyed Player below if no other found and not required to be targetable
+                continue;
+            } else if (mustBeTargetable && !ShieldProjectile.isTargetable(src, player)) {
                 continue;
             }
             final float distance = getDistanceX(src, player);
@@ -337,7 +343,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
                 nearestDistance = distance;
             }
         }
-        return (nearest == null) ? BotsnBoltsGame.getPrimaryPlayer() : nearest;
+        return (!mustBeTargetable && (nearest == null)) ? BotsnBoltsGame.getPrimaryPlayer() : nearest;
     }
     
     protected final float getNearestPlayerX() {
@@ -663,16 +669,17 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         protected AiShieldProjectile(final Player src) {
             super(src, src.pi, Player.SHOOT_SHIELD, src, 0, 0, Projectile.POWER_SHIELD);
             ShieldProjectile.initShieldProjectile(this, src);
-            pickTarget();
         }
         
-        private final void pickTarget() {
-            final Player target = getNearestPlayer(src);
-            if (isAttached(target) && (target.health > 0)) {
+        @Override
+        public final boolean pickTarget() {
+            final Player target = getNearestPlayer(src, true);
+            if (target != null) {
                 setTarget(target, 0);
             } else {
-                ShieldProjectile.setVelocityWithoutTarget(this);
+                return false;
             }
+            return true;
         }
         
         @Override
@@ -692,6 +699,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         public final void onAllOob(final AllOobEvent event) {
+        }
+        
+        @Override
+        protected final void onOutOfView() {
         }
         
         @Override
