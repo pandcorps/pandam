@@ -694,6 +694,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            if (target == src) {
+                return;
+            }
+            prj.setPower(prj.getPower() - 1);
             ShieldProjectile.startReturnToPlayer(this);
         }
         

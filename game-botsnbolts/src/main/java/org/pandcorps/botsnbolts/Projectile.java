@@ -660,7 +660,9 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         
         @Override
         public void onCollision(final CollisionEvent event) {
-            if (event.getCollider() instanceof AiProjectile) {
+            final Collidable collider = event.getCollider();
+            if (collider instanceof AiProjectile) {
+                ((AiProjectile) collider).burst();
                 startReturnToPlayer();
             }
         }
