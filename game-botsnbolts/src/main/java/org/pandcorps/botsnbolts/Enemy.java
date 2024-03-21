@@ -693,6 +693,11 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
+        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+            ShieldProjectile.startReturnToPlayer(this);
+        }
+        
+        @Override
         public final void ricochet() {
             ShieldProjectile.startReturnToPlayer(this);
         }
@@ -703,6 +708,16 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         protected final void onOutOfView() {
+        }
+        
+        @Override
+        protected final boolean isVulnerableToSword() {
+            return false;
+        }
+        
+        @Override
+        protected final boolean isDestroyedOnImpact() {
+            return false;
         }
         
         @Override

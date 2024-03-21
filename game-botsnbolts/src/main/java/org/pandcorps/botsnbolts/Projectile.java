@@ -24,6 +24,7 @@ package org.pandcorps.botsnbolts;
 
 import java.util.*;
 
+import org.pandcorps.botsnbolts.Enemy.*;
 import org.pandcorps.botsnbolts.Player.*;
 import org.pandcorps.botsnbolts.ShootableDoor.*;
 import org.pandcorps.core.*;
@@ -426,11 +427,12 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         }
     }
     
-    public static class ShieldProjectile extends Projectile implements SpecShieldProjectile {
+    public static class ShieldProjectile extends Projectile implements SpecShieldProjectile, CollisionListener {
         private final static byte TARGET_NONE = -1;
         private final static byte TARGET_ENEMY = 0;
         private final static byte TARGET_POWER_UP = 1;
-        private final static byte TARGET_BUTTON = 2;
+        private final static byte TARGET_AI_SHIELD = 2;
+        private final static byte TARGET_BUTTON = 3;
         private final static int VEL_SHIELD = Player.VEL_PROJECTILE;
         private Panctor target = null;
         private float targetOffsetY = 0;
@@ -454,7 +456,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         
         @Override
         public final boolean pickTarget() {
-            Panctor nearestEnemy = null, nearestPowerUp = null, shootableButton = null;
+            Panctor nearestEnemy = null, nearestPowerUp = null, aiShield = null, shootableButton = null;
             double nearestEnemyDistance = Float.MAX_VALUE, nearestPowerUpDistance = Float.MAX_VALUE;
             final Panple pos = src.getPosition();
             for (final Panctor actor : src.getLayerRequired().getActors()) {
@@ -463,6 +465,8 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
                     targetType = TARGET_ENEMY;
                 } else if (actor instanceof PowerUp) {
                     targetType = TARGET_POWER_UP;
+                } else if (actor instanceof AiShieldProjectile) {
+                    targetType = TARGET_AI_SHIELD;
                 } else if (actor instanceof ShootableButton){
                     targetType = TARGET_BUTTON;
                 } else {
@@ -488,13 +492,17 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
                                 nearestPowerUp = actor;
                                 nearestPowerUpDistance = distance;
                             }
+                        } else if (targetType == TARGET_AI_SHIELD) {
+                            aiShield = actor;
                         } else {
                             shootableButton = actor;
                         }
                     }
                 }
             }
-            if (nearestEnemy != null) {
+            if (aiShield != null) {
+                setTarget(aiShield, 0);
+            } else if (nearestEnemy != null) {
                 setTarget(nearestEnemy, 0);
             } else if (nearestPowerUp != null) {
                 setTarget(nearestPowerUp, 0);
@@ -648,6 +656,13 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         @Override
         public final void bounce() {
             startReturnToPlayer();
+        }
+        
+        @Override
+        public void onCollision(final CollisionEvent event) {
+            if (event.getCollider() instanceof AiProjectile) {
+                startReturnToPlayer();
+            }
         }
         
         @Override
