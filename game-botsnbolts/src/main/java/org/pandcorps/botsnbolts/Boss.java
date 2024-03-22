@@ -7981,6 +7981,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected int waitTimer = 0;
         protected int shootTimer = 0;
         protected int extra = 0;
+        protected int extra2 = 0;
         private float lastV = 0;
         private long lastStreamCollision = NULL_CLOCK;
         
@@ -8148,6 +8149,16 @@ public abstract class Boss extends Enemy implements SpecBoss {
             return waitTimer == WAIT_INDEFINITE;
         }
         
+        protected final boolean isNearWall() {
+            final float x = getPosition().getX();
+            if (x < 64) {
+                return true;
+            } else if (x >= (BotsnBoltsGame.GAME_W - 64)) {
+                return true;
+            }
+            return false;
+        }
+        
         protected final void startHandler(final AiHandler handler) {
             if ((isPermanent(this.handler)) || (isPermanent(nextHandler))) {
                 return;
@@ -8258,6 +8269,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final boolean onWall(final byte xResult) {
             super.onWall(xResult);
+            if (!handler.isDoneWhenReachedWall(this)) {
+                return true;
+            }
             needMirror = true;
             startStill();
             return true;
@@ -8649,6 +8663,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected final static class Transient2 extends AiBoss {
+        protected final List<AiHandler> nearWallHandlers = new ArrayList<AiHandler>();
         protected final List<AiHandler> dangerHandlers = new ArrayList<AiHandler>();
         
         protected Transient2() {
@@ -8660,9 +8675,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
             handlers.add(new WhipAttackRunHandler()); // 2
             handlers.add(new WhipAttackDashHandler()); // 3
             handlers.add(new ShieldAttackJumpHandler()); // 4
+            
+            for (int i = 0; i < 3; i++) {
+                nearWallHandlers.add(handlers.get(i));
+            }
+            nearWallHandlers.add(new ShieldAttackWallGrabHandler());
             /*
-            handlers.add(new ShieldAttackWallGrabHandler()); // 5
-            handlers.add(new GlideBombHandler()); // 5
+            nearWallHandlers.add(new GlideBombHandler());
             */
             
             dangerHandlers.add(streamAttackJumpsHandler);
@@ -8676,11 +8695,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (isPlayerDangerous()) {
                 overrideRand = -1;
                 return rand(dangerHandlers);
+            } else if (isNearWall()) {
+                return rand(nearWallHandlers);
             }
-            /*
-            If near wall, allow ShieldAttackWallGrabHandler or GlideBombHandler.
-            Else Allow ShieldAttackJumpHandler.
-            */
             return super.pickRandomHandler();
         }
         
@@ -8743,6 +8760,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected abstract void onStep(final AiBoss boss);
         
         protected void onJumpPeak(final AiBoss boss) {
+        }
+        
+        protected boolean isDoneWhenReachedWall(final AiBoss boss) {
+            return true;
         }
         
         protected boolean isDoneWhenLanded(final AiBoss boss) {
@@ -8992,6 +9013,69 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if ((boss.shootTimer <= 0) && (boss.v > 0) && (boss.v < 5)) {
                 boss.startAttacking(20);
             }
+        }
+    }
+    
+    private static class AttackWallGrabHandler extends AiHandler {
+        private final static int WALL_JUMP_COUNT = 2;
+        
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.extra2 = 0;
+            initAttackWallGrabHandler(boss);
+        }
+        
+        protected void initAttackWallGrabHandler(final AiBoss boss) {
+        }
+        
+        @Override
+        protected void onStep(final AiBoss boss) {
+            if (boss.isGrounded()) {
+                if (boss.extra2 > 0) {
+                    if (boss.prf.shootMode.isCurrentlyAllowed(boss) && (boss.waitTimer > 5)) {
+                        boss.waitTimer = 5;
+                    }
+                    return;
+                }
+                boss.extra = 0;
+                boss.extra2 = 0;
+                boss.jump();
+            } else if (boss.stateHandler == Player.WALL_GRAB_HANDLER) {
+                if (boss.extra == 6) {
+                    boss.extra = 0;
+                    if (boss.extra2 > WALL_JUMP_COUNT) {
+                        return;
+                    } else if (boss.extra2 == WALL_JUMP_COUNT) {
+                        boss.attack();
+                    } else {
+                        boss.jump();
+                    }
+                    boss.extra2++;
+                } else {
+                    boss.extra++;
+                }
+            } else if (boss.getPosition().getX() > MID_X) {
+                boss.right();
+            } else {
+                boss.left();
+            }
+        }
+        
+        @Override
+        protected final boolean isDoneWhenReachedWall(final AiBoss boss) {
+            return false;
+        }
+        
+        @Override
+        protected final boolean isDoneWhenLanded(final AiBoss boss) {
+            return false;
+        }
+    }
+    
+    private static class ShieldAttackWallGrabHandler extends AttackWallGrabHandler {
+        @Override
+        protected final void initAttackWallGrabHandler(final AiBoss boss) {
+            boss.setShootMode(Player.SHOOT_SHIELD);
         }
     }
     
