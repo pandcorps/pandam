@@ -334,7 +334,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             final Player player = PlayerContext.getPlayer(pc);
             if (!isAttached(player) || (player.health <= 0)) { // Could still return a detached/destroyed Player below if no other found and not required to be targetable
                 continue;
-            } else if (mustBeTargetable && !ShieldProjectile.isTargetable(src, player)) {
+            } else if (mustBeTargetable && !ShieldProjectile.isTargetable((Player) src, player)) {
                 continue;
             }
             final float distance = getDistanceX(src, player);

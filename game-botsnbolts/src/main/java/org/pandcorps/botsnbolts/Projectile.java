@@ -514,8 +514,8 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
             return true;
         }
         
-        protected final static boolean isTargetable(final Panctor src, final Panctor target) {
-            if (src.isMirror()) {
+        protected final static boolean isTargetable(final Player src, final Panctor target) {
+            if (src.getAimMirror()) {
                 return target.getPosition().getX() < src.getPosition().getX();
             } else {
                 return target.getPosition().getX() > src.getPosition().getX();
