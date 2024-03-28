@@ -92,7 +92,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int VEL_BOARD = 5;
     private final static int VEL_GLIDE_START = 4;
     private final static int VEL_GLIDE_DIVE = 0;
-    private final static int GLIDE_MAX_SPEED = 5;
+    private final static int GLIDE_MAX_SPEED = 4; // 5;
     private final static float GLIDE_ACCELERATION = 0.1875f;
     private final static float GLIDE_DECELERATION = 0.125f;
     private final static float GLIDE_BOOST_THRESHOLD = 7;
@@ -2358,6 +2358,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final boolean onGlidePullUp(final boolean forced) {
+        /*
+        While I was developing and frequently testing this, it felt natural and allowed a lot of control.
+        When I tried using it a while later, it didn't feel very intuitive.
+        Reverting to something simpler.
         if (isMirror()) {
             //chv = Math.min(chv + GLIDE_DECELERATION, 0);
             chv += GLIDE_DECELERATION;
@@ -2377,6 +2381,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             return false;
         }
+        */
+        if (v >= -4.0f) {
+            return false;
+        }
         prevV = 0;
         v = -v;
         if (v < GLIDE_BOOST_THRESHOLD) {
@@ -2393,11 +2401,16 @@ public class Player extends Chr implements Warpable, StepEndListener {
         } else {
             chv = Math.min(chv + GLIDE_ACCELERATION, GLIDE_MAX_SPEED);
         }
+        /*
         if (!pulledUpDuringThisGlide) {
             addV(GLIDE_DIVE_INITIAL_ACCELERATION_BOOST);
             return;
         } else if (v < 0) {
             addV(GLIDE_DIVE_ACCELERATION_BOOST); // In addition to gravity applied elsewhere
+            return;
+        }
+        */
+        if ((v <= 0) || !pulledUpDuringThisGlide) {
             return;
         }
         v = VEL_GLIDE_DIVE;
