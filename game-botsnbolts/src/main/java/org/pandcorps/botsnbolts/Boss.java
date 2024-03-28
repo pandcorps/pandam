@@ -2303,7 +2303,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void burst(final Player player) {
+        public final void burst(final Player player) {
             onShatter();
         }
         
@@ -2974,12 +2974,12 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isDestroyedOnImpact() {
+        public final boolean isDestroyedOnImpact() {
             return false;
         }
         
         @Override
-        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
             prj.burst();
         }
         
@@ -3148,7 +3148,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean isDestroyedOnImpact() {
+        public final boolean isDestroyedOnImpact() {
             return false;
         }
         
@@ -3590,7 +3590,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
             prj.bounce();
         }
         
@@ -3800,10 +3800,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 @Override protected final int getDamage() {
                     return 4;
                 }
-                @Override protected final boolean isDestroyedOnImpact() {
+                @Override public final boolean isDestroyedOnImpact() {
                     return false;
                 }
-                @Override protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+                @Override public final void onCollisionWithPlayerProjectile(final Projectile prj) {
                     prj.bounce();
                 }
             };
@@ -4052,7 +4052,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
             BotsnBoltsGame.fxDefeat.startSound();
             final int oldHealth = health, oldPower = prj.power;
             health -= oldPower;
@@ -5203,7 +5203,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
             if (launched) {
                 prj.bounce();
             }
@@ -5523,7 +5523,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
             prj.burst();
         }
         
@@ -6382,7 +6382,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean hurt(final Player player) {
+        public final boolean hurt(final Player player) {
             if (player.freezeIndefinite()) {
                 src.target = player;
                 return true;
@@ -6641,7 +6641,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
             prj.burst();
         }
         
@@ -7018,13 +7018,13 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final boolean hurt(final Player player) {
+        public final boolean hurt(final Player player) {
             resumePlayers();
             return super.hurt(player);
         }
         
         @Override
-        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
             prj.burst();
         }
         
@@ -8134,15 +8134,23 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final void moveX() {
+            moveX(hv, isMirror());
+        }
+        
+        protected final void moveX(final int hv, final boolean mirror) {
             if (hv < 0) {
                 left();
             } else if (hv > 0) {
                 right();
-            } else if (isMirror()) {
+            } else if (mirror) {
                 left();
             } else {
                 right();
             }
+        }
+        
+        protected final void moveBackX() {
+            moveX(-hv, !isMirror());
         }
         
         protected final boolean isIndefinite() {
@@ -8260,6 +8268,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final SpecProjectile newSwordProjectile() {
             return new AiSwordProjectile(this);
+        }
+        
+        @Override
+        protected final SpecProjectile newFallingBomb() {
+            return new AiFallingBomb(this);
         }
         
         protected final void startStill() {
@@ -8680,9 +8693,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
                 nearWallHandlers.add(handlers.get(i));
             }
             nearWallHandlers.add(new ShieldAttackWallGrabHandler());
-            /*
             nearWallHandlers.add(new GlideBombHandler());
-            */
             
             dangerHandlers.add(streamAttackJumpsHandler);
             dangerHandlers.add(new ShieldBlockHandler());
@@ -9076,6 +9087,30 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void initAttackWallGrabHandler(final AiBoss boss) {
             boss.setShootMode(Player.SHOOT_SHIELD);
+        }
+    }
+    
+    private static class GlideBombHandler extends AiHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.setJumpMode(Player.JUMP_GLIDER);
+        }
+        
+        @Override
+        protected void onStep(final AiBoss boss) {
+            if (boss.isGrounded()) {
+                boss.moveX();
+                boss.jump();
+            } else if (boss.stateHandler != Player.GLIDER_HANDLER) { // Jumping but not yet gliding
+                boss.moveX();
+                if (boss.v < -2.0f) {
+                    boss.jump(); // Start glide
+                }
+            } else if (boss.v < -2.0f) {
+                boss.moveBackX(); // Pull up
+            } else if (boss.v < 0.0f) {
+                boss.attack();
+            }
         }
     }
     
@@ -9601,11 +9636,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void burst(final Player player) {
+        public final void burst(final Player player) {
         }
         
         @Override
-        protected final boolean isDestroyedOnImpact() {
+        public final boolean isDestroyedOnImpact() {
             return false;
         }
         

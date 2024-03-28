@@ -405,7 +405,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         return new EnemyProjectile(src, ox, oy, vx, vy);
     }
     
-    protected static class EnemyProjectile extends Pandy implements CollisionListener, AllOobListener {
+    protected static class EnemyProjectile extends Pandy implements SpecEnemyProjectile, AllOobListener {
         protected EnemyProjectile(final Panctor src, final int ox, final int oy, final float vx, final float vy) {
             this(BotsnBoltsGame.getEnemyProjectile(), src, ox, oy, vx, vy);
         }
@@ -446,29 +446,34 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         
         @Override
         public void onCollision(final CollisionEvent event) {
+            onCollision(this, event);
+        }
+        
+        protected static void onCollision(final SpecEnemyProjectile prj, final CollisionEvent event) {
             final Collidable collider = event.getCollider();
             if (collider.getClass() == Player.class) {
                 final Player player = (Player) collider;
-                if (isBlocked(player)) {
-                    ricochet();
-                } else if (hurt(player)) {
-                    burst(player);
-                    if (isDestroyedOnImpact()) {
-                        destroy();
+                if (prj.isBlocked(player)) {
+                    prj.ricochet();
+                } else if (prj.hurt(player)) {
+                    prj.burst(player);
+                    if (prj.isDestroyedOnImpact()) {
+                        prj.destroy();
                     }
                 }
             } else if (collider instanceof Projectile) {
                 final Projectile playerProjectile = (Projectile) collider;
-                if (isVulnerableToSword() && (playerProjectile.getShootMode() == Player.SHOOT_SWORD)) {
+                if (prj.isVulnerableToSword() && (playerProjectile.getShootMode() == Player.SHOOT_SWORD)) {
                     BotsnBoltsGame.fxAttack.startSound();
-                    destroy();
+                    prj.destroy();
                 } else {
-                    onCollisionWithPlayerProjectile(playerProjectile);
+                    prj.onCollisionWithPlayerProjectile(playerProjectile);
                 }
             }
         }
         
-        protected boolean isBlocked(final Player player) {
+        @Override
+        public boolean isBlocked(final Player player) {
             if (!isBlockable()) {
                 return false;
             } else if (!player.isBlocking(this)) {
@@ -477,7 +482,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             return true;
         }
         
-        protected void ricochet() {
+        @Override
+        public void ricochet() {
             new Bounce(this);
         }
         
@@ -485,7 +491,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             return getClass() == EnemyProjectile.class;
         }
         
-        protected boolean hurt(final Player player) {
+        @Override
+        public boolean hurt(final Player player) {
             return player.hurt(getDamage());
         }
         
@@ -493,16 +500,17 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             return 1;
         }
         
-        //@OverrideMe
-        protected void onCollisionWithPlayerProjectile(final Projectile prj) {
+        @Override
+        public void onCollisionWithPlayerProjectile(final Projectile prj) {
         }
         
-        //@OverrideMe
-        protected boolean isVulnerableToSword() {
+        @Override
+        public boolean isVulnerableToSword() {
             return true;
         }
         
-        protected void burst(final Player player) {
+        @Override
+        public void burst(final Player player) {
             burstEnemy(this);
         }
         
@@ -519,7 +527,8 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             Projectile.burst(src, BotsnBoltsGame.enemyBurst, loc.getX() + offX, loc.getY() + offY);
         }
         
-        protected boolean isDestroyedOnImpact() {
+        @Override
+        public boolean isDestroyedOnImpact() {
             return true;
         }
         
@@ -571,7 +580,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void burst(final Player player) {
+        public final void burst(final Player player) {
             burst();
         }
         
@@ -650,7 +659,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void ricochet() {
+        public final void ricochet() {
             StreamProjectile.bounce(this);
         }
         
@@ -693,7 +702,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
             if (target == src) {
                 return;
             }
@@ -715,12 +724,12 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final boolean isVulnerableToSword() {
+        public final boolean isVulnerableToSword() {
             return false;
         }
         
         @Override
-        protected final boolean isDestroyedOnImpact() {
+        public final boolean isDestroyedOnImpact() {
             return false;
         }
         
@@ -776,6 +785,51 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
     }
     
+    protected static class AiFallingBomb extends FallingBomb implements SpecEnemyProjectile, SpecProjectile {
+        protected AiFallingBomb(final Player src) {
+            super(src);
+        }
+
+        @Override
+        public final void onCollision(final CollisionEvent event) {
+            EnemyProjectile.onCollision(this, event);
+        }
+        
+        @Override
+        public final boolean isBlocked(final Player player) {
+            return false;
+        }
+        
+        @Override
+        public final void ricochet() {
+            EnemyProjectile.burstEnemy(this);
+        }
+        
+        @Override
+        public boolean hurt(final Player player) {
+            return player.hurt(getPower());
+        }
+        
+        @Override
+        public final void onCollisionWithPlayerProjectile(final Projectile prj) {
+        }
+        
+        @Override
+        public final boolean isVulnerableToSword() {
+            return true;
+        }
+        
+        @Override
+        public final void burst(final Player player) {
+            EnemyProjectile.burstEnemy(this);
+        }
+        
+        @Override
+        public final boolean isDestroyedOnImpact() {
+            return true;
+        }
+    }
+    
     protected static class TimedEnemyProjectile extends EnemyProjectile {
         int timer;
         
@@ -818,7 +872,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final boolean isVulnerableToSword() {
+        public final boolean isVulnerableToSword() {
             return false;
         }
     }
@@ -869,13 +923,13 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final void burst(final Player player) {
+        public final void burst(final Player player) {
             final Panple pos = player.getPosition();
             Projectile.burst(this, BotsnBoltsGame.enemyBurst, pos.getX(), pos.getY() + Player.CENTER_Y);
         }
         
         @Override
-        protected final boolean isDestroyedOnImpact() {
+        public final boolean isDestroyedOnImpact() {
             return false;
         }
         
@@ -983,7 +1037,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
         
         @Override
-        protected final boolean hurt(final Player player) {
+        public final boolean hurt(final Player player) {
             return player.freeze();
         }
         

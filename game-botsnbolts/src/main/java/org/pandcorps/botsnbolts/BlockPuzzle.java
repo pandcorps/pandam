@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2023, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -710,12 +710,12 @@ public abstract class BlockPuzzle {
         }
         
         @Override
-        protected final boolean isDestroyedOnImpact() {
+        public final boolean isDestroyedOnImpact() {
             return false;
         }
         
         @Override
-        protected final void burst(final Player player) {
+        public final void burst(final Player player) {
         }
         
         @Override
@@ -998,12 +998,12 @@ public abstract class BlockPuzzle {
         }
         
         @Override
-        protected final boolean isDestroyedOnImpact() {
+        public final boolean isDestroyedOnImpact() {
             return false;
         }
         
         @Override
-        protected final void burst(final Player player) {
+        public final void burst(final Player player) {
         }
         
         @Override

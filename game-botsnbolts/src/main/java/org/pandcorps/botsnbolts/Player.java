@@ -596,6 +596,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return new SwordProjectile(this);
     }
     
+    protected SpecProjectile newFallingBomb() {
+        return new PlayerFallingBomb(this);
+    }
+    
     protected final int getStreamOffsetX() {
         if (stateHandler == WALL_GRAB_HANDLER) {
             return 3;
@@ -3751,7 +3755,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
             final long clock = getClock();
             if (clock - player.lastShotFired > SHOOT_DELAY_DEFAULT) {
                 final Panple pos = player.getPosition();
-                new PlayerFallingBomb(player).getPosition().set(pos.getX() + (12 * player.getMirrorMultiplier()), pos.getY() + 8);
+                player.newFallingBomb().getPosition().set(pos.getX() + (12 * player.getMirrorMultiplier()), pos.getY() + 8);
                 player.afterShoot(clock);
                 player.lastShotPosed = NULL_CLOCK;
             }
@@ -5571,6 +5575,22 @@ public class Player extends Chr implements Warpable, StepEndListener {
         public void bounce();
         
         public float getVelocityX();
+    }
+    
+    public static interface SpecEnemyProjectile extends CollisionListener {
+        public boolean isBlocked(final Player player);
+        
+        public void ricochet();
+        
+        public boolean hurt(final Player player);
+        
+        public void onCollisionWithPlayerProjectile(final Projectile prj);
+        
+        public boolean isVulnerableToSword();
+        
+        public void burst(final Player player);
+        
+        public boolean isDestroyedOnImpact();
     }
     
     protected static interface RoomChangeListener extends SpecPanctor {
