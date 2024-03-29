@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2023, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 import org.pandcorps.botsnbolts.BlockPuzzle.*;
+import org.pandcorps.botsnbolts.Boss.*;
 import org.pandcorps.botsnbolts.BotsnBoltsGame.*;
 import org.pandcorps.botsnbolts.Carrier.*;
 import org.pandcorps.botsnbolts.Enemy.*;
@@ -59,6 +60,9 @@ public abstract class RoomLoader {
     private final static Map<Character, Tile[][]> patterns = new HashMap<Character, Tile[][]>();
     private final static Map<Character, RoomFunction> functions = new HashMap<Character, RoomFunction>();
     private static Shader shader = null;
+    protected static ShootMode shootModeForced = null;
+    protected static JumpMode jumpModeForced = null;
+    protected static boolean passiveShieldForced = false;
     protected final static Map<String, String> variables = new HashMap<String, String>(); // Room variables
     protected final static Map<String, String> levelVariables = new HashMap<String, String>();
     private static Character alt = null;
@@ -248,6 +252,8 @@ public abstract class RoomLoader {
                 enm(seg);
             } else if ("BOS".equals(name)) { // Boss
                 bos(seg);
+            } else if ("AIB".equals(name)) { // AiBoss
+                aib(seg);
             } else if ("SHP".equals(name)) { // Shootable Block Puzzle
                 shp(seg);
             } else if ("TMP".equals(name)) { // Timed Block Puzzle
@@ -831,8 +837,12 @@ public abstract class RoomLoader {
     }
     
     private final static void bos(final Segment seg) throws Exception {
+        addBoss(newBoss(seg));
+    }
+    
+    private final static void addBoss(final Panctor boss) {
         setStartRoomNeeded(false);
-        addActor(newBoss(seg));
+        addActor(boss);
     }
     
     private final static Boss newBoss(final Segment seg) throws Exception {
@@ -849,6 +859,14 @@ public abstract class RoomLoader {
     
     private final static Constructor<? extends Enemy> getBossConstructor(final String enemyType) {
         return getEnemyConstructor(Boss.class, enemyType);
+    }
+    
+    private final static void aib(final Segment seg) throws Exception {
+        addBoss(newAiBoss(seg));
+    }
+    
+    private final static AiBoss newAiBoss(final Segment seg) throws Exception {
+        return (AiBoss) getActorConstructor(Boss.class, seg.getValue(2)).newInstance(seg);
     }
     
     private final static Map<String, RoomFunction> functionTypes = new HashMap<String, RoomFunction>();
@@ -1306,6 +1324,9 @@ public abstract class RoomLoader {
         patterns.clear();
         functions.clear();
         shader = null;
+        shootModeForced = null;
+        jumpModeForced = null;
+        passiveShieldForced = false;
         variables.clear();
         alt = null;
         bossDoors.clear();
@@ -1321,6 +1342,24 @@ public abstract class RoomLoader {
     protected final static void activate() {
         for (final BlockPuzzle blockPuzzle : blockPuzzles) {
             blockPuzzle.activate();
+        }
+    }
+    
+    protected final static void setShootModeForced(final ShootMode shootModeForced) {
+        RoomLoader.shootModeForced = shootModeForced;
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            if (pc.player != null) {
+                pc.player.setShootMode(shootModeForced);
+            }
+        }
+    }
+    
+    protected final static void setJumpModeForced(final JumpMode jumpModeForced) {
+        RoomLoader.jumpModeForced = jumpModeForced;
+        for (final PlayerContext pc : BotsnBoltsGame.pcs) {
+            if (pc.player != null) {
+                pc.player.setJumpMode(jumpModeForced);
+            }
         }
     }
     

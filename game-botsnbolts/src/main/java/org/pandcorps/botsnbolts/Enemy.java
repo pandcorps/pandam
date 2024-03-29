@@ -66,11 +66,15 @@ public abstract class Enemy extends Chr implements SpecEnemy {
     protected Enemy(final int offX, final int h, final int x, final int y, final int health) {
         super(offX, h);
         this.health = health;
-        final Panple pos = getPosition();
-        BotsnBoltsGame.tm.savePositionXy(pos, x, y);
-        pos.addX(getInitialOffsetX());
-        pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+        setTileCoordinates(this, x, y, getInitialOffsetX());
         initTileCoordinates(x, y);
+    }
+    
+    protected final static void setTileCoordinates(final Panctor actor, final int x, final int y, final int offX) {
+        final Panple pos = actor.getPosition();
+        BotsnBoltsGame.tm.savePositionXy(pos, x, y);
+        pos.addX(offX);
+        pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
     }
     
     protected boolean isAllowed() {

@@ -7985,12 +7985,14 @@ public abstract class Boss extends Enemy implements SpecBoss {
         private float lastV = 0;
         private long lastStreamCollision = NULL_CLOCK;
         
+        protected AiBoss(final PlayerImages pi, final Segment seg) {
+            this(pi, getX(seg), getY(seg));
+        }
+        
         protected AiBoss(final PlayerImages pi, final int x, final int y) {
             super(newPlayerContext(pi));
             addUpgrades(prf.upgrades);
-            final Panple pos = getPosition();
-            BotsnBoltsGame.tm.savePositionXy(pos, x, y);
-            pos.setZ(BotsnBoltsGame.DEPTH_ENEMY);
+            setTileCoordinates(this, x, y, 0);
             setMirror(true);
             BotsnBoltsGame.addActor(this);
             ai = new BossAi();
@@ -11967,6 +11969,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final int initStillTimer() {
+            return initStillTimerFinal();
+        }
+        
+        protected final static int initStillTimerFinal() {
             return Boss.initStillTimer(12, 15);
         }
         
@@ -12094,6 +12100,44 @@ public abstract class Boss extends Enemy implements SpecBoss {
             coat.getVelocity().set(2, 1);
             BotsnBoltsGame.addActor(coat);
             return coat;
+        }
+    }
+    
+    protected final static class Final2 extends AiBoss {
+        protected Final2(final Segment seg) {
+            super(BotsnBoltsGame.finalImages, seg);
+            init();
+        }
+        
+        protected Final2(final int x, final int y) {
+            super(BotsnBoltsGame.finalImages, x, y);
+            init();
+        }
+        
+        private final void init() {
+            handlers.add(new ShieldBlockHandler());
+            handlers.add(new JumpsHandler());
+            RoomLoader.setShootModeForced(SHOOT_SWORD);
+            RoomLoader.setJumpModeForced(JUMP_NORMAL);
+            RoomLoader.passiveShieldForced = true;
+            setShootMode(SHOOT_SWORD);
+            setJumpMode(JUMP_NORMAL);
+        }
+        
+        @Override
+        protected final void addUpgrades(final Set<Upgrade> upgrades) {
+            upgrades.add(Profile.UPGRADE_SWORD);
+            upgrades.add(Profile.UPGRADE_SHIELD);
+        }
+
+        @Override
+        protected final int initStillTimer() {
+            return Final.initStillTimerFinal();
+        }
+        
+        @Override
+        protected final ShootMode getWaitShootMode() {
+            return SHOOT_SWORD;
         }
     }
     

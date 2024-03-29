@@ -94,11 +94,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private final static int VEL_GLIDE_DIVE = 0;
     private final static int GLIDE_MAX_SPEED = 4; // 5;
     private final static float GLIDE_ACCELERATION = 0.1875f;
-    private final static float GLIDE_DECELERATION = 0.125f;
+    //private final static float GLIDE_DECELERATION = 0.125f;
     private final static float GLIDE_BOOST_THRESHOLD = 7;
-    private final static float GLIDE_DIVE_INITIAL_ACCELERATION_BOOST = gGlide / 4.0f;
-    private final static float GLIDE_DIVE_ACCELERATION_BOOST = gGlide / 2.0f;
-    private final static float GLIDE_PULL_UP_ACCELERATION_BOOST = -gGlide * 3.0f / 8.0f;
+    //private final static float GLIDE_DIVE_INITIAL_ACCELERATION_BOOST = gGlide / 4.0f;
+    //private final static float GLIDE_DIVE_ACCELERATION_BOOST = gGlide / 2.0f;
+    //private final static float GLIDE_PULL_UP_ACCELERATION_BOOST = -gGlide * 3.0f / 8.0f;
     private final static byte GLIDE_HORIZONTAL = 0;
     private final static byte GLIDE_UP = 1;
     private final static byte GLIDE_DOWN = -1;
@@ -245,6 +245,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         pc.player = this;
         this.pc = pc;
         prf = pc.prf;
+        setShootMode(prf.shootMode); // Will override with values forced for current room if needed
+        setJumpMode(prf.jumpMode);
         pi = pc.pi;
         setView(pi.basicSet.stand);
         destroyTimgPrev();
@@ -352,7 +354,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         setJumpMode(toggleInputMode(JUMP_MODES, prf.jumpMode, dir));
     }
     
-    protected final void setJumpMode(final JumpMode jumpMode) {
+    protected final void setJumpMode(JumpMode jumpMode) {
+        if (RoomLoader.jumpModeForced != null) {
+            jumpMode = RoomLoader.jumpModeForced;
+        }
+        if (prf.jumpMode == jumpMode) {
+            return;
+        }
         prf.jumpMode.onDeselect(this);
         prf.jumpMode = jumpMode;
     }
@@ -361,8 +369,13 @@ public class Player extends Chr implements Warpable, StepEndListener {
         setShootMode(toggleInputMode(SHOOT_MODES, prf.shootMode, dir));
     }
     
-    protected final void setShootMode(final ShootMode shootMode) {
-        if (prf.shootMode != null) {
+    protected final void setShootMode(ShootMode shootMode) {
+        if (RoomLoader.shootModeForced != null) {
+            shootMode = RoomLoader.shootModeForced;
+        }
+        if (prf.shootMode == shootMode) {
+            return;
+        } else if (prf.shootMode != null) {
             prf.shootMode.onDeselect(this);
         }
         prf.shootMode = shootMode;
@@ -2119,7 +2132,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     protected final boolean isPassiveShieldEnabled() {
-        return false; //TODO
+        return RoomLoader.passiveShieldForced;
     }
     
     protected final boolean isShieldEnabled() {
