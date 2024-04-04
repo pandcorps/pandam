@@ -75,6 +75,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int STREAM_SIZE = 8;
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
+    private final static int STUN_TIME = 15;
+    private final static int STUN_START_SPEED = 2;
+    private final static float STUN_ACCELERATION = -0.125f;
     private final static int FROZEN_TIME = 60;
     private final static int BUBBLE_TIME = 60;
     private final static int RUN_TIME = 5;
@@ -157,6 +160,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
     private boolean anyGlidingDuringThisJump = false;
     private float hvForced = 0;
     private int wrappedJumps = 0;
+    private int stunTimer = 0;
+    private float stunSpeed = 0;
     protected Carrier jumpStartedOnCarrier = null;
     protected Carrier walkedOffCarrier = null;
     private boolean jumpAllowed = true;
@@ -2147,7 +2152,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         float prjVelX = prj.getVelocity().getX(), prjX = prj.getPosition().getX();
         final float x = getPosition().getX();
-        if ((prjVelX == 0) && ((prj instanceof SpecStreamProjectile) || (prj instanceof SpecShieldProjectile) || (prj instanceof SpecSwordProjectile))) {
+        final boolean sword = prj instanceof SpecSwordProjectile;
+        if ((prjVelX == 0) && (sword || (prj instanceof SpecStreamProjectile) || (prj instanceof SpecShieldProjectile))) {
             final Player src = ((SpecProjectile) prj).getSource();
             final float srcX = src.getPosition().getX();
             if (x < srcX) {
@@ -2158,11 +2164,21 @@ public class Player extends Chr implements Warpable, StepEndListener {
             prjX = srcX;
         }
         if ((prjVelX < 0) && !getAimMirror() && (prjX > x)) {
+            stunSource(sword, prj);
             return true;
         } else if ((prjVelX > 0) && getAimMirror() && (prjX < x)) {
+            stunSource(sword, prj);
             return true;
         }
         return false;
+    }
+    
+    private final void stunSource(final boolean needed, final SpecVelocity vel) {
+        if (!needed) {
+            return;
+        }
+        final SpecProjectile prj = (SpecProjectile) vel;
+        prj.getSource().startStunned();
     }
     
     private final boolean isInBlockingPose() {
@@ -2509,6 +2525,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         wrapper.endWrap(this);
         wrapper = null;
+    }
+    
+    private final void startStunned() {
+        changeView(pi.hurt);
+        stateHandler = STUNNED_HANDLER;
+        stunTimer = 0;
+        stunSpeed = STUN_START_SPEED;
+    }
+    
+    private final void endStunned() {
+        stateHandler = NORMAL_HANDLER;
     }
     
     @Override
@@ -4100,6 +4127,53 @@ public class Player extends Chr implements Warpable, StepEndListener {
 
         @Override
         protected final void onLeft(final Player player) {
+        }
+
+        @Override
+        protected final void onGrounded(final Player player) {
+        }
+
+        @Override
+        protected final boolean onAir(final Player player) {
+            return player.onAirNormal();
+        }
+    };
+    
+    protected final static StateHandler STUNNED_HANDLER = new StateHandler() {
+        @Override
+        protected final void onJump(final Player player) {
+        }
+
+        @Override
+        protected final void onShootStart(final Player player) {
+        }
+
+        @Override
+        protected final void onShooting(final Player player) {
+        }
+
+        @Override
+        protected final void onShootEnd(final Player player) {
+        }
+
+        @Override
+        protected final void onRight(final Player player) {
+        }
+
+        @Override
+        protected final void onLeft(final Player player) {
+        }
+        
+        @Override
+        protected final boolean onStep(final Player player) {
+            player.stunTimer++;
+            if (player.stunTimer >= STUN_TIME) {
+                player.endStunned();
+            } else if (player.stunSpeed > 0) {
+                player.addX(Math.round(player.stunSpeed * -player.getMirrorMultiplier()), false, false);
+                player.stunSpeed += STUN_ACCELERATION;
+            }
+            return false;
         }
 
         @Override
