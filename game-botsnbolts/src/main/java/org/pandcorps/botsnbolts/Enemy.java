@@ -774,7 +774,7 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         }
     }
     
-    protected static class AiSwordProjectile extends AiProjectile implements StepEndListener {
+    protected static class AiSwordProjectile extends AiProjectile implements SpecSwordProjectile, StepEndListener {
         private boolean firstStep = true;
         
         protected AiSwordProjectile(final Player src) {

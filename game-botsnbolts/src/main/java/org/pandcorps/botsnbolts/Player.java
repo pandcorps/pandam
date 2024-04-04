@@ -605,7 +605,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         return new ShieldProjectile(this);
     }
     
-    protected SpecProjectile newSwordProjectile() {
+    protected SpecSwordProjectile newSwordProjectile() {
         return new SwordProjectile(this);
     }
     
@@ -2147,7 +2147,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         float prjVelX = prj.getVelocity().getX(), prjX = prj.getPosition().getX();
         final float x = getPosition().getX();
-        if ((prjVelX == 0) && ((prj instanceof SpecStreamProjectile) || (prj instanceof SpecShieldProjectile))) {
+        if ((prjVelX == 0) && ((prj instanceof SpecStreamProjectile) || (prj instanceof SpecShieldProjectile) || (prj instanceof SpecSwordProjectile))) {
             final Player src = ((SpecProjectile) prj).getSource();
             final float srcX = src.getPosition().getX();
             if (x < srcX) {
@@ -5579,6 +5579,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
         public boolean pickTarget();
         
         public void setTarget(final Panctor target, final float targetOffsetY);
+    }
+    
+    // A Player-like sword projectile (from an actual Player or an AiBoss)
+    public static interface SpecSwordProjectile extends SpecProjectile {
+        // There are instanceof checks for swords, but no special methods are required for them
     }
     
     // A projectile from an actual Player that could hurt an Enemy

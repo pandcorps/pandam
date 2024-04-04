@@ -673,7 +673,7 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         }
     }
     
-    public static class SwordProjectile extends Projectile {
+    public static class SwordProjectile extends Projectile implements SpecSwordProjectile {
         private boolean firstStep = true;
         
         protected SwordProjectile(final Player src) {

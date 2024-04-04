@@ -8268,7 +8268,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final SpecProjectile newSwordProjectile() {
+        protected final SpecSwordProjectile newSwordProjectile() {
             return new AiSwordProjectile(this);
         }
         
