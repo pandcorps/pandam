@@ -4176,6 +4176,11 @@ public class Player extends Chr implements Warpable, StepEndListener {
             }
             return false;
         }
+        
+        @Override
+        protected final void onStepEnd(final Player player) {
+            player.changeView(player.pi.hurt);
+        }
 
         @Override
         protected final void onGrounded(final Player player) {
