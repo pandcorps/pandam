@@ -2532,6 +2532,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         stateHandler = STUNNED_HANDLER;
         stunTimer = 0;
         stunSpeed = STUN_START_SPEED;
+        lastShotPosed = NULL_CLOCK;
     }
     
     private final void endStunned() {
