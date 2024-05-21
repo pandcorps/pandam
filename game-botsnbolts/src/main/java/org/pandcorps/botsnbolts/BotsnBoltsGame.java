@@ -1211,6 +1211,9 @@ public final class BotsnBoltsGame extends BaseGame {
         basicSet.blink.setExtra(stillExtra);
         talk.setExtra(stillExtra);
         basicSet.start.setExtra(stillExtra);
+        hurt.setExtra(new PlayerImageExtra(0, 0,
+                new HeldExtra(shieldDiag, 4 - wieldStillOffsetX, 17, DEPTH_PLAYER_BACK, false, true, 0, null),
+                new HeldExtra(swordDiag, -13 + wieldStillOffsetX, 13, DEPTH_PLAYER_FRONT_2, false, true, 0, null)));
         final HeldExtra jumpExtraSword = new HeldExtra(swordDiag, -9, 21, DEPTH_PLAYER_FRONT, true, false, 0, null);
         basicSet.jump.setExtra(new PlayerImageExtra(0, 0,
                 new HeldExtra(shieldVert, 6, 8, DEPTH_PLAYER_FRONT, false, false, 0, shootSet.jump),
