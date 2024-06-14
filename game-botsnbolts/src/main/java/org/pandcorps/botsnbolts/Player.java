@@ -2181,7 +2181,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
         prj.getSource().startStunned();
     }
     
-    private final boolean isInBlockingPose() {
+    protected final boolean isInBlockingPose() {
         return Panctor.isAttached(shield) && shield.isVisible() && (shield.getView() == pi.shieldVert) && (shield.getPosition().getZ() > getPosition().getZ())
                 && (shield.getRot() == 0);
     }
@@ -2533,6 +2533,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         stunTimer = 0;
         stunSpeed = STUN_START_SPEED;
         lastShotPosed = NULL_CLOCK;
+    }
+    
+    protected final boolean isStunned() {
+        return stateHandler == STUNNED_HANDLER;
     }
     
     private final void endStunned() {

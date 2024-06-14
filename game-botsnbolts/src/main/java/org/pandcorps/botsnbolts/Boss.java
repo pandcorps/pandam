@@ -9207,19 +9207,32 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         @Override
         protected final void init(final AiBoss boss) {
+            prepareToAttackIfNearPlayer(boss);
+        }
+        
+        protected final static void prepareToAttackIfNearPlayer(final AiBoss boss) {
             boss.extra2 = 0;
         }
         
         @Override
         protected final void onStepJumpingOrGrounded(final AiBoss boss) {
-            if (boss.extra2 > 0) {
-                return;
+            attackIfNearPlayer(boss);
+        }
+        
+        protected final static Player attackIfNearPlayer(final AiBoss boss) {
+            if (hasAttacked(boss)) {
+                return null;
             }
             final Player player = boss.getNearestPlayer();
-            if (boss.isFacingPlayer(player) && (player.getPosition().getDistance2(boss.getPosition()) < 40)) {
+            if (boss.isFacingPlayer(player) && (player.getPosition().getDistance2(boss.getPosition()) < 40) && (player.isInBlockingPose() || Mathtil.rand(40))) {
                 boss.attack();
                 boss.extra2 = 1;
             }
+            return player;
+        }
+        
+        protected final static boolean hasAttacked(final AiBoss boss) {
+            return boss.extra2 > 0;
         }
     }
     
@@ -9298,7 +9311,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
     }
     
-    private final static class ShieldBlockHandler extends AiHandler {
+    private static class ShieldBlockHandler extends AiHandler {
         @Override
         protected final int initTimer(final AiBoss boss) {
             boss.setShootMode(Player.SHOOT_SHIELD);
@@ -9306,8 +9319,23 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         @Override
-        protected final void onStep(final AiBoss boss) {
+        protected void onStep(final AiBoss boss) {
             // Just block
+        }
+    }
+    
+    private final static class SwordAttackShieldBlockHandler extends ShieldBlockHandler {
+        @Override
+        protected final void init(final AiBoss boss) {
+            SwordAttackJumpsHandler.prepareToAttackIfNearPlayer(boss);
+        }
+        
+        @Override
+        protected final void onStep(final AiBoss boss) {
+            final Player player = SwordAttackJumpsHandler.attackIfNearPlayer(boss);
+            if ((player != null) && player.isStunned() && boss.isFacingPlayer(player)) {
+                boss.moveX();
+            }
         }
     }
     
@@ -12159,7 +12187,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         private final void init() {
-            handlers.add(new ShieldBlockHandler());
+            handlers.add(new SwordAttackShieldBlockHandler());
             handlers.add(new SwordAttackJumpsHandler());
             RoomLoader.setShootModeForced(SHOOT_SWORD);
             RoomLoader.setJumpModeForced(JUMP_NORMAL);
