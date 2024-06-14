@@ -8221,7 +8221,11 @@ public abstract class Boss extends Enemy implements SpecBoss {
         }
         
         protected final boolean isFacingPlayer() {
-            final boolean mirrorNeeded = getNearestPlayerX() < getPosition().getX();
+            return isFacingPlayer(getNearestPlayer());
+        }
+        
+        protected final boolean isFacingPlayer(final Player player) {
+            final boolean mirrorNeeded = getPlayerX(player) < getPosition().getX();
             return mirrorNeeded == isMirror();
         }
         
@@ -9132,6 +9136,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
             if (boss.nextHandler != null) {
                 return;
             }
+            onStepJumpingOrGrounded(boss);
             if (canRunWhileGrounded || !boss.isGrounded()) {
                 boss.moveX();
             }
@@ -9141,6 +9146,10 @@ public abstract class Boss extends Enemy implements SpecBoss {
             }
             boss.jump();
             onStepJumping(boss);
+        }
+        
+        //@OverrideMe
+        protected void onStepJumpingOrGrounded(final AiBoss boss) {
         }
         
         //@OverrideMe
@@ -9187,6 +9196,29 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void onStepJumping(final AiBoss boss) {
             if ((boss.shootTimer <= 0) && (boss.v > 0)) {
                 boss.startAttacking(5);
+            }
+        }
+    }
+    
+    private static class SwordAttackJumpsHandler extends JumpsHandler {
+        private SwordAttackJumpsHandler() {
+            super(false);
+        }
+        
+        @Override
+        protected final void init(final AiBoss boss) {
+            boss.extra2 = 0;
+        }
+        
+        @Override
+        protected final void onStepJumpingOrGrounded(final AiBoss boss) {
+            if (boss.extra2 > 0) {
+                return;
+            }
+            final Player player = boss.getNearestPlayer();
+            if (boss.isFacingPlayer(player) && (player.getPosition().getDistance2(boss.getPosition()) < 40)) {
+                boss.attack();
+                boss.extra2 = 1;
             }
         }
     }
@@ -12128,7 +12160,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final void init() {
             handlers.add(new ShieldBlockHandler());
-            handlers.add(new JumpsHandler(false));
+            handlers.add(new SwordAttackJumpsHandler());
             RoomLoader.setShootModeForced(SHOOT_SWORD);
             RoomLoader.setJumpModeForced(JUMP_NORMAL);
             RoomLoader.passiveShieldForced = true;
