@@ -75,7 +75,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     protected final static int STREAM_SIZE = 8;
     private final static int INVINCIBLE_TIME = 60;
     private final static int HURT_TIME = 15;
-    private final static int STUN_TIME = 15;
+    private final static int STUN_TIME = 30;
     private final static int STUN_START_SPEED = 2;
     private final static float STUN_ACCELERATION = -0.125f;
     private final static int FROZEN_TIME = 60;
