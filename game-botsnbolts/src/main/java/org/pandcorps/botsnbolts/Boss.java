@@ -9117,12 +9117,24 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     private static class JumpsHandler extends AiHandler {
+        private final boolean canRunWhileGrounded;
+        
+        private JumpsHandler() {
+            this(true);
+        }
+        
+        private JumpsHandler(final boolean canRunWhileGrounded) {
+            this.canRunWhileGrounded = canRunWhileGrounded;
+        }
+        
         @Override
         protected final void onStep(final AiBoss boss) {
             if (boss.nextHandler != null) {
                 return;
             }
-            boss.moveX();
+            if (canRunWhileGrounded || !boss.isGrounded()) {
+                boss.moveX();
+            }
             if (boss.extra > 0) {
                 boss.extra--;
                 return;
@@ -12116,7 +12128,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         
         private final void init() {
             handlers.add(new ShieldBlockHandler());
-            handlers.add(new JumpsHandler());
+            handlers.add(new JumpsHandler(false));
             RoomLoader.setShootModeForced(SHOOT_SWORD);
             RoomLoader.setJumpModeForced(JUMP_NORMAL);
             RoomLoader.passiveShieldForced = true;
