@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2023, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -483,7 +483,7 @@ public class Menu {
             Player.registerCapture(grid);
             BotLevel centerLevel = null;
             boolean allBasicFinished = true, anyDenied = false;
-            for (final BotLevel level : RoomLoader.levels) {
+            for (final BotLevel level : RoomLoader.episode.levels) {
                 if (level.isSpecialLevel()) {
                     if (!level.isAllowed()) {
                         anyDenied = true;
@@ -571,7 +571,7 @@ public class Menu {
         
         private final static void addPortrait(final Panlayer layer, final int x, final int y, final BotLevel level) {
             final Boolean portraitMirror = level.portraitMirror;
-            final boolean allFinished = RoomLoader.levels.get(RoomLoader.levels.size() - 1).isReplayable();
+            final boolean allFinished = RoomLoader.episode.levels.get(RoomLoader.episode.levels.size() - 1).isReplayable();
             final Panmage portrait = (!allFinished && level.isFinished() && (level.portraitGrey != null)) ? level.portraitGrey : level.portrait;
             addPortrait(layer, x, y, portrait, (portraitMirror == null) ? ((x < 176) || ((x == 176) && (y < 112))) : !portraitMirror.booleanValue());
         }

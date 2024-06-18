@@ -702,7 +702,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
     }
     
     protected Panmage getPortrait() {
-        return RoomLoader.getPortrait(RoomLoader.levelMap.get(getClass().getSimpleName()));
+        return RoomLoader.getPortrait(RoomLoader.getLevel(getClass().getSimpleName()));
     }
     
     protected abstract Panmage getStill();

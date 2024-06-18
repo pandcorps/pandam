@@ -47,10 +47,21 @@ import org.pandcorps.pandax.visual.*;
 public abstract class RoomLoader {
     private final static int OFF_ALT = 256;
     private final static Class<?>[] SEGMENT_TYPES = { Segment.class };
-    private final static Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
-    protected final static List<BotLevel> levels = new ArrayList<BotLevel>();
-    protected final static Map<String, BotLevel> levelMap = new HashMap<String, BotLevel>();
-    private static BotLevel firstLevel = null;
+    protected final static class BotEpisode {
+        //private final int episodeNumber;
+        private final String path;
+        private final Map<BotCell, BotRoom> rooms = new HashMap<BotCell, BotRoom>();
+        protected final List<BotLevel> levels = new ArrayList<BotLevel>();
+        protected final Map<String, BotLevel> levelMap = new HashMap<String, BotLevel>();
+        private BotLevel firstLevel = null;
+        
+        protected BotEpisode(final int episodeNumber) {
+            //this.episodeNumber = episodeNumber;
+            this.path = BotsnBoltsGame.RES + "level" + ((episodeNumber == 1) ? "" : Integer.toString(episodeNumber)) + "/";
+        }
+    }
+    protected final static List<BotEpisode> episodes = new ArrayList<>();
+    protected static BotEpisode episode = null;
     private final static List<Panctor> actors = new ArrayList<Panctor>(); // Cleared when room change starts
     //protected final static List<Panctor> actorsDisplayedDuringChange = new ArrayList<Panctor>(); // Shouldn't need; extend Extra; isVisibleWhileRoomChanging() 
     private final static List<ShootableDoor> doors = new ArrayList<ShootableDoor>();
@@ -127,7 +138,7 @@ public abstract class RoomLoader {
     }
     
     protected final static void loadTex(final String fileId) {
-        final String fileName = BotsnBoltsGame.RES + "level/" + fileId + ".txt";
+        final String fileName = episode.path + fileId + ".txt";
         SegmentStream in = null;
         final int frameDuration;
         final Panmage images[];
@@ -151,7 +162,7 @@ public abstract class RoomLoader {
     }
     
     private final static void processSegmentFile(final String fileId, final boolean ctxRequired, final TileMap tm) {
-        final String fileName = BotsnBoltsGame.RES + "level/" + room.dir + "/" + fileId + ".txt";
+        final String fileName = episode.path + room.dir + "/" + fileId + ".txt";
         SegmentStream in = null;
         try {
             in = SegmentStream.openLocation(fileName);
@@ -1363,10 +1374,12 @@ public abstract class RoomLoader {
         }
     }
     
-    protected final static void loadRooms() {
+    protected final static void loadRooms(final int episodeNumber) {
+        episode = new BotEpisode(episodeNumber);
+        episodes.add(episode);
         SegmentStream in = null;
         try {
-            in = SegmentStream.openLocation(BotsnBoltsGame.RES + "level/Rooms.txt");
+            in = SegmentStream.openLocation(episode.path + "Rooms.txt");
             Segment seg;
             seg = in.readIf("CTX");
             /*
@@ -1380,14 +1393,14 @@ public abstract class RoomLoader {
                 final BotRoom room = new BotRoom(x, y, w, seg.getValue(3), seg.getValue(4), seg.getInt(5, BotsnBoltsGame.DIM));
                 for (int i = 0; i < w; i++) {
                     final int xi = x + i;
-                    if (rooms.put(new BotCell(xi, y), room) != null) {
+                    if (episode.rooms.put(new BotCell(xi, y), room) != null) {
                         in.close();
                         throw new IllegalStateException("Two room cells found at (" + xi + ", " + y + ")");
                     }
                 }
             }
             in.close();
-            in = SegmentStream.openLocation(BotsnBoltsGame.RES + "level/Levels.txt");
+            in = SegmentStream.openLocation(episode.path + "Levels.txt");
             loadLevels(in);
         } catch (final Exception e) {
             throw Pantil.toRuntimeException(e);
@@ -1426,7 +1439,7 @@ public abstract class RoomLoader {
             new FinPancolor(128, 192, 255), g192
         );
         while ((seg = in.readIf("LVL")) != null) {
-            levels.add(new BotLevel(seg, greyFilter));
+            episode.levels.add(new BotLevel(seg, greyFilter));
         }
         while ((seg = in.readIf("SCR")) != null) {
             loadScreen(seg);
@@ -1434,7 +1447,11 @@ public abstract class RoomLoader {
     }
     
     protected final static BotLevel getFirstLevel() {
-        return firstLevel;
+        return episode.firstLevel;
+    }
+    
+    protected final static BotLevel getLevel(final String bossName) {
+        return episode.levelMap.get(bossName); // Might need to loop through all Episodes in some cases
     }
     
     protected final static boolean isFirstLevelFinished() {
@@ -1454,7 +1471,7 @@ public abstract class RoomLoader {
     }
     
     protected final static BotRoom getRoom(final int x, final int y) {
-        return rooms.get(new BotCell(x, y));
+        return episode.rooms.get(new BotCell(x, y));
     }
     
     protected final static BotRoomCell getAdjacentRoom(final Panctor actor, final int dirX, final int dirY) {
@@ -1470,7 +1487,7 @@ public abstract class RoomLoader {
             y = room.y + dirY;
         }
         final BotCell cell = new BotCell(x, y);
-        final BotRoom room = rooms.get(cell);
+        final BotRoom room = episode.rooms.get(cell);
         if (room == null) {
             return null;
         }
@@ -1663,8 +1680,8 @@ public abstract class RoomLoader {
         protected final List<String> otherBossNames;
         
         protected BotLevel(final Segment seg, final PixelFilter greyFilter) {
-            if (firstLevel == null) {
-                firstLevel = this;
+            if (episode.firstLevel == null) {
+                episode.firstLevel = this;
             }
             name1 = seg.getValue(0);
             name2 = seg.getValue(1);
@@ -1702,7 +1719,7 @@ public abstract class RoomLoader {
             portraitMirror = seg.toBoolean(13);
             bossClassName = seg.getValue(14, fullName);
             replayPrerequisite = seg.getValue(15);
-            levelMap.put(bossClassName, this);
+            episode.levelMap.put(bossClassName, this);
             final boolean pupilNeeded = seg.getBoolean(16, false);
             if (pupilNeeded) {
                 Story.pupilNeededSet.add(portrait);

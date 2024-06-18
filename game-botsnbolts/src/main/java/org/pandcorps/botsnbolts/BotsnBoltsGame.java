@@ -344,7 +344,9 @@ public final class BotsnBoltsGame extends BaseGame {
         loadPlayer();
         postProcess();
         Menu.loadMenu();
-        RoomLoader.loadRooms();
+        for (int episodeNumber = 1; episodeNumber <= 1; episodeNumber++) {
+            RoomLoader.loadRooms(episodeNumber);
+        }
     }
     
     private final static void loadDoors() {

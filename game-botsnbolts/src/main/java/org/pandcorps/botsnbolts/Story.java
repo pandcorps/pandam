@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2022, Andrew M. Martin
+Copyright (c) 2009-2024, Andrew M. Martin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -557,7 +557,7 @@ public class Story {
                 }
                 levelBossName = b.toString();
             }
-            level = RoomLoader.levelMap.get(levelBossName);
+            level = RoomLoader.getLevel(levelBossName);
         }
         
         protected final CharacterDefinition setX(final int x) {
