@@ -345,10 +345,12 @@ public final class BotsnBoltsGame extends BaseGame {
         postProcess();
         Menu.loadMenu();
         RoomLoader.loadRooms(1,
-                new ShootMode[] { Player.SHOOT_NORMAL, Player.SHOOT_CHARGE, Player.SHOOT_SPREAD, Player.SHOOT_RAPID });
+                new ShootMode[] { Player.SHOOT_NORMAL, Player.SHOOT_CHARGE, Player.SHOOT_SPREAD, Player.SHOOT_RAPID },
+                new JumpMode[] { Player.JUMP_NORMAL, Player.JUMP_BALL, Player.JUMP_SPRING, Player.JUMP_GRAPPLING_HOOK });
         /*
         RoomLoader.loadRooms(2,
-                new ShootMode[] { Player.SHOOT_NORMAL, Player.SHOOT_STREAM, Player.SHOOT_SHIELD, Player.SHOOT_SWORD });
+                new ShootMode[] { Player.SHOOT_NORMAL, Player.SHOOT_STREAM, Player.SHOOT_SHIELD, Player.SHOOT_SWORD },
+                new JumpMode[] { Player.JUMP_NORMAL, Player.JUMP_BOARD, Player.JUMP_GLIDER });
         */
     }
     

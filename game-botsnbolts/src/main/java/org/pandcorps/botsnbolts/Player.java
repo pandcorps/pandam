@@ -356,7 +356,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void toggleJumpMode(final int dir) {
-        setJumpMode(toggleInputMode(JUMP_MODES, prf.jumpMode, dir));
+        setJumpMode(toggleInputMode(getJumpModes(), prf.jumpMode, dir));
     }
     
     protected final void setJumpMode(JumpMode jumpMode) {
@@ -5234,7 +5234,9 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
-    private final static JumpMode[] JUMP_MODES = { JUMP_NORMAL, JUMP_BALL, JUMP_SPRING, JUMP_GRAPPLING_HOOK, JUMP_BOARD, JUMP_GLIDER };
+    private final static JumpMode[] getJumpModes() {
+        return RoomLoader.episode.jumpModes;
+    }
     
     protected final static class Bubble extends Panctor implements StepListener {
         private int dir;
