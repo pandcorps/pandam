@@ -686,7 +686,6 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         private boolean firstStep = true;
         
         protected SwordProjectile(final Player src) {
-            //TODO Don't draw burst on Player
             super(src, src.pi, Player.SHOOT_SWORD, src, 0, 0, POWER_MEDIUM);
             initSwordProjectile(this, src);
         }
@@ -713,6 +712,12 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
         @Override
         public final boolean isEnemyBurstAlwaysNeeded() {
             return true;
+        }
+        
+        @Override
+        public final void burst() {
+            // Don't create a Projectile burst; it covers a wide range, don't know where it connects with Enemy; an Enemy burst is drawn separately
+            destroy();
         }
     }
     
