@@ -54,10 +54,12 @@ public abstract class RoomLoader {
         protected final List<BotLevel> levels = new ArrayList<BotLevel>();
         protected final Map<String, BotLevel> levelMap = new HashMap<String, BotLevel>();
         private BotLevel firstLevel = null;
+        protected final ShootMode[] shootModes;
         
-        protected BotEpisode(final int episodeNumber) {
+        protected BotEpisode(final int episodeNumber, final ShootMode[] shootModes) {
             //this.episodeNumber = episodeNumber;
             this.path = BotsnBoltsGame.RES + "level" + ((episodeNumber == 1) ? "" : Integer.toString(episodeNumber)) + "/";
+            this.shootModes = shootModes;
         }
     }
     protected final static List<BotEpisode> episodes = new ArrayList<>();
@@ -1374,8 +1376,8 @@ public abstract class RoomLoader {
         }
     }
     
-    protected final static void loadRooms(final int episodeNumber) {
-        episode = new BotEpisode(episodeNumber);
+    protected final static void loadRooms(final int episodeNumber, final ShootMode[] shootModes) {
+        episode = new BotEpisode(episodeNumber, shootModes);
         episodes.add(episode);
         SegmentStream in = null;
         try {

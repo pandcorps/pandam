@@ -371,7 +371,7 @@ public class Player extends Chr implements Warpable, StepEndListener {
     }
     
     private final void toggleShootMode(final int dir) {
-        setShootMode(toggleInputMode(SHOOT_MODES, prf.shootMode, dir));
+        setShootMode(toggleInputMode(getShootModes(), prf.shootMode, dir));
     }
     
     protected final void setShootMode(ShootMode shootMode) {
@@ -5050,7 +5050,10 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
     };
     
-    protected final static ShootMode[] SHOOT_MODES = { SHOOT_NORMAL, SHOOT_CHARGE, SHOOT_SPREAD, SHOOT_RAPID, SHOOT_STREAM, SHOOT_SHIELD, SHOOT_SWORD }; //TODO separate list per episode
+    protected final static ShootMode[] getShootModes() {
+        // After winning multiple episodes, might want to return union of modes from all defeated episodes if replaying a defeated episode
+        return RoomLoader.episode.shootModes;
+    }
     
     protected abstract static class MeleeMode {
         protected abstract String getName();
