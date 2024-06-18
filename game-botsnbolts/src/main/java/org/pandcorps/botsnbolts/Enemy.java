@@ -176,9 +176,14 @@ public abstract class Enemy extends Chr implements SpecEnemy {
             src.stamina++;
         }
         BotsnBoltsGame.fxImpact.startSound();
+        boolean burstHappened = false;
+        if (prj.isEnemyBurstAlwaysNeeded()) {
+            burstOnEnemy(enemy, prj);
+            burstHappened = true;
+        }
         if (health <= 0) {
-            if (enemy.isBurstNeeded()) {
-                Projectile.burst(prj, prj.getPlayerImages().burst, enemy.getPosition());
+            if (!burstHappened && enemy.isBurstNeeded()) {
+                burstOnEnemy(enemy, prj);
             }
             enemy.award(src);
             enemy.onDefeat(src);
@@ -189,6 +194,10 @@ public abstract class Enemy extends Chr implements SpecEnemy {
         if (oldHealth > 0) {
             Projectile.setPower(prj, oldPower - oldHealth);
         }
+    }
+    
+    private final static void burstOnEnemy(final SpecEnemy enemy, final SpecPlayerProjectile prj) {
+        Projectile.burst(prj, prj.getPlayerImages().burst, enemy.getBoundingCenter());
     }
     
     @Override

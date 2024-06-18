@@ -45,6 +45,8 @@ public interface SpecPanctor extends Pantity {
 
     public Panple getBoundingMaximum();
     
+    public Panple getBoundingCenter();
+    
     public boolean isVisible();
 
     public void setVisible(final boolean vis);

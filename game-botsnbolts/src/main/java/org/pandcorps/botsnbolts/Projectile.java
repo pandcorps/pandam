@@ -162,6 +162,11 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
     public float getVelocityX() {
         return getVelocity().getX();
     }
+    
+    @Override
+    public boolean isEnemyBurstAlwaysNeeded() {
+        return false;
+    }
 
     @Override
     public void onAllOob(final AllOobEvent event) {
@@ -341,6 +346,10 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
             BotsnBoltsGame.fxAttack.startSound();
             Projectile.burst(this, src.pi.burst, getPosition());
             destroy();
+        }
+        
+        public final boolean isEnemyBurstAlwaysNeeded() {
+            return false;
         }
     }
     
@@ -699,6 +708,11 @@ public class Projectile extends Pandy implements AllOobListener, SpecPlayerProje
             if (!firstStep) {
                 prj.destroy();
             }
+        }
+        
+        @Override
+        public final boolean isEnemyBurstAlwaysNeeded() {
+            return true;
         }
     }
     

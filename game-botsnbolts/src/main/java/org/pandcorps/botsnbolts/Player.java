@@ -5677,6 +5677,8 @@ public class Player extends Chr implements Warpable, StepEndListener {
         public void bounce();
         
         public float getVelocityX();
+        
+        public boolean isEnemyBurstAlwaysNeeded();
     }
     
     public static interface SpecEnemyProjectile extends CollisionListener {

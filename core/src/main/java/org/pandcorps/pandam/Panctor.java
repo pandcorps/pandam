@@ -35,6 +35,7 @@ public class Panctor extends BasePantity implements SpecPanctor {
 	private final Pantype type;
 	private final MinPanple min;
 	private final MaxPanple max;
+	private CenterPanple center = null;
 	private boolean destroyed = false;
 	/*package*/ Object collisionGroup = Panroom.defaultCollisionGroup;
 	/*package*/ Panlayer layer = null;
@@ -345,6 +346,31 @@ public class Panctor extends BasePantity implements SpecPanctor {
     public final Panple getBoundingMaximum() {
 	    return max;
     }
+	
+	private final class CenterPanple extends UnmodPanple {
+        @Override
+        public float getX() {
+            return (getBoundingMinimum().getX() + getBoundingMaximum().getX()) / 2.0f;
+        }
+        
+        @Override
+        public float getY() {
+            return (getBoundingMinimum().getY() + getBoundingMaximum().getY()) / 2.0f;
+        }
+        
+        @Override
+        public float getZ() {
+            return (getBoundingMinimum().getZ() + getBoundingMaximum().getZ()) / 2.0f;
+        }
+	}
+	
+	@Override
+	public final Panple getBoundingCenter() {
+	    if (center == null) {
+	        center = new CenterPanple();
+	    }
+	    return center;
+	}
 
 	@Override
 	public final boolean isVisible() {
