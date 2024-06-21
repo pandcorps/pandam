@@ -2123,13 +2123,17 @@ public class Player extends Chr implements Warpable, StepEndListener {
         }
         final long clock = getClock();
         if (((clock - lastStart) < 8) && useStamina(1)) {
-            slideTimer = 0;
-            hvForced = (dir * VEL_DASH);
-            hv = Math.round(hvForced);
+            startDash(dir);
             return NULL_CLOCK;
         } else {
             return clock;
         }
+    }
+    
+    protected final void startDash(final int dir) {
+        slideTimer = 0;
+        hvForced = (dir * VEL_DASH);
+        hv = Math.round(hvForced);
     }
     
     protected final boolean isDashing() {

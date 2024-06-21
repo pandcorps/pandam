@@ -9262,7 +9262,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void onStep(final AiBoss boss) {
             if (boss.waitTimer == 29) {
-                boss.startDashIfNeeded(Long.MAX_VALUE, boss.getMirrorMultiplier());
+                boss.startDash(boss.getMirrorMultiplier());
             } else if (boss.waitTimer == 14) {
                 boss.attack();
             }
@@ -9328,13 +9328,30 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void init(final AiBoss boss) {
             SwordAttackJumpsHandler.prepareToAttackIfNearPlayer(boss);
+            // SwordAttackJumpsHandler.prepareToAttackIfNearPlayer uses extra2, since its parent class uses extra
+            // This has a different parent class, so safe to use extra here
+            boss.extra = 0;
         }
         
         @Override
         protected final void onStep(final AiBoss boss) {
             final Player player = SwordAttackJumpsHandler.attackIfNearPlayer(boss);
-            if ((player != null) && player.isStunned() && boss.isFacingPlayer(player)) {
-                boss.moveX();
+            if (boss.extra > 1) {
+                return;
+            }
+            if ((player != null) && boss.isFacingPlayer(player)) {
+                final float distance = Math.abs(boss.getPosition().getX() - player.getPosition().getX());
+                if (distance > 160) {
+                    boss.startDash(boss.getMirrorMultiplier());
+                    boss.extra = 2;
+                } else if ((distance > 56) || player.isStunned()) {
+                    boss.moveX();
+                    boss.extra = 1;
+                } else if (boss.extra == 1) {
+                    boss.extra = 2;
+                }
+            } else if (boss.extra == 1) {
+                boss.extra = 2;
             }
         }
     }
@@ -12200,6 +12217,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         protected final void addUpgrades(final Set<Upgrade> upgrades) {
             upgrades.add(Profile.UPGRADE_SWORD);
             upgrades.add(Profile.UPGRADE_SHIELD);
+            upgrades.add(Profile.UPGRADE_DASH);
         }
 
         @Override
