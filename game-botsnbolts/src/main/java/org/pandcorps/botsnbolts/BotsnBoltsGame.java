@@ -37,6 +37,7 @@ import org.pandcorps.core.img.*;
 import org.pandcorps.game.*;
 import org.pandcorps.game.actor.*;
 import org.pandcorps.pandam.*;
+import org.pandcorps.pandam.Panput.*;
 import org.pandcorps.pandam.Panteraction.*;
 import org.pandcorps.pandam.event.*;
 import org.pandcorps.pandam.event.action.*;
@@ -1701,6 +1702,7 @@ public final class BotsnBoltsGame extends BaseGame {
     
     protected final static class EpisodeSelectScreen extends TitleRelatedScreen {
         private final static int yOff = 24;
+        private static Panmage episodeBoundingBox = null;
         private final int numEpisodes;
         private int selectedEpisodeIndex = 0;
         private Pantext indicator = null;
@@ -1716,14 +1718,34 @@ public final class BotsnBoltsGame extends BaseGame {
         
         @Override
         protected final void loadMore() {
+            final Pangine engine = Pangine.getEngine();
+            final Panteraction interaction = engine.getInteraction();
+            if (episodeBoundingBox == null) {
+                episodeBoundingBox = engine.createEmptyImage("episode.bounding.box", null, null, new FinPanple2(72, 8));
+            }
             Menu.addCursor(room);
             Pantext ep1 = null;
-            for (int episodeIndex = 0; episodeIndex < numEpisodes; episodeIndex++) {
+            for (int i = 0; i < numEpisodes; i++) {
+                final int episodeIndex = i;
                 final int episodeNumber = episodeIndex + 1;
                 final Pantext ep = addText(room, "Episode " + episodeNumber, w2, getY(episodeIndex));
                 if (ep1 == null) {
                     ep1 = ep;
                 }
+                final Panple pos = ep.getPosition();
+                final TouchButton btn = new TouchButton(interaction, room, "episide." + episodeIndex, Math.round(pos.getX()), Math.round(pos.getY()), 0, episodeBoundingBox, null, true);
+                engine.registerTouchButton(btn);
+                registerStartGame(btn);
+                actor.register(btn, new ActionStartListener() {
+                    @Override public final void onActionStart(final ActionStartEvent event) {
+                        selectedEpisodeIndex = episodeIndex;
+                        setIndicatorPosition();
+                    }});
+                btn.setActiveListener(new TouchButtonActiveListener() {
+                    @Override public final void onActive(final TouchButton btn) {
+                        selectedEpisodeIndex = episodeIndex;
+                        setIndicatorPosition();
+                    }});
             }
             addText(room, "Episode 2", w2, 41);
             final Panple ep1Pos = ep1.getPosition();
@@ -1749,7 +1771,6 @@ public final class BotsnBoltsGame extends BaseGame {
             registerStartGame(ctrl.getSubmit());
             registerStartGame(ctrl.get1());
             registerStartGame(ctrl.get2());
-            //TODO touch buttons
         }
         
         private final static int getY(final int episodeIndex) {
