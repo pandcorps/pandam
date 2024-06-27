@@ -132,7 +132,7 @@ public class Menu {
         imgOff = Pangine.getEngine().createImage("Off", BotsnBoltsGame.RES + "menu/Off.png");
     }
     
-    private final static Cursor addCursor(final Panlayer room) {
+    protected final static Cursor addCursor(final Panlayer room) {
         if (!isCursorNeeded()) {
             return null;
         }
@@ -552,7 +552,7 @@ public class Menu {
                             return;
                         }
                     }
-                    BotsnBoltsGame.addPlayerContext(new Profile(prf), BotsnBoltsGame.volatileImages, event);
+                    BotsnBoltsGame.addPlayerContext(new Profile(prf), event).setPlayerImages(BotsnBoltsGame.volatileImages);
                 }
             });
             layer.setConstant(true);
@@ -1030,8 +1030,8 @@ public class Menu {
             }};
     }
     
-    protected final static void addVersion() {
-        addText(16, 8, BotsnBoltsGame.VERSION);
+    protected final static Pantext addVersion() {
+        return addText(16, 8, BotsnBoltsGame.VERSION);
     }
     
     private final static void exitOptions() {

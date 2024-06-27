@@ -7966,7 +7966,9 @@ public abstract class Boss extends Enemy implements SpecBoss {
         final Profile prf = new Profile(true);
         prf.autoCharge = true;
         prf.infiniteStamina = true;
-        return new PlayerContext(0, prf, pi);
+        final PlayerContext pc = new PlayerContext(0, prf);
+        pc.setPlayerImages(pi);
+        return pc;
     }
     
     protected abstract static class AiBoss extends Player implements SpecBoss, RoomAddListener {
@@ -9208,6 +9210,7 @@ public abstract class Boss extends Enemy implements SpecBoss {
         @Override
         protected final void init(final AiBoss boss) {
             prepareToAttackIfNearPlayer(boss);
+            //TODO Maybe jump to wall if near wall but not near player, then start jumping normally? Would need to add WallGrab to Final2's upgrades
         }
         
         protected final static void prepareToAttackIfNearPlayer(final AiBoss boss) {

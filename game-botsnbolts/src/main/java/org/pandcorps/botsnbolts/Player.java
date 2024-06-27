@@ -4318,19 +4318,22 @@ public class Player extends Chr implements Warpable, StepEndListener {
         protected final int index;
         protected final Profile prf;
         protected ControlScheme ctrl;
-        protected final PlayerImages pi;
+        protected PlayerImages pi = null;
         protected Player player = null;
         protected int lives = 5;
         private Player srcPlayer = null;
         
-        protected PlayerContext(final int index, final Profile prf, final PlayerImages pi) {
+        protected PlayerContext(final int index, final Profile prf) {
             this.index = index;
             this.prf = prf;
-            this.pi = pi;
         }
         
         protected final void setControlScheme(final ControlScheme ctrl) {
             this.ctrl = ctrl;
+        }
+        
+        protected final void setPlayerImages(final PlayerImages pi) {
+            this.pi = pi;
         }
         
         protected final int getHudX() {

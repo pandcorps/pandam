@@ -348,12 +348,10 @@ public final class BotsnBoltsGame extends BaseGame {
                 voidImages,
                 new ShootMode[] { Player.SHOOT_NORMAL, Player.SHOOT_CHARGE, Player.SHOOT_SPREAD, Player.SHOOT_RAPID },
                 new JumpMode[] { Player.JUMP_NORMAL, Player.JUMP_BALL, Player.JUMP_SPRING, Player.JUMP_GRAPPLING_HOOK });
-        /*
         RoomLoader.loadRooms(2,
                 nullImages,
                 new ShootMode[] { Player.SHOOT_NORMAL, Player.SHOOT_STREAM, Player.SHOOT_SHIELD, Player.SHOOT_SWORD },
                 new JumpMode[] { Player.JUMP_NORMAL, Player.JUMP_BOARD, Player.JUMP_GLIDER });
-        */
     }
     
     private final static void loadDoors() {
@@ -1660,31 +1658,119 @@ public final class BotsnBoltsGame extends BaseGame {
         fxThunder = audio.createSound(RES + "sound/Thunder.mid");
     }
     
-    private final static class TitleScreen extends Panscreen {
-        private Panmage title = null;
+    private abstract static class TitleRelatedScreen extends Panscreen {
+        protected Panmage title = null;
+        protected Panctor actor = null;
+        protected int w2 = -1;
         
         @Override
         protected final void load() {
             final Pangine engine = Pangine.getEngine();
             engine.setBgColor(FinPancolor.BLACK);
-            title = engine.createImage("title", RES + "misc/BotsnBoltsTitle.png");
-            final Panctor actor = new Panctor();
+            if (title == null) {
+                title = engine.createImage("title", RES + "misc/BotsnBoltsTitle.png");
+            }
+            actor = new Panctor();
             actor.setView(title);
             final Panple size = title.getSize();
-            final int w = engine.getEffectiveWidth(), w2 = w / 2;
+            final int w = engine.getEffectiveWidth();
+            w2 = w / 2;
             actor.getPosition().set((w - size.getX()) / 2, (engine.getEffectiveHeight() - size.getY()) * 3 / 4);
             room = Pangame.getGame().getCurrentRoom();
             room.addActor(actor);
+            loadMore();
+        }
+        
+        protected abstract void loadMore();
+    }
+    
+    private final static class TitleScreen extends TitleRelatedScreen {
+        @Override
+        protected final void loadMore() {
             addText(room, Menu.isTouchEnabled() ? "Tap to start" : "Press anything", w2, 61);
             addText(room, COPYRIGHT, w2, 34);
             addText(room, AUTHOR, w2, 24);
             Menu.addVersion();
             actor.register(new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
-                    //addPlayerContext(prf0, voidImages, event);
-                    addPlayerContext(prf0, RoomLoader.episode.pi, event);
-                    startGame();
+                    addPlayerContext(prf0, event);
+                    Panscreen.set(new EpisodeSelectScreen(title));
                 }});
+        }
+    }
+    
+    protected final static class EpisodeSelectScreen extends TitleRelatedScreen {
+        private final static int yOff = 24;
+        private final int numEpisodes;
+        private int selectedEpisodeIndex = 0;
+        private Pantext indicator = null;
+        
+        protected EpisodeSelectScreen() {
+            this(null);
+        }
+        
+        protected EpisodeSelectScreen(final Panmage title) {
+            this.title = title;
+            numEpisodes = RoomLoader.episodes.size();
+        }
+        
+        @Override
+        protected final void loadMore() {
+            Menu.addCursor(room);
+            Pantext ep1 = null;
+            for (int episodeIndex = 0; episodeIndex < numEpisodes; episodeIndex++) {
+                final int episodeNumber = episodeIndex + 1;
+                final Pantext ep = addText(room, "Episode " + episodeNumber, w2, getY(episodeIndex));
+                if (ep1 == null) {
+                    ep1 = ep;
+                }
+            }
+            addText(room, "Episode 2", w2, 41);
+            final Panple ep1Pos = ep1.getPosition();
+            indicator = addText(room, "+", ep1Pos.getX() - 12, 0);
+            setIndicatorPosition();
+            final ControlScheme ctrl = pcs.get(0).ctrl;
+            actor.register(ctrl.getDown(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    selectedEpisodeIndex++;
+                    if (selectedEpisodeIndex >= numEpisodes) {
+                        selectedEpisodeIndex = 0;
+                    }
+                    setIndicatorPosition();
+                }});
+            actor.register(ctrl.getUp(), new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    selectedEpisodeIndex--;
+                    if (selectedEpisodeIndex < 0) {
+                        selectedEpisodeIndex = numEpisodes - 1;
+                    }
+                    setIndicatorPosition();
+                }});
+            registerStartGame(ctrl.getSubmit());
+            registerStartGame(ctrl.get1());
+            registerStartGame(ctrl.get2());
+            //TODO touch buttons
+        }
+        
+        private final static int getY(final int episodeIndex) {
+            return 65 - (yOff * episodeIndex);
+        }
+        
+        private final void setIndicatorPosition() {
+            indicator.getPosition().setY(getY(selectedEpisodeIndex));
+        }
+        
+        private final void registerStartGame(final Panput input) {
+            actor.register(input, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    runStartGame();
+                }});
+        }
+        
+        private final void runStartGame() {
+            RoomLoader.episode = RoomLoader.episodes.get(selectedEpisodeIndex);
+            pcs.get(0).setPlayerImages(RoomLoader.episode.pi);
+            startGame();
         }
         
         @Override
@@ -1693,7 +1779,7 @@ public final class BotsnBoltsGame extends BaseGame {
         }
     }
     
-    protected final static PlayerContext addPlayerContext(final Profile prf, final PlayerImages pi, final ActionEndEvent event) {
+    protected final static PlayerContext addPlayerContext(final Profile prf, final ActionEndEvent event) {
         final Device device = event.getInput().getDevice();
         final ControlScheme ctrl;
         if (device instanceof Touchscreen) {
@@ -1702,7 +1788,7 @@ public final class BotsnBoltsGame extends BaseGame {
         } else {
             ctrl = ControlScheme.getDefault(device);
         }
-        final PlayerContext pc = new PlayerContext(pcs.size(), prf, pi);
+        final PlayerContext pc = new PlayerContext(pcs.size(), prf);
         pcs.add(pc);
         pc.setControlScheme(ctrl);
         fxMenuClick.startSound();
@@ -1717,11 +1803,12 @@ public final class BotsnBoltsGame extends BaseGame {
         }
     }
     
-    public final static void addText(final Panlayer room, final String s, final int x, final int y) {
+    public final static Pantext addText(final Panlayer room, final String s, final float x, final float y) {
         final Pantext text = new Pantext(Pantil.vmid(), font, s);
         text.getPosition().set(x, y);
         text.centerX();
         room.addActor(text);
+        return text;
     }
     
     protected final static class BotsnBoltsScreen extends Panscreen {
