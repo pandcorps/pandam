@@ -331,8 +331,7 @@ public class Menu {
         pauseMenuButtons[currIndex++] = quit = addPauseMenuButton(layer, "Quit", px, py, active, imgQuit);
         registrar.register(quit, new ActionEndListener() {
             @Override public final void onActionEnd(final ActionEndEvent event) {
-                save();
-                Pangine.getEngine().exit();
+                goEpisodeSelect();
             }});
         addCursor(layer);
         final Panctor actor = play.getActor();
@@ -536,7 +535,7 @@ public class Menu {
             grid.register(engine.getInteraction().BACK, new ActionEndListener() {
                 @Override public final void onActionEnd(final ActionEndEvent event) {
                     if (isPauseMenuEnabled()) {
-                        engine.exit();
+                        goEpisodeSelect();
                     } else {
                         addQuitMenu(newRoom, pc);
                     }
@@ -920,6 +919,12 @@ public class Menu {
         }
         
         public abstract void onGridEnd();
+    }
+    
+    protected final static void goEpisodeSelect() {
+        save();
+        destroyPauseMenu();
+        Panscreen.set(new EpisodeSelectScreen());
     }
     
     protected final static void goOptions() {

@@ -1713,7 +1713,7 @@ public final class BotsnBoltsGame extends BaseGame {
         
         protected EpisodeSelectScreen(final Panmage title) {
             this.title = title;
-            numEpisodes = RoomLoader.episodes.size();
+            numEpisodes = RoomLoader.episodes.size() + 1; // Add one, because the exit button is treated as an episode in this menu
         }
         
         @Override
@@ -1724,11 +1724,13 @@ public final class BotsnBoltsGame extends BaseGame {
                 episodeBoundingBox = engine.createEmptyImage("episode.bounding.box", null, null, new FinPanple2(72, 8));
             }
             Menu.addCursor(room);
+            final int exitIndex = numEpisodes - 1;
             Pantext ep1 = null;
             for (int i = 0; i < numEpisodes; i++) {
                 final int episodeIndex = i;
                 final int episodeNumber = episodeIndex + 1;
-                final Pantext ep = addText(room, "Episode " + episodeNumber, w2, getY(episodeIndex));
+                final String episodeText = (i < exitIndex) ? ("Episode " + episodeNumber) : "Exit";
+                final Pantext ep = addText(room, episodeText, w2, getY(episodeIndex));
                 if (ep1 == null) {
                     ep1 = ep;
                 }
@@ -1771,6 +1773,11 @@ public final class BotsnBoltsGame extends BaseGame {
             registerStartGame(ctrl.getSubmit());
             registerStartGame(ctrl.get1());
             registerStartGame(ctrl.get2());
+            actor.register(interaction.BACK, new ActionEndListener() {
+                @Override public final void onActionEnd(final ActionEndEvent event) {
+                    engine.exit();
+                }
+            });
         }
         
         private final static int getY(final int episodeIndex) {
@@ -1789,6 +1796,10 @@ public final class BotsnBoltsGame extends BaseGame {
         }
         
         private final void runStartGame() {
+            if (selectedEpisodeIndex >= RoomLoader.episodes.size()) {
+                Pangine.getEngine().exit();
+                return;
+            }
             RoomLoader.episode = RoomLoader.episodes.get(selectedEpisodeIndex);
             pcs.get(0).setPlayerImages(RoomLoader.episode.pi);
             startGame();
